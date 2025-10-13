@@ -30,28 +30,6 @@
         header:hover {
             background-color: #1A1A1A;
         }
-        .social-links {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            padding: 10px 0;
-        }
-        .social-links a {
-            display: inline-block;
-            transition: transform 0.3s;
-        }
-        .social-links a:hover {
-            transform: scale(1.1);
-        }
-        .social-links svg {
-            width: 24px;
-            height: 24px;
-            fill: #B0B0B0;
-        }
-        .social-links img {
-            width: 24px;
-            height: 24px;
-        }
         nav {
             max-width: 1200px;
             margin: 0 auto;
@@ -94,7 +72,7 @@
         }
         .documentation-section {
             max-width: 800px;
-            margin: 150px auto 50px;
+            margin: 100px auto 50px;
             padding: 2rem;
             background: linear-gradient(45deg, #1C2526, #2F3A44);
             border-radius: 12px;
@@ -196,7 +174,7 @@
                 align-items: center;
             }
             .documentation-section {
-                margin: 120px 1rem 50px;
+                margin: 80px 1rem 50px;
                 padding: 1.5rem;
             }
             .documentation-section h1 {
@@ -216,150 +194,119 @@
                 document.querySelector('footer p').textContent = '© 2025 HackerOS. All rights reserved.';
                 const docContent = document.querySelector('.documentation-section').innerHTML;
                 document.querySelector('.documentation-section').innerHTML = docContent
-                    .replace(/HackerOS — Dokumentacja/, 'HackerOS — Documentation')
-                    .replace(/1. Wprowadzenie/, '1. Introduction')
-                    .replace(/HackerOS to dystrybucja linuksowa bazująca na Debianie \(testing\), stworzona z myślą o:/, 'HackerOS is a Linux distribution based on Debian (testing), created for:')
-                    .replace(/zwykłych użytkownikach,/, 'ordinary users,')
-                    .replace(/graczach,/, 'gamers,')
-                    .replace(/entuzjastach cyberbezpieczeństwa i power-userach./, 'cybersecurity enthusiasts and power-users.')
-                    .replace(/Filozofia/, 'Philosophy')
-                    .replace(/HackerOS ma dawać użytkownikowi pełną kontrolę, jednocześnie oferując gotowe, przyjazne środowisko do codziennego użytku i grania. Projekt stawia na:/, 'HackerOS aims to give the user full control while offering a ready-made, user-friendly environment for daily use and gaming. The project emphasizes:')
-                    .replace(/dostępność \(łatwe instalatory i GUI\),/, 'accessibility (easy installers and GUI),')
-                    .replace(/wydajność \(customowe jądro — np. XanMod oraz opcje przeinstalowanego firmware\),/, 'performance (custom kernel — e.g., XanMod and pre-installed firmware options),')
-                    .replace(/bezpieczeństwo i prywatność użytkownika./, 'user security and privacy.')
-                    .replace(/Cel/, 'Goal')
-                    .replace(/Celem HackerOS jest dostarczyć stabilne środowisko gotowe do pracy i rozrywki:/, 'The goal of HackerOS is to provide a stable environment ready for work and entertainment:')
-                    .replace(/stabilność — baza Debian testing z dodatkowymi testami i stabilizacją komponentów,/, 'stability — Debian testing base with additional tests and component stabilization,')
-                    .replace(/wydajność — opcjonalne jądro XanMod oraz zoptymalizowane firmware,/, 'performance — optional XanMod kernel and optimized firmware,')
-                    .replace(/prostota aktualizacji — skrypty do tworzenia\/updatu ISO\/rootfs i proste GUI\/CLI do aktualizacji \(hacker-update\),/, 'simplicity of updates — scripts for creating/updating ISO/rootfs and simple GUI/CLI for updates (hacker-update),')
-                    .replace(/dostosowanie — łatwa personalizacja i integracja narzędzi dla pentesterów i graczy./, 'customization — easy personalization and integration of tools for pentesters and gamers.')
-                    .replace(/2. Wymagania sprzętowe/, '2. Hardware Requirements')
-                    .replace(/Minimalne/, 'Minimum')
-                    .replace(/Procesor: 2 rdzenie, 1.6 GHz \(x86_64 \/ ARMv8\)/, 'Processor: 2 cores, 1.6 GHz (x86_64 / ARMv8)')
-                    .replace(/Pamięć RAM: 2 GB/, 'RAM: 2 GB')
-                    .replace(/Dysk: 20 GB wolnej przestrzeni/, 'Disk: 20 GB free space')
-                    .replace(/Grafika: zintegrowana, obsługa rozdzielczości 1024×768/, 'Graphics: integrated, support for 1024×768 resolution')
-                    .replace(/Sieć: karta sieciowa Ethernet\/Wi-Fi/, 'Network: Ethernet/Wi-Fi network card')
-                    .replace(/Te parametry pozwolą uruchomić system; przy nich wydajność GUI i gier będzie ograniczona./, 'These parameters will allow the system to run; GUI and game performance will be limited.')
-                    .replace(/Rekomendowane/, 'Recommended')
-                    .replace(/Procesor: 4 rdzenie, 2.5 GHz lub szybszy \(x86_64 \/ ARM64\)/, 'Processor: 4 cores, 2.5 GHz or faster (x86_64 / ARM64)')
-                    .replace(/Pamięć RAM: 8 GB lub więcej/, 'RAM: 8 GB or more')
-                    .replace(/Dysk: 50 GB wolnej przestrzeni \(SSD zalecany\)/, 'Disk: 50 GB free space (SSD recommended)')
-                    .replace(/Grafika: GPU z akceleracją 3D \(NVIDIA\/AMD\/Intel\)/, 'Graphics: GPU with 3D acceleration (NVIDIA/AMD/Intel)')
-                    .replace(/Sieć: stabilne łącze internetowe/, 'Network: stable internet connection')
-                    .replace(/Obsługiwane architektury/, 'Supported Architectures')
-                    .replace(/x86_64 \(amd64\) — pełne wsparcie/, 'x86_64 (amd64) — full support')
-                    .replace(/ARM64 \(aarch64\) — wsparcie eksperymentalne \/ porty \(np. SBC\)/, 'ARM64 (aarch64) — experimental support / ports (e.g., SBC)')
-                    .replace(/Możliwość dołączenia innych architektur \(RISC-V\) w przyszłości./, 'Possibility of adding other architectures (RISC-V) in the future.')
-                    .replace(/3. Instalacja/, '3. Installation')
-                    .replace(/Pobieranie/, 'Downloading')
-                    .replace(/Pobierz obraz ISO ze strony projektu:/, 'Download the ISO image from the project website:')
-                    .replace(/Tworzenie bootowalnego nośnika/, 'Creating a Bootable Medium')
-                    .replace(/Windows: Rufus/, 'Windows: Rufus')
-                    .replace(/Linux: dd, balenaEtcher, Fedora Media Writer/, 'Linux: dd, balenaEtcher, Fedora Media Writer')
-                    .replace(/Przykład dd \(UWAGA: dobierz poprawne \/dev\/sdX\):/, 'Example dd (CAUTION: select the correct /dev/sdX):')
-                    .replace(/Instalacja z nośnika/, 'Installation from the Medium')
-                    .replace(/Uruchom komputer z pendrive\/USB./, 'Boot the computer from the USB drive.')
-                    .replace(/Wybierz tryb Live \(jeśli chcesz sprawdzić środowisko\) lub bezpośrednio instalator./, 'Select Live mode (if you want to test the environment) or directly the installer.')
-                    .replace(/Instalator poprowadzi przez: partycjonowanie, tworzenie użytkownika, wybór jądra\/firmware \(opcjonalnie: XanMod\)./, 'The installer will guide you through: partitioning, user creation, kernel/firmware selection (optionally: XanMod).')
-                    .replace(/Po zakończeniu uruchom system z dysku./, 'After completion, boot the system from the disk.')
-                    .replace(/Dual-boot/, 'Dual-boot')
-                    .replace(/Instalator posiada opcję instalacji obok istniejącego systemu./, 'The installer offers the option to install alongside an existing system.')
-                    .replace(/Zawsze wykonaj backup przed zmianami partycji./, 'Always back up before making partition changes.')
-                    .replace(/Jeżeli chcesz, by Bootloader \(GRUB\) był zarządzany ręcznie — wybierz opcję zaawansowaną./, 'If you want the Bootloader (GRUB) to be managed manually, select the advanced option.')
-                    .replace(/4. Pierwsze kroki po instalacji/, '4. First Steps After Installation')
-                    .replace(/Logowanie/, 'Logging In')
-                    .replace(/Jeżeli wybrałeś automatyczne logowanie — zostaniesz zalogowany od razu./, 'If you chose automatic login, you will be logged in immediately.')
-                    .replace(/W przeciwnym razie: zaloguj się przy użyciu utworzonego użytkownika./, 'Otherwise, log in using the created user.')
-                    .replace(/Menedżer pakietów/, 'Package Manager')
-                    .replace(/HackerOS używa APT oraz własnego narzędzia hacker:/, 'HackerOS uses APT and its own hacker tool:')
-                    .replace(/hacker jest wrapperem i integruje dodatkowe repozytoria\/paczki customowe — sprawdź hacker --help./, 'hacker is a wrapper and integrates additional repositories/custom packages — check hacker --help.')
-                    .replace(/Konfiguracja sieci i podstawowe ustawienia/, 'Network Configuration and Basic Settings')
-                    .replace(/GUI: Ustawienia → Sieć/, 'GUI: Settings → Network')
-                    .replace(/CLI: nmcli, ip, ifconfig \(jeśli dostępne\)/, 'CLI: nmcli, ip, ifconfig (if available)')
-                    .replace(/Lista komend i gotowych skryptów do customizacji:/, 'List of commands and ready scripts for customization:')
-                    .replace(/5. Środowisko graficzne i aplikacje/, '5. Graphical Environment and Applications')
-                    .replace(/Domyślne środowisko/, 'Default Environment')
-                    .replace(/KDE Plasma \(edycja Official HackerOS\), skonfigurowane pod wydajność i gry./, 'KDE Plasma (Official HackerOS edition), configured for performance and gaming.')
-                    .replace(/Preinstalowane aplikacje/, 'Pre-installed Applications')
-                    .replace(/Przeglądarka: Vivaldi/, 'Browser: Vivaldi')
-                    .replace(/Terminale: Alacritty, Konsole/, 'Terminals: Alacritty, Konsole')
-                    .replace(/Sklep\/aplikacje: GNOME Software \(lub software\)/, 'Store/applications: GNOME Software (or software)')
-                    .replace(/Gry i autorskie aplikacje od HackerOS \(zestaw zależny od wersji ISO\)/, 'Games and custom HackerOS applications (set depends on the ISO version)')
-                    .replace(/Instalacja dodatkowego oprogramowania/, 'Installing Additional Software')
-                    .replace(/Z poziomu GUI: otwórz Software i zainstaluj wybrane aplikacje./, 'From the GUI: open Software and install selected applications.')
-                    .replace(/Z CLI: sudo apt install <pakiet> lub sudo hacker install <pakiet>/, 'From CLI: sudo apt install <package> or sudo hacker install <package>')
-                    .replace(/Możesz także instalować za pomocą Flatpak i Snap \(jeśli masz je zainstalowane\)./, 'You can also install using Flatpak and Snap (if installed).')
-                    .replace(/6. Konfiguracja i personalizacja/, '6. Configuration and Customization')
-                    .replace(/Wszystkie ustawienia graficzne i użytkowe znajdziesz w:/, 'All graphical and user settings can be found in:')
-                    .replace(/Aplikacja Ustawienia \(KDE\) — wygląd, motywy, skróty, dźwięki, starupy./, 'Settings application (KDE) — appearance, themes, shortcuts, sounds, startups.')
-                    .replace(/Dodatkowe pliki konfiguracyjne: ~/.config\/, ~/.local\/share\//, 'Additional configuration files: ~/.config/, ~/.local/share/')
-                    .replace(/Aliasów i globalnych ustawień powłoki: \/etc\/bash.bashrc \(tam znajdują się domyślne aliasy HackerOS\)./, 'Aliases and global shell settings: /etc/bash.bashrc (contains default HackerOS aliases).')
-                    .replace(/Animacje startowe i splash screen: \/usr\/share\/HackerOS\/Animations\/ \(np. HackerOS.webm\)./, 'Startup animations and splash screen: /usr/share/HackerOS/Animations/ (e.g., HackerOS.webm).')
-                    .replace(/7. Rozwiązywanie błędów \(troubleshooting\)/, '7. Troubleshooting')
-                    .replace(/Najpierw sprawdź logi:/, 'First, check the logs:')
-                    .replace(/Systemd: journalctl -b \(mozesz tez sprawdzic logi za pomoca hacker-syslog\)/, 'Systemd: journalctl -b (you can also check logs using hacker-syslog)')
-                    .replace(/Dmesg: dmesg \| less/, 'Dmesg: dmesg | less')
-                    .replace(/X\/Wayland logs: ~/.local\/share\/sddm\/ lub ~/.xsession-errors/, 'X/Wayland logs: ~/.local/share/sddm/ or ~/.xsession-errors')
-                    .replace(/Sieć: nmcli device status, ping 8.8.8.8/, 'Network: nmcli device status, ping 8.8.8.8')
-                    .replace(/Problem z paczkami: sudo apt --fix-broken install, sudo dpkg --configure -a/, 'Package issues: sudo apt --fix-broken install, sudo dpkg --configure -a')
-                    .replace(/Jeśli nic nie pomaga: dołącz na Discord lub napisz mail:/, 'If nothing helps, join Discord or send an email:')
-                    .replace(/Opisz krok po kroku problem, załącz logi \(pastebin\/plik\), wersję systemu \(cat \/etc\/os-release\) i konfigurację sprzętową./, 'Describe the problem step-by-step, attach logs (pastebin/file), system version (cat /etc/os-release), and hardware configuration.')
-                    .replace(/8. Licencja i prawa/, '8. License and Rights')
-                    .replace(/HackerOS stosuje mieszankę licencji zależnie od komponentu:/, 'HackerOS uses a mix of licenses depending on the component:')
-                    .replace(/Jądro i dystrybucyjne komponenty Debiana — zgodne z licencjami oryginalnych pakietów \(GPL, itp.\)./, 'Kernel and Debian distribution components — compliant with the original package licenses (GPL, etc.).')
-                    .replace(/Aplikacje i narzędzia customowe od HackerOS:/, 'Custom HackerOS applications and tools:')
-                    .replace(/domyślnie GNU GPL v3.0 \(jeśli wymagasz kompatybilności z GPL dla modyfikacji\),/, 'default GNU GPL v3.0 (if GPL compatibility is required for modifications),')
-                    .replace(/niektóre narzędzia mogą być pod BSD 3-Clause, MIT, lub Apache License 2.0 \(w zależności od autora\/komponentu\)./, 'some tools may be under BSD 3-Clause, MIT, or Apache License 2.0 (depending on the author/component).')
-                    .replace(/W LICENSE repo: zamieść główną licencję projektu i listę wyjątków\/licencji dla poszczególnych komponentów \(NOTICE\/THIRD_PARTY\)./, 'In the LICENSE repo: include the main project license and a list of exceptions/licenses for individual components (NOTICE/THIRD_PARTY).')
-                    .replace(/Znak towarowy \/ nazwa: zastrzeżona przez projekt — sprawdź politykę użycia nazwy i logo w LICENSE\/TRADEMARK./, 'Trademark / name: reserved by the project — check the policy for using the name and logo in LICENSE/TRADEMARK.');
+                    .replace('HackerOS — Dokumentacja', 'HackerOS — Documentation')
+                    .replace('1. Wprowadzenie', '1. Introduction')
+                    .replace('HackerOS to dystrybucja linuksowa bazująca na Debianie \\(testing\\), stworzona z myślą o:', 'HackerOS is a Linux distribution based on Debian (testing), created for:')
+                    .replace('zwykłych użytkownikach,', 'ordinary users,')
+                    .replace('graczach,', 'gamers,')
+                    .replace('entuzjastach cyberbezpieczeństwa i power-userach.', 'cybersecurity enthusiasts and power-users.')
+                    .replace('Filozofia', 'Philosophy')
+                    .replace('HackerOS ma dawać użytkownikowi pełną kontrolę, jednocześnie oferując gotowe, przyjazne środowisko do codziennego użytku i grania. Projekt stawia na:', 'HackerOS aims to give the user full control while offering a ready-made, user-friendly environment for daily use and gaming. The project emphasizes:')
+                    .replace('dostępność \\(łatwe instalatory i GUI\\),', 'accessibility (easy installers and GUI),')
+                    .replace('wydajność \\(customowe jądro — np. XanMod oraz opcje przeinstalowanego firmware\\),', 'performance (custom kernel — e.g., XanMod and pre-installed firmware options),')
+                    .replace('bezpieczeństwo i prywatność użytkownika.', 'user security and privacy.')
+                    .replace('Cel', 'Goal')
+                    .replace('Celem HackerOS jest dostarczyć stabilne środowisko gotowe do pracy i rozrywki:', 'The goal of HackerOS is to provide a stable environment ready for work and entertainment:')
+                    .replace('stabilność — baza Debian testing z dodatkowymi testami i stabilizacją komponentów,', 'stability — Debian testing base with additional tests and component stabilization,')
+                    .replace('wydajność — opcjonalne jądro XanMod oraz zoptymalizowane firmware,', 'performance — optional XanMod kernel and optimized firmware,')
+                    .replace('prostota aktualizacji — skrypty do tworzenia\\/updatu ISO\\/rootfs i proste GUI\\/CLI do aktualizacji \\(hacker-update\\),', 'simplicity of updates — scripts for creating/updating ISO/rootfs and simple GUI/CLI for updates (hacker-update),')
+                    .replace('dostosowanie — łatwa personalizacja i integracja narzędzi dla pentesterów i graczy.', 'customization — easy personalization and integration of tools for pentesters and gamers.')
+                    .replace('2. Wymagania sprzętowe', '2. Hardware Requirements')
+                    .replace('Minimalne', 'Minimum')
+                    .replace('Procesor: 2 rdzenie, 1.6 GHz \\(x86_64 \\/ ARMv8\\)', 'Processor: 2 cores, 1.6 GHz (x86_64 / ARMv8)')
+                    .replace('Pamięć RAM: 2 GB', 'RAM: 2 GB')
+                    .replace('Dysk: 20 GB wolnej przestrzeni', 'Disk: 20 GB free space')
+                    .replace('Grafika: zintegrowana, obsługa rozdzielczości 1024×768', 'Graphics: integrated, support for 1024×768 resolution')
+                    .replace('Sieć: karta sieciowa Ethernet\\/Wi-Fi', 'Network: Ethernet/Wi-Fi network card')
+                    .replace('Te parametry pozwolą uruchomić system; przy nich wydajność GUI i gier będzie ograniczona.', 'These parameters will allow the system to run; GUI and game performance will be limited.')
+                    .replace('Rekomendowane', 'Recommended')
+                    .replace('Procesor: 4 rdzenie, 2.5 GHz lub szybszy \\(x86_64 \\/ ARM64\\)', 'Processor: 4 cores, 2.5 GHz or faster (x86_64 / ARM64)')
+                    .replace('Pamięć RAM: 8 GB lub więcej', 'RAM: 8 GB or more')
+                    .replace('Dysk: 50 GB wolnej przestrzeni \\(SSD zalecany\\)', 'Disk: 50 GB free space (SSD recommended)')
+                    .replace('Grafika: GPU z akceleracją 3D \\(NVIDIA\\/AMD\\/Intel\\)', 'Graphics: GPU with 3D acceleration (NVIDIA/AMD/Intel)')
+                    .replace('Sieć: stabilne łącze internetowe', 'Network: stable internet connection')
+                    .replace('Obsługiwane architektury', 'Supported Architectures')
+                    .replace('x86_64 \\(amd64\\) — pełne wsparcie', 'x86_64 (amd64) — full support')
+                    .replace('ARM64 \\(aarch64\\) — wsparcie eksperymentalne \\/ porty \\(np. SBC\\)', 'ARM64 (aarch64) — experimental support / ports (e.g., SBC)')
+                    .replace('Możliwość dołączenia innych architektur \\(RISC-V\\) w przyszłości.', 'Possibility of adding other architectures (RISC-V) in the future.')
+                    .replace('3. Instalacja', '3. Installation')
+                    .replace('Pobieranie', 'Downloading')
+                    .replace('Pobierz obraz ISO ze strony projektu:', 'Download the ISO image from the project website:')
+                    .replace('Tworzenie bootowalnego nośnika', 'Creating a Bootable Medium')
+                    .replace('Windows: Rufus', 'Windows: Rufus')
+                    .replace('Linux: dd, balenaEtcher, Fedora Media Writer', 'Linux: dd, balenaEtcher, Fedora Media Writer')
+                    .replace('Przykład dd \\(UWAGA: dobierz poprawne \\/dev\\/sdX\\):', 'Example dd (CAUTION: select the correct /dev/sdX):')
+                    .replace('Instalacja z nośnika', 'Installation from the Medium')
+                    .replace('Uruchom komputer z pendrive\\/USB.', 'Boot the computer from the USB drive.')
+                    .replace('Wybierz tryb Live \\(jeśli chcesz sprawdzić środowisko\\) lub bezpośrednio instalator.', 'Select Live mode (if you want to test the environment) or directly the installer.')
+                    .replace('Instalator poprowadzi przez: partycjonowanie, tworzenie użytkownika, wybór jądra\\/firmware \\(opcjonalnie: XanMod\\).', 'The installer will guide you through: partitioning, user creation, kernel/firmware selection (optionally: XanMod).')
+                    .replace('Po zakończeniu uruchom system z dysku.', 'After completion, boot the system from the disk.')
+                    .replace('Dual-boot', 'Dual-boot')
+                    .replace('Instalator posiada opcję instalacji obok istniejącego systemu.', 'The installer offers the option to install alongside an existing system.')
+                    .replace('Zawsze wykonaj backup przed zmianami partycji.', 'Always back up before making partition changes.')
+                    .replace('Jeżeli chcesz, by Bootloader \\(GRUB\\) był zarządzany ręcznie — wybierz opcję zaawansowaną.', 'If you want the Bootloader (GRUB) to be managed manually, select the advanced option.')
+                    .replace('4. Pierwsze kroki po instalacji', '4. First Steps After Installation')
+                    .replace('Logowanie', 'Logging In')
+                    .replace('Jeżeli wybrałeś automatyczne logowanie — zostaniesz zalogowany od razu.', 'If you chose automatic login, you will be logged in immediately.')
+                    .replace('W przeciwnym razie: zaloguj się przy użyciu utworzonego użytkownika.', 'Otherwise, log in using the created user.')
+                    .replace('Menedżer pakietów', 'Package Manager')
+                    .replace('HackerOS używa APT oraz własnego narzędzia hacker:', 'HackerOS uses APT and its own hacker tool:')
+                    .replace('hacker jest wrapperem i integruje dodatkowe repozytoria\\/paczki customowe — sprawdź hacker --help.', 'hacker is a wrapper and integrates additional repositories/custom packages — check hacker --help.')
+                    .replace('Konfiguracja sieci i podstawowe ustawienia', 'Network Configuration and Basic Settings')
+                    .replace('GUI: Ustawienia → Sieć', 'GUI: Settings → Network')
+                    .replace('CLI: nmcli, ip, ifconfig \\(jeśli dostępne\\)', 'CLI: nmcli, ip, ifconfig (if available)')
+                    .replace('Lista komend i gotowych skryptów do customizacji:', 'List of commands and ready scripts for customization:')
+                    .replace('5. Środowisko graficzne i aplikacje', '5. Graphical Environment and Applications')
+                    .replace('Domyślne środowisko', 'Default Environment')
+                    .replace('KDE Plasma \\(edycja Official HackerOS\\), skonfigurowane pod wydajność i gry.', 'KDE Plasma (Official HackerOS edition), configured for performance and gaming.')
+                    .replace('Preinstalowane aplikacje', 'Pre-installed Applications')
+                    .replace('Przeglądarka: Vivaldi', 'Browser: Vivaldi')
+                    .replace('Terminale: Alacritty, Konsole', 'Terminals: Alacritty, Konsole')
+                    .replace('Sklep\\/aplikacje: GNOME Software \\(lub software\\)', 'Store/applications: GNOME Software (or software)')
+                    .replace('Gry i autorskie aplikacje od HackerOS \\(zestaw zależny od wersji ISO\\)', 'Games and custom HackerOS applications (set depends on the ISO version)')
+                    .replace('Instalacja dodatkowego oprogramowania', 'Installing Additional Software')
+                    .replace('Z poziomu GUI: otwórz Software i zainstaluj wybrane aplikacje.', 'From the GUI: open Software and install selected applications.')
+                    .replace('Z CLI: sudo apt install <pakiet> lub sudo hacker install <pakiet>', 'From CLI: sudo apt install <package> or sudo hacker install <package>')
+                    .replace('Możesz także instalować za pomocą Flatpak i Snap \\(jeśli masz je zainstalowane\\).', 'You can also install using Flatpak and Snap (if installed).')
+                    .replace('6. Konfiguracja i personalizacja', '6. Configuration and Customization')
+                    .replace('Wszystkie ustawienia graficzne i użytkowe znajdziesz w:', 'All graphical and user settings can be found in:')
+                    .replace('Aplikacja Ustawienia \\(KDE\\) — wygląd, motywy, skróty, dźwięki, starupy.', 'Settings application (KDE) — appearance, themes, shortcuts, sounds, startups.')
+                    .replace('Dodatkowe pliki konfiguracyjne: ~/.config\\/, ~/.local\\/share\\/', 'Additional configuration files: ~/.config/, ~/.local/share/')
+                    .replace('Aliasów i globalnych ustawień powłoki: \\/etc\\/bash.bashrc \\(tam znajdują się domyślne aliasy HackerOS\\).', 'Aliases and global shell settings: /etc/bash.bashrc (contains default HackerOS aliases).')
+                    .replace('Animacje startowe i splash screen: \\/usr\\/share\\/HackerOS\\/Animations\\/ \\(np. HackerOS.webm\\).', 'Startup animations and splash screen: /usr/share/HackerOS/Animations/ (e.g., HackerOS.webm).')
+                    .replace('7. Rozwiązywanie błędów \\(troubleshooting\\)', '7. Troubleshooting')
+                    .replace('Najpierw sprawdź logi:', 'First, check the logs:')
+                    .replace('Systemd: journalctl -b \\(możesz też sprawdzić logi za pomocą hacker-syslog\\)', 'Systemd: journalctl -b (you can also check logs using hacker-syslog)')
+                    .replace('Dmesg: dmesg \\| less', 'Dmesg: dmesg | less')
+                    .replace('X\\/Wayland logs: ~/.local\\/share\\/sddm\\/ lub ~/.xsession-errors', 'X/Wayland logs: ~/.local/share/sddm/ or ~/.xsession-errors')
+                    .replace('Sieć: nmcli device status, ping 8.8.8.8', 'Network: nmcli device status, ping 8.8.8.8')
+                    .replace('Problem z paczkami: sudo apt --fix-broken install, sudo dpkg --configure -a', 'Package issues: sudo apt --fix-broken install, sudo dpkg --configure -a')
+                    .replace('Jeśli nic nie pomaga: napisz mail:', 'If nothing helps, send an email:')
+                    .replace('Opisz krok po kroku problem, załącz logi \\(pastebin\\/plik\\), wersję systemu \\(cat \\/etc\\/os-release\\) i konfigurację sprzętową.', 'Describe the problem step-by-step, attach logs (pastebin/file), system version (cat /etc/os-release), and hardware configuration.')
+                    .replace('8. Licencja i prawa', '8. License and Rights')
+                    .replace('HackerOS stosuje mieszankę licencji zależnie od komponentu:', 'HackerOS uses a mix of licenses depending on the component:')
+                    .replace('Jądro i dystrybucyjne komponenty Debiana — zgodne z licencjami oryginalnych pakietów \\(GPL, itp.\\).', 'Kernel and Debian distribution components — compliant with the original package licenses (GPL, etc.).')
+                    .replace('Aplikacje i narzędzia customowe od HackerOS:', 'Custom HackerOS applications and tools:')
+                    .replace('domyślnie GNU GPL v3.0 \\(jeśli wymagasz kompatybilności z GPL dla modyfikacji\\),', 'default GNU GPL v3.0 (if GPL compatibility is required for modifications),')
+                    .replace('niektóre narzędzia mogą być pod BSD 3-Clause, MIT, lub Apache License 2.0 \\(w zależności od autora\\/komponentu\\).', 'some tools may be under BSD 3-Clause, MIT, or Apache License 2.0 (depending on the author/component).')
+                    .replace('W LICENSE repo: zamieść główną licencję projektu i listę wyjątków\\/licencji dla poszczególnych komponentów \\(NOTICE\\/THIRD_PARTY\\).', 'In the LICENSE repo: include the main project license and a list of exceptions/licenses for individual components (NOTICE/THIRD_PARTY).')
+                    .replace('Znak towarowy \\/ nazwa: zastrzeżona przez projekt — sprawdź politykę użycia nazwy i logo w LICENSE\\/TRADEMARK.', 'Trademark / name: reserved by the project — check the policy for using the name and logo in LICENSE/TRADEMARK.');
             }
         });
     </script>
 </head>
 <body>
     <header>
-        <div class="social-links">
-            <a href="https://x.com/hackeros_linux" target="_blank" rel="noopener noreferrer">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 16 16">
-                    <path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865z"/>
-                </svg>
-            </a>
-            <a href="https://discord.com/invite/8yHNcBaEKy" target="_blank" rel="noopener noreferrer">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 16 16">
-                    <path d="M13.545 2.907a13.2 13.2 0 0 0-3.257-1.011.05.05 0 0 0-.052.025c-.141.25-.297.577-.406.833a12.2 12.2 0 0 0-3.658 0 8 8 0 0 0-.412-.833.05.05 0 0 0-.052-.025c-1.125.194-2.22.534-3.257 1.011a.04.04 0 0 0-.021.018C.356 6.024-.213 9.047.066 12.032q.003.022.021.037a13.3 13.3 0 0 0 3.995 2.02.05.05 0 0 0 .056-.019q.463-.63.818-1.329a.05.05 0 0 0-.01-.059l-.018-.011a9 9 0 0 1-1.248-.595.05.05 0 0 1-.02-.066l.015-.019q.127-.095.248-.195a.05.05 0 0 1 .051-.007c2.619 1.196 5.454 1.196 8.041 0a.05.05 0 0 1 .053.007q.121.1.248.195a.05.05 0 0 1-.004.085 8 8 0 0 1-1.249.594.05.05 0 0 0-.03.03.05.05 0 0 0 .003.041c.24.465.515.909.817 1.329a.05.05 0 0 0 .056.019 13.2 13.2 0 0 0 4.001-2.02.05.05 0 0 0 .021-.037c.334-3.451-.559-6.449-2.366-9.106a.03.03 0 0 0-.02-.019m-8.198 7.307c-.789 0-1.438-.724-1.438-1.612s.637-1.613 1.438-1.613c.807 0 1.45.73 1.438 1.613 0 .888-.637 1.612-1.438 1.612m5.316 0c-.788 0-1.438-.724-1.438-1.612s.637-1.613 1.438-1.613c.807 0 1.451.73 1.438 1.613 0 .888-.631 1.612-1.438 1.612"/>
-                </svg>
-            </a>
-            <a href="https://linuxiarze.pl/distro-hackeros/" target="_blank" rel="noopener noreferrer">
-                <img src="https://linuxiarze.pl/obrazy/images/logo-linuxiarze1.webp" alt="Linuxiarze" width="24" height="24">
-            </a>
-            <a href="https://distrowatch.com/table.php?distribution=hackeros" target="_blank" rel="noopener noreferrer">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Distrowatch-logo.png/24px-Distrowatch-logo.png" alt="DistroWatch" width="24" height="24" onerror="this.style.display='none';">
-            </a>
-            <a href="https://www.reddit.com/r/HackerOS_/" target="_blank" rel="noopener noreferrer">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                    <path d="M24 11.779c0-1.459-1.192-2.645-2.657-2.645-.715 0-1.363.286-1.84.746-1.81-1.191-4.259-1.949-6.971-2.046l1.483-4.669 4.016.941-.006.058c0 .828.671 1.5 1.5 1.5s1.5-.672 1.5-1.5c0-.828-.671-1.5-1.5-1.5-.689 0-1.259.541-1.466 1.236l-4.013-.908-1.656 5.207c-2.765.093-5.236.842-7.058 2.046a2.658 2.658 0 0 0-1.844-.746C1.192 9.134 0 10.32 0 11.779c0 .996.547 1.862 1.36 2.317-.04.256-.06.516-.06.784 0 3.514 4.412 6.364 9.868 6.364 5.455 0 9.868-2.85 9.868-6.364 0-.268-.021-.528-.06-.784.814-.455 1.36-1.321 1.36-2.317zm-14.355 2.93c0-.862.695-1.559 1.555-1.559.859 0 1.554.697 1.554 1.559 0 .861-.695 1.558-1.554 1.558-.86 0-1.555-.696-1.555-1.558zm7.945 4.978c-1.678 1.143-3.901 1.805-6.344 1.805-2.442 0-4.665-.662-6.344-1.805-.396-.269-.496-.766-.227-1.161.27-.396.766-.496 1.161-.227 1.374.934 3.184 1.48 5.41 1.48 2.226 0 4.036-.546 5.41-1.48.395-.269.891-.169 1.161.227.269.395.169.891-.227 1.161zm-.227-3.419c-.859 0-1.554-.697-1.554-1.558 0-.862.695-1.559 1.554-1.559.86 0 1.555.697 1.555 1.559 0 .861-.695 1.558-1.555 1.558z"/>
-                </svg>
-            </a>
-            <a href="https://github.com/HackerOS-Linux-System" target="_blank" rel="noopener noreferrer">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 16 16">
-                    <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
-                </svg>
-            </a>
-            <a href="https://www.youtube.com/channel/UCwYT5jqUhZHoRhNKOrjKTrQ" target="_blank" rel="noopener noreferrer">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                </svg>
-            </a>
-        </div>
         <nav>
             <div class="logo"><img src="HackerOS.png" alt="HackerOS Logo"></div>
             <ul>
-                <li><a href="Home-page.html">Strona główna</a></li>
-                <li><a href="download.html">Pobierz</a></li>
-                <li><a href="releases.html">Wydania</a></li>
-                <li><a href="about-hackeros.html">O HackerOS</a></li>
-                <li><a href="hackeros-team.html">Zespół HackerOS</a></li>
+                <li><a href="Home-page.html">Home</a></li>
+                <li><a href="download.html">Download</a></li>
+                <li><a href="releases.html">Releases</a></li>
+                <li><a href="about-hackeros.html">About HackerOS</a></li>
+                <li><a href="hackeros-team.html">HackerOS Team</a></li>
+                <li><a href="privacy-policy-hackeros.html">Privacy Policy</a></li>
+                <li><a href="hackeros-documentation.html">Documentation</a></li>
             </ul>
         </nav>
     </header>
@@ -489,6 +436,7 @@ sudo hacker upgrade-all # (przykładowa komenda — zależnie od implementacji)<
             <li><strong>Aplikacja Ustawienia</strong> (KDE) — wygląd, motywy, skróty, dźwięki, starupy.</li>
             <li>Dodatkowe pliki konfiguracyjne: <code>~/.config/</code>, <code>~/.local/share/</code></li>
             <li>Aliasów i globalnych ustawień powłoki: <code>/etc/bash.bashrc</code> (tam znajdują się domyślne aliasy HackerOS).</li>
+            <li>Animacje startowe i splash screen: <code>/usr/share/HackerOS/Animations/</code> (np. HackerOS.webm).</li>
         </ul>
         <h2>7. Rozwiązywanie błędów (troubleshooting)</h2>
         <ul>
@@ -498,8 +446,7 @@ sudo hacker upgrade-all # (przykładowa komenda — zależnie od implementacji)<
             <li>X/Wayland logs: <code>~/.local/share/sddm/</code> lub <code>~/.xsession-errors</code></li>
             <li><strong>Sieć:</strong> <code>nmcli device status</code>, <code>ping 8.8.8.8</code></li>
             <li><strong>Problem z paczkami:</strong> <code>sudo apt --fix-broken install</code>, <code>sudo dpkg --configure -a</code></li>
-            <li><strong>Jeśli nic nie pomaga:</strong> dołącz na Discord lub napisz mail:</li>
-            <li>Discord: <a href="https://discord.com/invite/8yHNcBaEKy">https://discord.com/invite/8yHNcBaEKy</a></li>
+            <li><strong>Jeśli nic nie pomaga:</strong> napisz mail:</li>
             <li>Email: <a href="mailto:hackeros068@gmail.com">hackeros068@gmail.com</a></li>
             <li>Opisz krok po kroku problem, załącz logi (pastebin/plik), wersję systemu (<code>cat /etc/os-release</code>) i konfigurację sprzętową.</li>
         </ul>
