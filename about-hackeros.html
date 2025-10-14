@@ -315,7 +315,7 @@
                 document.querySelector('footer p').textContent = '© 2025 HackerOS. All rights reserved.';
                 document.querySelector('.commands-section h2').textContent = 'HackerOS Commands';
                 document.querySelector('.hacker-mode h2').textContent = 'Hacker Mode';
-                document.querySelector('.hacker-mode p').textContent = 'Gaming session launched via i3 (BETA)';
+                document.querySelector('.hacker-mode p').textContent = 'Gaming session launched via gamescope';
                 document.querySelector('.features h2').textContent = 'What does HackerOS include?';
                 const featureItems = document.querySelectorAll('.features li');
                 featureItems[0].textContent = 'Xanmod LTS kernel';
@@ -332,10 +332,12 @@
                 editionTitles[0].textContent = 'Official Edition';
                 editionTitles[1].textContent = 'Hydra Edition';
                 editionTitles[2].textContent = 'Cybersecurity Edition';
+                editionTitles[3].textContent = 'Nvidia Edition';
                 const editionPs = document.querySelectorAll('.editions p');
                 editionPs[0].textContent = 'The Official Edition is a standard edition for users, gamers, and programmers, suitable for practically everyone.';
                 editionPs[1].textContent = 'The Hydra Edition is a copy of the HackerOS edition but with a different look (Garuda-like).';
                 editionPs[2].textContent = 'The Cybersecurity Edition has no visual modifications and is a copy of the Official Edition but designed for cybersecurity enthusiasts (this version includes penetration testing tools, cybersecurity tools, and runs on the Xen kernel known from Qubes OS).';
+                editionPs[3].textContent = 'The Nvidia Edition includes everything from the Official Edition but comes with preinstalled Nvidia drivers and the Xanmod LTS kernel for better compatibility with Nvidia hardware.';
                 document.querySelector('.games-section h2').textContent = 'HackerOS Games';
                 const gameTitles = document.querySelectorAll('.game h3');
                 gameTitles[0].textContent = 'The Racer';
@@ -348,7 +350,7 @@
                 document.querySelector('.gaming-section h2').textContent = 'Gaming on HackerOS';
                 const gamingPs = document.querySelectorAll('.gaming-section p:not(.gaming-tools p)');
                 gamingPs[0].innerHTML = 'Gaming on Windows games on HackerOS is possible thanks to a tool called Proton (90% of games work). Unfortunately, some online games, e.g., Fortnite, are blocked on Linux HackerOS. You can find more information on: <a href="https://www.protondb.com" target="_blank" class="protondb">ProtonDB</a>, <a href="https://areweanticheatyet.com" target="_blank" class="anticheat">Are We Anti-Cheat Yet?</a>.';
-                gamingPs[1].textContent = 'By default, it uses the XanMod kernel, and if you set up the system with the setup-nvidia command for NVIDIA graphics cards, you will have the XanMod LTS kernel and NVIDIA drivers.';
+                gamingPs[1].textContent = 'By default, it uses the XanMod kernel.';
                 gamingPs[2].innerHTML = 'You can see how HackerOS handles games: <a href="https://www.youtube.com/channel/UCwYT5jqUhZHoRhNKOrjKTrQ" target="_blank" class="youtube">YouTube</a>.';
             }
             const copyButtons = document.querySelectorAll('.copy-button');
@@ -404,7 +406,7 @@
         </div>
         <div class="hacker-mode">
             <h2>Hacker Mode</h2>
-            <p>Sesja do gier uruchamiana przez i3 (BETA)</p>
+            <p>Sesja do uruchamiania gier przez gamescope</p>
             <img src="hacker-mode.png" alt="Hacker Mode">
         </div>
         <div class="features">
@@ -430,8 +432,9 @@
             <img src="hydra-edition.png" alt="Hydra Edition">
             <p>Edycja Hydra to kopia edycji HackerOS, ale z innym wyglądem (Garuda-like).</p>
             <h3>Edycja Cybersecurity</h3>
-            <img src="cybersecurity-edition.png" alt="Cybersecurity Edition">
             <p>Edycja Cybersecurity nie posiada modyfikacji wyglądu, jest to też kopia wersji oficjalnej, ale przeznaczona dla entuzjastów cyberbezpieczeństwa (wersja Cybersecurity posiada narzędzia do testów penetracyjnych, narzędzia do cyberbezpieczeństwa, pod jądro Xen znane z systemu Qubes OS).</p>
+            <h3>Edycja Nvidia</h3>
+            <p>Edycja Nvidia posiada wszystko co Official, ale ma preinstalowane sterowniki Nvidia i jądra Xanmod LTS (dla lepszej kompatybilności ze sterownikami).</p>
         </div>
     </section>
     <section class="games-section">
@@ -459,7 +462,7 @@
         <h2>Granie na HackerOS</h2>
         <img src="windows.png" alt="Windows Logo">
         <p>Granie w gry Windows na HackerOS jest możliwe dzięki narzędziu Proton (90% gier działa). Niestety, niektóre gry online, np. Fortnite, są zablokowane na Linuxie HackerOS. Więcej informacji znajdziesz na: <a href="https://www.protondb.com" target="_blank" class="protondb">ProtonDB</a>, <a href="https://areweanticheatyet.com" target="_blank" class="anticheat">Are We Anti-Cheat Yet?</a>.</p>
-        <p>Domyślnie używane jest jądro XanMod, a po skonfigurowaniu systemu komendą <span style="font-family: 'Courier New', Courier, monospace;">setup-nvidia</span> dla kart graficznych NVIDIA, otrzymasz jądro XanMod LTS oraz sterowniki NVIDIA.</p>
+        <p>Domyślnie używane jest jądro XanMod.</p>
         <p>Sprawdź, jak HackerOS radzi sobie z grami: <a href="https://www.youtube.com/channel/UCwYT5jqUhZHoRhNKOrjKTrQ" target="_blank" class="youtube">YouTube</a>.</p>
         <p>Narzędzia do uruchamiania gier Windows:</p>
         <div class="gaming-tools">
