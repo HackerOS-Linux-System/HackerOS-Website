@@ -275,6 +275,42 @@
             background-color: #3F4F5A;
             transform: translateY(-2px);
         }
+        .hacker-lang-section {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 30px;
+            text-align: center;
+            background-color: #2F3A44;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            transition: transform 0.3s ease;
+        }
+        .hacker-lang-section:hover {
+            transform: translateY(-5px);
+        }
+        .hacker-lang-section h2 {
+            font-size: 32px;
+            margin-bottom: 25px;
+            color: #FFFFFF;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+        }
+        .hacker-lang-section img {
+            max-width: 100%;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+        .hacker-lang-section img:hover {
+            transform: scale(1.05);
+        }
+        .hacker-lang-section p {
+            font-size: 18px;
+            color: #B0B0B0;
+            margin-bottom: 20px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
         @media (max-width: 768px) {
             .gaming-section {
                 padding: 20px;
@@ -288,6 +324,15 @@
             .gaming-tools {
                 flex-direction: column;
                 align-items: center;
+            }
+            .hacker-lang-section {
+                padding: 20px;
+            }
+            .hacker-lang-section h2 {
+                font-size: 26px;
+            }
+            .hacker-lang-section p {
+                font-size: 16px;
             }
         }
         footer {
@@ -351,6 +396,8 @@
                 gamingPs[0].innerHTML = 'Gaming on Windows games on HackerOS is possible thanks to a tool called Proton (90% of games work). Unfortunately, some online games, e.g., Fortnite, are blocked on Linux HackerOS. You can find more information on: <a href="https://www.protondb.com" target="_blank" class="protondb">ProtonDB</a>, <a href="https://areweanticheatyet.com" target="_blank" class="anticheat">Are We Anti-Cheat Yet?</a>.';
                 gamingPs[1].textContent = 'By default, it uses the XanMod kernel.';
                 gamingPs[2].innerHTML = 'You can see how HackerOS handles games: <a href="https://www.youtube.com/channel/UCwYT5jqUhZHoRhNKOrjKTrQ" target="_blank" class="youtube">YouTube</a>.';
+                document.querySelector('.hacker-lang-section h2').textContent = 'Hacker Programming Language';
+                document.querySelector('.hacker-lang-section p').textContent = 'HackerOS features its own scripting programming language called Hacker. To use this tool, simply run the command "hackerc".';
             }
             const copyButtons = document.querySelectorAll('.copy-button');
             copyButtons.forEach(button => {
@@ -469,6 +516,11 @@
             <span>Heroic Games Launcher</span>
             <span>ProtonTricks</span>
         </div>
+    </section>
+    <section class="hacker-lang-section">
+        <h2>Język Programowania Hacker</h2>
+        <p>HackerOS posiada własny skryptowy język programowania o nazwie Hacker. Aby korzystać z tego narzędzia, użyj komendy <span style="font-family: 'Courier New', Courier, monospace;">hackerc</span>.</p>
+        <img src="hacker-lang-screenshot.png" alt="Hacker Language Screenshot">
     </section>
     <footer>
         <p>&copy; 2025 HackerOS. Wszelkie prawa zastrzeżone.</p>
