@@ -311,6 +311,56 @@
             margin-left: auto;
             margin-right: auto;
         }
+        .hacker-kernel-section {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 30px;
+            text-align: center;
+            background-color: #2F3A44;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            transition: transform 0.3s ease;
+        }
+        .hacker-kernel-section:hover {
+            transform: translateY(-5px);
+        }
+        .hacker-kernel-section h2 {
+            font-size: 32px;
+            margin-bottom: 25px;
+            color: #FFFFFF;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+        }
+        .hacker-kernel-section p {
+            font-size: 18px;
+            color: #B0B0B0;
+            margin-bottom: 20px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .hacker-kernel-section a {
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s, text-shadow 0.3s;
+            position: relative;
+            color: #55AAFF;
+        }
+        .hacker-kernel-section a:hover {
+            text-shadow: 0 0 5px rgba(255,255,255,0.5);
+        }
+        .hacker-kernel-section a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -2px;
+            left: 0;
+            background-color: currentColor;
+            transition: width 0.3s;
+        }
+        .hacker-kernel-section a:hover::after {
+            width: 100%;
+        }
         @media (max-width: 768px) {
             .gaming-section {
                 padding: 20px;
@@ -332,6 +382,15 @@
                 font-size: 26px;
             }
             .hacker-lang-section p {
+                font-size: 16px;
+            }
+            .hacker-kernel-section {
+                padding: 20px;
+            }
+            .hacker-kernel-section h2 {
+                font-size: 26px;
+            }
+            .hacker-kernel-section p {
                 font-size: 16px;
             }
         }
@@ -398,6 +457,10 @@
                 gamingPs[2].innerHTML = 'You can see how HackerOS handles games: <a href="https://www.youtube.com/channel/UCwYT5jqUhZHoRhNKOrjKTrQ" target="_blank" class="youtube">YouTube</a>.';
                 document.querySelector('.hacker-lang-section h2').textContent = 'Hacker Programming Language';
                 document.querySelector('.hacker-lang-section p').textContent = 'HackerOS features its own scripting programming language called Hacker. To use this tool, simply run the command "hackerc".';
+                document.querySelector('.hacker-kernel-section h2').textContent = 'Hacker Kernel';
+                const kernelPs = document.querySelectorAll('.hacker-kernel-section p');
+                kernelPs[0].innerHTML = 'Do you want to develop the hacker kernel? Report to gmail hackeros068@gmail.com or to <a href="https://github.com/HackerOS-Linux-System/HackerOS-Website/issues">issues</a> or <a href="https://github.com/HackerOS-Linux-System/HackerOS-Website/discussions">discussions</a> (log in if you want to actively develop this project)';
+                kernelPs[1].textContent = 'What is Hacker Kernel? It is an efficient kernel, it will have optimizations for games, it will be an LTS kernel stable with stable updates. Support for all amd64 processors and all GPUs.';
             }
             const copyButtons = document.querySelectorAll('.copy-button');
             copyButtons.forEach(button => {
@@ -522,6 +585,11 @@
         <h2>Język Programowania Hacker</h2>
         <p>HackerOS posiada własny skryptowy język programowania o nazwie Hacker. Aby korzystać z tego narzędzia, użyj komendy <span style="font-family: 'Courier New', Courier, monospace;">hackerc</span>.</p>
         <img src="hacker-lang-screenshot.png" alt="Hacker Language Screenshot">
+    </section>
+    <section class="hacker-kernel-section">
+        <h2>Hacker Kernel</h2>
+        <p>Chcesz rozwijać jądro hacker kernel? Zgłoś się na gmail hackeros068@gmail.com lub na <a href="https://github.com/HackerOS-Linux-System/HackerOS-Website/issues">issues</a> lub <a href="https://github.com/HackerOS-Linux-System/HackerOS-Website/discussions">discussions</a> (zaloguj się jeżeli chcesz aktywnie rozwijać ten projekt)</p>
+        <p>Czym jest Hacker Kernel? Jest to jądro wydajne, będzie posiadać optymalizacje do gier, będzie jądrem LTS stabilnym ze stabilnymi aktualizacjami. Wsparcie dla wszystkich procesorów amd64 i wszystkich GPU.</p>
     </section>
     <footer>
         <p>&copy; 2025 HackerOS. Wszelkie prawa zastrzeżone.</p>
