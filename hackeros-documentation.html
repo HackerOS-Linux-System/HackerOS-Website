@@ -322,15 +322,13 @@
         <p>HackerOS ma dawać użytkownikowi <strong>pełną kontrolę</strong>, jednocześnie oferując gotowe, przyjazne środowisko do codziennego użytku i grania. Projekt stawia na:</p>
         <ul>
             <li>dostępność (łatwe instalatory i GUI),</li>
-            <li>wydajność (customowe jądro — np. XanMod oraz opcje przeinstalowanego firmware),</li>
             <li>bezpieczeństwo i prywatność użytkownika.</li>
         </ul>
         <h3>Cel</h3>
         <p>Celem HackerOS jest dostarczyć stabilne środowisko gotowe do pracy i rozrywki:</p>
         <ul>
             <li><strong>stabilność</strong> — baza Debian testing z dodatkowymi testami i stabilizacją komponentów,</li>
-            <li><strong>wydajność</strong> — opcjonalne jądro XanMod oraz zoptymalizowane firmware,</li>
-            <li><strong>prostota aktualizacji</strong> — skrypty do tworzenia/updatu ISO/rootfs i proste GUI/CLI do aktualizacji (<code>hacker-update</code>),</li>
+            <li><strong>prostota aktualizacji</strong> — jedną komendą zaktualizuj caly system (<code>hacker update</code>),</li>
             <li><strong>dostosowanie</strong> — łatwa personalizacja i integracja narzędzi dla pentesterów i graczy.</li>
         </ul>
         <h2>2. Wymagania sprzętowe</h2>
@@ -402,7 +400,7 @@ sudo apt autoclean</code></pre>
         <pre><code>sudo hacker install &lt;pakiet&gt;
 sudo hacker remove &lt;pakiet&gt;
 sudo hacker update
-sudo hacker upgrade-all # (przykładowa komenda — zależnie od implementacji)</code></pre>
+hacker update</code></pre>
         <p><code>hacker</code> jest wrapperem i integruje dodatkowe repozytoria/paczki customowe — sprawdź <code>hacker --help</code>.</p>
         <h3>Konfiguracja sieci i podstawowe ustawienia</h3>
         <ul>
@@ -417,7 +415,7 @@ sudo hacker upgrade-all # (przykładowa komenda — zależnie od implementacji)<
         <h3>Preinstalowane aplikacje</h3>
         <ul>
             <li><strong>Przeglądarka:</strong> Vivaldi</li>
-            <li><strong>Terminale:</strong> Alacritty, Konsole</li>
+            <li><strong>Terminale:</strong> Alacritty, Konsole, Hyper Terminal</li>
             <li><strong>Sklep/aplikacje:</strong> GNOME Software (lub <code>software</code>)</li>
             <li><strong>Gry i autorskie aplikacje od HackerOS</strong> (zestaw zależny od wersji ISO)</li>
         </ul>
