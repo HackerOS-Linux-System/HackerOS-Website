@@ -209,7 +209,7 @@
                     .replace('Celem HackerOS jest dostarczyć stabilne środowisko gotowe do pracy i rozrywki:', 'The goal of HackerOS is to provide a stable environment ready for work and entertainment:')
                     .replace('stabilność — baza Debian testing z dodatkowymi testami i stabilizacją komponentów,', 'stability — Debian testing base with additional tests and component stabilization,')
                     .replace('wydajność — opcjonalne jądro XanMod oraz zoptymalizowane firmware,', 'performance — optional XanMod kernel and optimized firmware,')
-                    .replace('prostota aktualizacji — skrypty do tworzenia\\/updatu ISO\\/rootfs i proste GUI\\/CLI do aktualizacji \\(hacker-update\\),', 'simplicity of updates — scripts for creating/updating ISO/rootfs and simple GUI/CLI for updates (hacker-update),')
+                    .replace('prostota aktualizacji — jedną komendą zaktualizuj caly system \\(<code>hacker update</code>\\),', 'simplicity of updates — update the entire system with one command (<code>hacker update</code>),')
                     .replace('dostosowanie — łatwa personalizacja i integracja narzędzi dla pentesterów i graczy.', 'customization — easy personalization and integration of tools for pentesters and gamers.')
                     .replace('2. Wymagania sprzętowe', '2. Hardware Requirements')
                     .replace('Minimalne', 'Minimum')
@@ -251,6 +251,13 @@
                     .replace('Menedżer pakietów', 'Package Manager')
                     .replace('HackerOS używa APT oraz własnego narzędzia hacker:', 'HackerOS uses APT and its own hacker tool:')
                     .replace('hacker jest wrapperem i integruje dodatkowe repozytoria\\/paczki customowe — sprawdź hacker --help.', 'hacker is a wrapper and integrates additional repositories/custom packages — check hacker --help.')
+                    .replace('Instalacja specjalnych jąder (XanMod/Liquorix)', 'Installing Special Kernels (XanMod/Liquorix)')
+                    .replace('Aby zainstalować jądro XanMod lub Liquorix:', 'To install the XanMod or Liquorix kernel:')
+                    .replace('Użyj komendy: <code>sudo hacker unpack xanmod</code> (lub dla Liquorix: <code>sudo hacker unpack liquorix</code>)', 'Use the command: <code>sudo hacker unpack xanmod</code> (or for Liquorix: <code>sudo hacker unpack liquorix</code>)')
+                    .replace('Następnie usuń aktualne jądro (ważne, aby to było jądro Debiana): <code>sudo remove-current-kernel</code>', 'Then remove the current kernel (important that it is the Debian kernel): <code>sudo remove-current-kernel</code>')
+                    .replace('W interfejsie graficznym APT wybierz [OK], następnie [NIE].', 'In the APT graphical interface, select [OK], then [NO].')
+                    .replace('Uruchom ponownie komputer.', 'Restart the computer.')
+                    .replace('Czy specjalne jądra dają dużą różnicę wydajności w grach? Zazwyczaj są to niewielkie różnice.', 'Do special kernels give a big difference in performance in games? They are usually small differences.')
                     .replace('Konfiguracja sieci i podstawowe ustawienia', 'Network Configuration and Basic Settings')
                     .replace('GUI: Ustawienia → Sieć', 'GUI: Settings → Network')
                     .replace('CLI: nmcli, ip, ifconfig \\(jeśli dostępne\\)', 'CLI: nmcli, ip, ifconfig (if available)')
@@ -261,6 +268,7 @@
                     .replace('Preinstalowane aplikacje', 'Pre-installed Applications')
                     .replace('Przeglądarka: Vivaldi', 'Browser: Vivaldi')
                     .replace('Terminale: Alacritty, Konsole', 'Terminals: Alacritty, Konsole')
+                    .replace('Terminale: Alacritty, Konsole, Hyper Terminal', 'Terminals: Alacritty, Konsole, Hyper Terminal')
                     .replace('Sklep\\/aplikacje: GNOME Software \\(lub software\\)', 'Store/applications: GNOME Software (or software)')
                     .replace('Gry i autorskie aplikacje od HackerOS \\(zestaw zależny od wersji ISO\\)', 'Games and custom HackerOS applications (set depends on the ISO version)')
                     .replace('Instalacja dodatkowego oprogramowania', 'Installing Additional Software')
@@ -322,12 +330,14 @@
         <p>HackerOS ma dawać użytkownikowi <strong>pełną kontrolę</strong>, jednocześnie oferując gotowe, przyjazne środowisko do codziennego użytku i grania. Projekt stawia na:</p>
         <ul>
             <li>dostępność (łatwe instalatory i GUI),</li>
+            <li>wydajność (customowe jądro — np. XanMod oraz opcje przeinstalowanego firmware),</li>
             <li>bezpieczeństwo i prywatność użytkownika.</li>
         </ul>
         <h3>Cel</h3>
         <p>Celem HackerOS jest dostarczyć stabilne środowisko gotowe do pracy i rozrywki:</p>
         <ul>
             <li><strong>stabilność</strong> — baza Debian testing z dodatkowymi testami i stabilizacją komponentów,</li>
+            <li><strong>wydajność</strong> — opcjonalne jądro XanMod oraz zoptymalizowane firmware,</li>
             <li><strong>prostota aktualizacji</strong> — jedną komendą zaktualizuj caly system (<code>hacker update</code>),</li>
             <li><strong>dostosowanie</strong> — łatwa personalizacja i integracja narzędzi dla pentesterów i graczy.</li>
         </ul>
@@ -352,6 +362,7 @@
         <h3>Obsługiwane architektury</h3>
         <ul>
             <li><strong>x86_64 (amd64)</strong> — pełne wsparcie</li>
+            <li>Możliwość dołączenia innych architektur (RISC-V) w przyszłości.</li>
         </ul>
         <h2>3. Instalacja</h2>
         <h3>Pobieranie</h3>
@@ -402,6 +413,15 @@ sudo hacker remove &lt;pakiet&gt;
 sudo hacker update
 hacker update</code></pre>
         <p><code>hacker</code> jest wrapperem i integruje dodatkowe repozytoria/paczki customowe — sprawdź <code>hacker --help</code>.</p>
+        <h3>Instalacja specjalnych jąder (XanMod/Liquorix)</h3>
+        <p>Aby zainstalować jądro XanMod lub Liquorix:</p>
+        <ol>
+            <li>Użyj komendy: <code>sudo hacker unpack xanmod</code> (lub dla Liquorix: <code>sudo hacker unpack liquorix</code>)</li>
+            <li>Następnie usuń aktualne jądro (ważne, aby to było jądro Debiana): <code>sudo remove-current-kernel</code></li>
+            <li>W interfejsie graficznym APT wybierz [OK], następnie [NIE].</li>
+            <li>Uruchom ponownie komputer.</li>
+        </ol>
+        <p>Czy specjalne jądra dają dużą różnicę wydajności w grach? Zazwyczaj są to niewielkie różnice.</p>
         <h3>Konfiguracja sieci i podstawowe ustawienia</h3>
         <ul>
             <li><strong>GUI:</strong> Ustawienia → Sieć</li>
