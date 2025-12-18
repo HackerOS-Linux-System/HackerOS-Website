@@ -422,7 +422,7 @@
                 document.querySelector('.hacker-mode p').textContent = 'Gaming session launched via gamescope';
                 document.querySelector('.features h2').textContent = 'What does HackerOS include?';
                 const featureItems = document.querySelectorAll('.features li');
-                featureItems[0].textContent = 'Any kernel choice - if you don't have special requirements, you can stick with the default Debian kernel or install XanMod or Liquorix to improve performance.';
+                featureItems[0].textContent = 'Any kernel choice - if you don\'t have special requirements, you can stick with the default Debian kernel or install XanMod or Liquorix to improve performance.';
                 featureItems[1].textContent = 'Preinstalled firmware';
                 featureItems[2].textContent = 'HackerOS proprietary games';
                 featureItems[3].textContent = 'Specialized commands';
@@ -436,11 +436,14 @@
                 editionTitles[0].textContent = 'Official Edition';
                 editionTitles[1].textContent = 'Hydra Edition';
                 editionTitles[2].textContent = 'Cybersecurity Edition';
-                editionTitles[3].textContent = 'Nvidia Edition';
+                editionTitles[3].textContent = 'Gnome Edition';
+                editionTitles[4].textContent = 'Xfce Edition';
                 const editionPs = document.querySelectorAll('.editions p');
                 editionPs[0].textContent = 'The Official Edition is a standard edition for users, gamers, and programmers, suitable for practically everyone.';
                 editionPs[1].textContent = 'The Hydra Edition is a copy of the official edition but with a different look (Garuda-like).';
                 editionPs[2].textContent = 'The Cybersecurity Edition has no visual modifications and is a copy of the Official Edition but designed for cybersecurity enthusiasts (this version includes penetration testing tools, cybersecurity tools, and runs on the Xen kernel known from Qubes OS).';
+                editionPs[3].textContent = 'The Gnome Edition is the same as the official edition but with the GNOME desktop environment.';
+                editionPs[4].textContent = 'The Xfce Edition is the same as the official edition but with the XFCE desktop environment.';
                 document.querySelector('.games-section h2').textContent = 'HackerOS Games';
                 const gameTitles = document.querySelectorAll('.game h3');
                 gameTitles[0].textContent = 'The Racer';
@@ -545,6 +548,12 @@
             <p>Edycja Hydra to kopia edycji official, ale z innym wyglądem (Garuda-like).</p>
             <h3>Edycja Cybersecurity</h3>
             <p>Edycja Cybersecurity nie posiada modyfikacji wyglądu, jest to też kopia wersji oficjalnej, ale przeznaczona dla entuzjastów cyberbezpieczeństwa (wersja Cybersecurity posiada narzędzia do testów penetracyjnych, narzędzia do cyberbezpieczeństwa, pod jądro Xen znane z systemu Qubes OS).</p>
+            <h3>Edycja Gnome</h3>
+            <img src="gnome-edition.png" alt="Gnome Edition">
+            <p>jest to samo co edycja oficialna ale z srodowiskiem graficznym gnome</p>
+            <h3>Edycja Xfce</h3>
+            <img src="xfce-edition.png" alt="Xfce Edition">
+            <p>jest to to samo co edycja oficialna ale ze srodowiskiem graficznym xfce</p>
         </div>
     </section>
     <section class="games-section">
