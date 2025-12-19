@@ -438,12 +438,14 @@
                 editionTitles[2].textContent = 'Cybersecurity Edition';
                 editionTitles[3].textContent = 'Gnome Edition';
                 editionTitles[4].textContent = 'Xfce Edition';
+                editionTitles[5].textContent = 'LTS Edition';
                 const editionPs = document.querySelectorAll('.editions p');
                 editionPs[0].textContent = 'The Official Edition is a standard edition for users, gamers, and programmers, suitable for practically everyone.';
                 editionPs[1].textContent = 'The Hydra Edition is a copy of the official edition but with a different look (Garuda-like).';
                 editionPs[2].textContent = 'The Cybersecurity Edition has no visual modifications and is a copy of the Official Edition but designed for cybersecurity enthusiasts (this version includes penetration testing tools, cybersecurity tools, and runs on the Xen kernel known from Qubes OS).';
                 editionPs[3].textContent = 'The Gnome Edition is the same as the official edition but with the GNOME desktop environment.';
                 editionPs[4].textContent = 'The Xfce Edition is the same as the official edition but with the XFCE desktop environment.';
+                editionPs[5].textContent = 'The LTS Edition is the same as the Official Edition, but instead of Debian Testing, it uses Debian Stable.';
                 document.querySelector('.games-section h2').textContent = 'HackerOS Games';
                 const gameTitles = document.querySelectorAll('.game h3');
                 gameTitles[0].textContent = 'The Racer';
@@ -550,10 +552,12 @@
             <p>Edycja Cybersecurity nie posiada modyfikacji wyglądu, jest to też kopia wersji oficjalnej, ale przeznaczona dla entuzjastów cyberbezpieczeństwa (wersja Cybersecurity posiada narzędzia do testów penetracyjnych, narzędzia do cyberbezpieczeństwa, pod jądro Xen znane z systemu Qubes OS).</p>
             <h3>Edycja Gnome</h3>
             <img src="gnome-edition.png" alt="Gnome Edition">
-            <p>jest to samo co edycja oficialna ale z srodowiskiem graficznym gnome</p>
+            <p>Jest to to samo co edycja oficjalna, ale ze środowiskiem graficznym GNOME.</p>
             <h3>Edycja Xfce</h3>
             <img src="xfce-edition.png" alt="Xfce Edition">
-            <p>jest to to samo co edycja oficialna ale ze srodowiskiem graficznym xfce</p>
+            <p>Jest to to samo co edycja oficjalna, ale ze środowiskiem graficznym Xfce.</p>
+            <h3>Edycja LTS</h3>
+            <p>Edycja LTS to to samo co edycja Official, ale zamiast Debiana Testing używa Debiana Stable.</p>
         </div>
     </section>
     <section class="games-section">
