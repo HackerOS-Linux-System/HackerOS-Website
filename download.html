@@ -117,6 +117,73 @@
             transform: scale(1.05);
             box-shadow: 0 4px 10px rgba(255,255,255,0.2);
         }
+        .quick-download {
+            background-color: #3A4A55;
+            border: 2px solid #B0B0B0;
+            padding: 30px;
+            margin-bottom: 40px;
+            border-radius: 15px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+        }
+        .quick-download h2 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+        }
+        .quick-download p.description {
+            font-size: 18px;
+            margin-bottom: 25px;
+            color: #D0D0D0;
+        }
+        .quick-download label {
+            display: block;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #E0E0E0;
+        }
+        .quick-download .select-wrapper {
+            position: relative;
+            max-width: 400px;
+            margin: 0 auto 20px;
+        }
+        .quick-download select {
+            width: 100%;
+            background-color: #121212;
+            color: #FFFFFF;
+            border: 1px solid #B0B0B0;
+            padding: 12px 40px 12px 15px;
+            border-radius: 5px;
+            font-size: 16px;
+            appearance: none;
+            cursor: pointer;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .quick-download select:hover,
+        .quick-download select:focus {
+            border-color: #FFFFFF;
+            box-shadow: 0 0 8px rgba(255,255,255,0.2);
+            outline: none;
+        }
+        .quick-download .select-wrapper::after {
+            content: '▼';
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #B0B0B0;
+            font-size: 16px;
+            pointer-events: none;
+            transition: color 0.3s;
+        }
+        .quick-download select:hover + ::after {
+            color: #FFFFFF;
+        }
+        .quick-download .btn {
+            margin-top: 20px;
+            padding: 14px 28px;
+            font-size: 18px;
+        }
         footer {
             background-color: #121212;
             padding: 20px;
@@ -136,9 +203,6 @@
             } else {
                 document.documentElement.lang = 'en';
                 document.querySelector('.download-section h1').textContent = 'Download HackerOS';
-                const h2s = document.querySelectorAll('.download-option h2');
-                h2s[0].textContent = 'HackerOS Official';
-                h2s[1].textContent = 'HackerOS Cybersecurity';
                 const btns = document.querySelectorAll('.btn');
                 for (let i = 0; i < btns.length; i++) {
                     if (btns[i].href.includes('sourceforge')) {
@@ -152,6 +216,27 @@
                     }
                 }
                 document.querySelector('footer p').textContent = '© 2025 HackerOS. All rights reserved.';
+                // Translations for quick download section
+                document.getElementById('quick-title').textContent = 'Quick System Download';
+                document.getElementById('quick-description').textContent = 'Select the HackerOS edition and download directly from SourceForge.';
+                document.getElementById('select-label').textContent = 'Select edition:';
+                document.getElementById('select-default').textContent = '-- Select edition --';
+            }
+
+            // Event listener for quick download
+            const editionSelect = document.getElementById('edition-select');
+            if (editionSelect) {
+                editionSelect.addEventListener('change', function() {
+                    const link = document.getElementById('download-link');
+                    link.href = this.value;
+                    const isEnglish = document.documentElement.lang === 'en';
+                    link.textContent = isEnglish ? 'Download' : 'Pobierz';
+                    if (this.value) {
+                        link.style.display = 'inline-block';
+                    } else {
+                        link.style.display = 'none';
+                    }
+                });
             }
         });
     </script>
@@ -173,7 +258,24 @@
     </header>
     <section class="download-section">
         <h1>Pobierz HackerOS</h1>
-        <div class="download-option">
+        <div class="download-option quick-download">
+            <h2 id="quick-title">Szybkie pobieranie systemu</h2>
+            <p class="description" id="quick-description">Wybierz edycję HackerOS i pobierz bezpośrednio z SourceForge.</p>
+            <label id="select-label" for="edition-select">Wybierz edycję:</label>
+            <div class="select-wrapper">
+                <select id="edition-select">
+                    <option id="select-default" value="">-- Wybierz edycję --</option>
+                    <option value="https://sourceforge.net/projects/hackeros/files/OFFICIAL/HackerOS-V4.1.iso/download">HackerOS Official</option>
+                    <option value="https://sourceforge.net/projects/hackeros/files/OFFICIAL/GNOME/HackerOS-V4.0-Gnome.iso/download">HackerOS Official: Gnome</option>
+                    <option value="https://sourceforge.net/projects/hackeros/files/OFFICIAL/XFCE/HackerOS-V4.0-Xfce.iso/download">HackerOS Official: Xfce</option>
+                    <option value="https://sourceforge.net/projects/hackeros/files/HYDRA/HackerOS-V4.1-Hydra.iso/download">HackerOS Hydra</option>
+                    <option value="https://sourceforge.net/projects/hackeros/files/CYBERSECURITY/HackerOS-V4.1-Cybersecurity.iso/download">HackerOS Cybersecurity</option>
+                    <option value="https://sourceforge.net/projects/hackeros/files/LTS/HackerOS-V4.1-LTS.iso/download">HackerOS LTS</option>
+                </select>
+            </div>
+            <a id="download-link" class="btn" href="#" style="display:none;">Pobierz</a>
+        </div>
+        <div class="download-option" style="margin-top: 40px;">
             <h2>HackerOS Official</h2>
             <a href="https://sourceforge.net/projects/hackeros/files/OFFICIAL/HackerOS-V4.1.iso/download" class="btn">Pobierz z SourceForge</a>
             <a href="https://mega.nz/file/9PlSjB7B#d_1VbdpIahw07s1SmGYC7G7TXqUjCjzUdmx7LdzrdpU" class="btn">Pobierz z Mega.nz</a>
@@ -208,7 +310,7 @@
             <a href="https://drive.google.com/file/d/1vFHu3QCOTgQHSvegvv0WtvSYVgejGZEB/view?usp=sharing" class="btn">Pobierz z Google Drive</a>
             <a href="https://transfer.it/t/r8kMBaslSTyA" class="btn">Pobierz z Transfer.it</a>
         </div>
-            <div class="download-option">
+        <div class="download-option">
             <h2>HackerOS LTS</h2>
             <a href="https://sourceforge.net/projects/hackeros/files/LTS/HackerOS-V4.1-LTS.iso/download" class="btn">Pobierz z SourceForge</a>
             <a href="https://mega.nz/file/ZX9wnYrK#yqYIn7RjRZJeNpjDk8kVxg8uS4V18X0_dpOt6RbTqfg" class="btn">Pobierz z Mega.nz</a>
@@ -221,4 +323,3 @@
     </footer>
 </body>
 </html>
-
