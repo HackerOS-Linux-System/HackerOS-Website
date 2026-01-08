@@ -311,6 +311,90 @@
             margin-left: auto;
             margin-right: auto;
         }
+        .hacker-lang-section h3 {
+            font-size: 24px;
+            margin: 20px 0 10px;
+            color: #FFFFFF;
+        }
+        .hacker-lang-section ol, .hacker-lang-section ul {
+            text-align: left;
+            max-width: 800px;
+            margin: 0 auto 20px;
+            color: #B0B0B0;
+        }
+        .hacker-lang-section ol li, .hacker-lang-section ul li {
+            margin-bottom: 10px;
+        }
+        .hacker-lang-section pre {
+            background-color: #1A1A1A;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: 'Courier New', Courier, monospace;
+            color: #B0B0B0;
+            text-align: left;
+            max-width: 800px;
+            margin: 0 auto 20px;
+            overflow-x: auto;
+        }
+        .tabs-container {
+            display: flex;
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #1A1A1A;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        .tab-menu {
+            width: 200px;
+            background-color: #121212;
+            padding: 20px;
+            border-right: 1px solid #2F3A44;
+        }
+        .tab-menu ul {
+            list-style: none;
+        }
+        .tab-menu li {
+            margin-bottom: 15px;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s, color 0.3s;
+            color: #B0B0B0;
+            font-weight: bold;
+        }
+        .tab-menu li:hover {
+            background-color: #2F3A44;
+            color: #FFFFFF;
+        }
+        .tab-menu li.active {
+            background-color: #2F3A44;
+            color: #FFFFFF;
+        }
+        .tab-content {
+            flex: 1;
+            padding: 20px;
+            text-align: left;
+        }
+        .tab-pane {
+            display: none;
+        }
+        .tab-pane.active {
+            display: block;
+        }
+        .tab-pane h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #FFFFFF;
+        }
+        .tab-pane p, .tab-pane ul, .tab-pane ol {
+            color: #B0B0B0;
+        }
+        .tab-pane img {
+            max-width: 100%;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
         .hacker-kernel-section {
             max-width: 1200px;
             margin: 50px auto;
@@ -383,6 +467,21 @@
             }
             .hacker-lang-section p {
                 font-size: 16px;
+            }
+            .tabs-container {
+                flex-direction: column;
+            }
+            .tab-menu {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #2F3A44;
+            }
+            .tab-menu ul {
+                display: flex;
+                justify-content: space-around;
+            }
+            .tab-menu li {
+                margin-bottom: 0;
             }
             .hacker-kernel-section {
                 padding: 20px;
@@ -460,8 +559,14 @@
                 gamingPs[0].innerHTML = 'Gaming on Windows games on HackerOS is possible thanks to a tool called Proton (90% of games work). Unfortunately, some online games, e.g., Fortnite, are blocked on Linux HackerOS. You can find more information on: <a href="https://www.protondb.com" target="_blank" class="protondb">ProtonDB</a>, <a href="https://areweanticheatyet.com" target="_blank" class="anticheat">Are We Anti-Cheat Yet?</a>.';
                 gamingPs[1].textContent = 'By default, it uses the XanMod kernel.';
                 gamingPs[2].innerHTML = 'You can see how HackerOS handles games: <a href="https://www.youtube.com/channel/UCwYT5jqUhZHoRhNKOrjKTrQ" target="_blank" class="youtube">YouTube</a>.';
-                document.querySelector('.hacker-lang-section h2').textContent = 'Hacker Programming Language';
-                document.querySelector('.hacker-lang-section p').textContent = 'HackerOS features its own scripting programming language called Hacker. To use this tool, simply run the command "hackerc".';
+                document.querySelector('.hacker-lang-section h2').textContent = 'Programming Languages HackerOS';
+                // Update tab menu and content for English
+                document.querySelectorAll('.tab-menu li')[0].textContent = 'Hacker Lang';
+                document.querySelectorAll('.tab-menu li')[1].textContent = 'HackerScript';
+                const tabPanes = document.querySelectorAll('.tab-pane');
+                tabPanes[0].querySelector('h3').textContent = 'Hacker Lang Programming Language';
+                tabPanes[0].querySelector('p:first-of-type').textContent = 'Syntax description:';
+                // Similarly update other texts in tabPanes[0] and tabPanes[1] for English if needed
                 document.querySelector('.hacker-kernel-section h2').textContent = 'Hacker Kernel';
                 const kernelPs = document.querySelectorAll('.hacker-kernel-section p');
                 kernelPs[0].innerHTML = 'Do you want to develop the hacker kernel? Report to gmail hackeros068@gmail.com or to <a href="https://github.com/HackerOS-Linux-System/HackerOS-Website/issues">issues</a> or <a href="https://github.com/HackerOS-Linux-System/HackerOS-Website/discussions">discussions</a> (apply if you want to actively develop this project)';
@@ -474,6 +579,17 @@
                     navigator.clipboard.writeText(commandText).then(() => {
                         alert('Command copied to clipboard!');
                     });
+                });
+            });
+            // Tab switching logic
+            const tabLinks = document.querySelectorAll('.tab-link');
+            const tabPanes = document.querySelectorAll('.tab-pane');
+            tabLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    tabLinks.forEach(l => l.classList.remove('active'));
+                    link.classList.add('active');
+                    tabPanes.forEach(p => p.classList.remove('active'));
+                    document.getElementById(link.dataset.tab).classList.add('active');
                 });
             });
         });
@@ -597,9 +713,132 @@
         </div>
     </section>
     <section class="hacker-lang-section">
-        <h2>Język Programowania Hacker</h2>
-        <p>HackerOS posiada własny skryptowy język programowania o nazwie Hacker. Aby korzystać z tego narzędzia, użyj komendy <span style="font-family: 'Courier New', Courier, monospace;">hackerc</span> lub dla większych projektów <span style="font-family: 'Courier New', Courier, monospace;">hli</span> oraz do instalacji bibliotek <span style="font-family: 'Courier New', Courier, monospace;">bytes</span>.</p>
-        <img src="hacker-lang-screenshot.png" alt="Hacker Language Screenshot">
+        <h2>Języki programowania HackerOS</h2>
+        <div class="tabs-container">
+            <div class="tab-menu">
+                <ul>
+                    <li class="tab-link active" data-tab="hacker-lang">Hacker Lang</li>
+                    <li class="tab-link" data-tab="hacker-script">HackerScript</li>
+                </ul>
+            </div>
+            <div class="tab-content">
+                <div id="hacker-lang" class="tab-pane active">
+                    <h3>Język Programowania Hacker Lang</h3>
+                    <p>Opis składni:</p>
+                    <ol>
+                        <li>Podstawowe operatory (Prefiksy)<br>Każda linia zaczyna się od symbolu definiującego jej przeznaczenie:
+                            <ul>
+                                <li>* > – Zwykła komenda systemowa.</li>
+                                <li>* >> – Komenda z obsługą zmiennych.</li>
+                                <li>* >>> – Komenda wykonywana jako oddzielny plik/proces.</li>
+                                <li>* & – Uruchomienie komendy w tle (background).</li>
+                                <li>* ^ – (Modyfikator) Dodany przed operatorem (np. ^>) wymusza użycie sudo.</li>
+                                <li>* !! – Blokowy komentarz (przełącznik: włącz/wyłącz).</li>
+                                <li>* \\ – Ładowanie pluginu.</li>
+                            </ul>
+                        </li>
+                        <li>Zarządzanie zmiennymi i typowanie<br>Język obsługuje typy: int, bool, str, list (składnia [a,b]), dict (składnia {k:v}).
+                            <ul>
+                                <li>* @nazwa:typ = wartość – Zmienna globalna.</li>
+                                <li>* $nazwa:typ = wartość – Zmienna lokalna.</li>
+                                <li>* $nazwa – Odwołanie do zmiennej wewnątrz komend lub funkcji.</li>
+                            </ul>
+                        </li>
+                        <li>Funkcje i Biblioteki
+                            <ul>
+                                <li>* :nazwa(param:typ=default) – Definicja funkcji.</li>
+                                <li>* : – Zakończenie bloku funkcji.</li>
+                                <li>* .nazwa(argumenty) – Wywołanie funkcji.</li>
+                                <li>* #prefiks:nazwa – Import bibliotek zewnętrznych:</li>
+                                <li>  * #rust:..., #python:..., #java:... – Biblioteki językowe.</li>
+                                <li>  * #bytes:... – Inne skrypty Hacker Lang (szuka pliku main.hacker).</li>
+                                <li>* // – Deklaracja zależności systemowych (system deps).</li>
+                            </ul>
+                        </li>
+                        <li>Struktury sterujące<br>Język mapuje specyficzne skróty na konstrukcje powłoki:
+                            <ul>
+                                <li>* Pętle: =liczba > komenda (wykonuje komendę określoną liczbę razy).</li>
+                                <li>* Warunki: ?warunek > komenda (generuje if warunek; then komenda; fi).</li>
+                                <li>* Foreach: %lista > komenda (iteracja po elementach listy).</li>
+                                <li>* Try-Catch: T> try C> catch F> finally (obsługa błędów wykonania).</li>
+                            </ul>
+                        </li>
+                        <li>Konfiguracja
+                            <ul>
+                                <li>* [ oraz ] – Sekcja konfiguracyjna (klucz = wartość), parsująca ustawienia do słownika config_data.</li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <p>Komendy/narzędzia CLI:</p>
+                    <ul>
+                        <li>hl - główne narzędzie Hacker Lang - kompiluj/uruchamiaj programy w .hk lub .hacker</li>
+                        <li>hli - interfejs dla narzędzia hl - zainstaluj za pomocą hacker unpack hl-utils</li>
+                        <li>hlh - informacje o narzędziach cli + informacje o Hacker Lang</li>
+                        <li>bytes - manager bibliotek dla Hacker Lang</li>
+                    </ul>
+                    <img src="hacker-lang-screenshot.png" alt="Hacker Lang Screenshot">
+                </div>
+                <div id="hacker-script" class="tab-pane">
+                    <h3>Język programowania HackerScript</h3>
+                    <p>Przykładowa składnia:</p>
+                    <ol>
+                        <li>Struktura i Importy
+                            <ul>
+                                <li>* Dyrektywy: --- automatic --- (domyślne zarządzanie pamięcią) lub --- manual ---.</li>
+                                <li>* Importy: * import <c:stdio> (biblioteki systemowe C).</li>
+                                <li>  * import <virus:nmap> (lokalne moduły .hcs).</li>
+                            </ul>
+                        </li>
+                        <li>Zmienne i Typy
+                            <ul>
+                                <li>* Typowanie: Dynamiczne/Inferred (kompilator sam zgaduje typy: int, char*, Array, struct).</li>
+                                <li>* Literały: * tekst = "Hacker" (Stringi).</li>
+                                <li>  * liczba = 100 (Integery).</li>
+                                <li>  * lista = ["a", "b"] (Tablice).</li>
+                                <li>* Interpolacja: "Wartość: {zmienna}" (Automatyczne formatowanie tekstu).</li>
+                            </ul>
+                        </li>
+                        <li>Programowanie Obiektowe (OOP)
+                            <ul>
+                                <li>* Klasy: Definiowane za pomocą class Nazwa [ ... ].</li>
+                                <li>* Metody: Pierwszy parametr to zawsze self.</li>
+                                <li>* Tworzenie obiektów: obj = new Klasa().</li>
+                                <li>* Dostęp do pól: self.pole = wartość (Działa jak struktury w C).</li>
+                            </ul>
+                        </li>
+                        <li>Kontrola Przepływu
+                            <ul>
+                                <li>* Bloki kodu: Zawsze w nawiasach kwadratowych [...].</li>
+                                <li>* Instrukcje warunkowe: if expr [...] else if expr [...] else [...].</li>
+                                <li>* Pętle: for element in kolekcja [...] (Iteracja po tablicach).</li>
+                            </ul>
+                        </li>
+                        <li>Funkcje i System
+                            <ul>
+                                <li>* Definicja: func nazwa(paramy) [ return wartość ].</li>
+                                <li>* Funkcja Main: func main(args) [...] – punkt startowy programu.</li>
+                                <li>* Wbudowane:</li>
+                                <li>  * log "msg" – Wypisywanie do konsoli.</li>
+                                <li>  * curl_get(url) – Żądania HTTP.</li>
+                                <li>  * allocate(size) / deallocate(ptr) – Zarządzanie pamięcią.</li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <p>Narzędzia/komendy:</p>
+                    <ul>
+                        <li>virus - kompiluj programy napisane w .hcs do binarki (wszystkie narzędzia hackerscript możesz zainstalować za pomocą hacker unpack hackerscript)</li>
+                    </ul>
+                    <p>Jakie repozytoria biblioteki obsługuje HackerScript:</p>
+                    <ul>
+                        <li>virus - zamknięte repo zwykły użytkownik nie może dawać tu własnych bibliotek jest to repo zarządzane przez wybranych ludzi</li>
+                        <li>vira - otwarte repo każdy użytkownik może tu dawać biblioteki</li>
+                        <li>HackerScript obsługuje również biblioteki c i c++</li>
+                    </ul>
+                    <p>Jakie pliki posiada HackerOS - do konfiguracji projektu używaj pliku Virus.hcs, gdzie znajdę kod źródłowy HackerScript w /cmd, jaki format plików ma HackerScript ? Posiada .hcs co oznacza ten skrót ? Hacker C Script</p>
+                    <img src="hackerscript-screenshot.png" alt="HackerScript Screenshot">
+                </div>
+            </div>
+        </div>
     </section>
     <section class="hacker-kernel-section">
         <h2>Hacker Kernel</h2>
