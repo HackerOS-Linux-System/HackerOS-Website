@@ -13,29 +13,25 @@
             font-family: 'Arial', sans-serif;
         }
         body {
-            background-color: #1C2526;
+            background-color: #000000;
             color: #FFFFFF;
             line-height: 1.6;
         }
         header {
-            background-color: #121212;
+            background-color: #1A1A1A;
             padding: 20px 0;
             position: fixed;
             width: 100%;
             top: 0;
             z-index: 1000;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7);
-            transition: background-color 0.3s ease;
-        }
-        header:hover {
-            background-color: #1A1A1A;
         }
         nav {
-            max-width: 1200px;
+            max-width: 100%;
             margin: 0 auto;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding: 0 20px;
         }
         nav .logo img {
             height: 40px;
@@ -70,44 +66,37 @@
             color: #B0B0B0;
             transform: translateY(-2px);
         }
-        .about-section {
-            max-width: 1200px;
-            margin: 120px auto 50px;
+        .main-section {
+            max-width: 100%;
+            margin: 80px auto 0;
             padding: 20px;
             text-align: center;
-            background-color: #2F3A44;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
-        .about-section img {
+        .main-section img {
             max-width: 100%;
             border-radius: 10px;
             margin-bottom: 20px;
         }
-        .about-section h1 {
-            font-size: 36px;
-            margin-bottom: 20px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-        }
-        .about-section h2 {
+        .main-section h2 {
             font-size: 28px;
             margin: 30px 0 15px;
             color: #FFFFFF;
         }
-        .about-section p {
+        .main-section h3 {
+            font-size: 24px;
+            margin: 20px 0 10px;
+            color: #FFFFFF;
+        }
+        .main-section p {
             font-size: 18px;
             color: #B0B0B0;
             margin-bottom: 20px;
         }
-        .commands-section {
-            margin: 20px 0;
-            text-align: left;
-        }
         .commands-section ul {
             list-style: none;
-            background-color: #1A1A1A;
             padding: 15px;
             border-radius: 5px;
+            text-align: left;
         }
         .commands-section li {
             font-size: 16px;
@@ -131,16 +120,10 @@
         .copy-button:hover {
             background-color: #FFFFFF;
         }
-        .features {
-            margin: 20px 0;
-            text-align: left;
-            background-color: #1A1A1A;
-            padding: 20px;
-            border-radius: 5px;
-        }
         .features ul {
             list-style: none;
             padding-left: 20px;
+            text-align: left;
         }
         .features li {
             font-size: 18px;
@@ -155,23 +138,6 @@
             left: -20px;
             font-size: 18px;
         }
-        .editions {
-            margin: 20px 0;
-        }
-        .games-section {
-            max-width: 1200px;
-            margin: 50px auto;
-            padding: 20px;
-            text-align: center;
-            background-color: #2F3A44;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-        }
-        .games-section h2 {
-            font-size: 28px;
-            margin-bottom: 20px;
-            color: #FFFFFF;
-        }
         .game {
             margin: 30px 0;
             text-align: center;
@@ -181,199 +147,66 @@
             border-radius: 10px;
             margin: 10px;
         }
-        .game p {
-            font-size: 18px;
-            color: #B0B0B0;
-        }
-        .gaming-section {
-            max-width: 1200px;
-            margin: 50px auto;
-            padding: 30px;
-            text-align: center;
-            background-color: #2F3A44;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-            transition: transform 0.3s ease;
-        }
-        .gaming-section:hover {
-            transform: translateY(-5px);
-        }
-        .gaming-section h2 {
-            font-size: 32px;
-            margin-bottom: 25px;
-            color: #FFFFFF;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
-        }
-        .gaming-section img {
-            max-width: 80px;
-            margin-bottom: 20px;
-            transition: transform 0.3s ease;
-        }
-        .gaming-section img:hover {
-            transform: scale(1.1);
-        }
-        .gaming-section p {
-            font-size: 18px;
-            color: #B0B0B0;
-            margin-bottom: 20px;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        .gaming-section a {
-            text-decoration: none;
-            font-weight: bold;
-            transition: color 0.3s, text-shadow 0.3s;
-            position: relative;
-        }
-        .gaming-section a.protondb {
-            color: #FF5555;
-        }
-        .gaming-section a.anticheat {
-            color: #55AAFF;
-        }
-        .gaming-section a.youtube {
-            color: #FF5555;
-        }
-        .gaming-section a:hover {
-            text-shadow: 0 0 5px rgba(255,255,255,0.5);
-        }
-        .gaming-section a::after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 2px;
-            bottom: -2px;
-            left: 0;
-            background-color: currentColor;
-            transition: width 0.3s;
-        }
-        .gaming-section a:hover::after {
-            width: 100%;
-        }
         .gaming-tools {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
             gap: 20px;
             margin-top: 20px;
-            background-color: #1A1A1A;
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         }
         .gaming-tools span {
             font-size: 16px;
             color: #B0B0B0;
-            background-color: #2F3A44;
             padding: 10px 15px;
             border-radius: 5px;
             transition: background-color 0.3s, transform 0.3s;
             font-family: 'Courier New', Courier, monospace;
         }
         .gaming-tools span:hover {
-            background-color: #3F4F5A;
             transform: translateY(-2px);
-        }
-        .hacker-lang-section {
-            max-width: 1200px;
-            margin: 50px auto;
-            padding: 30px;
-            text-align: center;
-            background-color: #2F3A44;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-            transition: transform 0.3s ease;
-        }
-        .hacker-lang-section:hover {
-            transform: translateY(-5px);
-        }
-        .hacker-lang-section h2 {
-            font-size: 32px;
-            margin-bottom: 25px;
-            color: #FFFFFF;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
-        }
-        .hacker-lang-section img {
-            max-width: 100%;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            transition: transform 0.3s ease;
-        }
-        .hacker-lang-section img:hover {
-            transform: scale(1.05);
-        }
-        .hacker-lang-section p {
-            font-size: 18px;
-            color: #B0B0B0;
-            margin-bottom: 20px;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        .hacker-lang-section h3 {
-            font-size: 24px;
-            margin: 20px 0 10px;
-            color: #FFFFFF;
-        }
-        .hacker-lang-section ol, .hacker-lang-section ul {
-            text-align: left;
-            max-width: 800px;
-            margin: 0 auto 20px;
-            color: #B0B0B0;
-        }
-        .hacker-lang-section ol li, .hacker-lang-section ul li {
-            margin-bottom: 10px;
-        }
-        .hacker-lang-section pre {
-            background-color: #1A1A1A;
-            padding: 10px;
-            border-radius: 5px;
-            font-family: 'Courier New', Courier, monospace;
-            color: #B0B0B0;
-            text-align: left;
-            max-width: 800px;
-            margin: 0 auto 20px;
-            overflow-x: auto;
         }
         .tabs-container {
             display: flex;
-            max-width: 800px;
+            max-width: 100%;
             margin: 0 auto;
-            background-color: #1A1A1A;
-            border-radius: 8px;
+            border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            transition: box-shadow 0.3s ease;
+        }
+        .tabs-container:hover {
+            box-shadow: 0 6px 16px rgba(0,0,0,0.5);
         }
         .tab-menu {
-            width: 200px;
-            background-color: #121212;
-            padding: 20px;
-            border-right: 1px solid #2F3A44;
+            width: 250px;
+            padding: 25px;
+            border-right: 2px solid #2F3A44;
         }
         .tab-menu ul {
             list-style: none;
         }
         .tab-menu li {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             cursor: pointer;
-            padding: 10px;
-            border-radius: 5px;
-            transition: background-color 0.3s, color 0.3s;
+            padding: 12px 15px;
+            border-radius: 8px;
+            transition: background-color 0.3s, color 0.3s, transform 0.3s;
             color: #B0B0B0;
             font-weight: bold;
+            font-size: 18px;
         }
         .tab-menu li:hover {
-            background-color: #2F3A44;
             color: #FFFFFF;
+            transform: translateX(5px);
         }
         .tab-menu li.active {
-            background-color: #2F3A44;
             color: #FFFFFF;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
         }
         .tab-content {
             flex: 1;
-            padding: 20px;
+            padding: 30px;
             text-align: left;
         }
         .tab-pane {
@@ -382,57 +215,37 @@
         .tab-pane.active {
             display: block;
         }
-        .tab-pane h3 {
-            font-size: 24px;
-            margin-bottom: 15px;
-            color: #FFFFFF;
-        }
-        .tab-pane p, .tab-pane ul, .tab-pane ol {
-            color: #B0B0B0;
-        }
         .tab-pane img {
             max-width: 100%;
-            border-radius: 10px;
+            border-radius: 12px;
             margin-top: 20px;
-        }
-        .hacker-kernel-section {
-            max-width: 1200px;
-            margin: 50px auto;
-            padding: 30px;
-            text-align: center;
-            background-color: #2F3A44;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
             transition: transform 0.3s ease;
         }
-        .hacker-kernel-section:hover {
-            transform: translateY(-5px);
+        .tab-pane img:hover {
+            transform: scale(1.02);
         }
-        .hacker-kernel-section h2 {
-            font-size: 32px;
-            margin-bottom: 25px;
-            color: #FFFFFF;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
-        }
-        .hacker-kernel-section p {
-            font-size: 18px;
+        .tab-pane ol, .tab-pane ul {
             color: #B0B0B0;
-            margin-bottom: 20px;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
+            font-size: 18px;
         }
-        .hacker-kernel-section a {
+        .tab-pane pre {
+            padding: 10px;
+            border-radius: 5px;
+            font-family: 'Courier New', Courier, monospace;
+            color: #B0B0B0;
+            overflow-x: auto;
+        }
+        .tab-pane a {
             text-decoration: none;
             font-weight: bold;
             transition: color 0.3s, text-shadow 0.3s;
             position: relative;
             color: #55AAFF;
         }
-        .hacker-kernel-section a:hover {
+        .tab-pane a:hover {
             text-shadow: 0 0 5px rgba(255,255,255,0.5);
         }
-        .hacker-kernel-section a::after {
+        .tab-pane a::after {
             content: '';
             position: absolute;
             width: 0;
@@ -442,66 +255,40 @@
             background-color: currentColor;
             transition: width 0.3s;
         }
-        .hacker-kernel-section a:hover::after {
+        .tab-pane a:hover::after {
             width: 100%;
         }
         @media (max-width: 768px) {
-            .gaming-section {
-                padding: 20px;
-            }
-            .gaming-section h2 {
-                font-size: 26px;
-            }
-            .gaming-section p {
-                font-size: 16px;
-            }
-            .gaming-tools {
-                flex-direction: column;
-                align-items: center;
-            }
-            .hacker-lang-section {
-                padding: 20px;
-            }
-            .hacker-lang-section h2 {
-                font-size: 26px;
-            }
-            .hacker-lang-section p {
-                font-size: 16px;
-            }
             .tabs-container {
                 flex-direction: column;
             }
             .tab-menu {
                 width: 100%;
                 border-right: none;
-                border-bottom: 1px solid #2F3A44;
+                border-bottom: 2px solid #2F3A44;
+                padding: 15px;
             }
             .tab-menu ul {
                 display: flex;
                 justify-content: space-around;
+                flex-wrap: wrap;
             }
             .tab-menu li {
-                margin-bottom: 0;
-            }
-            .hacker-kernel-section {
-                padding: 20px;
-            }
-            .hacker-kernel-section h2 {
-                font-size: 26px;
-            }
-            .hacker-kernel-section p {
+                margin-bottom: 10px;
                 font-size: 16px;
+                padding: 10px;
+            }
+            .tab-content {
+                padding: 20px;
             }
         }
         footer {
-            background-color: #121212;
             padding: 20px;
             text-align: center;
             color: #B0B0B0;
             position: relative;
             bottom: 0;
             width: 100%;
-            box-shadow: 0 -2px 5px rgba(0,0,0,0.5);
         }
     </style>
     <script>
@@ -511,66 +298,24 @@
                 document.documentElement.lang = 'pl';
             } else {
                 document.documentElement.lang = 'en';
-                document.querySelector('.about-section h1').textContent = 'About HackerOS';
-                const aboutPs = document.querySelectorAll('.about-section > p');
-                aboutPs[0].textContent = 'HackerOS is based on Debian Testing distribution, uses xanmod lts kernel and is intended for regular users, gamers and cybersecurity enthusiasts.';
-                aboutPs[1].textContent = 'Our mission is to create an efficient and user-friendly environment for exploring the world of technology, security and games.';
-                document.querySelector('footer p').textContent = '© 2025 HackerOS. All rights reserved.';
-                document.querySelector('.commands-section h2').textContent = 'HackerOS Commands';
-                document.querySelector('.hacker-mode h2').textContent = 'Hacker Mode';
-                document.querySelector('.hacker-mode p').textContent = 'Gaming session launched via gamescope';
-                document.querySelector('.features h2').textContent = 'What does HackerOS include?';
-                const featureItems = document.querySelectorAll('.features li');
-                featureItems[0].textContent = 'Any kernel choice - if you don\'t have special requirements, you can stick with the default Debian kernel or install XanMod or Liquorix to improve performance.';
-                featureItems[1].textContent = 'Preinstalled firmware';
-                featureItems[2].textContent = 'HackerOS proprietary games';
-                featureItems[3].textContent = 'Specialized commands';
-                featureItems[4].textContent = 'Based on Debian Testing, balancing frequent updates with stability';
-                featureItems[5].textContent = 'Uses Vivaldi browser';
-                featureItems[6].textContent = 'Includes a "cybersecurity" edition with specialized tools';
-                featureItems[7].textContent = 'Uses KDE Plasma desktop environment';
-                featureItems[8].textContent = 'Continuously developed Polish Linux distribution';
-                document.querySelector('.editions h2').textContent = 'HackerOS Editions';
-                const editionTitles = document.querySelectorAll('.editions h3');
-                editionTitles[0].textContent = 'Official Edition';
-                editionTitles[1].textContent = 'Hydra Edition';
-                editionTitles[2].textContent = 'Cybersecurity Edition';
-                editionTitles[3].textContent = 'Gnome Edition';
-                editionTitles[4].textContent = 'Xfce Edition';
-                editionTitles[5].textContent = 'LTS Edition';
-                const editionPs = document.querySelectorAll('.editions p');
-                editionPs[0].textContent = 'The Official Edition is a standard edition for users, gamers, and programmers, suitable for practically everyone.';
-                editionPs[1].textContent = 'The Hydra Edition is a copy of the official edition but with a different look (Garuda-like).';
-                editionPs[2].textContent = 'The Cybersecurity Edition has no visual modifications and is a copy of the Official Edition but designed for cybersecurity enthusiasts (this version includes penetration testing tools, cybersecurity tools, and runs on the Xen kernel known from Qubes OS).';
-                editionPs[3].textContent = 'The Gnome Edition is the same as the official edition but with the GNOME desktop environment.';
-                editionPs[4].textContent = 'The Xfce Edition is the same as the official edition but with the XFCE desktop environment.';
-                editionPs[5].textContent = 'The LTS Edition is the same as the Official Edition, but instead of Debian Testing, it uses Debian Stable.';
-                document.querySelector('.games-section h2').textContent = 'HackerOS Games';
-                const gameTitles = document.querySelectorAll('.game h3');
-                gameTitles[0].textContent = 'The Racer';
-                gameTitles[1].textContent = 'Starblaster';
-                gameTitles[2].textContent = 'Bit Jump';
-                const gamePs = document.querySelectorAll('.game p');
-                gamePs[0].textContent = 'Become a race car driver, game written in Python';
-                gamePs[1].textContent = 'Game inspired by Galaxy Attack, written in Rust';
-                gamePs[2].textContent = 'Game inspired by Geometry Dash, written in Lua';
-                document.querySelector('.gaming-section h2').textContent = 'Gaming on HackerOS';
-                const gamingPs = document.querySelectorAll('.gaming-section p:not(.gaming-tools p)');
-                gamingPs[0].innerHTML = 'Gaming on Windows games on HackerOS is possible thanks to a tool called Proton (90% of games work). Unfortunately, some online games, e.g., Fortnite, are blocked on Linux HackerOS. You can find more information on: <a href="https://www.protondb.com" target="_blank" class="protondb">ProtonDB</a>, <a href="https://areweanticheatyet.com" target="_blank" class="anticheat">Are We Anti-Cheat Yet?</a>.';
-                gamingPs[1].textContent = 'By default, it uses the XanMod kernel.';
-                gamingPs[2].innerHTML = 'You can see how HackerOS handles games: <a href="https://www.youtube.com/channel/UCwYT5jqUhZHoRhNKOrjKTrQ" target="_blank" class="youtube">YouTube</a>.';
-                document.querySelector('.hacker-lang-section h2').textContent = 'Programming Languages HackerOS';
-                // Update tab menu and content for English
-                document.querySelectorAll('.tab-menu li')[0].textContent = 'Hacker Lang';
-                document.querySelectorAll('.tab-menu li')[1].textContent = 'HackerScript';
+                // English translations
+                const tabLinks = document.querySelectorAll('.tab-menu li');
+                tabLinks[0].textContent = 'Overview';
+                tabLinks[1].textContent = 'Commands';
+                tabLinks[2].textContent = 'Sessions HackerOS';
+                tabLinks[3].textContent = 'Features';
+                tabLinks[4].textContent = 'Editions';
+                tabLinks[5].textContent = 'Games';
+                tabLinks[6].textContent = 'Gaming';
+                tabLinks[7].textContent = 'Programming Languages';
+                tabLinks[8].textContent = 'Hacker Kernel';
+                // Update contents in each tab-pane for English
                 const tabPanes = document.querySelectorAll('.tab-pane');
-                tabPanes[0].querySelector('h3').textContent = 'Hacker Lang Programming Language';
-                tabPanes[0].querySelector('p:first-of-type').textContent = 'Syntax description:';
-                // Similarly update other texts in tabPanes[0] and tabPanes[1] for English if needed
-                document.querySelector('.hacker-kernel-section h2').textContent = 'Hacker Kernel';
-                const kernelPs = document.querySelectorAll('.hacker-kernel-section p');
-                kernelPs[0].innerHTML = 'Do you want to develop the hacker kernel? Report to gmail hackeros068@gmail.com or to <a href="https://github.com/HackerOS-Linux-System/HackerOS-Website/issues">issues</a> or <a href="https://github.com/HackerOS-Linux-System/HackerOS-Website/discussions">discussions</a> (apply if you want to actively develop this project)';
-                kernelPs[1].textContent = 'What is Hacker Kernel? It is an efficient kernel, it will have optimizations for games, it will be an LTS kernel stable with stable updates. Support for all amd64 processors and all GPUs.';
+                tabPanes[0].querySelectorAll('p')[0].textContent = 'HackerOS is based on Debian Testing distribution (some editions on Stable), usually uses the Debian kernel and is intended for regular users, gamers and cybersecurity enthusiasts.';
+                tabPanes[0].querySelectorAll('p')[1].textContent = 'Our mission is to create an efficient and user-friendly environment for exploring the world of technology, security and games.';
+                tabPanes[1].querySelector('h2').textContent = 'HackerOS Commands';
+                // etc. for other panes
+                document.querySelector('footer p').textContent = '© 2025 HackerOS. All rights reserved.';
             }
             const copyButtons = document.querySelectorAll('.copy-button');
             copyButtons.forEach(button => {
@@ -592,6 +337,17 @@
                     document.getElementById(link.dataset.tab).classList.add('active');
                 });
             });
+            // Nested tab switching for programming languages
+            const langTabLinks = document.querySelectorAll('#programming-languages .lang-tab-link');
+            const langTabPanes = document.querySelectorAll('#programming-languages .lang-tab-pane');
+            langTabLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    langTabLinks.forEach(l => l.classList.remove('active'));
+                    link.classList.add('active');
+                    langTabPanes.forEach(p => p.classList.remove('active'));
+                    document.getElementById(link.dataset.tab).classList.add('active');
+                });
+            });
         });
     </script>
 </head>
@@ -610,240 +366,265 @@
             </ul>
         </nav>
     </header>
-    <section class="about-section">
-        <img src="installed-hackeros.png" alt="HackerOS Installed">
-        <h1>O HackerOS</h1>
-        <p>HackerOS bazuje na dystrybucji Debian Testing, wykorzystuje jądro xanmod i jest przeznaczony dla zwykłych użytkowników, graczy i entuzjastów cyberbezpieczeństwa.</p>
-        <p>Naszą misją jest stworzenie wydajnego i przyjaznego użytkownikowi środowiska do eksploracji świata technologii, bezpieczeństwa i gier.</p>
-        <div class="commands-section">
-            <h2>Komendy HackerOS</h2>
-            <ul>
-                <li><span>hacker update</span> <button class="copy-button">Kopiuj</button> (aktualizuje snapa apt flatpaka firmware) narzędzie napisane w go</li>
-                <li><span>hacker</span> <button class="copy-button">Kopiuj</button> (manager pakietów możesz go używać zamiast apt)</li>
-                <li><span>hacker unpack</span> <button class="copy-button">Kopiuj</button> (instaluje narzędzia do gier cyberbezpieczeństwa i inne polecane narzędzia przez hackeros)</li>
-                <li><span>hacker unpack cybersecurity</span> <button class="copy-button">Kopiuj</button> (instaluje narzędzia do cyberbezpieczeństwa)</li>
-                <li><span>hacker unpack gaming</span> <button class="copy-button">Kopiuj</button> (instaluje narzędzia do gier)</li>
-                <li><span>hacker unpack gaming noroblox</span> <button class="copy-button">Kopiuj</button> (instaluje narzędzia do gier bez robloxa)</li>
-                <li><span>hacker unpack emulators</span> <button class="copy-button">Kopiuj</button> (instaluje narzędzia emulatory)</li>
-                <li><span>hacker syslog</span> <button class="copy-button">Kopiuj</button> (pokazuje logi systemowe)</li>
-                <li><span>hacker help</span> <button class="copy-button">Kopiuj</button> (pokazuje listę komend)</li>
-                <li><span>hacker help-ui</span> <button class="copy-button">Kopiuj</button> (pokazuje listę komend w ladnym ui)</li>
-                <li><span>hacker unpack devtools</span> <button class="copy-button">Kopiuj</button> (instaluje narzędzia do programowania)</li>
-                <li><span>hacker unpack add-ons</span> <button class="copy-button">Kopiuj</button> (instaluje dodatki polecane przez hackeros)</li>
-                <li><span>hacker unpack gs</span> <button class="copy-button">Kopiuj</button> (instaluje narzędzia do gier i cyberbezpieczeństwa)</li>
-                <li><span>hacker unpack xanmod</span> <button class="copy-button">Kopiuj</button> (instaluje jadro xanmod)</li>
-                <li><span>hacker unpack liquorix</span> <button class="copy-button">Kopiuj</button> (instaluje jadro liquorix)</li>
-                <li><span>remove-current-kernel</span> <button class="copy-button">Kopiuj</button> (usuwa aktualne jądro - po uruchomeiniu komendy hacker unpack xanmod/liquorix uzyj tej komendy wiecej o instalacji customowych jąder dowiesz sie na HackerOS Documentation)</li>
-                <li><span>hlh</span> <button class="copy-button">Kopiuj</button>poznaj narzędzia cli dla hacker lang</li>
-            </ul>
-        </div>
-        <div class="hacker-mode">
-            <h2>Hacker Mode</h2>
-            <p>Sesja do uruchamiania gier przez gamescope</p>
-            <img src="hacker-mode.png" alt="Hacker Mode">
-        </div>
-        <div class="features">
-            <h2>Co oferuje HackerOS?</h2>
-            <ul>
-                <li>Dowolny wybór jądra — jeśli nie masz specjalnych wymagań, możesz pozostać przy domyślnym jądrze Debiana lub zainstalować XanMod albo Liquorix, aby poprawić wydajność.</li>
-                <li>Preinstalowany firmware dla lepszej kompatybilności</li>
-                <li>Własne gry HackerOS</li>
-                <li>Specjalistyczne komendy systemowe</li>
-                <li>Bazuje na Debianie Testing, zapewniając równowagę między aktualizacjami a stabilnością.</li>
-                <li>Przeglądarka Vivaldi dla nowoczesnego przeglądania</li>
-                <li>Edycja „cybersecurity” z narzędziami do bezpieczeństwa</li>
-                <li>Środowisko graficzne KDE Plasma dla intuicyjnej obsługi</li>
-                <li>Ciągle rozwijana polska dystrybucja Linuksa</li>
-            </ul>
-        </div>
-        <div class="editions">
-            <h2>Edycje HackerOS</h2>
-            <h3>Edycja Official</h3>
-            <img src="official-edition.png" alt="Official Edition">
-            <p>Edycja Official jest to zwykła edycja dla użytkowników, graczy, programistów, praktycznie dla każdego.</p>
-            <h3>Edycja Hydra</h3>
-            <img src="hydra-edition.png" alt="Hydra Edition">
-            <p>Edycja Hydra to kopia edycji official, ale z innym wyglądem (Garuda-like).</p>
-            <h3>Edycja Cybersecurity</h3>
-            <p>Edycja Cybersecurity nie posiada modyfikacji wyglądu, jest to też kopia wersji oficjalnej, ale przeznaczona dla entuzjastów cyberbezpieczeństwa (wersja Cybersecurity posiada narzędzia do testów penetracyjnych, narzędzia do cyberbezpieczeństwa, pod jądro Xen znane z systemu Qubes OS).</p>
-            <h3>Edycja Gnome</h3>
-            <img src="gnome-edition.png" alt="Gnome Edition">
-            <p>Jest to to samo co edycja oficjalna, ale ze środowiskiem graficznym GNOME.</p>
-            <h3>Edycja Xfce</h3>
-            <img src="xfce-edition.png" alt="Xfce Edition">
-            <p>Jest to to samo co edycja oficjalna, ale ze środowiskiem graficznym Xfce.</p>
-            <h3>Edycja LTS</h3>
-            <p>Edycja LTS to to samo co edycja Official, ale zamiast Debiana Testing używa Debiana Stable.</p>
-        </div>
-    </section>
-    <section class="games-section">
-        <h2>Gry HackerOS</h2>
-        <div class="game">
-            <h3>The Racer</h3>
-            <img src="the-racer.png" alt="The Racer">
-            <img src="the-racer-logo.png" alt="The Racer Logo">
-            <p>Zostań kierowcą wyścigowym, gra napisana w Pythonie</p>
-        </div>
-        <div class="game">
-            <h3>Starblaster</h3>
-            <img src="starblaster.png" alt="Starblaster">
-            <img src="starblaster-logo.png" alt="Starblaster Logo">
-            <p>Gra inspirowana Galaxy Attack, napisana w Rust</p>
-        </div>
-        <div class="game">
-            <h3>Bit Jump</h3>
-            <img src="bit-jump.png" alt="Bit Jump">
-            <img src="bit-jump-logo.png" alt="Bit Jump Logo">
-            <p>Gra inspirowana Geometry Dash, napisana w Lua</p>
-        </div>
-    </section>
-    <section class="gaming-section">
-        <h2>Granie na HackerOS</h2>
-        <img src="windows.png" alt="Windows Logo">
-        <p>Granie w gry Windows na HackerOS jest możliwe dzięki narzędziu Proton (90% gier działa). Niestety, niektóre gry online, np. Fortnite, są zablokowane na Linuxie HackerOS. Więcej informacji znajdziesz na: <a href="https://www.protondb.com" target="_blank" class="protondb">ProtonDB</a>, <a href="https://areweanticheatyet.com" target="_blank" class="anticheat">Are We Anti-Cheat Yet?</a>.</p>
-        <p>Domyślnie używane jest jądro XanMod.</p>
-        <p>Sprawdź, jak HackerOS radzi sobie z grami: <a href="https://www.youtube.com/@hack3r-0s" target="_blank" class="youtube">YouTube</a>.</p>
-        <p>Narzędzia do uruchamiania gier Windows:</p>
-        <div class="gaming-tools">
-            <span>ProtonPlus</span>
-            <span>Steam</span>
-            <span>Lutris</span>
-            <span>Heroic Games Launcher</span>
-            <span>ProtonTricks</span>
-        </div>
-    </section>
-    <section class="hacker-lang-section">
-        <h2>Języki programowania HackerOS</h2>
+    <section class="main-section">
         <div class="tabs-container">
             <div class="tab-menu">
                 <ul>
-                    <li class="tab-link active" data-tab="hacker-lang">Hacker Lang</li>
-                    <li class="tab-link" data-tab="hacker-script">HackerScript</li>
+                    <li class="tab-link active" data-tab="overview">Przegląd</li>
+                    <li class="tab-link" data-tab="commands">Komendy</li>
+                    <li class="tab-link" data-tab="hacker-mode">Sesje HackerOS</li>
+                    <li class="tab-link" data-tab="features">Funkcje</li>
+                    <li class="tab-link" data-tab="editions">Edycje</li>
+                    <li class="tab-link" data-tab="games">Gry</li>
+                    <li class="tab-link" data-tab="gaming">Granie</li>
+                    <li class="tab-link" data-tab="programming-languages">Języki Programowania</li>
+                    <li class="tab-link" data-tab="hacker-kernel">Hacker Kernel</li>
                 </ul>
             </div>
             <div class="tab-content">
-                <div id="hacker-lang" class="tab-pane active">
-                    <h3>Język Programowania Hacker Lang</h3>
-                    <p>Opis składni:</p>
-                    <ol>
-                        <li>Podstawowe operatory (Prefiksy)<br>Każda linia zaczyna się od symbolu definiującego jej przeznaczenie:
-                            <ul>
-                                <li>* > – Zwykła komenda systemowa.</li>
-                                <li>* >> – Komenda z obsługą zmiennych.</li>
-                                <li>* >>> – Komenda wykonywana jako oddzielny plik/proces.</li>
-                                <li>* & – Uruchomienie komendy w tle (background).</li>
-                                <li>* ^ – (Modyfikator) Dodany przed operatorem (np. ^>) wymusza użycie sudo.</li>
-                                <li>* !! – Blokowy komentarz (przełącznik: włącz/wyłącz).</li>
-                                <li>* \\ – Ładowanie pluginu.</li>
-                            </ul>
-                        </li>
-                        <li>Zarządzanie zmiennymi i typowanie<br>Język obsługuje typy: int, bool, str, list (składnia [a,b]), dict (składnia {k:v}).
-                            <ul>
-                                <li>* @nazwa:typ = wartość – Zmienna globalna.</li>
-                                <li>* $nazwa:typ = wartość – Zmienna lokalna.</li>
-                                <li>* $nazwa – Odwołanie do zmiennej wewnątrz komend lub funkcji.</li>
-                            </ul>
-                        </li>
-                        <li>Funkcje i Biblioteki
-                            <ul>
-                                <li>* :nazwa(param:typ=default) – Definicja funkcji.</li>
-                                <li>* : – Zakończenie bloku funkcji.</li>
-                                <li>* .nazwa(argumenty) – Wywołanie funkcji.</li>
-                                <li>* #prefiks:nazwa – Import bibliotek zewnętrznych:</li>
-                                <li>  * #rust:..., #python:..., #java:... – Biblioteki językowe.</li>
-                                <li>  * #bytes:... – Inne skrypty Hacker Lang (szuka pliku main.hacker).</li>
-                                <li>* // – Deklaracja zależności systemowych (system deps).</li>
-                            </ul>
-                        </li>
-                        <li>Struktury sterujące<br>Język mapuje specyficzne skróty na konstrukcje powłoki:
-                            <ul>
-                                <li>* Pętle: =liczba > komenda (wykonuje komendę określoną liczbę razy).</li>
-                                <li>* Warunki: ?warunek > komenda (generuje if warunek; then komenda; fi).</li>
-                                <li>* Foreach: %lista > komenda (iteracja po elementach listy).</li>
-                                <li>* Try-Catch: T> try C> catch F> finally (obsługa błędów wykonania).</li>
-                            </ul>
-                        </li>
-                        <li>Konfiguracja
-                            <ul>
-                                <li>* [ oraz ] – Sekcja konfiguracyjna (klucz = wartość), parsująca ustawienia do słownika config_data.</li>
-                            </ul>
-                        </li>
-                    </ol>
-                    <p>Komendy/narzędzia CLI:</p>
-                    <ul>
-                        <li>hl - główne narzędzie Hacker Lang - kompiluj/uruchamiaj programy w .hk lub .hacker</li>
-                        <li>hli - interfejs dla narzędzia hl - zainstaluj za pomocą hacker unpack hl-utils</li>
-                        <li>hlh - informacje o narzędziach cli + informacje o Hacker Lang</li>
-                        <li>bytes - manager bibliotek dla Hacker Lang</li>
-                    </ul>
-                    <img src="hacker-lang-screenshot.png" alt="Hacker Lang Screenshot">
+                <div id="overview" class="tab-pane active">
+                    <img src="installed-hackeros.png" alt="HackerOS Installed">
+                    <p>HackerOS bazuje na dystrybucji Debian Testing (niektóre edycje na Stable), wykorzystuje zwykle jądro Debiana i jest przeznaczony dla zwykłych użytkowników, graczy i entuzjastów cyberbezpieczeństwa.</p>
+                    <p>Naszą misją jest stworzenie wydajnego i przyjaznego użytkownikowi środowiska do eksploracji świata technologii, bezpieczeństwa i gier.</p>
                 </div>
-                <div id="hacker-script" class="tab-pane">
-                    <h3>Język programowania HackerScript</h3>
-                    <p>Przykładowa składnia:</p>
-                    <ol>
-                        <li>Struktura i Importy
-                            <ul>
-                                <li>* Dyrektywy: --- automatic --- (domyślne zarządzanie pamięcią) lub --- manual ---.</li>
-                                <li>* Importy: * import <c:stdio> (biblioteki systemowe C).</li>
-                                <li>  * import <virus:nmap> (lokalne moduły .hcs).</li>
-                            </ul>
-                        </li>
-                        <li>Zmienne i Typy
-                            <ul>
-                                <li>* Typowanie: Dynamiczne/Inferred (kompilator sam zgaduje typy: int, char*, Array, struct).</li>
-                                <li>* Literały: * tekst = "Hacker" (Stringi).</li>
-                                <li>  * liczba = 100 (Integery).</li>
-                                <li>  * lista = ["a", "b"] (Tablice).</li>
-                                <li>* Interpolacja: "Wartość: {zmienna}" (Automatyczne formatowanie tekstu).</li>
-                            </ul>
-                        </li>
-                        <li>Programowanie Obiektowe (OOP)
-                            <ul>
-                                <li>* Klasy: Definiowane za pomocą class Nazwa [ ... ].</li>
-                                <li>* Metody: Pierwszy parametr to zawsze self.</li>
-                                <li>* Tworzenie obiektów: obj = new Klasa().</li>
-                                <li>* Dostęp do pól: self.pole = wartość (Działa jak struktury w C).</li>
-                            </ul>
-                        </li>
-                        <li>Kontrola Przepływu
-                            <ul>
-                                <li>* Bloki kodu: Zawsze w nawiasach kwadratowych [...].</li>
-                                <li>* Instrukcje warunkowe: if expr [...] else if expr [...] else [...].</li>
-                                <li>* Pętle: for element in kolekcja [...] (Iteracja po tablicach).</li>
-                            </ul>
-                        </li>
-                        <li>Funkcje i System
-                            <ul>
-                                <li>* Definicja: func nazwa(paramy) [ return wartość ].</li>
-                                <li>* Funkcja Main: func main(args) [...] – punkt startowy programu.</li>
-                                <li>* Wbudowane:</li>
-                                <li>  * log "msg" – Wypisywanie do konsoli.</li>
-                                <li>  * curl_get(url) – Żądania HTTP.</li>
-                                <li>  * allocate(size) / deallocate(ptr) – Zarządzanie pamięcią.</li>
-                            </ul>
-                        </li>
-                    </ol>
-                    <p>Narzędzia/komendy:</p>
-                    <ul>
-                        <li>virus - kompiluj programy napisane w .hcs do binarki (wszystkie narzędzia hackerscript możesz zainstalować za pomocą hacker unpack hackerscript)</li>
+                <div id="commands" class="tab-pane">
+                    <h2>Komendy HackerOS</h2>
+                    <ul class="commands-section">
+                        <li><span>hacker update</span> <button class="copy-button">Kopiuj</button> (aktualizuje snapa, apt, flatpaka, firmware) – narzędzie napisane w Go.</li>
+                        <li><span>hacker</span> <button class="copy-button">Kopiuj</button> (manager pakietów – możesz go używać zamiast apt).</li>
+                        <li><span>hacker unpack</span> <button class="copy-button">Kopiuj</button> (instaluje narzędzia do gier, cyberbezpieczeństwa i inne polecane narzędzia przez HackerOS).</li>
+                        <li><span>hacker unpack cybersecurity</span> <button class="copy-button">Kopiuj</button> (instaluje narzędzia do cyberbezpieczeństwa).</li>
+                        <li><span>hacker unpack gaming</span> <button class="copy-button">Kopiuj</button> (instaluje narzędzia do gier).</li>
+                        <li><span>hacker unpack gaming noroblox</span> <button class="copy-button">Kopiuj</button> (instaluje narzędzia do gier bez Roblox).</li>
+                        <li><span>hacker unpack emulators</span> <button class="copy-button">Kopiuj</button> (instaluje emulatory).</li>
+                        <li><span>hacker syslog</span> <button class="copy-button">Kopiuj</button> (pokazuje logi systemowe).</li>
+                        <li><span>hacker help</span> <button class="copy-button">Kopiuj</button> (pokazuje listę komend).</li>
+                        <li><span>hacker help-ui</span> <button class="copy-button">Kopiuj</button> (pokazuje listę komend w ładnym UI).</li>
+                        <li><span>hacker unpack devtools</span> <button class="copy-button">Kopiuj</button> (instaluje narzędzia do programowania).</li>
+                        <li><span>hacker unpack add-ons</span> <button class="copy-button">Kopiuj</button> (instaluje dodatki polecane przez HackerOS).</li>
+                        <li><span>hacker unpack gs</span> <button class="copy-button">Kopiuj</button> (instaluje narzędzia do gier i cyberbezpieczeństwa).</li>
+                        <li><span>hacker unpack xanmod</span> <button class="copy-button">Kopiuj</button> (instaluje jądro XanMod).</li>
+                        <li><span>hacker unpack liquorix</span> <button class="copy-button">Kopiuj</button> (instaluje jądro Liquorix).</li>
+                        <li><span>remove-current-kernel</span> <button class="copy-button">Kopiuj</button> (usuwa aktualne jądro – po uruchomieniu komendy hacker unpack xanmod/liquorix użyj tej komendy. Więcej o instalacji customowych jąder dowiesz się na HackerOS Documentation).</li>
+                        <li><span>hlh</span> <button class="copy-button">Kopiuj</button> (poznaj narzędzia CLI dla Hacker Lang).</li>
                     </ul>
-                    <p>Jakie repozytoria biblioteki obsługuje HackerScript:</p>
-                    <ul>
-                        <li>virus - zamknięte repo zwykły użytkownik nie może dawać tu własnych bibliotek jest to repo zarządzane przez wybranych ludzi</li>
-                        <li>vira - otwarte repo każdy użytkownik może tu dawać biblioteki</li>
-                        <li>HackerScript obsługuje również biblioteki c i c++</li>
+                </div>
+                <div id="hacker-mode" class="tab-pane">
+                    <h2>Sesje HackerOS</h2>
+                    <h3>Hacker Mode</h3>
+                    <p>Sesja do uruchamiania launcherów/gier windowsowych. Zainstaluj za pomocą: hacker unpack hacker-mode (znajdziesz również w edycji gaming).</p>
+                    <img src="hacker-mode.png" alt="Hacker Mode">
+                    <h3>HackerOS-TV</h3>
+                    <p>Sesja do oglądania filmów. Zainstaluj za pomocą: hacker unpack hackeros-tv.</p>
+                    <img src="hackeros-tv.png" alt="HackerOS-TV">
+                    <h3>Security Mode</h3>
+                    <p>Sesja do testów penetracyjnych. Zainstaluj za pomocą: hacker unpack security-mode (znajdziesz w edycji Cybersecurity w formie aplikacji oraz sesji).</p>
+                    <img src="security-mode.png" alt="Security Mode">
+                </div>
+                <div id="features" class="tab-pane">
+                    <h2>Co oferuje HackerOS?</h2>
+                    <ul class="features">
+                        <li>Dowolny wybór jądra — jeśli nie masz specjalnych wymagań, możesz pozostać przy domyślnym jądrze Debiana lub zainstalować XanMod albo Liquorix, aby poprawić wydajność.</li>
+                        <li>Preinstalowany firmware dla lepszej kompatybilności.</li>
+                        <li>Własne gry HackerOS.</li>
+                        <li>Specjalistyczne komendy systemowe.</li>
+                        <li>Bazuje na Debianie Testing, zapewniając równowagę między aktualizacjami a stabilnością.</li>
+                        <li>Przeglądarka Vivaldi dla nowoczesnego przeglądania.</li>
+                        <li>Edycja „cybersecurity” z narzędziami do bezpieczeństwa.</li>
+                        <li>Środowisko graficzne KDE Plasma dla intuicyjnej obsługi.</li>
+                        <li>Ciągle rozwijana polska dystrybucja Linuksa.</li>
                     </ul>
-                    <p>Jakie pliki posiada HackerOS - do konfiguracji projektu używaj pliku Virus.hcs, gdzie znajdę kod źródłowy HackerScript w /cmd, jaki format plików ma HackerScript ? Posiada .hcs co oznacza ten skrót ? Hacker C Script</p>
-                    <img src="hackerscript-screenshot.png" alt="HackerScript Screenshot">
+                </div>
+                <div id="editions" class="tab-pane">
+                    <h2>Edycje HackerOS</h2>
+                    <h3>Edycja Official</h3>
+                    <img src="official-edition.png" alt="Official Edition">
+                    <p>Edycja Official to zwykła edycja dla użytkowników, graczy, programistów – praktycznie dla każdego.</p>
+                    <h3>Edycja Hydra</h3>
+                    <img src="hydra-edition.png" alt="Hydra Edition">
+                    <p>Edycja Hydra to kopia edycji Official, ale z innym wyglądem (Garuda-like).</p>
+                    <h3>Edycja Cybersecurity</h3>
+                    <p>Edycja Cybersecurity nie posiada modyfikacji wyglądu. Jest to kopia wersji Official, ale przeznaczona dla entuzjastów cyberbezpieczeństwa (wersja Cybersecurity posiada narzędzia do testów penetracyjnych, narzędzia do cyberbezpieczeństwa, pod jądro Xen znane z systemu Qubes OS).</p>
+                    <h3>Edycja Gnome</h3>
+                    <img src="gnome-edition.png" alt="Gnome Edition">
+                    <p>Jest to to samo co edycja Official, ale ze środowiskiem graficznym GNOME.</p>
+                    <h3>Edycja Xfce</h3>
+                    <img src="xfce-edition.png" alt="Xfce Edition">
+                    <p>Jest to to samo co edycja Official, ale ze środowiskiem graficznym Xfce.</p>
+                    <h3>Edycja LTS</h3>
+                    <p>Edycja LTS to to samo co edycja Official, ale zamiast Debiana Testing używa Debiana Stable.</p>
+                </div>
+                <div id="games" class="tab-pane">
+                    <h2>Gry HackerOS</h2>
+                    <div class="game">
+                        <h3>The Racer</h3>
+                        <img src="the-racer.png" alt="The Racer">
+                        <img src="the-racer-logo.png" alt="The Racer Logo">
+                        <p>Zostań kierowcą wyścigowym. Gra napisana w Pythonie.</p>
+                    </div>
+                    <div class="game">
+                        <h3>Starblaster</h3>
+                        <img src="starblaster.png" alt="Starblaster">
+                        <img src="starblaster-logo.png" alt="Starblaster Logo">
+                        <p>Gra inspirowana Galaxy Attack. Napisana w Rust.</p>
+                    </div>
+                    <div class="game">
+                        <h3>Bit Jump</h3>
+                        <img src="bit-jump.png" alt="Bit Jump">
+                        <img src="bit-jump-logo.png" alt="Bit Jump Logo">
+                        <p>Gra inspirowana Geometry Dash. Napisana w Lua.</p>
+                    </div>
+                </div>
+                <div id="gaming" class="tab-pane">
+                    <h2>Granie na HackerOS</h2>
+                    <img src="windows.png" alt="Windows Logo">
+                    <p>Granie w gry Windows na HackerOS jest możliwe dzięki narzędziu Proton (90% gier działa). Niestety, niektóre gry online, np. Fortnite, są zablokowane na Linuxie HackerOS. Więcej informacji znajdziesz na: <a href="https://www.protondb.com" target="_blank" class="protondb">ProtonDB</a>, <a href="https://areweanticheatyet.com" target="_blank" class="anticheat">Are We Anti-Cheat Yet?</a>.</p>
+                    <p>Domyślnie używane jest jądro XanMod.</p>
+                    <p>Sprawdź, jak HackerOS radzi sobie z grami: <a href="https://www.youtube.com/@hack3r-0s" target="_blank" class="youtube">YouTube</a>.</p>
+                    <p>Narzędzia do uruchamiania gier Windows:</p>
+                    <div class="gaming-tools">
+                        <span>ProtonPlus</span>
+                        <span>Steam</span>
+                        <span>Lutris</span>
+                        <span>Heroic Games Launcher</span>
+                        <span>ProtonTricks</span>
+                    </div>
+                </div>
+                <div id="programming-languages" class="tab-pane">
+                    <h2>Języki programowania HackerOS</h2>
+                    <div class="nested-tabs-container" style="display: flex; flex-direction: column; align-items: center;">
+                        <div class="nested-tab-menu" style="width: 100%; max-width: 300px; margin-bottom: 20px;">
+                            <ul style="display: flex; justify-content: space-around; list-style: none; padding: 0;">
+                                <li class="lang-tab-link active" data-tab="hacker-lang" style="cursor: pointer; padding: 10px; border-radius: 5px; transition: background-color 0.3s;">Hacker Lang</li>
+                                <li class="lang-tab-link" data-tab="hacker-script" style="cursor: pointer; padding: 10px; border-radius: 5px; transition: background-color 0.3s;">HackerScript</li>
+                            </ul>
+                        </div>
+                        <div class="nested-tab-content" style="width: 100%;">
+                            <div id="hacker-lang" class="lang-tab-pane active">
+                                <h3>Język Programowania Hacker Lang</h3>
+                                <p>Opis składni:</p>
+                                <ol>
+                                    <li>Podstawowe operatory (Prefiksy)<br>Każda linia zaczyna się od symbolu definiującego jej przeznaczenie:
+                                        <ul>
+                                            <li>> – Zwykła komenda systemowa.</li>
+                                            <li>>> – Komenda z obsługą zmiennych.</li>
+                                            <li>>>> – Komenda wykonywana jako oddzielny plik/proces.</li>
+                                            <li>& – Uruchomienie komendy w tle (background).</li>
+                                            <li>^ – (Modyfikator) Dodany przed operatorem (np. ^>) wymusza użycie sudo.</li>
+                                            <li>!! – Blokowy komentarz (przełącznik: włącz/wyłącz).</li>
+                                            <li>\\ – Ładowanie pluginu.</li>
+                                        </ul>
+                                    </li>
+                                    <li>Zarządzanie zmiennymi i typowanie<br>Język obsługuje typy: int, bool, str, list (składnia [a,b]), dict (składnia {k:v}).
+                                        <ul>
+                                            <li>@nazwa:typ = wartość – Zmienna globalna.</li>
+                                            <li>$nazwa:typ = wartość – Zmienna lokalna.</li>
+                                            <li>$nazwa – Odwołanie do zmiennej wewnątrz komend lub funkcji.</li>
+                                        </ul>
+                                    </li>
+                                    <li>Funkcje i Biblioteki
+                                        <ul>
+                                            <li>:nazwa(param:typ=default) – Definicja funkcji.</li>
+                                            <li>: – Zakończenie bloku funkcji.</li>
+                                            <li>.nazwa(argumenty) – Wywołanie funkcji.</li>
+                                            <li>#prefiks:nazwa – Import bibliotek zewnętrznych:</li>
+                                            <li>#rust:..., #python:..., #java:... – Biblioteki językowe.</li>
+                                            <li>#bytes:... – Inne skrypty Hacker Lang (szuka pliku main.hacker).</li>
+                                            <li>// – Deklaracja zależności systemowych (system deps).</li>
+                                        </ul>
+                                    </li>
+                                    <li>Struktury sterujące<br>Język mapuje specyficzne skróty na konstrukcje powłoki:
+                                        <ul>
+                                            <li>Pętle: =liczba > komenda (wykonuje komendę określoną liczbę razy).</li>
+                                            <li>Warunki: ?warunek > komenda (generuje if warunek; then komenda; fi).</li>
+                                            <li>Foreach: %lista > komenda (iteracja po elementach listy).</li>
+                                            <li>Try-Catch: T> try C> catch F> finally (obsługa błędów wykonania).</li>
+                                        </ul>
+                                    </li>
+                                    <li>Konfiguracja
+                                        <ul>
+                                            <li>[ oraz ] – Sekcja konfiguracyjna (klucz = wartość), parsująca ustawienia do słownika config_data.</li>
+                                        </ul>
+                                    </li>
+                                </ol>
+                                <p>Komendy/narzędzia CLI:</p>
+                                <ul>
+                                    <li>hl – główne narzędzie Hacker Lang – kompiluj/uruchamiaj programy w .hk lub .hacker.</li>
+                                    <li>hli – interfejs dla narzędzia hl – zainstaluj za pomocą hacker unpack hl-utils.</li>
+                                    <li>hlh – informacje o narzędziach CLI + informacje o Hacker Lang.</li>
+                                    <li>bytes – manager bibliotek dla Hacker Lang.</li>
+                                </ul>
+                                <img src="hacker-lang-screenshot.png" alt="Hacker Lang Screenshot">
+                            </div>
+                            <div id="hacker-script" class="lang-tab-pane">
+                                <h3>Język programowania HackerScript</h3>
+                                <p>Przykładowa składnia:</p>
+                                <ol>
+                                    <li>Struktura i Importy
+                                        <ul>
+                                            <li>Dyrektywy: --- automatic --- (domyślne zarządzanie pamięcią) lub --- manual ---.</li>
+                                            <li>Importy: import <c:stdio> (biblioteki systemowe C).</li>
+                                            <li>import <virus:nmap> (lokalne moduły .hcs).</li>
+                                        </ul>
+                                    </li>
+                                    <li>Zmienne i Typy
+                                        <ul>
+                                            <li>Typowanie: Dynamiczne/Inferred (kompilator sam zgaduje typy: int, char*, Array, struct).</li>
+                                            <li>Literały: tekst = "Hacker" (Stringi).</li>
+                                            <li>liczba = 100 (Integery).</li>
+                                            <li>lista = ["a", "b"] (Tablice).</li>
+                                            <li>Interpolacja: "Wartość: {zmienna}" (Automatyczne formatowanie tekstu).</li>
+                                        </ul>
+                                    </li>
+                                    <li>Programowanie Obiektowe (OOP)
+                                        <ul>
+                                            <li>Klasy: Definiowane za pomocą class Nazwa [ ... ].</li>
+                                            <li>Metody: Pierwszy parametr to zawsze self.</li>
+                                            <li>Tworzenie obiektów: obj = new Klasa().</li>
+                                            <li>Dostęp do pól: self.pole = wartość (Działa jak struktury w C).</li>
+                                        </ul>
+                                    </li>
+                                    <li>Kontrola Przepływu
+                                        <ul>
+                                            <li>Bloki kodu: Zawsze w nawiasach kwadratowych [...].</li>
+                                            <li>Instrukcje warunkowe: if expr [...] else if expr [...] else [...].</li>
+                                            <li>Pętle: for element in kolekcja [...] (Iteracja po tablicach).</li>
+                                        </ul>
+                                    </li>
+                                    <li>Funkcje i System
+                                        <ul>
+                                            <li>Definicja: func nazwa(paramy) [ return wartość ].</li>
+                                            <li>Funkcja Main: func main(args) [...] – punkt startowy programu.</li>
+                                            <li>Wbudowane:</li>
+                                            <li>log "msg" – Wypisywanie do konsoli.</li>
+                                            <li>curl_get(url) – Żądania HTTP.</li>
+                                            <li>allocate(size) / deallocate(ptr) – Zarządzanie pamięcią.</li>
+                                        </ul>
+                                    </li>
+                                </ol>
+                                <p>Narzędzia/komendy:</p>
+                                <ul>
+                                    <li>virus – kompiluj programy napisane w .hcs do binarki (wszystkie narzędzia HackerScript możesz zainstalować za pomocą hacker unpack hackerscript).</li>
+                                </ul>
+                                <p>Jakie repozytoria bibliotek obsługuje HackerScript:</p>
+                                <ul>
+                                    <li>virus – zamknięte repo, zwykły użytkownik nie może dawać tu własnych bibliotek, jest to repo zarządzane przez wybranych ludzi.</li>
+                                    <li>vira – otwarte repo, każdy użytkownik może tu dawać biblioteki.</li>
+                                    <li>HackerScript obsługuje również biblioteki C i C++.</li>
+                                </ul>
+                                <p>Jakie pliki posiada HackerOS – do konfiguracji projektu używaj pliku Virus.hcs, gdzie znajdę kod źródłowy HackerScript w /cmd, jaki format plików ma HackerScript? Posiada .hcs, co oznacza ten skrót? Hacker C Script.</p>
+                                <img src="hackerscript-screenshot.png" alt="HackerScript Screenshot">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="hacker-kernel" class="tab-pane">
+                    <h2>Hacker Kernel</h2>
+                    <p>Chcesz rozwijać jądro Hacker Kernel? Zgłoś się na e-mail: hackeros068@gmail.com lub na <a href="https://github.com/HackerOS-Linux-System/HackerOS-Website/issues">issues</a> lub <a href="https://github.com/HackerOS-Linux-System/HackerOS-Website/discussions">discussions</a> (zgłoś się, jeżeli chcesz aktywnie rozwijać ten projekt).</p>
+                    <p>Czym jest Hacker Kernel? Jest to jądro wydajne, będzie posiadać optymalizacje do gier, będzie jądrem LTS stabilnym ze stabilnymi aktualizacjami. Wsparcie dla wszystkich procesorów amd64 i wszystkich GPU.</p>
                 </div>
             </div>
         </div>
-    </section>
-    <section class="hacker-kernel-section">
-        <h2>Hacker Kernel</h2>
-        <p>Chcesz rozwijać jądro hacker kernel? Zgłoś się na gmail hackeros068@gmail.com lub na <a href="https://github.com/HackerOS-Linux-System/HackerOS-Website/issues">issues</a> lub <a href="https://github.com/HackerOS-Linux-System/HackerOS-Website/discussions">discussions</a> (zgłoś się jeżeli chcesz aktywnie rozwijać ten projekt)</p>
-        <p>Czym jest Hacker Kernel? Jest to jądro wydajne, będzie posiadać optymalizacje do gier, będzie jądrem LTS stabilnym ze stabilnymi aktualizacjami. Wsparcie dla wszystkich procesorów amd64 i wszystkich GPU.</p>
     </section>
     <footer>
         <p>&copy; 2025 HackerOS. Wszelkie prawa zastrzeżone.</p>
