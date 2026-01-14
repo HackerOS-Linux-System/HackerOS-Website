@@ -92,20 +92,31 @@
             color: #B0B0B0;
             margin-bottom: 20px;
         }
-        .commands-section ul {
-            list-style: none;
-            padding: 15px;
-            border-radius: 5px;
+        .commands-section {
+            width: 100%;
+            margin: 20px auto;
+            border-collapse: collapse;
             text-align: left;
+            background-color: #1A1A1A;
+            border-radius: 8px;
+            overflow: hidden;
         }
-        .commands-section li {
+        .commands-section th {
+            background-color: #2F3A44;
+            padding: 12px;
+            font-size: 18px;
+            color: #FFFFFF;
+            border-bottom: 2px solid #B0B0B0;
+        }
+        .commands-section td {
+            padding: 12px;
             font-size: 16px;
             color: #B0B0B0;
-            margin: 10px 0;
+            border-bottom: 1px solid #2F3A44;
             font-family: 'Courier New', Courier, monospace;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        }
+        .commands-section tr:hover {
+            background-color: #2F3A44;
         }
         .copy-button {
             background-color: #B0B0B0;
@@ -377,7 +388,7 @@
             const copyButtons = document.querySelectorAll('.copy-button');
             copyButtons.forEach(button => {
                 button.addEventListener('click', () => {
-                    const commandText = button.previousElementSibling.textContent;
+                    const commandText = button.getAttribute('data-command');
                     navigator.clipboard.writeText(commandText).then(() => {
                         alert('Command copied to clipboard!');
                     });
@@ -446,25 +457,102 @@
                 </div>
                 <div id="commands" class="tab-pane">
                     <h2>Komendy HackerOS</h2>
-                    <ul class="commands-section">
-                        <li><span>hacker update</span> <button class="copy-button">Kopiuj</button> (aktualizuje snapa, apt, flatpaka, firmware) – narzędzie napisane w Go.</li>
-                        <li><span>hacker</span> <button class="copy-button">Kopiuj</button> (manager pakietów – możesz go używać zamiast apt).</li>
-                        <li><span>hacker unpack</span> <button class="copy-button">Kopiuj</button> (instaluje narzędzia do gier, cyberbezpieczeństwa i inne polecane narzędzia przez HackerOS).</li>
-                        <li><span>hacker unpack cybersecurity</span> <button class="copy-button">Kopiuj</button> (instaluje narzędzia do cyberbezpieczeństwa).</li>
-                        <li><span>hacker unpack gaming</span> <button class="copy-button">Kopiuj</button> (instaluje narzędzia do gier).</li>
-                        <li><span>hacker unpack gaming noroblox</span> <button class="copy-button">Kopiuj</button> (instaluje narzędzia do gier bez Roblox).</li>
-                        <li><span>hacker unpack emulators</span> <button class="copy-button">Kopiuj</button> (instaluje emulatory).</li>
-                        <li><span>hacker syslog</span> <button class="copy-button">Kopiuj</button> (pokazuje logi systemowe).</li>
-                        <li><span>hacker help</span> <button class="copy-button">Kopiuj</button> (pokazuje listę komend).</li>
-                        <li><span>hacker help-ui</span> <button class="copy-button">Kopiuj</button> (pokazuje listę komend w ładnym UI).</li>
-                        <li><span>hacker unpack devtools</span> <button class="copy-button">Kopiuj</button> (instaluje narzędzia do programowania).</li>
-                        <li><span>hacker unpack add-ons</span> <button class="copy-button">Kopiuj</button> (instaluje dodatki polecane przez HackerOS).</li>
-                        <li><span>hacker unpack gs</span> <button class="copy-button">Kopiuj</button> (instaluje narzędzia do gier i cyberbezpieczeństwa).</li>
-                        <li><span>hacker unpack xanmod</span> <button class="copy-button">Kopiuj</button> (instaluje jądro XanMod).</li>
-                        <li><span>hacker unpack liquorix</span> <button class="copy-button">Kopiuj</button> (instaluje jądro Liquorix).</li>
-                        <li><span>remove-current-kernel</span> <button class="copy-button">Kopiuj</button> (usuwa aktualne jądro – po uruchomieniu komendy hacker unpack xanmod/liquorix użyj tej komendy. Więcej o instalacji customowych jąder dowiesz się na HackerOS Documentation).</li>
-                        <li><span>hlh</span> <button class="copy-button">Kopiuj</button> (poznaj narzędzia CLI dla Hacker Lang).</li>
-                    </ul>
+                    <table class="commands-section">
+                        <thead>
+                            <tr>
+                                <th>Komenda</th>
+                                <th>Opis</th>
+                                <th>Akcja</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>hacker update</td>
+                                <td>Aktualizuje snapa, apt, flatpaka, firmware – narzędzie napisane w Go.</td>
+                                <td><button class="copy-button" data-command="hacker update">Kopiuj</button></td>
+                            </tr>
+                            <tr>
+                                <td>hacker</td>
+                                <td>Manager pakietów – możesz go używać zamiast apt.</td>
+                                <td><button class="copy-button" data-command="hacker">Kopiuj</button></td>
+                            </tr>
+                            <tr>
+                                <td>hacker unpack</td>
+                                <td>Instaluje narzędzia do gier, cyberbezpieczeństwa i inne polecane narzędzia przez HackerOS.</td>
+                                <td><button class="copy-button" data-command="hacker unpack">Kopiuj</button></td>
+                            </tr>
+                            <tr>
+                                <td>hacker unpack cybersecurity</td>
+                                <td>Instaluje narzędzia do cyberbezpieczeństwa.</td>
+                                <td><button class="copy-button" data-command="hacker unpack cybersecurity">Kopiuj</button></td>
+                            </tr>
+                            <tr>
+                                <td>hacker unpack gaming</td>
+                                <td>Instaluje narzędzia do gier.</td>
+                                <td><button class="copy-button" data-command="hacker unpack gaming">Kopiuj</button></td>
+                            </tr>
+                            <tr>
+                                <td>hacker unpack gaming noroblox</td>
+                                <td>Instaluje narzędzia do gier bez Roblox.</td>
+                                <td><button class="copy-button" data-command="hacker unpack gaming noroblox">Kopiuj</button></td>
+                            </tr>
+                            <tr>
+                                <td>hacker unpack emulators</td>
+                                <td>Instaluje emulatory.</td>
+                                <td><button class="copy-button" data-command="hacker unpack emulators">Kopiuj</button></td>
+                            </tr>
+                            <tr>
+                                <td>hacker syslog</td>
+                                <td>Pokazuje logi systemowe.</td>
+                                <td><button class="copy-button" data-command="hacker syslog">Kopiuj</button></td>
+                            </tr>
+                            <tr>
+                                <td>hacker help</td>
+                                <td>Pokazuje listę komend.</td>
+                                <td><button class="copy-button" data-command="hacker help">Kopiuj</button></td>
+                            </tr>
+                            <tr>
+                                <td>hacker help-ui</td>
+                                <td>Pokazuje listę komend w ładnym UI.</td>
+                                <td><button class="copy-button" data-command="hacker help-ui">Kopiuj</button></td>
+                            </tr>
+                            <tr>
+                                <td>hacker unpack devtools</td>
+                                <td>Instaluje narzędzia do programowania.</td>
+                                <td><button class="copy-button" data-command="hacker unpack devtools">Kopiuj</button></td>
+                            </tr>
+                            <tr>
+                                <td>hacker unpack add-ons</td>
+                                <td>Instaluje dodatki polecane przez HackerOS.</td>
+                                <td><button class="copy-button" data-command="hacker unpack add-ons">Kopiuj</button></td>
+                            </tr>
+                            <tr>
+                                <td>hacker unpack gs</td>
+                                <td>Instaluje narzędzia do gier i cyberbezpieczeństwa.</td>
+                                <td><button class="copy-button" data-command="hacker unpack gs">Kopiuj</button></td>
+                            </tr>
+                            <tr>
+                                <td>hacker unpack xanmod</td>
+                                <td>Instaluje jądro XanMod.</td>
+                                <td><button class="copy-button" data-command="hacker unpack xanmod">Kopiuj</button></td>
+                            </tr>
+                            <tr>
+                                <td>hacker unpack liquorix</td>
+                                <td>Instaluje jądro Liquorix.</td>
+                                <td><button class="copy-button" data-command="hacker unpack liquorix">Kopiuj</button></td>
+                            </tr>
+                            <tr>
+                                <td>remove-current-kernel</td>
+                                <td>Usuwa aktualne jądro – po uruchomieniu komendy hacker unpack xanmod/liquorix użyj tej komendy. Więcej o instalacji customowych jąder dowiesz się na HackerOS Documentation.</td>
+                                <td><button class="copy-button" data-command="remove-current-kernel">Kopiuj</button></td>
+                            </tr>
+                            <tr>
+                                <td>hlh</td>
+                                <td>Poznaj narzędzia CLI dla Hacker Lang.</td>
+                                <td><button class="copy-button" data-command="hlh">Kopiuj</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
                 <div id="hacker-mode" class="tab-pane">
                     <h2>Sesje HackerOS</h2>
