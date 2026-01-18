@@ -137,167 +137,181 @@
                 document.documentElement.lang = 'en';
                 document.querySelector('.releases-section h1').textContent = 'HackerOS Releases';
                 const releases = document.querySelectorAll('.release');
-                // V4.1 - najnowsze wydanie (releases[0])
-                releases[0].querySelector('h2').textContent = 'HackerOS V4.1';
-                releases[0].querySelector('p').textContent = 'New version with fixed bugs and new features.';
+                // V4.2 - najnowsze wydanie (releases[0])
+                releases[0].querySelector('h2').textContent = 'HackerOS V4.2';
+                releases[0].querySelector('p').textContent = 'New version with updated CLI tools and new features.';
                 releases[0].querySelectorAll('h3')[0].textContent = 'Release Dates:';
-                const v41dates = releases[0].querySelectorAll('ul')[0].querySelectorAll('li');
+                const v42dates = releases[0].querySelectorAll('ul')[0].querySelectorAll('li');
+                v42dates[0].textContent = 'HackerOS Official: 18.01.2026';
+                v42dates[1].textContent = 'HackerOS Cybersecurity: 18.01.2026';
+                releases[0].querySelectorAll('h3')[1].textContent = 'Changelog:';
+                const v42changes = releases[0].querySelectorAll('ul')[1].querySelectorAll('li');
+                v42changes[0].textContent = 'Updated CLI tools';
+                v42changes[1].textContent = 'Added new application HackerOS App';
+                v42changes[2].textContent = 'Fixed CLI tool named HackerOS-Steam';
+                v42changes[3].textContent = 'Added prerelease for atomic edition';
+                v42changes[4].textContent = 'Updated cybersecurity edition with new tools and better browser';
+                // V4.1 (releases[1])
+                releases[1].querySelector('h2').textContent = 'HackerOS V4.1';
+                releases[1].querySelector('p').textContent = 'New version with fixed bugs and new features.';
+                releases[1].querySelectorAll('h3')[0].textContent = 'Release Dates:';
+                const v41dates = releases[1].querySelectorAll('ul')[0].querySelectorAll('li');
                 v41dates[0].textContent = 'HackerOS Official: 26.12.2025';
                 v41dates[1].textContent = 'HackerOS Hydra: 26.12.2025';
                 v41dates[2].textContent = 'HackerOS Cybersecurity: 26.12.2026';
                 v41dates[3].textContent = 'HackerOS LTS: 26.12.2025';
-                releases[0].querySelectorAll('h3')[1].textContent = 'Changelog:';
-                const v41changes = releases[0].querySelectorAll('ul')[1].querySelectorAll('li');
+                releases[1].querySelectorAll('h3')[1].textContent = 'Changelog:';
+                const v41changes = releases[1].querySelectorAll('ul')[1].querySelectorAll('li');
                 v41changes[0].textContent = 'Fixed bugs with MOTD';
                 v41changes[1].textContent = 'Added new LTS edition';
                 v41changes[2].textContent = 'Updated Debian base to Debian Forky';
                 v41changes[3].textContent = 'Added updated tools';
-                // V4.0 (releases[1])
-                releases[1].querySelector('h2').textContent = 'HackerOS V4.0';
-                releases[1].querySelector('p').textContent = 'New major version with updated tools and applications.';
-                releases[1].querySelectorAll('h3')[0].textContent = 'Release Dates:';
-                const v40dates = releases[1].querySelectorAll('ul')[0].querySelectorAll('li');
+                // V4.0 (releases[2])
+                releases[2].querySelector('h2').textContent = 'HackerOS V4.0';
+                releases[2].querySelector('p').textContent = 'New major version with updated tools and applications.';
+                releases[2].querySelectorAll('h3')[0].textContent = 'Release Dates:';
+                const v40dates = releases[2].querySelectorAll('ul')[0].querySelectorAll('li');
                 v40dates[0].textContent = 'HackerOS Official: 8.12.2025';
                 v40dates[1].textContent = 'HackerOS Official Gnome: 12.12.2025';
                 v40dates[2].textContent = 'HackerOS Official Xfce: 12.12.2025';
                 v40dates[3].textContent = 'HackerOS Hydra: 8.12.2025';
                 v40dates[4].textContent = 'HackerOS Cybersecurity: 9.12.2025';
-                releases[1].querySelectorAll('h3')[1].textContent = 'Changelog:';
-                const v40changes = releases[1].querySelectorAll('ul')[1].querySelectorAll('li');
+                releases[2].querySelectorAll('h3')[1].textContent = 'Changelog:';
+                const v40changes = releases[2].querySelectorAll('ul')[1].querySelectorAll('li');
                 v40changes[0].textContent = 'Updated tools: hacker, hli, hackerc, bytes, hpm and applications';
                 v40changes[1].textContent = 'Added MOTD (Message of the Day)';
-                // V3.9 (releases[2])
-                releases[2].querySelector('h2').textContent = 'HackerOS V3.9';
-                releases[2].querySelector('p').textContent = 'New version with expanded tools.';
-                releases[2].querySelectorAll('h3')[0].textContent = 'Release Dates:';
-                const v39dates = releases[2].querySelectorAll('ul')[0].querySelectorAll('li');
+                // V3.9 (releases[3])
+                releases[3].querySelector('h2').textContent = 'HackerOS V3.9';
+                releases[3].querySelector('p').textContent = 'New version with expanded tools.';
+                releases[3].querySelectorAll('h3')[0].textContent = 'Release Dates:';
+                const v39dates = releases[3].querySelectorAll('ul')[0].querySelectorAll('li');
                 v39dates[0].textContent = 'HackerOS Official: 22.11.2025';
                 v39dates[1].textContent = 'HackerOS Hydra: 22.11.2025';
                 v39dates[2].textContent = 'HackerOS Cybersecurity: 23.11.2025';
-                releases[2].querySelectorAll('h3')[1].textContent = 'Changelog:';
-                const v39changes = releases[2].querySelectorAll('ul')[1].querySelectorAll('li');
+                releases[3].querySelectorAll('h3')[1].textContent = 'Changelog:';
+                const v39changes = releases[3].querySelectorAll('ul')[1].querySelectorAll('li');
                 v39changes[0].textContent = 'Updated base to the latest Debian.';
                 v39changes[1].textContent = 'Expanded scripts: unpack-xanmod and unpack-liquorix. Expanded hacker tool and updated update-system application.';
-                // V3.8 (releases[3])
-                releases[3].querySelector('h2').textContent = 'HackerOS V3.8';
-                releases[3].querySelector('p').textContent = 'New version with updated tools and fixed scripts.';
-                releases[3].querySelectorAll('h3')[0].textContent = 'Release Dates:';
-                const v38Lis = releases[3].querySelectorAll('ul')[0].querySelectorAll('li');
+                // V3.8 (releases[4])
+                releases[4].querySelector('h2').textContent = 'HackerOS V3.8';
+                releases[4].querySelector('p').textContent = 'New version with updated tools and fixed scripts.';
+                releases[4].querySelectorAll('h3')[0].textContent = 'Release Dates:';
+                const v38Lis = releases[4].querySelectorAll('ul')[0].querySelectorAll('li');
                 v38Lis[0].textContent = 'HackerOS Official: 16.11.2025';
                 v38Lis[1].textContent = 'HackerOS Hydra: 16.11.2025';
                 v38Lis[2].textContent = 'HackerOS Cybersecurity: 16.11.2025';
-                releases[3].querySelectorAll('h3')[1].textContent = 'Changelog:';
-                const v38Changes = releases[3].querySelectorAll('ul')[1].querySelectorAll('li');
+                releases[4].querySelectorAll('h3')[1].textContent = 'Changelog:';
+                const v38Changes = releases[4].querySelectorAll('ul')[1].querySelectorAll('li');
                 v38Changes[0].textContent = 'Updated tools - hacker, hackerc.';
                 v38Changes[1].textContent = 'Fixed scripts.';
-                // V3.7 (releases[4])
-                releases[4].querySelector('h2').textContent = 'HackerOS V3.7';
-                releases[4].querySelector('p').textContent = 'New version with fixed scripts and expanded hacker, hackerc tools.';
-                releases[4].querySelectorAll('h3')[0].textContent = 'Release Dates:';
-                const v37Lis = releases[4].querySelectorAll('ul')[0].querySelectorAll('li');
+                // V3.7 (releases[5])
+                releases[5].querySelector('h2').textContent = 'HackerOS V3.7';
+                releases[5].querySelector('p').textContent = 'New version with fixed scripts and expanded hacker, hackerc tools.';
+                releases[5].querySelectorAll('h3')[0].textContent = 'Release Dates:';
+                const v37Lis = releases[5].querySelectorAll('ul')[0].querySelectorAll('li');
                 v37Lis[0].textContent = 'HackerOS Official: 10.11.2025';
                 v37Lis[1].textContent = 'HackerOS Hydra: 10.11.2025';
                 v37Lis[2].textContent = 'HackerOS Cybersecurity: 10.11.2025';
-                releases[4].querySelectorAll('h3')[1].textContent = 'Changelog:';
-                const v37Changes = releases[4].querySelectorAll('ul')[1].querySelectorAll('li');
+                releases[5].querySelectorAll('h3')[1].textContent = 'Changelog:';
+                const v37Changes = releases[5].querySelectorAll('ul')[1].querySelectorAll('li');
                 v37Changes[0].textContent = 'Updated base to the latest Debian, added latest tools: HackerOS Welcome, hacker and tools for hacker programming language - hackerc';
                 v37Changes[1].textContent = 'Fixed scripts launching hacker mode';
-                // V3.6 (releases[5])
-                releases[5].querySelector('h2').textContent = 'HackerOS V3.6';
-                releases[5].querySelector('p').textContent = 'New version with fixed bugs and modifications.';
-                releases[5].querySelectorAll('h3')[0].textContent = 'Release Dates:';
-                const v36Lis = releases[5].querySelectorAll('ul')[0].querySelectorAll('li');
+                // V3.6 (releases[6])
+                releases[6].querySelector('h2').textContent = 'HackerOS V3.6';
+                releases[6].querySelector('p').textContent = 'New version with fixed bugs and modifications.';
+                releases[6].querySelectorAll('h3')[0].textContent = 'Release Dates:';
+                const v36Lis = releases[6].querySelectorAll('ul')[0].querySelectorAll('li');
                 v36Lis[0].textContent = 'HackerOS Official: 07.11.2025';
                 v36Lis[1].textContent = 'HackerOS Hydra: 07.11.2025';
                 v36Lis[2].textContent = 'HackerOS Cybersecurity: 07.11.2025';
-                releases[5].querySelectorAll('h3')[1].textContent = 'Changelog:';
-                const v36Changes = releases[5].querySelectorAll('ul')[1].querySelectorAll('li');
+                releases[6].querySelectorAll('h3')[1].textContent = 'Changelog:';
+                const v36Changes = releases[6].querySelectorAll('ul')[1].querySelectorAll('li');
                 v36Changes[0].textContent = 'Updated base to the latest Debian';
                 v36Changes[1].textContent = 'Fixed bugs in the hacker launcher application';
                 v36Changes[2].textContent = 'Fixed bugs in hacker mode';
                 v36Changes[3].textContent = 'Fixed/Expanded scripts';
-                // V3.5 (releases[6])
-                releases[6].querySelector('h2').textContent = 'HackerOS V3.5';
-                releases[6].querySelector('p').textContent = 'New version with updates to the base, added hacker lang programming language, and other improvements.';
-                releases[6].querySelectorAll('h3')[0].textContent = 'Release Dates:';
-                const v35Lis = releases[6].querySelectorAll('ul')[0].querySelectorAll('li');
+                // V3.5 (releases[7])
+                releases[7].querySelector('h2').textContent = 'HackerOS V3.5';
+                releases[7].querySelector('p').textContent = 'New version with updates to the base, added hacker lang programming language, and other improvements.';
+                releases[7].querySelectorAll('h3')[0].textContent = 'Release Dates:';
+                const v35Lis = releases[7].querySelectorAll('ul')[0].querySelectorAll('li');
                 v35Lis[0].textContent = 'HackerOS Official: 29.10.2025';
                 v35Lis[1].textContent = 'HackerOS Hydra: 29.10.2025';
                 v35Lis[2].textContent = 'HackerOS Cybersecurity: 29.10.2025';
-                releases[6].querySelectorAll('h3')[1].textContent = 'Changelog:';
-                const v35Changes = releases[6].querySelectorAll('ul')[1].querySelectorAll('li');
+                releases[7].querySelectorAll('h3')[1].textContent = 'Changelog:';
+                const v35Changes = releases[7].querySelectorAll('ul')[1].querySelectorAll('li');
                 v35Changes[0].textContent = 'Updated base to latest Debian';
                 v35Changes[1].textContent = 'Added programming language hacker lang';
                 v35Changes[2].textContent = 'Updated hacker mode to work only on x11 (hacker mode will work on both new and old GPUs)';
                 v35Changes[3].textContent = 'Updated permissions for files';
-                // V3.4 (releases[7])
-                releases[7].querySelector('h2').textContent = 'HackerOS V3.4';
-                releases[7].querySelector('p').textContent = 'Removed Nvidia edition, many changes.';
-                releases[7].querySelectorAll('h3')[0].textContent = 'Release Dates:';
-                const v34Lis = releases[7].querySelectorAll('ul')[0].querySelectorAll('li');
+                // V3.4 (releases[8])
+                releases[8].querySelector('h2').textContent = 'HackerOS V3.4';
+                releases[8].querySelector('p').textContent = 'Removed Nvidia edition, many changes.';
+                releases[8].querySelectorAll('h3')[0].textContent = 'Release Dates:';
+                const v34Lis = releases[8].querySelectorAll('ul')[0].querySelectorAll('li');
                 v34Lis[0].textContent = 'HackerOS Official: 24.10.2025';
                 v34Lis[1].textContent = 'HackerOS Hydra: 24.10.2025';
                 v34Lis[2].textContent = 'HackerOS Cybersecurity: 24.10.2025';
-                releases[7].querySelectorAll('h3')[1].textContent = 'Changelog:';
-                const v34Changes = releases[7].querySelectorAll('ul')[1].querySelectorAll('li');
+                releases[8].querySelectorAll('h3')[1].textContent = 'Changelog:';
+                const v34Changes = releases[8].querySelectorAll('ul')[1].querySelectorAll('li');
                 v34Changes[0].textContent = 'Removed hacker-update tool';
                 v34Changes[1].textContent = 'From now on, there will be no built-in xanmod kernel, install it and set as default using the command set-xanmod-default';
                 v34Changes[2].textContent = 'Expanded hacker tool';
                 v34Changes[3].textContent = 'Removed HackerOS games, added one application that launches all HackerOS games';
                 v34Changes[4].textContent = 'From now on, hacker mode will not be launched via gamescope but cage';
                 v34Changes[5].textContent = 'Added application inspired by ASUS Armoury Crate named HackerOS Game Mode';
-                // V3.3 (releases[8])
-                releases[8].querySelector('h2').textContent = 'HackerOS V3.3';
-                releases[8].querySelector('p').textContent = 'Added new Nvidia edition.';
-                releases[8].querySelectorAll('h3')[0].textContent = 'Release Dates:';
-                const v33Lis = releases[8].querySelectorAll('ul')[0].querySelectorAll('li');
+                // V3.3 (releases[9])
+                releases[9].querySelector('h2').textContent = 'HackerOS V3.3';
+                releases[9].querySelector('p').textContent = 'Added new Nvidia edition.';
+                releases[9].querySelectorAll('h3')[0].textContent = 'Release Dates:';
+                const v33Lis = releases[9].querySelectorAll('ul')[0].querySelectorAll('li');
                 v33Lis[0].textContent = 'HackerOS Official: 14.10.2025';
                 v33Lis[1].textContent = 'HackerOS Hydra: 14.10.2025';
                 v33Lis[2].textContent = 'HackerOS Cybersecurity: 14.10.2025';
                 v33Lis[3].textContent = 'HackerOS Nvidia: 14.10.2025';
-                releases[8].querySelectorAll('h3')[1].textContent = 'Changelog:';
-                const v33Changes = releases[8].querySelectorAll('ul')[1].querySelectorAll('li');
+                releases[9].querySelectorAll('h3')[1].textContent = 'Changelog:';
+                const v33Changes = releases[9].querySelectorAll('ul')[1].querySelectorAll('li');
                 v33Changes[0].textContent = 'Updated to the latest Debian base.';
                 v33Changes[1].textContent = 'Expanded Hacker Launcher, now ready to run games and .exe files.';
                 v33Changes[2].textContent = 'Fixed and rebuilt Hacker Mode.';
                 v33Changes[3].textContent = 'Updated scripts.';
-                // V3.2 (releases[9])
-                releases[9].querySelector('h2').textContent = 'HackerOS V3.2';
-                releases[9].querySelector('p').textContent = 'Added new Hydra edition and updated wallpapers.';
-                releases[9].querySelectorAll('h3')[0].textContent = 'Release Dates:';
-                const v32Lis = releases[9].querySelectorAll('ul')[0].querySelectorAll('li');
+                // V3.2 (releases[10])
+                releases[10].querySelector('h2').textContent = 'HackerOS V3.2';
+                releases[10].querySelector('p').textContent = 'Added new Hydra edition and updated wallpapers.';
+                releases[10].querySelectorAll('h3')[0].textContent = 'Release Dates:';
+                const v32Lis = releases[10].querySelectorAll('ul')[0].querySelectorAll('li');
                 v32Lis[0].textContent = 'HackerOS Official: 29.09.2025';
                 v32Lis[1].textContent = 'HackerOS Hydra: 29.09.2025';
                 v32Lis[2].textContent = 'HackerOS Cybersecurity: 29.09.2025';
-                releases[9].querySelectorAll('h3')[1].textContent = 'Changelog:';
-                const v32Changes = releases[9].querySelectorAll('ul')[1].querySelectorAll('li');
+                releases[10].querySelectorAll('h3')[1].textContent = 'Changelog:';
+                const v32Changes = releases[10].querySelectorAll('ul')[1].querySelectorAll('li');
                 v32Changes[0].textContent = 'Updated to the latest Debian Testing.';
                 v32Changes[1].textContent = 'Updated wallpapers.';
                 v32Changes[2].textContent = 'Updated scripts.';
                 v32Changes[3].textContent = 'Fixed several bugs.';
-                // V3.1 (releases[10])
-                releases[10].querySelector('h2').textContent = 'HackerOS V3.1';
-                releases[10].querySelector('p').textContent = 'The latest version with many known bugs fixed from HackerOS V3.0.';
-                releases[10].querySelectorAll('h3')[0].textContent = 'Release Dates:';
-                const v31Lis = releases[10].querySelectorAll('ul')[0].querySelectorAll('li');
+                // V3.1 (releases[11])
+                releases[11].querySelector('h2').textContent = 'HackerOS V3.1';
+                releases[11].querySelector('p').textContent = 'The latest version with many known bugs fixed from HackerOS V3.0.';
+                releases[11].querySelectorAll('h3')[0].textContent = 'Release Dates:';
+                const v31Lis = releases[11].querySelectorAll('ul')[0].querySelectorAll('li');
                 v31Lis[0].textContent = 'HackerOS Official: 20.09.2025';
                 v31Lis[1].textContent = 'HackerOS Cybersecurity: 20.09.2025';
-                releases[10].querySelectorAll('h3')[1].textContent = 'Changelog:';
-                const v31Changes = releases[10].querySelectorAll('ul')[1].querySelectorAll('li');
+                releases[11].querySelectorAll('h3')[1].textContent = 'Changelog:';
+                const v31Changes = releases[11].querySelectorAll('ul')[1].querySelectorAll('li');
                 v31Changes[0].textContent = 'Updated to the latest Debian Testing.';
                 v31Changes[1].textContent = 'Fixed issues with wallpapers.';
                 v31Changes[2].textContent = 'Fixed kernel-related bugs.';
                 v31Changes[3].textContent = 'Added new game The Racer and new application HackerOS Welcome.';
-                // V3.0 (releases[11])
-                releases[11].querySelector('h2').textContent = 'HackerOS V3.0';
-                releases[11].querySelector('p').textContent = 'The latest major release with significant upgrades in performance, security, and compatibility.';
-                releases[11].querySelectorAll('h3')[0].textContent = 'Release Dates:';
-                const v3Lis = releases[11].querySelectorAll('ul')[0].querySelectorAll('li');
+                // V3.0 (releases[12])
+                releases[12].querySelector('h2').textContent = 'HackerOS V3.0';
+                releases[12].querySelector('p').textContent = 'The latest major release with significant upgrades in performance, security, and compatibility.';
+                releases[12].querySelectorAll('h3')[0].textContent = 'Release Dates:';
+                const v3Lis = releases[12].querySelectorAll('ul')[0].querySelectorAll('li');
                 v3Lis[0].textContent = 'HackerOS Official: 13.09.2025';
                 v3Lis[1].textContent = 'HackerOS Nvidia: 13.09.2025';
                 v3Lis[2].textContent = 'HackerOS Cybersecurity: 13.09.2025';
-                releases[11].querySelectorAll('h3')[1].textContent = 'Changelog:';
-                const v3Changes = releases[11].querySelectorAll('ul')[1].querySelectorAll('li');
+                releases[12].querySelectorAll('h3')[1].textContent = 'Changelog:';
+                const v3Changes = releases[12].querySelectorAll('ul')[1].querySelectorAll('li');
                 v3Changes[0].textContent = 'Upgraded to latest Debian Testing base.';
                 v3Changes[1].textContent = 'Improved Nvidia driver support for better gaming performance.';
                 v3Changes[2].textContent = 'Added advanced cybersecurity tools like enhanced firewalls and intrusion detection.';
@@ -325,7 +339,25 @@
     </header>
     <section class="releases-section">
         <h1>Wydania HackerOS</h1>
-        <!-- NAJNOWSZE WYDANIE V4.1 -->
+        <!-- NAJNOWSZE WYDANIE V4.2 -->
+        <div class="release">
+            <h2>HackerOS V4.2</h2>
+            <p>Nowa wersja z zaktualizowanymi narzędziami CLI i nowymi funkcjami.</p>
+            <h3>Data wydania:</h3>
+            <ul>
+                <li>HackerOS Official: 18.01.2026</li>
+                <li>HackerOS Cybersecurity: 18.01.2026</li>
+            </ul>
+            <h3>Changelog:</h3>
+            <ul>
+                <li>Zaktualizowano narzędzia CLI</li>
+                <li>Dodano nową aplikację HackerOS App</li>
+                <li>Naprawiono narzędzie CLI o nazwie HackerOS-Steam</li>
+                <li>Dodano prerelease dla edycji atomic</li>
+                <li>Zaktualizowano edycję cybersecurity o nowe narzędzia i lepszą przeglądarkę</li>
+            </ul>
+        </div>
+        <!-- V4.1 -->
         <div class="release">
             <h2>HackerOS V4.1</h2>
             <p>Nowa wersja z naprawionymi błędami i nowymi funkcjami.</p>
