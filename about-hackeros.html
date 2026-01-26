@@ -643,7 +643,7 @@
                         <div class="nested-tab-menu">
                             <ul>
                                 <li class="lang-tab-link active" data-tab="hacker-lang">Hacker Lang</li>
-                                <li class="lang-tab-link" data-tab="hacker-script">HackerScript</li>
+                                <li class="lang-tab-link" data-tab="h-sharp">H#</li>
                             </ul>
                         </div>
                         <div class="nested-tab-content">
@@ -703,88 +703,15 @@
                                 </ul>
                                 <img src="hacker-lang-screenshot.png" alt="Hacker Lang Screenshot">
                             </div>
-                            <div id="hacker-script" class="lang-tab-pane">
-                                <h3>Język programowania HackerScript</h3>
-                                <p>Przykładowa składnia:</p>
-                                <div class="emoji-header">Zarządzanie Pamięcią:</div>
+                            <div id="h-sharp" class="lang-tab-pane">
+                                <h3>Język programowania H#</h3>
+                                <p>Język programowania z unikalną składnią, jest to język programowania transpilowany lub interpretowany (zależnie od użytkownika).</p>
+                                <p>Narzędzia CLI H# (tutaj masz wszystkie funkcje H#):</p>
                                 <ul>
-                                    <li>--- automatic ---: (Domyślne) Pamięć zarządzana przez Python GC.</li>
-                                    <li>--- manual ---: Aktywuje dostęp do libc i bezpośrednią alokację (wymaga ctypes).</li>
+                                    <li>virus (pakowanie do pliku .par, odpalanie kodu za pomocą interpretera)</li>
                                 </ul>
-                                <div class="emoji-header">Importy Systemowe i Zewnętrzne:</div>
-                                <ul>
-                                    <li>import &lt;core:moduł&gt;: Standardowe biblioteki (np. import &lt;core:math&gt;).</li>
-                                    <li>import &lt;virus:pkg&gt; lub &lt;vira:pkg&gt;: Automatyczne pobieranie statycznych bibliotek .a przez narzędzie hspm.</li>
-                                    <li>&lt;rust:crate=wersja&gt;: Integracja z Cargo – kompilator automatycznie doda zależność do backendu Rust.</li>
-                                    <li>&lt;c:ścieżka&gt;: Dynamiczne ładowanie bibliotek współdzielonych (.so / .dll).</li>
-                                </ul>
-                                <div class="emoji-header">Modułowość:</div>
-                                <ul>
-                                    <li>require &lt;plik.hcs&gt;: Rekurencyjne włączanie kodu źródłowego (odpowiednik #include).</li>
-                                </ul>
-                                <div class="emoji-header">Zmienne, Typy i Super-obliczenia</div>
-                                <p>HackerScript 2026 stawia na wysoką wydajność obliczeniową:</p>
-                                <ul>
-                                    <li>Typowanie: Dynamiczne z silną inferencją (Inferred).</li>
-                                    <li>Struktury danych:</li>
-                                    <ul>
-                                        <li>tekst = "Hacker" (String)</li>
-                                        <li>liczba = 100 (Int)</li>
-                                        <li>lista = ["a", "b"] (Standardowa tablica)</li>
-                                    </ul>
-                                    <li>Obliczenia Macierzowe (Native Support):</li>
-                                    <ul>
-                                        <li>tensor / matrix / vector: Zmienne automatycznie konwertowane na obiekty NumPy.</li>
-                                        <li>zeros(shape) / ones(shape): Szybka inicjalizacja struktur.</li>
-                                        <li>dot: Operator mnożenia macierzowego (mapowany na @).</li>
-                                    </ul>
-                                    <li>Interpolacja: "V: {zmienna}" – automatyczne formatowanie f-string.</li>
-                                </ul>
-                                <div class="emoji-header">High-Performance Functions</div>
-                                <p>To unikalna cecha najnowszej wersji, widoczna w kompilatorze:</p>
-                                <ul>
-                                    <li>fast func nazwa(p) [...]: Funkcja dekorowana przez Numba (@njit). Jest kompilowana do kodu maszynowego przy pierwszym uruchomieniu, oferując prędkość zbliżoną do C.</li>
-                                    <li>func nazwa(p) [...]: Standardowa funkcja interpretowana.</li>
-                                    <li>Bloki kodu: Zawsze zamknięte w nawiasach kwadratowych [...].</li>
-                                </ul>
-                                <div class="emoji-header">Programowanie Obiektowe (OOP)</div>
-                                <p>HackerScript używa słowa kluczowego object zamiast tradycyjnego class:</p>
-                                <ul>
-                                    <li>Definicja: object Nazwa [ ... ]</li>
-                                    <li>Metody: Zawsze przyjmują self jako pierwszy parametr.</li>
-                                    <li>Inicjalizacja: obj = new Nazwa() (mapowane na standardowy konstruktor klasy).</li>
-                                </ul>
-                                <div class="emoji-header">Kontrola Przepływu i System</div>
-                                <ul>
-                                    <li>Warunki: if expr [...] else if expr [...] else [...].</li>
-                                    <li>Pętle: for element in kolekcja [...].</li>
-                                    <li>Obsługa Błędów: ] except Exception [...] (specyficzna składnia zamykająca blok i otwierająca handler).</li>
-                                    <li>Shell Integration:</li>
-                                    <ul>
-                                        <li>sh [ komenda ]: Bezpośrednie wywołanie systemowe.</li>
-                                        <li>Obsługuje zmienne: val_zmienna wewnątrz bloku sh jest automatycznie wstrzykiwane do powłoki.</li>
-                                    </ul>
-                                </ul>
-                                <div class="emoji-header">System Kompilacji (Backend)</div>
-                                <p>Twój kod jest procesowany przez star, który wykonuje następujące kroki:</p>
-                                <ol>
-                                    <li>Translation: Zamiana .hcs na zoptymalizowany kod Pythona (logic.py) z obsługą numba i numpy.</li>
-                                    <li>Rust Wrapping: Wygenerowanie kodu w Rust, który inicjalizuje maszynę wirtualną Pythona (PyO3).</li>
-                                    <li>Static Linking: Jeśli użyto import &lt;virus:...&gt;, kompilator generuje plik build.rs i linkuje biblioteki .a bezpośrednio do końcowej binarki.</li>
-                                    <li>Final Binary: Wynikiem jest pojedynczy, szybki plik wykonywalny, który nie wymaga zainstalowanego Pythona w systemie (dzięki izolowanemu venv wewnątrz cache).</li>
-                                </ol>
-                                <p>Narzędzia/komendy:</p>
-                                <ul>
-                                    <li>virus – kompiluj programy napisane w .hcs do binarki (wszystkie narzędzia HackerScript możesz zainstalować za pomocą hacker unpack hackerscript).</li>
-                                </ul>
-                                <p>Jakie repozytoria bibliotek obsługuje HackerScript:</p>
-                                <ul>
-                                    <li>virus – zamknięte repo, zwykły użytkownik nie może dawać tu własnych bibliotek, jest to repo zarządzane przez wybranych ludzi.</li>
-                                    <li>vira – otwarte repo, każdy użytkownik może tu dawać biblioteki.</li>
-                                    <li>HackerScript obsługuje również biblioteki C i C++.</li>
-                                </ul>
-                                <p>Jakie pliki posiada HackerOS – do konfiguracji projektu używaj pliku Virus.hcs, gdzie znajdę kod źródłowy HackerScript w /cmd, jaki format plików ma HackerScript? Posiada .hcs, co oznacza ten skrót? Hacker C Script.</p>
-                                <img src="hackerscript-screenshot.png" alt="HackerScript Screenshot">
+                                <p>Więcej informacji znajdziesz na stronie: <a href="https://virus-repository.github.io/website/" target="_blank">https://virus-repository.github.io/website/</a></p>
+                                <img src="h-sharp-screenshot.png" alt="H# Screenshot">
                             </div>
                         </div>
                     </div>
