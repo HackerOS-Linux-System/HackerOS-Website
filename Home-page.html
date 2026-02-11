@@ -175,21 +175,60 @@
             gap: 20px;
             margin-bottom: 10px;
         }
+        .cursor {
+            animation: blink 0.7s infinite;
+        }
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0; }
+            100% { opacity: 1; }
+        }
     </style>
     <script>
-        // Language detection
         document.addEventListener('DOMContentLoaded', () => {
             const userLang = navigator.language || navigator.userLanguage;
+            let words;
             if (userLang.startsWith('pl')) {
                 document.documentElement.lang = 'pl';
-                // Polish content (already set)
+                document.getElementById('title').textContent = 'Witaj w HackerOS.';
+                document.getElementById('prefix').textContent = 'Dystrybucja Linuksa dla: ';
+                words = ['graczy', 'specjalistów ds. cyberbezpieczeństwa', 'hackerów', 'zwykłych użytkowników', 'deweloperów', 'użytkowników ceniących stabilność'];
+                document.querySelector('footer p').textContent = '© 2026 HackerOS. Wszelkie prawa zastrzeżone.';
             } else {
                 document.documentElement.lang = 'en';
-                // Switch to English
-                document.querySelector('.hero-content h1').textContent = 'Welcome to HackerOS';
-                document.querySelector('.hero-content p').textContent = 'A powerful, Debian-based operating system designed for enthusiasts and professionals.';
-                document.querySelector('footer p').textContent = '© 2025 HackerOS. All rights reserved.';
+                document.getElementById('title').textContent = 'Welcome to HackerOS';
+                document.getElementById('prefix').textContent = 'Linux distro for: ';
+                words = ['gamers', 'cybersecurity specialists', 'hackers', 'normal users', 'developers', 'stability users'];
+                document.querySelector('footer p').textContent = '© 2026 HackerOS. All rights reserved.';
             }
+
+            let i = 0;
+            let timer;
+            const typingElement = document.getElementById('typing');
+            function typeWord(word) {
+                let j = 0;
+                timer = setInterval(() => {
+                    if (j < word.length) {
+                        typingElement.textContent += word.charAt(j);
+                        j++;
+                    } else {
+                        clearInterval(timer);
+                        setTimeout(deleteWord, 2000);
+                    }
+                }, 100);
+            }
+            function deleteWord() {
+                timer = setInterval(() => {
+                    if (typingElement.textContent.length > 0) {
+                        typingElement.textContent = typingElement.textContent.slice(0, -1);
+                    } else {
+                        clearInterval(timer);
+                        i = (i + 1) % words.length;
+                        setTimeout(() => typeWord(words[i]), 500);
+                    }
+                }, 50);
+            }
+            typeWord(words[0]);
         });
     </script>
 </head>
@@ -243,8 +282,8 @@
     </header>
     <section class="hero">
         <div class="hero-content">
-            <h1>Witaj w HackerOS.</h1>
-            <p>Potężny system operacyjny oparty na Debianie, zaprojektowany dla entuzjastów od cyberbezpiecznestwa, zwykłych użytkowników oraz graczy.</p>
+            <h1 id="title">Witaj w HackerOS.</h1>
+            <p><span id="prefix">Dystrybucja Linuksa dla: </span><span id="typing"></span><span class="cursor">|</span></p>
             <a href="download.html" class="btn">Pobierz Teraz</a>
         </div>
     </section>
