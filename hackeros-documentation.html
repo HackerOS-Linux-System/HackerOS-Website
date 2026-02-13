@@ -341,10 +341,12 @@
                 tabPanes[0].querySelectorAll('ul')[1].innerHTML = '<li>accessibility (easy installers and GUI),</li><li>performance (custom kernel — e.g., XanMod and pre-installed firmware options),</li><li>user security and privacy.</li>';
                 tabPanes[0].querySelectorAll('h3')[1].textContent = 'Goal';
                 tabPanes[0].querySelectorAll('p')[3].textContent = 'The goal of HackerOS is to provide a stable environment ready for work and entertainment:';
-                tabPanes[0].querySelectorAll('ul')[2].innerHTML = '<li>stability — Debian testing base with additional tests and component stabilization,</li><li>performance — optional XanMod kernel and optimized firmware,</li><li>simplicity of updates — update the entire system with one command (<code>hacker update</code>),</li><li>customization — easy personalization and integration of tools for pentesters and gamers.</li>';
+                tabPanes[0].querySelectorAll('ul')[2].innerHTML = '<li>stability — Debian testing base,</li><li>simplicity of updates — update the entire system with one command (<code>hacker update</code>),</li><li>customization — easy personalization and integration of tools for pentesters and gamers.</li>';
                 tabPanes[0].querySelectorAll('h3')[2].textContent = 'Atomic Edition';
                 tabPanes[0].querySelectorAll('p')[4].textContent = 'HackerOS has a special edition called Atomic Edition, which includes additional CLI tools for advanced system management. Additionally, HackerOS in every edition has the ext4 file system, but this one edition has the btrfs file system.';
                 tabPanes[0].querySelectorAll('ul')[3].innerHTML = '<li><strong>hammer</strong>: The main role of this tool is to update the system (in snapshots). You can also install packages/applications in a snapshot using --install or --remove.</li><li><strong>isolator</strong>: Install packages from a special repository (a special list of applications from specific distributions, etc.). The isolator tool is used to install CLI and GUI tools.</li>';
+                tabPanes[0].querySelectorAll('h3')[3].textContent = 'Hacker Lang';
+                tabPanes[0].querySelectorAll('p')[5].innerHTML = 'HackerOS has its own programming language called Hacker Lang. You can write simple scripts in it. Hacker Lang is an interpreted programming language - you can run scripts in efficient JIT, or compiled - compile .hl scripts to binaries via LLVM. More about Hacker Lang can be found in the <a href="https://hackeros-linux-system.github.io/HackerOS-Website/about-hackeros.html">About HackerOS page</a> in the Hacker Lang section.';
                 tabPanes[1].querySelector('h2').textContent = '2. Hardware Requirements';
                 tabPanes[1].querySelectorAll('h3')[0].textContent = 'Minimum';
                 tabPanes[1].querySelectorAll('ul')[0].innerHTML = '<li>Processor: 2 cores, 1.6 GHz (x86_64 / ARMv8)</li><li>RAM: 2 GB</li><li>Disk: 20 GB free space</li><li>Graphics: integrated, support for 1024×768 resolution</li><li>Network: Ethernet/Wi-Fi network card</li>';
@@ -376,7 +378,7 @@
                 tabPanes[3].querySelectorAll('ol')[0].innerHTML = '<li>Use the command: <code>sudo hacker unpack xanmod</code> (or for Liquorix: <code>sudo hacker unpack liquorix</code>)</li><li>Then remove the current kernel (important that it is the Debian kernel): <code>sudo remove-current-kernel</code></li><li>In the APT graphical interface, select [OK], then [NO].</li><li>Restart the computer.</li>';
                 tabPanes[3].querySelectorAll('p')[4].textContent = 'Do special kernels give a big difference in performance in games? They are usually small differences.';
                 tabPanes[3].querySelectorAll('h3')[3].textContent = 'Network Configuration and Basic Settings';
-                tabPanes[3].querySelectorAll('ul')[3].innerHTML = '<li>GUI: Settings → Network</li><li>CLI: nmcli, ip, ifconfig (if available)</li><li>List of commands and ready scripts for customization:</li>';
+                tabPanes[3].querySelectorAll('ul')[3].innerHTML = '<li>GUI: Settings → Network</li><li>CLI: nmcli, ip, ifconfig (if available)</li><li>List of commands and ready scripts for customization:</li><li><a href="https://hackeros-linux-system.github.io/HackerOS-Website/about-hackeros.html">About HackerOS page</a></li>';
                 tabPanes[3].querySelectorAll('h3')[4].textContent = 'Atomic Edition Tools';
                 tabPanes[3].querySelectorAll('p')[5].textContent = 'In the Atomic Edition, additional CLI tools are available for system management:';
                 tabPanes[3].querySelectorAll('ul')[4].innerHTML = '<li><strong>hammer</strong>: Used primarily for updating the system in snapshots. You can also install or remove packages/applications in a snapshot using --install or --remove flags.</li><li><strong>isolator</strong>: Allows installing packages from a special repository, which includes a curated list of applications from various distributions. It supports installation of both CLI and GUI tools.</li>';
@@ -468,8 +470,7 @@
                     <h3>Cel</h3>
                     <p>Celem HackerOS jest dostarczyć stabilne środowisko gotowe do pracy i rozrywki:</p>
                     <ul>
-                        <li><strong>stabilność</strong> — baza Debian testing z dodatkowymi testami i stabilizacją komponentów,</li>
-                        <li><strong>wydajność</strong> — opcjonalne jądro XanMod oraz zoptymalizowane firmware,</li>
+                        <li><strong>stabilność</strong> — baza Debian testing,</li>
                         <li><strong>prostota aktualizacji</strong> — jedną komendą zaktualizuj caly system (<code>hacker update</code>),</li>
                         <li><strong>dostosowanie</strong> — łatwa personalizacja i integracja narzędzi dla pentesterów i graczy.</li>
                     </ul>
@@ -479,6 +480,8 @@
                         <li><strong>hammer</strong>: Główna rola narzędzia to aktualizacja systemu (w snapshotach). Możesz także instalować pakiety/aplikacje w snapshocie za pomocą --install lub --remove.</li>
                         <li><strong>isolator</strong>: Instaluj pakiety ze specjalnego repozytorium (specjalna lista aplikacji z różnych dystrybucji itd.). Narzędzie isolator służy do instalowania narzędzi CLI oraz GUI.</li>
                     </ul>
+                    <h3>Hacker Lang</h3>
+                    <p>HackerOS posiada własny język programowania o nazwie Hacker Lang. Możesz pisać w nim proste skrypty. Hacker Lang jest językiem programowania interpretowanym – możesz uruchamiać skrypty w wydajnym JIT, lub kompilowanym – kompiluj skrypty .hl do binarek poprzez LLVM. Więcej o Hacker Lang dowiesz się na <a href="https://hackeros-linux-system.github.io/HackerOS-Website/about-hackeros.html">stronie About HackerOS</a> w sekcji Hacker Lang.</p>
                 </div>
                 <div id="hardware" class="tab-pane">
                     <h2>2. Wymagania sprzętowe</h2>
@@ -571,7 +574,7 @@ hacker update</span> <button class="copy-button">Kopiuj</button></pre>
                         <li><strong>GUI:</strong> Ustawienia → Sieć</li>
                         <li><strong>CLI:</strong> <code>nmcli</code>, <code>ip</code>, <code>ifconfig</code> (jeśli dostępne)</li>
                         <li>Lista komend i gotowych skryptów do customizacji:</li>
-                        <li><a href="https://hackeros-linux-system.github.io/HackerOS-Website/about-hackeros.html">https://hackeros-linux-system.github.io/HackerOS-Website/about-hackeros.html</a></li>
+                        <li><a href="https://hackeros-linux-system.github.io/HackerOS-Website/about-hackeros.html">Strona About HackerOS</a></li>
                     </ul>
                     <h3>Narzędzia w edycji Atomic</h3>
                     <p>W edycji Atomic dostępne są dodatkowe narzędzia CLI do zarządzania systemem:</p>
