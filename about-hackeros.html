@@ -394,18 +394,24 @@
                     });
                 });
             });
-            // Tab switching logic
+            // Tab switching logic – z modyfikacją dla Hacker Lang
             const tabLinks = document.querySelectorAll('.tab-link');
             const tabPanes = document.querySelectorAll('.tab-pane');
             tabLinks.forEach(link => {
-                link.addEventListener('click', () => {
+                link.addEventListener('click', (event) => {
+                    // Jeśli kliknięto sekcję Hacker Lang → teleport do dokumentacji
+                    if (link.dataset.tab === 'programming-languages') {
+                        window.open('https://hackeros-linux-system.github.io/HackerOS-Website/hacker-lang/docs.html', '_blank');
+                        return; // nie przełączamy taba, tylko otwieramy docs
+                    }
+                    // Normalne przełączanie tabów
                     tabLinks.forEach(l => l.classList.remove('active'));
                     link.classList.add('active');
                     tabPanes.forEach(p => p.classList.remove('active'));
                     document.getElementById(link.dataset.tab).classList.add('active');
                 });
             });
-            // Nested tab switching for programming languages
+            // Nested tab switching for programming languages (pozostaje na wszelki wypadek)
             const langTabLinks = document.querySelectorAll('#programming-languages .lang-tab-link');
             const langTabPanes = document.querySelectorAll('#programming-languages .lang-tab-pane');
             langTabLinks.forEach(link => {
@@ -541,7 +547,8 @@
                                 <td>Instaluje jądro Liquorix.</td>
                                 <td><button class="copy-button" data-command="hacker unpack liquorix">Kopiuj</button></td>
                             </tr>
-                            <td>hacker unpack hacker-mode</td>
+                            <tr>
+                                <td>hacker unpack hacker-mode</td>
                                 <td>Zainstaluj Hacker Mode.</td>
                                 <td><button class="copy-button" data-command="hacker unpack hacker-mode">Kopiuj</button></td>
                             </tr>
