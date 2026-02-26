@@ -1,1 +1,1585 @@
-
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hacker Lang — Dokumentacja</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,600;0,800;1,400&family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c10;
+    --bg2: #0f1218;
+    --bg3: #141820;
+    --panel: #1a1f2e;
+    --border: #2a3040;
+    --border2: #3a4560;
+    --green: #ffffff;
+    --green2: #cccccc;
+    --cyan: #00e5ff;
+    --purple: #b060ff;
+    --yellow: #ffcc00;
+    --red: #ff4466;
+    --orange: #ff8844;
+    --text: #c8d4e8;
+    --text2: #7a8aaa;
+    --text3: #4a5a7a;
+    --white: #e8f0ff;
+    --code-bg: #0d1017;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+  /* ─── SCANLINE OVERLAY ─── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.04) 2px,
+      rgba(0,0,0,0.04) 4px
+    );
+    pointer-events: none;
+    z-index: 9999;
+  }
+  /* ─── LAYOUT ─── */
+  .layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    min-height: 100vh;
+  }
+  /* ─── SIDEBAR ─── */
+  .sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .sidebar::-webkit-scrollbar { width: 4px; }
+  .sidebar::-webkit-scrollbar-track { background: transparent; }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+  .sidebar-logo {
+    padding: 28px 20px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .logo-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--green);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    opacity: 0.8;
+  }
+  .logo-name {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--white);
+    margin-top: 4px;
+    letter-spacing: -0.02em;
+  }
+  .logo-name span { color: var(--green); }
+  .logo-ver {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text3);
+    margin-top: 2px;
+  }
+  .nav-section {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-section-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text3);
+    padding: 10px 20px 4px;
+  }
+  .nav-link {
+    display: block;
+    padding: 7px 20px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--text2);
+    text-decoration: none;
+    transition: all 0.15s;
+    border-left: 2px solid transparent;
+    position: relative;
+  }
+  .nav-link:hover {
+    color: var(--white);
+    background: rgba(0,255,136,0.05);
+    border-left-color: var(--green);
+  }
+  .nav-link .nav-icon {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--green);
+    margin-right: 8px;
+    opacity: 0.7;
+  }
+  .sidebar-footer {
+    margin-top: auto;
+    padding: 16px 20px;
+    border-top: 1px solid var(--border);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text3);
+  }
+  /* ─── MAIN CONTENT ─── */
+  .main {
+    padding: 0;
+    max-width: 900px;
+  }
+  /* ─── HERO ─── */
+  .hero {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 60px 60px 50px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -100px; right: -100px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(0,255,136,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; left: 40%;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(0,229,255,0.04) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--white);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .hero-eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 30px; height: 1px;
+    background: var(--white);
+  }
+  .hero h1 {
+    font-size: clamp(36px, 5vw, 56px);
+    font-weight: 800;
+    color: var(--white);
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    margin-bottom: 20px;
+  }
+  .hero h1 .hl { color: var(--green); }
+  .hero h1 .hl2 { color: var(--cyan); }
+  .hero-desc {
+    font-size: 17px;
+    color: var(--text2);
+    max-width: 560px;
+    line-height: 1.7;
+    margin-bottom: 32px;
+  }
+  .badge-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 5px 12px;
+    border-radius: 4px;
+    border: 1px solid;
+    letter-spacing: 0.05em;
+  }
+  .badge-green { color: var(--green); border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.06); }
+  .badge-cyan { color: var(--cyan); border-color: rgba(0,229,255,0.3); background: rgba(0,229,255,0.06); }
+  .badge-purple{ color: var(--purple);border-color: rgba(176,96,255,0.3); background: rgba(176,96,255,0.06); }
+  /* ─── SECTIONS ─── */
+  .section {
+    padding: 50px 60px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section:last-child { border-bottom: none; }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 32px;
+  }
+  .section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text3);
+    min-width: 28px;
+  }
+  .section h2 {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--white);
+    letter-spacing: -0.02em;
+  }
+  .section h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--white);
+    margin: 28px 0 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section h3::before {
+    content: '';
+    display: inline-block;
+    width: 3px; height: 16px;
+    background: var(--green);
+    border-radius: 2px;
+  }
+  .section p {
+    color: var(--text2);
+    margin-bottom: 14px;
+    line-height: 1.75;
+    font-size: 15px;
+  }
+  .section p strong {
+    color: var(--white);
+    font-weight: 700;
+  }
+  /* ─── CODE BLOCKS ─── */
+  .code-block {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin: 16px 0;
+    overflow: hidden;
+  }
+  .code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+  }
+  .code-lang {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text3);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .code-dots {
+    display: flex;
+    gap: 6px;
+  }
+  .code-dots span {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+  }
+  .dot-r { background: rgba(255,68,102,0.6); }
+  .dot-y { background: rgba(255,204,0,0.6); }
+  .dot-g { background: rgba(0,255,136,0.6); }
+  .code-body {
+    padding: 20px;
+    overflow-x: auto;
+  }
+  .code-body pre {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13.5px;
+    line-height: 1.8;
+    color: var(--text);
+  }
+  /* Syntax highlighting */
+  .hl-comment { color: #4a5a6a; font-style: italic; }
+  .hl-keyword { color: var(--cyan); font-weight: 600; }
+  .hl-prefix { color: var(--green); font-weight: 700; }
+  .hl-string { color: var(--yellow); }
+  .hl-number { color: var(--purple); }
+  .hl-var { color: var(--orange); }
+  .hl-op { color: var(--red); }
+  .hl-func { color: #88aaff; }
+  .hl-lib { color: var(--purple); }
+  /* ─── COMMAND TABLE ─── */
+  .cmd-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 14px;
+  }
+  .cmd-table th {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text3);
+    padding: 10px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .cmd-table td {
+    padding: 11px 16px;
+    border-bottom: 1px solid rgba(42,48,64,0.5);
+    vertical-align: top;
+  }
+  .cmd-table tr:last-child td { border-bottom: none; }
+  .cmd-table tr:hover td {
+    background: rgba(0,255,136,0.025);
+  }
+  .cmd-syntax {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--green);
+    white-space: nowrap;
+  }
+  .cmd-desc {
+    color: var(--text2);
+    font-size: 13.5px;
+  }
+  .cmd-example {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text3);
+  }
+  /* ─── INLINE CODE ─── */
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.88em;
+    background: rgba(0,255,136,0.07);
+    color: var(--green);
+    padding: 1px 6px;
+    border-radius: 3px;
+    border: 1px solid rgba(0,255,136,0.15);
+  }
+  /* ─── CALLOUT BOXES ─── */
+  .callout {
+    display: flex;
+    gap: 14px;
+    padding: 16px 18px;
+    border-radius: 6px;
+    margin: 20px 0;
+    font-size: 14px;
+    line-height: 1.65;
+  }
+  .callout-icon {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    min-width: 24px;
+    padding-top: 1px;
+  }
+  .callout-body { color: var(--text2); }
+  .callout-body strong { color: var(--white); font-weight: 700; }
+  .callout-info {
+    background: rgba(0,229,255,0.06);
+    border: 1px solid rgba(0,229,255,0.2);
+  }
+  .callout-info .callout-icon { color: var(--cyan); }
+  .callout-warn {
+    background: rgba(255,204,0,0.06);
+    border: 1px solid rgba(255,204,0,0.2);
+  }
+  .callout-warn .callout-icon { color: var(--yellow); }
+  .callout-danger {
+    background: rgba(255,68,102,0.06);
+    border: 1px solid rgba(255,68,102,0.2);
+  }
+  .callout-danger .callout-icon { color: var(--red); }
+  .callout-tip {
+    background: rgba(0,255,136,0.05);
+    border: 1px solid rgba(0,255,136,0.2);
+  }
+  .callout-tip .callout-icon { color: var(--green); }
+  /* ─── GRID ─── */
+  .grid2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 16px 0;
+  }
+  .grid3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 16px 0;
+  }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px;
+    transition: border-color 0.2s;
+  }
+  .card:hover { border-color: var(--border2); }
+  .card-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--green);
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+  .card-body {
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.6;
+  }
+  /* ─── SYNTAX REFERENCE PILL ─── */
+  .pill {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin: 3px 2px;
+    border: 1px solid;
+  }
+  .pill-green { color: var(--green); border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.07); }
+  .pill-cyan { color: var(--cyan); border-color: rgba(0,229,255,0.3); background: rgba(0,229,255,0.07); }
+  .pill-purple { color: var(--purple); border-color: rgba(176,96,255,0.3); background: rgba(176,96,255,0.07); }
+  .pill-yellow { color: var(--yellow); border-color: rgba(255,204,0,0.3); background: rgba(255,204,0,0.07); }
+  .pill-red { color: var(--red); border-color: rgba(255,68,102,0.3); background: rgba(255,68,102,0.07); }
+  .pill-orange { color: var(--orange); border-color: rgba(255,136,68,0.3); background: rgba(255,136,68,0.07); }
+  /* ─── DIVIDER ─── */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, var(--green) 0%, transparent 60%);
+    margin: 28px 0;
+    opacity: 0.3;
+  }
+  /* ─── ANCHOR OFFSET ─── */
+  [id] { scroll-margin-top: 24px; }
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 768px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { position: static; height: auto; }
+    .hero, .section { padding: 32px 24px; }
+    .grid2, .grid3 { grid-template-columns: 1fr; }
+  }
+  /* ─── ANIMATIONS ─── */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .hero, .section {
+    animation: fadeIn 0.4s ease both;
+  }
+  /* Glow pulse on hero */
+  @keyframes glow-pulse {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.6; }
+  }
+  .hero::before { animation: glow-pulse 4s ease-in-out infinite; }
+</style>
+</head>
+<body>
+<div class="layout">
+  <!-- ═══════════════ SIDEBAR ═══════════════ -->
+  <nav class="sidebar">
+    <div style="padding: 10px 20px;">
+      <button onclick="window.location.href='https://github.com/HackerOS-Linux-System/Hacker-Lang'" style="background: var(--panel); border: 1px solid var(--border); padding: 8px 16px; border-radius: 4px; cursor: pointer;">Source</button>
+    </div>
+    <div class="sidebar-logo">
+      <div class="logo-tag">Dokumentacja</div>
+      <div class="logo-name">Hacker Lang</div>
+      <div class="logo-ver">Język programownia dystrybucji linuxa HackerOS.</div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Wprowadzenie</div>
+      <a class="nav-link" href="#intro"><span class="nav-icon">01</span>Czym jest hacker-lang?</a>
+      <a class="nav-link" href="#struktura"><span class="nav-icon">02</span>Struktura pliku</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Podstawy</div>
+      <a class="nav-link" href="#komentarze"><span class="nav-icon">//</span>Komentarze</a>
+      <a class="nav-link" href="#zmienne"><span class="nav-icon">@~</span>Zmienne</a>
+      <a class="nav-link" href="#komendy"><span class="nav-icon">&gt;</span>Komendy</a>
+      <a class="nav-link" href="#log"><span class="nav-icon">lg</span>Logowanie</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Sterowanie</div>
+      <a class="nav-link" href="#if"><span class="nav-icon">?</span>If / Elif / Else</a>
+      <a class="nav-link" href="#loop"><span class="nav-icon">=</span>Pętle (loop)</a>
+      <a class="nav-link" href="#while"><span class="nav-icon">wh</span>While</a>
+      <a class="nav-link" href="#for"><span class="nav-icon">for</span>For</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Organizacja kodu</div>
+      <a class="nav-link" href="#funkcje"><span class="nav-icon">:</span>Funkcje</a>
+      <a class="nav-link" href="#klasy"><span class="nav-icon">;;</span>Klasy</a>
+      <a class="nav-link" href="#try"><span class="nav-icon">try</span>Try / Catch</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Typy danych</div>
+      <a class="nav-link" href="#enum"><span class="nav-icon">==</span>Enum</a>
+      <a class="nav-link" href="#struct"><span class="nav-icon">st</span>Struct</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Zaawansowane</div>
+      <a class="nav-link" href="#libs"><span class="nav-icon">#</span>Biblioteki</a>
+      <a class="nav-link" href="#sysdep"><span class="nav-icon">//</span>Zależności systemowe</a>
+      <a class="nav-link" href="#plugins"><span class="nav-icon">\\</span>Pluginy</a>
+      <a class="nav-link" href="#extern"><span class="nav-icon">--</span>Extern</a>
+      <a class="nav-link" href="#sudo"><span class="nav-icon">^</span>Sudo</a>
+      <a class="nav-link" href="#lock"><span class="nav-icon">lk</span>Lock / Unlock</a>
+      <a class="nav-link" href="#rawblock"><span class="nav-icon">[]</span>Raw block</a>
+      <a class="nav-link" href="#bg"><span class="nav-icon">&amp;</span>Background</a>
+      <a class="nav-link" href="#import"><span class="nav-icon">&lt;&lt;</span>Import</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Przykłady</div>
+      <a class="nav-link" href="#example1"><span class="nav-icon">ex</span>Hello World</a>
+      <a class="nav-link" href="#example2"><span class="nav-icon">ex</span>Skrypt backupu</a>
+      <a class="nav-link" href="#example3"><span class="nav-icon">ex</span>Zaawansowany parser</a>
+      <a class="nav-link" href="#cheatsheet"><span class="nav-icon">★</span>Cheat Sheet</a>
+    </div>
+    <div class="sidebar-footer">
+      HackerOS · Hacker-Lang 2<br>
+      <a href="https://hackeros-linux-system.github.io/HackerOS-Website/hacker-lang/docs.html" style="color:var(--green);text-decoration:none;">hackeros/hacker-lang/docs</a>
+      <br><button onclick="window.location.href='https://hackeros-linux-system.github.io/HackerOS-Website/Home-page.html'" style="background: var(--panel); border: 1px solid var(--border); padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-top: 10px;">BACK</button>
+    </div>
+  </nav>
+  <!-- ═══════════════ MAIN ═══════════════ -->
+  <main class="main">
+    <!-- HERO -->
+    <div class="hero" id="intro">
+      <div class="hero-eyebrow">HackerOS · Język programownia dla HackerOS</div>
+      <h1>Hacker Lang<br>Dokumentacja</h1>
+      <p class="hero-desc">
+        Skryptowy język powłoki zaprojektowany pod HackerOS. Łączy czytelność shellscriptów z własną, minimalistyczną składnią. Przeznaczony do automatyzacji, narzędzi CLI i systemowych skryptów. Wspiera zaawansowane funkcje jak klasy, enumy i pluginy dla maksymalnej elastyczności.
+      </p>
+      <div class="badge-row">
+        <span class="badge badge-cyan">✓ Pluginy i biblioteki</span>
+        <span class="badge badge-purple">✓ Klasy i funkcje</span>
+        <span class="badge badge-yellow">✓ Bezpieczeństwo i izolacja</span>
+      </div>
+    </div>
+    <!-- STRUKTURA PLIKU -->
+    <div class="section" id="struktura">
+      <div class="section-header">
+        <span class="section-num">02</span>
+        <h2>Struktura pliku .hl</h2>
+      </div>
+      <p>Każdy plik hacker-lang ma rozszerzenie <code>.hl</code>. Interpreter przetwarza linie jedna po drugiej. Kolejność sekcji jest elastyczna, ale konwencjonalnie wygląda tak:</p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">hacker-lang · struktura.hl</span>
+          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        </div>
+        <div class="code-body"><pre><span class="hl-comment">! Zależności systemowe (opcjonalne)</span>
+<span class="hl-keyword">//</span> curl
+<span class="hl-keyword">//</span> jq
+<span class="hl-comment">! Biblioteki (opcjonalne)</span>
+<span class="hl-lib">#&lt;source/utils&gt;</span>
+<span class="hl-lib">#&lt;core/io:1.0&gt;</span>
+<span class="hl-comment">! Zmienne globalne</span>
+<span class="hl-var">@APP_NAME</span>=<span class="hl-string">"MójSkrypt"</span>
+<span class="hl-var">@VERSION</span>=<span class="hl-string">"1.0.0"</span>
+<span class="hl-comment">! Definicje funkcji</span>
+<span class="hl-prefix">:</span><span class="hl-func">powitaj</span> def
+  <span class="hl-prefix">log</span> <span class="hl-string">"Witaj w hacker-lang!"</span>
+done
+<span class="hl-comment">! Ciało główne (main)</span>
+<span class="hl-prefix">.</span><span class="hl-func">powitaj</span>
+<span class="hl-prefix">end</span> 0</pre></div>
+      </div>
+      <h3>Konwencje struktury</h3>
+      <p>Chociaż kolejność jest elastyczna, zaleca się umieszczanie zależności na górze, następnie zmiennych, definicji i ciała głównego na końcu. To ułatwia analizę statyczną PLSA.</p>
+      <div class="callout callout-info">
+        <div class="callout-icon">ℹ</div>
+        <div class="callout-body"><strong>Ważne:</strong> Puste linie są ignorowane. Każda niepusta linia to jedna instrukcja — hacker-lang nie używa średników ani nawiasów klamrowych jako separatorów bloków. Użyj komentarzy do organizacji kodu.</div>
+      </div>
+    </div>
+    <!-- KOMENTARZE -->
+    <div class="section" id="komentarze">
+      <div class="section-header">
+        <span class="section-num">03</span>
+        <h2>Komentarze</h2>
+      </div>
+      <p>Hacker-lang obsługuje dwa rodzaje komentarzy: liniowe i blokowe. Komentarze są ignorowane przez interpreter, ale analizowane przez PLSA do dokumentacji.</p>
+      <table class="cmd-table">
+        <tr>
+          <th>Składnia</th><th>Typ</th><th>Opis</th>
+        </tr>
+        <tr>
+          <td><span class="cmd-syntax">! tekst</span></td>
+          <td><span class="pill pill-cyan">liniowy</span></td>
+          <td class="cmd-desc">Komentarz jednolinijkowy — cała linia jest ignorowana</td>
+        </tr>
+        <tr>
+          <td><span class="cmd-syntax">!!</span></td>
+          <td><span class="pill pill-purple">blokowy</span></td>
+          <td class="cmd-desc">Przełącza tryb komentarza blokowego (otwiera/zamyka)</td>
+        </tr>
+      </table>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">komentarze.hl</span>
+          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        </div>
+        <div class="code-body"><pre><span class="hl-comment">! To jest komentarz liniowy</span>
+<span class="hl-var">@AUTOR</span>=<span class="hl-string">"Jan"</span> <span class="hl-comment">! komentarz w tej samej linii — NIEOBSŁUGIWANY (! musi być na początku)</span>
+<span class="hl-comment">!!</span>
+<span class="hl-comment">To jest blok komentarza.</span>
+<span class="hl-comment">Może zajmować wiele linii.</span>
+<span class="hl-comment">Żadna linia tutaj nie jest parsowana.</span>
+<span class="hl-comment">!!</span>
+<span class="hl-prefix">log</span> <span class="hl-string">"Ten kod jest wykonywalny"</span></pre></div>
+      </div>
+      <h3>Przykłady użycia komentarzy</h3>
+      <p>Komentarze blokowe są przydatne do wyłączania dużych fragmentów kodu podczas debugowania.</p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">debug.hl</span>
+          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        </div>
+        <div class="code-body"><pre><span class="hl-comment">!!</span>
+<span class="hl-comment">Ten kod jest tymczasowo wyłączony</span>
+<span class="hl-prefix">&gt;</span> rm -rf /tmp/test
+<span class="hl-comment">!!</span></pre></div>
+      </div>
+      <div class="callout callout-warn">
+        <div class="callout-icon">⚠</div>
+        <div class="callout-body"><strong>Uwaga:</strong> Komentarze liniowe (<code>!</code>) muszą być na początku linii (po trim). Nie można dodać komentarza na końcu linii z kodem. Użyj blokowych dla wieloliniowych wyjaśnień.</div>
+      </div>
+    </div>
+    <!-- ZMIENNE -->
+    <div class="section" id="zmienne">
+      <div class="section-header">
+        <span class="section-num">04</span>
+        <h2>Zmienne</h2>
+      </div>
+      <p>Hacker-lang rozróżnia dwa rodzaje zmiennych: <strong>globalne (env)</strong> oznaczone prefiksem <code>@</code> i <strong>lokalne</strong> bez prefiksu. Zmienne "surowe" (raw) oznaczamy prefiksem <code>~</code>. Zmienne mogą być blokowane dla bezpieczeństwa.</p>
+      <div class="grid2">
+        <div class="card">
+          <div class="card-title">@ — Zmienne globalne (env)</div>
+          <div class="card-body">Ustawiane jako zmienne środowiskowe. Dostępne przez cały program. Konwencja: WIELKIE_LITERY. Mogą być dziedziczone przez subshelle.</div>
+        </div>
+        <div class="card">
+          <div class="card-title">name= — Zmienne lokalne</div>
+          <div class="card-body">Zmienne lokalne funkcji lub głównego ciała. Nie są eksportowane do środowiska. Przydatne do tymczasowych obliczeń.</div>
+        </div>
+        <div class="card">
+          <div class="card-title">~ — Raw (bez podstawienia)</div>
+          <div class="card-body">Wartość jest przechowywana bez rozwijania <code>$(...)</code> — surowy tekst. Idealne do szablonów lub komend literalnych.</div>
+        </div>
+        <div class="card">
+          <div class="card-title">Odwołania do zmiennych</div>
+          <div class="card-body">Zmienne wbudowane shell: <code>$1</code>, <code>$VAR</code>, <code>$(cmd)</code> działają w wartościach lokalnych. Użyj <code>${VAR}</code> dla złożonych wyrażeń.</div>
+        </div>
+      </div>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">zmienne.hl</span>
+          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        </div>
+        <div class="code-body"><pre><span class="hl-comment">! Zmienne globalne (env)</span>
+<span class="hl-var">@HOME_DIR</span>=<span class="hl-string">"/home/user"</span>
+<span class="hl-var">@MAX_RETRY</span>=<span class="hl-number">3</span>
+<span class="hl-var">@APP</span>=<span class="hl-string">"backup-tool"</span>
+<span class="hl-comment">! Zmienne lokalne</span>
+<span class="hl-var">nazwa_</span>=<span class="hl-string">"Jan Kowalski"</span>
+<span class="hl-var">wynik_</span>=$(<span class="hl-keyword">date</span> +%Y%m%d)
+<span class="hl-var">liczba_</span>=<span class="hl-number">42</span>
+<span class="hl-comment">! Zmienna raw — bez interpretacji $(...)</span>
+<span class="hl-op">~</span><span class="hl-var">surowa_</span>=<span class="hl-string">"$(to nie zostanie wykonane)"</span>
+<span class="hl-comment">! Użycie zmiennych w komendach</span>
+<span class="hl-prefix">&gt;</span> echo <span class="hl-string">"Witaj, $nazwa_"</span>
+<span class="hl-prefix">&gt;</span> echo <span class="hl-string">"Data: $wynik_"</span></pre></div>
+      </div>
+      <h3>Zaawansowane użycie zmiennych</h3>
+      <p>Zmienne mogą być używane w warunkach, pętlach i jako argumenty funkcji. Dla bezpieczeństwa, używaj <code>lock</code> na kluczowych zmiennych.</p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">zmienne-zaawansowane.hl</span>
+          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        </div>
+        <div class="code-body"><pre><span class="hl-var">@API_URL</span>=<span class="hl-string">"https://api.example.com"</span>
+<span class="hl-keyword">lock</span> $API_URL
+<span class="hl-var">response_</span>=$(<span class="hl-prefix">&gt;</span> curl -s $API_URL)</pre></div>
+      </div>
+      <div class="callout callout-tip">
+        <div class="callout-icon">✦</div>
+        <div class="callout-body"><strong>Konwencja nazw:</strong> Zmienne lokalne najczęściej kończą się podkreślnikiem (<code>wynik_</code>, <code>plik_</code>) — odróżnia je to od słów kluczowych jak <code>done</code>, <code>end</code>. Używaj raw dla wrażliwych danych.</div>
+      </div>
+    </div>
+    <!-- KOMENDY -->
+    <div class="section" id="komendy">
+      <div class="section-header">
+        <span class="section-num">05</span>
+        <h2>Komendy (polecenia systemowe)</h2>
+      </div>
+      <p>Hacker-lang ma trzy prefiksy do uruchamiania komend systemowych. Różnią się sposobem wykonania i izolacją środowiska. Wszystkie komendy mogą być łączone z <code>^</code> dla sudo.</p>
+      <table class="cmd-table">
+        <tr>
+          <th>Prefiks</th><th>Typ</th><th>Opis</th><th>Przykład</th>
+        </tr>
+        <tr>
+          <td><span class="cmd-syntax">&gt; komenda</span></td>
+          <td><span class="pill pill-green">RawSub</span></td>
+          <td class="cmd-desc">Komenda z podstawianiem zmiennych. Wykonywana w bieżącym kontekście.</td>
+          <td class="cmd-example">&gt; echo "Cześć $USER"</td>
+        </tr>
+        <tr>
+          <td><span class="cmd-syntax">|&gt; komenda</span></td>
+          <td><span class="pill pill-cyan">RawSub</span></td>
+          <td class="cmd-desc">Alternatywny prefiks — identyczne działanie co <code>&gt;</code>.</td>
+          <td class="cmd-example">|&gt; ls -la /tmp</td>
+        </tr>
+        <tr>
+          <td><span class="cmd-syntax">&lt;| komenda</span></td>
+          <td><span class="pill pill-cyan">RawSub</span></td>
+          <td class="cmd-desc">Alternatywny prefiks (wejście pipe).</td>
+          <td class="cmd-example">&lt;| grep "błąd"</td>
+        </tr>
+        <tr>
+          <td><span class="cmd-syntax">&gt;&gt; komenda</span></td>
+          <td><span class="pill pill-purple">RawNoSub</span></td>
+          <td class="cmd-desc">Komenda <strong>bez</strong> podstawiania zmiennych. Dosłowny tekst.</td>
+          <td class="cmd-example">&gt;&gt; echo '$PATH'</td>
+        </tr>
+        <tr>
+          <td><span class="cmd-syntax">&gt;&gt;&gt; komenda</span></td>
+          <td><span class="pill pill-yellow">Isolated</span></td>
+          <td class="cmd-desc">Komenda w izolowanym środowisku (subshell).</td>
+          <td class="cmd-example">&gt;&gt;&gt; mkdir -p /tmp/x</td>
+        </tr>
+      </table>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">komendy.hl</span>
+          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        </div>
+        <div class="code-body"><pre><span class="hl-var">@KATALOG</span>=<span class="hl-string">"/tmp/moje"</span>
+<span class="hl-comment">! Zwykła komenda z podstawieniem zmiennych</span>
+<span class="hl-prefix">&gt;</span> mkdir -p <span class="hl-var">$KATALOG</span>
+<span class="hl-prefix">&gt;</span> echo <span class="hl-string">"Tworzę: $KATALOG"</span>
+<span class="hl-comment">! Bez podstawiania — $KATALOG trafi dosłownie</span>
+<span class="hl-prefix">&gt;&gt;</span> echo <span class="hl-string">'Dosłownie: $KATALOG'</span>
+<span class="hl-comment">! Izolowany subshell</span>
+<span class="hl-prefix">&gt;&gt;&gt;</span> cd /tmp &amp;&amp; ls -la
+<span class="hl-comment">! Pipe — alternatywne prefiksy</span>
+<span class="hl-prefix">&gt;</span> cat /etc/passwd
+<span class="hl-prefix">|&gt;</span> grep root</pre></div>
+      </div>
+      <h3>Łączenie komend</h3>
+      <p>Komendy mogą być łączone za pomocą pipe (<code>|</code>) lub operatorów logicznych (<code>&amp;&amp;</code>, <code>||</code>).</p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">komendy-lancuch.hl</span>
+          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        </div>
+        <div class="code-body"><pre><span class="hl-prefix">&gt;</span> ls -la | grep ".log" || echo "Brak logów"</pre></div>
+      </div>
+    </div>
+    <!-- LOG -->
+    <div class="section" id="log">
+      <div class="section-header">
+        <span class="section-num">06</span>
+        <h2>Logowanie</h2>
+      </div>
+      <p>Instrukcja <code>log</code> wypisuje wiadomość na standardowe wyjście. Przyjmuje <strong>string w cudzysłowie</strong>. Logi mogą być kolorowane w terminalu HackerOS.</p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">log.hl</span>
+          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        </div>
+        <div class="code-body"><pre><span class="hl-keyword">log</span> <span class="hl-string">"Uruchamiam skrypt..."</span>
+<span class="hl-keyword">log</span> <span class="hl-string">"Wersja: 1.0"</span>
+<span class="hl-keyword">log</span> <span class="hl-string">"Operacja zakończona."</span></pre></div>
+      </div>
+      <h3>Zaawansowane logowanie</h3>
+      <p>Użyj zmiennych w logach poprzez komendy echo, lub biblioteki logger.</p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">log-dynamic.hl</span>
+          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        </div>
+        <div class="code-body"><pre><span class="hl-var">status_</span>=<span class="hl-string">"sukces"</span>
+<span class="hl-prefix">&gt;</span> echo <span class="hl-string">"Log: operacja $status_"</span></pre></div>
+      </div>
+      <div class="callout callout-info">
+        <div class="callout-icon">ℹ</div>
+        <div class="callout-body"><code>log</code> wymaga cudzysłowów — <code>log "tekst"</code>. Bez cudzysłowów nastąpi błąd składni. Użyj <code>&gt; echo tekst</code> dla dynamicznych wartości lub zaawansowanego formatowania.</div>
+      </div>
+    </div>
+    <!-- IF / ELIF / ELSE -->
+    <div class="section" id="if">
+      <div class="section-header">
+        <span class="section-num">07</span>
+        <h2>Warunkowe: if / elif / else</h2>
+      </div>
+      <p>Instrukcje warunkowe używają prefiksów <code>?</code>, <code>??</code> i <code>?:</code>. Komenda do wykonania jest po separatorze <code>&gt;</code>, <code>|&gt;</code> lub <code>&lt;|</code>. Warunki bazują na bash test.</p>
+      <table class="cmd-table">
+        <tr><th>Składnia</th><th>Opis</th></tr>
+        <tr>
+          <td><span class="cmd-syntax">? warunek &gt; komenda</span></td>
+          <td class="cmd-desc">Jeśli warunek spełniony — wykonaj komendę</td>
+        </tr>
+        <tr>
+          <td><span class="cmd-syntax">?? warunek &gt; komenda</span></td>
+          <td class="cmd-desc">Else-if — jeśli poprzedni warunek nie spełniony</td>
+        </tr>
+        <tr>
+          <td><span class="cmd-syntax">?: &gt; komenda</span></td>
+          <td class="cmd-desc">Else — wykonaj jeśli żaden poprzedni warunek</td>
+        </tr>
+      </table>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">warunki.hl</span>
+          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        </div>
+        <div class="code-body"><pre><span class="hl-var">wiek_</span>=<span class="hl-number">20</span>
+<span class="hl-comment">! Podstawowy if</span>
+<span class="hl-op">?</span> $wiek_ -ge 18 <span class="hl-prefix">&gt;</span> echo <span class="hl-string">"Dorosły"</span>
+<span class="hl-comment">! If / elif / else</span>
+<span class="hl-op">?</span> $wiek_ -lt 13 <span class="hl-prefix">&gt;</span> echo <span class="hl-string">"Dziecko"</span>
+<span class="hl-op">??</span> $wiek_ -lt 18 <span class="hl-prefix">&gt;</span> echo <span class="hl-string">"Nastolatek"</span>
+<span class="hl-op">??</span> $wiek_ -lt 65 <span class="hl-prefix">&gt;</span> echo <span class="hl-string">"Dorosły"</span>
+<span class="hl-op">?:</span> <span class="hl-prefix">&gt;</span> echo <span class="hl-string">"Senior"</span>
+<span class="hl-comment">! Sprawdzenie istnienia pliku</span>
+<span class="hl-op">?</span> -f /etc/hosts <span class="hl-prefix">&gt;</span> echo <span class="hl-string">"Plik istnieje"</span>
+<span class="hl-op">?:</span> <span class="hl-prefix">&gt;</span> echo <span class="hl-string">"Brak pliku"</span>
+<span class="hl-comment">! Sprawdzenie zmiennej</span>
+<span class="hl-op">?</span> -n "$USER" <span class="hl-prefix">&gt;</span> log <span class="hl-string">"Użytkownik ustawiony"</span></pre></div>
+      </div>
+      <h3>Złożone warunki</h3>
+      <p>Używaj operatorów logicznych w warunkach: <code>[[ $a -gt 10 &amp;&amp; $b = "test" ]]</code>.</p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">warunki-zlozone.hl</span>
+          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        </div>
+        <div class="code-body"><pre><span class="hl-op">?</span> [[ $wiek_ -gt 18 &amp;&amp; $status = "aktywny" ]] <span class="hl-prefix">&gt;</span> echo <span class="hl-string">"Dostęp przyznany"</span></pre></div>
+      </div>
+      <div class="callout callout-tip">
+        <div class="callout-icon">✦</div>
+        <div class="callout-body"><strong>Warunek</strong> to dowolny wyrażenie testowe bash (<code>-f plik</code>, <code>-n "$str"</code>, <code>$a -gt $b</code> itp.). Separator <code> &gt; </code> (spacje po obu stronach) oddziela warunek od komendy. Używaj [[ ]] dla złożonych testów.</div>
+      </div>
+    </div>
+    <!-- LOOP -->
+    <div class="section" id="loop">
+      <div class="section-header">
+        <span class="section-num">08</span>
+        <h2>Pętle: loop (N razy)</h2>
+      </div>
+      <p>Pętla <code>=N &gt; komenda</code> powtarza komendę <code>N</code> razy. Prosta i szybka dla stałej liczby iteracji. Może być używana w funkcjach.</p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">loop.hl</span>
+          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        </div>
+        <div class="code-body"><pre><span class="hl-comment">! Powtórz 5 razy</span>
+<span class="hl-op">=</span><span class="hl-number">5</span> <span class="hl-prefix">&gt;</span> echo <span class="hl-string">"Iteracja"</span>
+<span class="hl-comment">! Utwórz 10 plików tymczasowych</span>
+<span class="hl-op">=</span><span class="hl-number">10</span> <span class="hl-prefix">&gt;</span> touch /tmp/plik_$(date +%N)
+<span class="hl-comment">! Ping 3 razy</span>
+<span class="hl-op">=</span><span class="hl-number">3</span> <span class="hl-prefix">&gt;</span> ping -c 1 8.8.8.8</pre></div>
+      </div>
+      <h3>Pętla z zmienną</h3>
+      <p>Użyj zmiennej dla dynamicznej liczby iteracji.</p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">loop-dynamic.hl</span>
+          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        </div>
+        <div class="code-body"><pre><span class="hl-var">@POWTORZEN</span>=<span class="hl-number">4</span>
+<span class="hl-op">=</span>$POWTORZEN <span class="hl-prefix">&gt;</span> echo <span class="hl-string">"Powtórka"</span></pre></div>
+      </div>
+    </div>
+    <!-- WHILE -->
+    <div class="section" id="while">
+      <div class="section-header">
+        <span class="section-num">09</span>
+        <h2>Pętla while</h2>
+      </div>
+      <p>Pętla <code>while warunek &gt; komenda</code> powtarza komendę dopóki warunek jest spełniony. Przydatna do czekania na zdarzenia.</p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">while.hl</span>
+          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        </div>
+        <div class="code-body"><pre><span class="hl-var">licznik_</span>=<span class="hl-number">0</span>
+<span class="hl-comment">! Pętla — inkrementuj licznik</span>
+<span class="hl-keyword">while</span> $licznik_ -lt 5 <span class="hl-prefix">&gt;</span> licznik_=$(( $licznik_ + 1 ))
+<span class="hl-comment">! Czekaj na plik</span>
+<span class="hl-keyword">while</span> ! -f /tmp/gotowy.lock <span class="hl-prefix">&gt;</span> sleep 1</pre></div>
+      </div>
+      <h3>While z komendą</h3>
+      <p>Użyj while do przetwarzania strumieni.</p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">while-strumien.hl</span>
+          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        </div>
+        <div class="code-body"><pre><span class="hl-keyword">while</span> read linia <span class="hl-prefix">&gt;</span> echo <span class="hl-string">"Linia: $linia"</span> < /etc/passwd</pre></div>
+      </div>
+    </div>
+    <!-- FOR -->
+    <div class="section" id="for">
+      <div class="section-header">
+        <span class="section-num">10</span>
+        <h2>Pętla for</h2>
+      </div>
+      <p>Pętla <code>for zmienna in lista &gt; komenda</code> iteruje po elementach listy lub wzorcu glob. Obsługuje argumenty skryptu.</p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">for.hl</span>
+          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        </div>
+        <div class="code-body"><pre><span class="hl-comment">! Iteracja po liście wartości</span>
+<span class="hl-keyword">for</span> kolor <span class="hl-keyword">in</span> czerwony zielony niebieski <span class="hl-prefix">&gt;</span> echo <span class="hl-string">"$kolor"</span>
+<span class="hl-comment">! Iteracja po plikach</span>
+<span class="hl-keyword">for</span> plik <span class="hl-keyword">in</span> /tmp/*.log <span class="hl-prefix">&gt;</span> echo <span class="hl-string">"Plik: $plik"</span>
+<span class="hl-comment">! Iteracja po argumentach skryptu</span>
+<span class="hl-keyword">for</span> arg <span class="hl-keyword">in</span> $@ <span class="hl-prefix">&gt;</span> echo <span class="hl-string">"Argument: $arg"</span></pre></div>
+      </div>
+      <h3>For z zakresem</h3>
+      <p>Użyj seq dla numerycznych zakresów.</p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">for-zakres.hl</span>
+          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        </div>
+        <div class="code-body"><pre><span class="hl-keyword">for</span> i <span class="hl-keyword">in</span> $(seq 1 10) <span class="hl-prefix">&gt;</span> echo <span class="hl-string">"Numer: $i"</span></pre></div>
+      </div>
+    </div>
+    <!-- FUNKCJE -->
+    <div class="section" id="funkcje">
+      <div class="section-header">
+        <span class="section-num">11</span>
+        <h2>Funkcje</h2>
+      </div>
+      <p>Funkcje definiujemy przez <code>:nazwa def</code> i kończymy słowem <code>done</code>. Wywołanie przez <code>.nazwa</code>. Funkcje unsafe (niebezpieczne) oznaczamy <code>::nazwa def</code>. Funkcje mogą zwracać wartości przez echo.</p>
+      <table class="cmd-table">
+        <tr><th>Składnia</th><th>Opis</th></tr>
+        <tr>
+          <td><span class="cmd-syntax">:nazwa def</span></td>
+          <td class="cmd-desc">Deklaracja zwykłej funkcji</td>
+        </tr>
+        <tr>
+          <td><span class="cmd-syntax">::nazwa def</span></td>
+          <td class="cmd-desc">Deklaracja funkcji unsafe (operacje systemowe)</td>
+        </tr>
+        <tr>
+          <td><span class="cmd-syntax">done</span></td>
+          <td class="cmd-desc">Koniec definicji funkcji</td>
+        </tr>
+        <tr>
+          <td><span class="cmd-syntax">.nazwa</span></td>
+          <td class="cmd-desc">Wywołanie funkcji (z kropką na początku)</td>
+        </tr>
+        <tr>
+          <td><span class="cmd-syntax">.klasa.metoda</span></td>
+          <td class="cmd-desc">Wywołanie metody klasy</td>
+        </tr>
+      </table>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">funkcje.hl</span>
+          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        </div>
+        <div class="code-body"><pre><span class="hl-comment">! Definicja zwykłej funkcji</span>
+<span class="hl-prefix">:</span><span class="hl-func">powitaj</span> def
+  <span class="hl-var">imie_</span>=<span class="hl-string">"$1"</span>
+  <span class="hl-prefix">&gt;</span> echo <span class="hl-string">"Witaj, $imie_!"</span>
+done
+<span class="hl-comment">! Funkcja unsafe — wykona operacje z podwyższonymi prawami</span>
+<span class="hl-op">::</span><span class="hl-func">wyczysc_logi</span> def
+  <span class="hl-prefix">&gt;</span> rm -f /var/log/app/*.log
+  <span class="hl-prefix">log</span> <span class="hl-string">"Logi wyczyszczone"</span>
+done
+<span class="hl-comment">! Wywołanie funkcji</span>
+<span class="hl-prefix">.</span><span class="hl-func">powitaj</span>
+<span class="hl-prefix">.</span><span class="hl-func">wyczysc_logi</span>
+<span class="hl-comment">! Funkcja z argumentami (dostępne jako $1, $2...)</span>
+<span class="hl-prefix">:</span><span class="hl-func">suma</span> def
+  <span class="hl-prefix">&gt;</span> echo $(( $1 + $2 ))
+done
+<span class="hl-prefix">.</span><span class="hl-func">suma</span></pre></div>
+      </div>
+      <h3>Funkcje z zwrotem wartości</h3>
+      <p>Funkcje mogą zwracać wartości przez stdout, przechwytywane przez <code>$(.funkcja)</code>.</p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">funkcje-zwrot.hl</span>
+          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        </div>
+        <div class="code-body"><pre><span class="hl-prefix">:</span><span class="hl-func">pobierz_date</span> def
+  <span class="hl-prefix">&gt;</span> date +%Y-%m-%d
+done
+<span class="hl-var">data_</span>=$(<span class="hl-prefix">.</span><span class="hl-func">pobierz_date</span>)</pre></div>
+      </div>
+    </div>
+    <!-- KLASY -->
+    <div class="section" id="klasy">
+      <div class="section-header">
+        <span class="section-num">12</span>
+        <h2>Klasy</h2>
+      </div>
+      <p>Klasy grupują funkcje (metody) w przestrzeń nazw. Definiujemy przez <code>;;nazwa def</code> i kończymy przez <code>done</code>. Metody klasy są wywoływane jako <code>.nazwa_klasy.metoda</code>. Klasy wspierają dziedziczenie poprzez biblioteki.</p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">klasy.hl</span>
+          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        </div>
+        <div class="code-body"><pre><span class="hl-comment">! Definicja klasy</span>
+<span class="hl-op">;;</span><span class="hl-func">Plik</span> def
+  <span class="hl-comment">! Metoda klasy</span>
+  <span class="hl-prefix">:</span><span class="hl-func">stworz</span> def
+    <span class="hl-var">sciezka_</span>=<span class="hl-string">"$1"</span>
+    <span class="hl-prefix">&gt;</span> touch <span class="hl-string">$sciezka_</span>
+    <span class="hl-keyword">log</span> <span class="hl-string">"Plik stworzony"</span>
+  done
+  <span class="hl-prefix">:</span><span class="hl-func">usun</span> def
+    <span class="hl-prefix">&gt;</span> rm -f <span class="hl-string">"$1"</span>
+  done
+done
+<span class="hl-comment">! Wywołanie metody klasy: .NazwaKlasy.metoda</span>
+<span class="hl-prefix">.</span><span class="hl-func">Plik.stworz</span>
+<span class="hl-prefix">.</span><span class="hl-func">Plik.usun</span></pre></div>
+      </div>
+      <h3>Klasy z polami</h3>
+      <p>Użyj zmiennych lokalnych jako pól klasy.</p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">klasy-pola.hl</span>
+          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        </div>
+        <div class="code-body"><pre><span class="hl-op">;;</span><span class="hl-func">User</span> def
+  <span class="hl-var">imie_</span>=<span class="hl-string">"Anon"</span>
+  <span class="hl-prefix">:</span><span class="hl-func">ustaw_imie</span> def
+    imie_=<span class="hl-string">"$1"</span>
+  done
+done</pre></div>
+      </div>
+    </div>
+    <!-- TRY / CATCH -->
+    <div class="section" id="try">
+      <div class="section-header">
+        <span class="section-num">13</span>
+        <h2>Obsługa błędów: try / catch</h2>
+      </div>
+      <p>Instrukcja <code>try komenda catch komenda_błędu</code> obsługuje błędy w jednej linii. Przydatne do obsługi komend systemowych.</p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">try-catch.hl</span>
+          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        </div>
+        <div class="code-body"><pre><span class="hl-comment">! Prosta obsługa błędu</span>
+<span class="hl-keyword">try</span> curl -s https://api.example.com/data <span class="hl-keyword">catch</span> echo <span class="hl-string">"Błąd połączenia"</span>
+<span class="hl-comment">! Operacja na pliku</span>
+<span class="hl-keyword">try</span> cat /etc/config.txt <span class="hl-keyword">catch</span> echo <span class="hl-string">"Brak pliku konfiguracyjnego"</span>
+<span class="hl-comment">! Z zapisem do zmiennej</span>
+<span class="hl-keyword">try</span> ./uruchom.sh <span class="hl-keyword">catch</span> log <span class="hl-string">"Uruchomienie nieudane"</span></pre></div>
+      </div>
+      <h3>Try w pętlach</h3>
+      <p>Użyj try w pętlach do obsługi błędów w iteracjach.</p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">try-loop.hl</span>
+          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        </div>
+        <div class="code-body"><pre><span class="hl-keyword">for</span> url <span class="hl-keyword">in</span> list_urls <span class="hl-prefix">&gt;</span> try curl $url catch log <span class="hl-string">"Błąd: $url"</span></pre></div>
+      </div>
+    </div>
+    <!-- ENUM -->
+    <div class="section" id="enum">
+      <div class="section-header">
+        <span class="section-num">14</span>
+        <h2>Enum (wyliczenia)</h2>
+      </div>
+      <p>Enum definiuje zbiór nazwanych stałych. Składnia: <code>== NazwaEnum [wariant1, wariant2, ...]</code>. Używane w warunkach i structach.</p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">enum.hl</span>
+          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        </div>
+        <div class="code-body"><pre><span class="hl-comment">! Definicja enum</span>
+<span class="hl-op">==</span> Status [uruchomiony, zatrzymany, blad, oczekiwanie]
+<span class="hl-op">==</span> Kolor [czerwony, zielony, niebieski, zolty]
+<span class="hl-op">==</span> Tryb [produkcja, staging, test]</pre></div>
+      </div>
+      <h3>Użycie enum</h3>
+      <p>Enumy mogą być używane w warunkach.</p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">enum-uzycie.hl</span>
+          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        </div>
+        <div class="code-body"><pre><span class="hl-op">?</span> $status = Status.uruchomiony <span class="hl-prefix">&gt;</span> log <span class="hl-string">"System aktywny"</span></pre></div>
+      </div>
+    </div>
+    <!-- STRUCT -->
+    <div class="section" id="struct">
+      <div class="section-header">
+        <span class="section-num">15</span>
+        <h2>Struct (struktury danych)</h2>
+      </div>
+      <p>Struct definiuje strukturę z nazwanymi polami i typami. Składnia: <code>struct NazwaStruct [pole:typ, pole2:typ2]</code>. Typy: str, int, bool, enum itp.</p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">struct.hl</span>
+          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        </div>
+        <div class="code-body"><pre><span class="hl-comment">! Definicja struktury użytkownika</span>
+<span class="hl-keyword">struct</span> Uzytkownik [imie:str, wiek:int, aktywny:bool]
+<span class="hl-keyword">struct</span> Serwer [host:str, port:int, protokol:str]
+<span class="hl-keyword">struct</span> Plik [sciezka:str, rozmiar:int, modyfikacja:str]</pre></div>
+      </div>
+      <h3>Instancje struct</h3>
+      <p>Twórz instancje w klasach lub funkcjach.</p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">struct-inst.hl</span>
+          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        </div>
+        <div class="code-body"><pre><span class="hl-var">user_</span>=Uzytkownik[imie="Jan", wiek=30, aktywny=true]</pre></div>
+      </div>
+    </div>
+    <!-- BIBLIOTEKI -->
+    <div class="section" id="libs">
+      <div class="section-header">
+        <span class="section-num">16</span>
+        <h2>Biblioteki</h2>
+      </div>
+      <p>Biblioteki importujemy przez <code>#&lt;typ/nazwa:wersja&gt;</code>. Dostępne typy bibliotek: source, core, bytes, github, virus, vira. Biblioteki mogą być wersjonowane.</p>
+      <div class="grid3">
+        <div class="card">
+          <div class="card-title">source</div>
+          <div class="card-body">Lokalne pliki .hl z ~/.hackeros/hacker-lang/libs/sources/. Dla custom kodu.</div>
+        </div>
+        <div class="card">
+          <div class="card-title">core</div>
+          <div class="card-body">Biblioteki rdzenia z ~/.hackeros/hacker-lang/libs/core/. Podstawowe funkcje.</div>
+        </div>
+        <div class="card">
+          <div class="card-title">bytes</div>
+          <div class="card-body">Skompilowane biblioteki .so z libs/bytes/. Dla skryptow i programów (glowne repozytorium pobieraj liby za pomoca bytes install).</div>
+        </div>
+        <div class="card">
+          <div class="card-title">github</div>
+          <div class="card-body">Biblioteki pobierane z GitHuba (zdalne). Automatyczne pobieranie.</div>
+        </div>
+        <div class="card">
+          <div class="card-title">virus</div>
+          <div class="card-body">Specjalne biblioteki .a z libs/.vira/. Dla zaawansowanych narzędzi.</div>
+        </div>
+        <div class="card">
+          <div class="card-title">vira</div>
+          <div class="card-body">Biblioteki pobierane do ~/home/nazwa uzytkownika/.hackeros/hacker-lang/libs/.vira/. Dla języka programownia Hacker Lang od każdego użytkownika.</div>
+        </div>
+      </div>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">biblioteki.hl</span>
+          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        </div>
+        <div class="code-body"><pre><span class="hl-comment">! Lokalna biblioteka source</span>
+<span class="hl-lib">#&lt;source/utils&gt;</span>
+<span class="hl-lib">#&lt;source/logger&gt;</span>
+<span class="hl-comment">! Biblioteka core z wersją</span>
+<span class="hl-lib">#&lt;core/io:2.1&gt;</span>
+<span class="hl-lib">#&lt;core/http:1.0.3&gt;</span>
+<span class="hl-comment">! Skompilowana biblioteka</span>
+<span class="hl-lib">#&lt;bytes/openssl&gt;</span>
+<span class="hl-comment">! Biblioteka z GitHuba</span>
+<span class="hl-lib">#&lt;github/user/moja-lib:0.5&gt;</span></pre></div>
+      </div>
+      <h3>Zarządzanie wersjami</h3>
+      <p>PLSA sprawdza wersje bibliotek podczas analizy.</p>
+    </div>
+    <!-- ZALEŻNOŚCI SYSTEMOWE -->
+    <div class="section" id="sysdep">
+      <div class="section-header">
+        <span class="section-num">17</span>
+        <h2>Zależności systemowe</h2>
+      </div>
+      <p>Deklaracja zależności systemowych: <code>// narzędzie</code>. Informuje analizator statyczny (PLSA) jakie narzędzia systemowe są wymagane. PLSA sprawdzi ich obecność.</p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">sysdep.hl</span>
+          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        </div>
+        <div class="code-body"><pre><span class="hl-comment">! Wymagane narzędzia systemowe</span>
+<span class="hl-keyword">//</span> curl
+<span class="hl-keyword">//</span> jq
+<span class="hl-keyword">//</span> git
+<span class="hl-keyword">//</span> ffmpeg
+<span class="hl-comment">! Dalszy kod może korzystać z tych narzędzi</span>
+<span class="hl-prefix">&gt;</span> curl -s https://api.example.com | jq '.data'</pre></div>
+      </div>
+      <h3>Sprawdzanie zależności</h3>
+      <p>Użyj <code>hl-plsa --check-deps</code> do weryfikacji.</p>
+    </div>
+    <!-- PLUGINY -->
+    <div class="section" id="plugins">
+      <div class="section-header">
+        <span class="section-num">18</span>
+        <h2>Pluginy</h2>
+      </div>
+      <p>Pluginy to zewnętrzne pliki (.hl lub binarne) z katalogu <code>~/.hackeros/hacker-lang/plugins/</code>. Uruchamiamy przez <code>\\nazwa [argumenty]</code>. Mogą być łączone z sudo. Dany plugin możesz pobrać za pomocą bytes install plugin &lt;nazwa pluginu&gt;</p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">plugins.hl</span>
+          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        </div>
+        <div class="code-body"><pre><span class="hl-comment">! Uruchom plugin "backup"</span>
+<span class="hl-prefix">\\</span>backup
+<span class="hl-comment">! Plugin z argumentami</span>
+<span class="hl-prefix">\\</span>kompresuj /home/user/dokumenty
+<span class="hl-comment">! Plugin z sudo (^)</span>
+<span class="hl-op">^</span><span class="hl-prefix">\\</span>instaluj-pakiety curl git vim
+<span class="hl-comment">! Plugin z wieloma argumentami</span>
+<span class="hl-prefix">\\</span>deploy staging v1.2.3 --force</pre></div>
+      </div>
+      <div class="callout callout-info">
+        <div class="callout-icon">ℹ</div>
+        <div class="callout-body">Plugin może być plikiem <code>nazwa.hl</code> lub binarnym plikiem wykonywalnym <code>nazwa</code> w katalogu pluginów. PLSA sprawdza ich obecność przy użyciu flagi <code>--check-plugins</code>. Twórz własne pluginy dla modularności.</div>
+      </div>
+    </div>
+    <!-- EXTERN -->
+    <div class="section" id="extern">
+      <div class="section-header">
+        <span class="section-num">19</span>
+        <h2>Linkowanie zewnętrzne: extern</h2>
+      </div>
+      <p>Instrukcja <code>-- ścieżka</code> deklaruje zewnętrzne linkowanie dynamiczne. <code>-- static ścieżka</code> — statyczne. Używane do integracji z C/C++ libs.</p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">extern.hl</span>
+          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        </div>
+        <div class="code-body"><pre><span class="hl-comment">! Dynamiczne linkowanie</span>
+<span class="hl-prefix">--</span> /usr/lib/libssl.so
+<span class="hl-comment">! Statyczne linkowanie</span>
+<span class="hl-prefix">--</span> static /usr/local/lib/libcustom.a
+<span class="hl-comment">! Biblioteka systemowa</span>
+<span class="hl-prefix">--</span> /lib/x86_64-linux-gnu/libc.so.6</pre></div>
+      </div>
+      <h3>Integracja z extern</h3>
+      <p>Użyj w bytes libs.</p>
+    </div>
+    <!-- SUDO -->
+    <div class="section" id="sudo">
+      <div class="section-header">
+        <span class="section-num">20</span>
+        <h2>Sudo (^)</h2>
+      </div>
+      <p>Prefiks <code>^</code> przed dowolną instrukcją oznacza wykonanie z podwyższonymi uprawnieniami. PLSA oznacza te linie jako potencjalnie niebezpieczne.</p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">sudo.hl</span>
+          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        </div>
+        <div class="code-body"><pre><span class="hl-comment">! Komenda z sudo</span>
+<span class="hl-op">^</span><span class="hl-prefix">&gt;</span> apt-get update
+<span class="hl-op">^</span><span class="hl-prefix">&gt;</span> systemctl restart nginx
+<span class="hl-comment">! Plugin z sudo</span>
+<span class="hl-op">^</span><span class="hl-prefix">\\</span>instaluj curl git
+<span class="hl-comment">! Wywołanie funkcji z sudo</span>
+<span class="hl-op">^</span><span class="hl-prefix">.</span><span class="hl-func">wyczysc_system</span></pre></div>
+      </div>
+      <div class="callout callout-danger">
+        <div class="callout-icon">⚡</div>
+        <div class="callout-body"><strong>Ostrzeżenie:</strong> Komendy z <code>^</code> są wykonywane z prawami root. Analizator PLSA raportuje je jako <code>is_potentially_unsafe = true</code> i zbiera listę ostrzeżeń bezpieczeństwa. Używaj ostrożnie.</div>
+      </div>
+    </div>
+    <!-- LOCK / UNLOCK -->
+    <div class="section" id="lock">
+      <div class="section-header">
+        <span class="section-num">21</span>
+        <h2>Lock / Unlock (zmienne zablokowane)</h2>
+      </div>
+      <p>Instrukcje <code>lock</code> i <code>unlock</code> pozwalają blokować i odblokowywać zmienne (muteksy/stałe). Zapobiega przypadkowym zmianom.</p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">lock.hl</span>
+          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        </div>
+        <div class="code-body"><pre><span class="hl-comment">! Zablokuj zmienną (ustaw jako stałą)</span>
+<span class="hl-keyword">lock</span> $WERSJA = <span class="hl-string">"1.0.0"</span>
+<span class="hl-keyword">lock</span> $MAX_POLACZEN = 100
+<span class="hl-comment">! Odblokuj zmienną</span>
+<span class="hl-keyword">unlock</span> $WERSJA</pre></div>
+      </div>
+      <h3>Lock w funkcjach</h3>
+      <p>Użyj lock do ochrony parametrów.</p>
+    </div>
+    <!-- RAW BLOCK -->
+    <div class="section" id="rawblock">
+      <div class="section-header">
+        <span class="section-num">22</span>
+        <h2>Raw block [ ... ]</h2>
+      </div>
+      <p>Blok surowy <code>[</code> ... <code>]</code> zawiera wieloliniowy tekst/kod bez parsowania hacker-lang. Przydatny do heredoc, skryptów inline itp. Zawartość jest wykonywana jako bash.</p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">rawblock.hl</span>
+          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        </div>
+        <div class="code-body"><pre><span class="hl-comment">! Raw block — zawartość nie jest parsowana przez hacker-lang</span>
+[
+#!/bin/bash
+# To jest surowy bash
+for i in $(seq 1 5); do
+    echo "Liczba: $i"
+done
+]</pre></div>
+      </div>
+      <h3>Raw do szablonów</h3>
+      <p>Użyj raw do tworzenia plików konfiguracyjnych.</p>
+    </div>
+    <!-- BACKGROUND -->
+    <div class="section" id="bg">
+      <div class="section-header">
+        <span class="section-num">23</span>
+        <h2>Tło (&amp;)</h2>
+      </div>
+      <p>Instrukcja <code>&amp; komenda</code> uruchamia komendę w tle (asynchronicznie). Przydatne do paralelnego wykonania.</p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">background.hl</span>
+          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        </div>
+        <div class="code-body"><pre><span class="hl-comment">! Uruchom serwer w tle</span>
+<span class="hl-op">&amp;</span> python3 -m http.server 8080
+<span class="hl-comment">! Pobieranie w tle</span>
+<span class="hl-op">&amp;</span> wget -q https://example.com/plik.zip
+<span class="hl-comment">! Główny kod kontynuuje działanie</span>
+<span class="hl-keyword">log</span> <span class="hl-string">"Serwer uruchomiony w tle"</span></pre></div>
+      </div>
+      <h3>Zarządzanie procesami tła</h3>
+      <p>Użyj <code>wait</code> do synchronizacji.</p>
+    </div>
+    <!-- IMPORT -->
+    <div class="section" id="import">
+      <div class="section-header">
+        <span class="section-num">24</span>
+        <h2>Import</h2>
+      </div>
+      <p>Instrukcja <code>&lt;&lt; "ścieżka"</code> importuje zasób (plik konfiguracyjny, dane itp.). Wczytuje do środowiska.</p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">import.hl</span>
+          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        </div>
+        <div class="code-body"><pre><span class="hl-comment">! Import pliku konfiguracyjnego</span>
+<span class="hl-prefix">&lt;&lt;</span> <span class="hl-string">"config/app.conf"</span>
+<span class="hl-prefix">&lt;&lt;</span> <span class="hl-string">"/etc/myapp/settings.hl"</span></pre></div>
+      </div>
+      <h3>Import z URL</h3>
+      <p>Użyj curl do zdalnych importów.</p>
+    </div>
+    <!-- END -->
+    <div class="section" id="end">
+      <div class="section-header">
+        <span class="section-num">25</span>
+        <h2>Zakończenie programu: end</h2>
+      </div>
+      <p>Instrukcja <code>end [kod]</code> kończy program z opcjonalnym kodem wyjścia. Domyślnie 0.</p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">end.hl</span>
+          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        </div>
+        <div class="code-body"><pre><span class="hl-comment">! Zakończ z kodem 0 (sukces)</span>
+<span class="hl-keyword">end</span> 0
+<span class="hl-comment">! Zakończ z błędem</span>
+<span class="hl-keyword">end</span> 1
+<span class="hl-comment">! Zakończ bez kodu (domyślnie 0)</span>
+<span class="hl-keyword">end</span></pre></div>
+      </div>
+      <h3>End w funkcjach</h3>
+      <p>Użyj end w funkcjach do wczesnego wyjścia.</p>
+    </div>
+    <!-- PRZYKŁAD 1 -->
+    <div class="section" id="example1">
+      <div class="section-header">
+        <span class="section-num">EX</span>
+        <h2>Przykład: Hello World</h2>
+      </div>
+      <p>Podstawowy przykład demonstrujący zmienne i funkcje.</p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">hello.hl</span>
+          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        </div>
+        <div class="code-body"><pre><span class="hl-comment">! hello.hl — pierwszy program w hacker-lang</span>
+<span class="hl-var">@NAZWA</span>=<span class="hl-string">"Świat"</span>
+<span class="hl-prefix">:</span><span class="hl-func">powitaj</span> def
+  <span class="hl-prefix">&gt;</span> echo <span class="hl-string">"Witaj, $NAZWA!"</span>
+  <span class="hl-keyword">log</span> <span class="hl-string">"Program działa poprawnie."</span>
+done
+<span class="hl-prefix">.</span><span class="hl-func">powitaj</span>
+<span class="hl-keyword">end</span> 0</pre></div>
+      </div>
+    </div>
+    <!-- PRZYKŁAD 2 -->
+    <div class="section" id="example2">
+      <div class="section-header">
+        <span class="section-num">EX</span>
+        <h2>Przykład: Skrypt backupu</h2>
+      </div>
+      <p>Praktyczny skrypt z funkcjami i obsługą błędów.</p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">backup.hl</span>
+          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        </div>
+        <div class="code-body"><pre><span class="hl-comment">! backup.hl — skrypt tworzenia kopii zapasowych</span>
+<span class="hl-keyword">//</span> tar
+<span class="hl-keyword">//</span> gzip
+<span class="hl-var">@SRC_DIR</span>=<span class="hl-string">"/home/user/dokumenty"</span>
+<span class="hl-var">@BACKUP_DIR</span>=<span class="hl-string">"/mnt/backup"</span>
+<span class="hl-prefix">:</span><span class="hl-func">sprawdz_katalog</span> def
+  <span class="hl-op">?</span> ! -d $BACKUP_DIR <span class="hl-prefix">&gt;</span> mkdir -p $BACKUP_DIR
+  <span class="hl-keyword">log</span> <span class="hl-string">"Katalog backupu gotowy"</span>
+done
+<span class="hl-prefix">:</span><span class="hl-func">zrob_backup</span> def
+  <span class="hl-var">data_</span>=$(date +%Y%m%d_%H%M%S)
+  <span class="hl-var">plik_</span>=<span class="hl-string">"$BACKUP_DIR/backup_$data_.tar.gz"</span>
+  <span class="hl-keyword">try</span> tar -czf $plik_ $SRC_DIR <span class="hl-keyword">catch</span> log <span class="hl-string">"Backup nieudany!"</span>
+  <span class="hl-prefix">&gt;</span> echo <span class="hl-string">"Backup zapisany: $plik_"</span>
+done
+<span class="hl-prefix">:</span><span class="hl-func">pokaz_rozmiar</span> def
+  <span class="hl-prefix">&gt;</span> du -sh $BACKUP_DIR
+done
+<span class="hl-comment">! ─── Ciało główne ────────────────────</span>
+<span class="hl-keyword">log</span> <span class="hl-string">"=== Backup Start ==="</span>
+<span class="hl-prefix">.</span><span class="hl-func">sprawdz_katalog</span>
+<span class="hl-prefix">.</span><span class="hl-func">zrob_backup</span>
+<span class="hl-prefix">.</span><span class="hl-func">pokaz_rozmiar</span>
+<span class="hl-keyword">log</span> <span class="hl-string">"=== Backup Done ==="</span>
+<span class="hl-keyword">end</span> 0</pre></div>
+      </div>
+    </div>
+    <!-- PRZYKŁAD 3 -->
+    <div class="section" id="example3">
+      <div class="section-header">
+        <span class="section-num">EX</span>
+        <h2>Przykład: Zaawansowany parser</h2>
+      </div>
+      <p>Skrypt parsujący JSON z API używając jq i struktury.</p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">parser.hl</span>
+          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        </div>
+        <div class="code-body"><pre><span class="hl-keyword">//</span> curl
+<span class="hl-keyword">//</span> jq
+<span class="hl-lib">#&lt;core/json:1.0&gt;</span>
+<span class="hl-keyword">struct</span> Dane [id:int, nazwa:str, wartosc:float]
+<span class="hl-prefix">:</span><span class="hl-func">pobierz_dane</span> def
+  <span class="hl-var">json_</span>=$(<span class="hl-prefix">&gt;</span> curl -s https://api.example.com/data)
+  <span class="hl-prefix">&gt;</span> echo $json_ | jq '.[]'
+done
+<span class="hl-prefix">.</span><span class="hl-func">pobierz_dane</span>
+<span class="hl-keyword">end</span> 0</pre></div>
+      </div>
+    </div>
+    <!-- CHEAT SHEET -->
+    <div class="section" id="cheatsheet">
+      <div class="section-header">
+        <span class="section-num">★</span>
+        <h2>Cheat Sheet — Szybka Ściągawka</h2>
+      </div>
+      <p>Szybki przewodnik po składni hacker-lang.</p>
+      <table class="cmd-table">
+        <tr><th style="width:200px">Składnia</th><th>Co robi</th></tr>
+        <tr><td><span class="cmd-syntax">! tekst</span></td><td class="cmd-desc">Komentarz liniowy</td></tr>
+        <tr><td><span class="cmd-syntax">!!</span></td><td class="cmd-desc">Przełącz komentarz blokowy</td></tr>
+        <tr><td><span class="cmd-syntax">@VAR=wartość</span></td><td class="cmd-desc">Zmienna globalna (env)</td></tr>
+        <tr><td><span class="cmd-syntax">nazwa_=wartość</span></td><td class="cmd-desc">Zmienna lokalna</td></tr>
+        <tr><td><span class="cmd-syntax">~nazwa_=wartość</span></td><td class="cmd-desc">Zmienna raw (bez podstawień)</td></tr>
+        <tr><td><span class="cmd-syntax">&gt; komenda</span></td><td class="cmd-desc">Komenda z podstawianiem zmiennych</td></tr>
+        <tr><td><span class="cmd-syntax">&gt;&gt; komenda</span></td><td class="cmd-desc">Komenda bez podstawiania</td></tr>
+        <tr><td><span class="cmd-syntax">&gt;&gt;&gt; komenda</span></td><td class="cmd-desc">Komenda w izolowanym subshell</td></tr>
+        <tr><td><span class="cmd-syntax">log "tekst"</span></td><td class="cmd-desc">Wypisanie wiadomości</td></tr>
+        <tr><td><span class="cmd-syntax">? warunek &gt; cmd</span></td><td class="cmd-desc">If</td></tr>
+        <tr><td><span class="cmd-syntax">?? warunek &gt; cmd</span></td><td class="cmd-desc">Else-if</td></tr>
+        <tr><td><span class="cmd-syntax">?: &gt; cmd</span></td><td class="cmd-desc">Else</td></tr>
+        <tr><td><span class="cmd-syntax">=N &gt; cmd</span></td><td class="cmd-desc">Pętla N razy</td></tr>
+        <tr><td><span class="cmd-syntax">while cond &gt; cmd</span></td><td class="cmd-desc">Pętla while</td></tr>
+        <tr><td><span class="cmd-syntax">for v in lista &gt; cmd</span></td><td class="cmd-desc">Pętla for</td></tr>
+        <tr><td><span class="cmd-syntax">:nazwa def ... done</span></td><td class="cmd-desc">Definicja funkcji</td></tr>
+        <tr><td><span class="cmd-syntax">::nazwa def ... done</span></td><td class="cmd-desc">Funkcja unsafe</td></tr>
+        <tr><td><span class="cmd-syntax">;;nazwa def ... done</span></td><td class="cmd-desc">Definicja klasy</td></tr>
+        <tr><td><span class="cmd-syntax">.nazwa</span></td><td class="cmd-desc">Wywołanie funkcji / metody</td></tr>
+        <tr><td><span class="cmd-syntax">try cmd catch cmd2</span></td><td class="cmd-desc">Obsługa błędu</td></tr>
+        <tr><td><span class="cmd-syntax">== Enum [a, b, c]</span></td><td class="cmd-desc">Definicja enum</td></tr>
+        <tr><td><span class="cmd-syntax">struct S [f:t, ...]</span></td><td class="cmd-desc">Definicja struktury</td></tr>
+        <tr><td><span class="cmd-syntax">#&lt;typ/nazwa:ver&gt;</span></td><td class="cmd-desc">Import biblioteki</td></tr>
+        <tr><td><span class="cmd-syntax">// narzędzie</span></td><td class="cmd-desc">Zależność systemowa</td></tr>
+        <tr><td><span class="cmd-syntax">\\ plugin [args]</span></td><td class="cmd-desc">Uruchom plugin</td></tr>
+        <tr><td><span class="cmd-syntax">-- ścieżka</span></td><td class="cmd-desc">Extern dynamiczny</td></tr>
+        <tr><td><span class="cmd-syntax">-- static ścieżka</span></td><td class="cmd-desc">Extern statyczny</td></tr>
+        <tr><td><span class="cmd-syntax">^</span></td><td class="cmd-desc">Prefiks sudo (przed instrukcją)</td></tr>
+        <tr><td><span class="cmd-syntax">lock $VAR = val</span></td><td class="cmd-desc">Zablokuj zmienną</td></tr>
+        <tr><td><span class="cmd-syntax">unlock $VAR</span></td><td class="cmd-desc">Odblokuj zmienną</td></tr>
+        <tr><td><span class="cmd-syntax">&amp; komenda</span></td><td class="cmd-desc">Uruchom w tle</td></tr>
+        <tr><td><span class="cmd-syntax">&lt;&lt; "plik"</span></td><td class="cmd-desc">Import zasobu</td></tr>
+        <tr><td><span class="cmd-syntax">[ ... ]</span></td><td class="cmd-desc">Raw block (bez parsowania)</td></tr>
+        <tr><td><span class="cmd-syntax">end [kod]</span></td><td class="cmd-desc">Zakończ program</td></tr>
+      </table>
+      <div class="divider"></div>
+      <div class="callout callout-tip">
+        <div class="callout-icon">✦</div>
+        <div class="callout-body">
+          <strong>Gotowy do działania!</strong> Uruchom analizator statyczny:<br><br>
+          <code>hl run twoj_skrypt.hl</code><br>
+          <code>hl run twoj_skrypt.hl --verbose</code><br>
+          <code>hl compile twoj_skrypt.hl</code>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script>
+  // Highlight active nav link on scroll
+  const sections = document.querySelectorAll('[id]');
+  const navLinks = document.querySelectorAll('.nav-link');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(link => {
+          link.style.color = '';
+          link.style.borderLeftColor = 'transparent';
+          link.style.background = '';
+        });
+        const active = document.querySelector(`.nav-link[href="#${entry.target.id}"]`);
+        if (active) {
+          active.style.color = 'var(--white)';
+          active.style.borderLeftColor = 'var(--green)';
+          active.style.background = 'rgba(0,255,136,0.05)';
+        }
+      }
+    });
+  }, { threshold: 0.3 });
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
