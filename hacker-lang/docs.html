@@ -37,6 +37,9 @@
     line-height: 1.6;
     overflow-x: hidden;
   }
+  ::selection {
+    background: #cccccc;
+  }
   /* ─── SCANLINE OVERLAY ─── */
   body::before {
     content: '';
@@ -190,7 +193,7 @@
   .hero h1 {
     font-size: clamp(36px, 5vw, 56px);
     font-weight: 800;
-    color: var(--white);
+    color: var(--text);
     line-height: 1.05;
     letter-spacing: -0.03em;
     margin-bottom: 20px;
@@ -293,17 +296,18 @@
     letter-spacing: 0.1em;
     text-transform: uppercase;
   }
-  .code-dots {
-    display: flex;
-    gap: 6px;
+  .copy-btn {
+    background: transparent;
+    border: none;
+    color: var(--text3);
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    padding: 4px 8px;
   }
-  .code-dots span {
-    width: 8px; height: 8px;
-    border-radius: 50%;
+  .copy-btn:hover {
+    color: var(--text);
   }
-  .dot-r { background: rgba(255,68,102,0.6); }
-  .dot-y { background: rgba(255,204,0,0.6); }
-  .dot-g { background: rgba(0,255,136,0.6); }
   .code-body {
     padding: 20px;
     overflow-x: auto;
@@ -586,7 +590,7 @@
       <div class="code-block">
         <div class="code-header">
           <span class="code-lang">hacker-lang · struktura.hl</span>
-          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <button class="copy-btn">Copy</button>
         </div>
         <div class="code-body"><pre><span class="hl-comment">! Zależności systemowe (opcjonalne)</span>
 <span class="hl-keyword">//</span> curl
@@ -606,7 +610,7 @@ done
 <span class="hl-prefix">end</span> 0</pre></div>
       </div>
       <h3>Konwencje struktury</h3>
-      <p>Chociaż kolejność jest elastyczna, zaleca się umieszczanie zależności na górze, następnie zmiennych, definicji i ciała głównego na końcu. To ułatwia analizę statyczną PLSA.</p>
+      <p>Chociaż kolejność jest elastyczna, zaleca się umieszczanie zależności na górze, następnie zmiennych, definicji i ciała głównego na końcu.</p>
       <div class="callout callout-info">
         <div class="callout-icon">ℹ</div>
         <div class="callout-body"><strong>Ważne:</strong> Puste linie są ignorowane. Każda niepusta linia to jedna instrukcja — hacker-lang nie używa średników ani nawiasów klamrowych jako separatorów bloków. Użyj komentarzy do organizacji kodu.</div>
@@ -618,7 +622,7 @@ done
         <span class="section-num">03</span>
         <h2>Komentarze</h2>
       </div>
-      <p>Hacker-lang obsługuje dwa rodzaje komentarzy: liniowe i blokowe. Komentarze są ignorowane przez interpreter, ale analizowane przez PLSA do dokumentacji.</p>
+      <p>Hacker-lang obsługuje dwa rodzaje komentarzy: liniowe i blokowe. Komentarze są ignorowane przez interpreter bytecode, ale analizowane przez Hacker Lang do dokumentacji.</p>
       <table class="cmd-table">
         <tr>
           <th>Składnia</th><th>Typ</th><th>Opis</th>
@@ -637,7 +641,7 @@ done
       <div class="code-block">
         <div class="code-header">
           <span class="code-lang">komentarze.hl</span>
-          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <button class="copy-btn">Copy</button>
         </div>
         <div class="code-body"><pre><span class="hl-comment">! To jest komentarz liniowy</span>
 <span class="hl-var">@AUTOR</span>=<span class="hl-string">"Jan"</span> <span class="hl-comment">! komentarz w tej samej linii — NIEOBSŁUGIWANY (! musi być na początku)</span>
@@ -653,7 +657,7 @@ done
       <div class="code-block">
         <div class="code-header">
           <span class="code-lang">debug.hl</span>
-          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <button class="copy-btn">Copy</button>
         </div>
         <div class="code-body"><pre><span class="hl-comment">!!</span>
 <span class="hl-comment">Ten kod jest tymczasowo wyłączony</span>
@@ -693,7 +697,7 @@ done
       <div class="code-block">
         <div class="code-header">
           <span class="code-lang">zmienne.hl</span>
-          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <button class="copy-btn">Copy</button>
         </div>
         <div class="code-body"><pre><span class="hl-comment">! Zmienne globalne (env)</span>
 <span class="hl-var">@HOME_DIR</span>=<span class="hl-string">"/home/user"</span>
@@ -714,7 +718,7 @@ done
       <div class="code-block">
         <div class="code-header">
           <span class="code-lang">zmienne-zaawansowane.hl</span>
-          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <button class="copy-btn">Copy</button>
         </div>
         <div class="code-body"><pre><span class="hl-var">@API_URL</span>=<span class="hl-string">"https://api.example.com"</span>
 <span class="hl-keyword">lock</span> $API_URL
@@ -770,7 +774,7 @@ done
       <div class="code-block">
         <div class="code-header">
           <span class="code-lang">komendy.hl</span>
-          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <button class="copy-btn">Copy</button>
         </div>
         <div class="code-body"><pre><span class="hl-var">@KATALOG</span>=<span class="hl-string">"/tmp/moje"</span>
 <span class="hl-comment">! Zwykła komenda z podstawieniem zmiennych</span>
@@ -789,7 +793,7 @@ done
       <div class="code-block">
         <div class="code-header">
           <span class="code-lang">komendy-lancuch.hl</span>
-          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <button class="copy-btn">Copy</button>
         </div>
         <div class="code-body"><pre><span class="hl-prefix">&gt;</span> ls -la | grep ".log" || echo "Brak logów"</pre></div>
       </div>
@@ -804,7 +808,7 @@ done
       <div class="code-block">
         <div class="code-header">
           <span class="code-lang">log.hl</span>
-          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <button class="copy-btn">Copy</button>
         </div>
         <div class="code-body"><pre><span class="hl-keyword">log</span> <span class="hl-string">"Uruchamiam skrypt..."</span>
 <span class="hl-keyword">log</span> <span class="hl-string">"Wersja: 1.0"</span>
@@ -815,7 +819,7 @@ done
       <div class="code-block">
         <div class="code-header">
           <span class="code-lang">log-dynamic.hl</span>
-          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <button class="copy-btn">Copy</button>
         </div>
         <div class="code-body"><pre><span class="hl-var">status_</span>=<span class="hl-string">"sukces"</span>
 <span class="hl-prefix">&gt;</span> echo <span class="hl-string">"Log: operacja $status_"</span></pre></div>
@@ -850,7 +854,7 @@ done
       <div class="code-block">
         <div class="code-header">
           <span class="code-lang">warunki.hl</span>
-          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <button class="copy-btn">Copy</button>
         </div>
         <div class="code-body"><pre><span class="hl-var">wiek_</span>=<span class="hl-number">20</span>
 <span class="hl-comment">! Podstawowy if</span>
@@ -871,7 +875,7 @@ done
       <div class="code-block">
         <div class="code-header">
           <span class="code-lang">warunki-zlozone.hl</span>
-          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <button class="copy-btn">Copy</button>
         </div>
         <div class="code-body"><pre><span class="hl-op">?</span> [[ $wiek_ -gt 18 &amp;&amp; $status = "aktywny" ]] <span class="hl-prefix">&gt;</span> echo <span class="hl-string">"Dostęp przyznany"</span></pre></div>
       </div>
@@ -890,7 +894,7 @@ done
       <div class="code-block">
         <div class="code-header">
           <span class="code-lang">loop.hl</span>
-          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <button class="copy-btn">Copy</button>
         </div>
         <div class="code-body"><pre><span class="hl-comment">! Powtórz 5 razy</span>
 <span class="hl-op">=</span><span class="hl-number">5</span> <span class="hl-prefix">&gt;</span> echo <span class="hl-string">"Iteracja"</span>
@@ -904,7 +908,7 @@ done
       <div class="code-block">
         <div class="code-header">
           <span class="code-lang">loop-dynamic.hl</span>
-          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <button class="copy-btn">Copy</button>
         </div>
         <div class="code-body"><pre><span class="hl-var">@POWTORZEN</span>=<span class="hl-number">4</span>
 <span class="hl-op">=</span>$POWTORZEN <span class="hl-prefix">&gt;</span> echo <span class="hl-string">"Powtórka"</span></pre></div>
@@ -920,7 +924,7 @@ done
       <div class="code-block">
         <div class="code-header">
           <span class="code-lang">while.hl</span>
-          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <button class="copy-btn">Copy</button>
         </div>
         <div class="code-body"><pre><span class="hl-var">licznik_</span>=<span class="hl-number">0</span>
 <span class="hl-comment">! Pętla — inkrementuj licznik</span>
@@ -933,7 +937,7 @@ done
       <div class="code-block">
         <div class="code-header">
           <span class="code-lang">while-strumien.hl</span>
-          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <button class="copy-btn">Copy</button>
         </div>
         <div class="code-body"><pre><span class="hl-keyword">while</span> read linia <span class="hl-prefix">&gt;</span> echo <span class="hl-string">"Linia: $linia"</span> < /etc/passwd</pre></div>
       </div>
@@ -948,7 +952,7 @@ done
       <div class="code-block">
         <div class="code-header">
           <span class="code-lang">for.hl</span>
-          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <button class="copy-btn">Copy</button>
         </div>
         <div class="code-body"><pre><span class="hl-comment">! Iteracja po liście wartości</span>
 <span class="hl-keyword">for</span> kolor <span class="hl-keyword">in</span> czerwony zielony niebieski <span class="hl-prefix">&gt;</span> echo <span class="hl-string">"$kolor"</span>
@@ -962,7 +966,7 @@ done
       <div class="code-block">
         <div class="code-header">
           <span class="code-lang">for-zakres.hl</span>
-          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <button class="copy-btn">Copy</button>
         </div>
         <div class="code-body"><pre><span class="hl-keyword">for</span> i <span class="hl-keyword">in</span> $(seq 1 10) <span class="hl-prefix">&gt;</span> echo <span class="hl-string">"Numer: $i"</span></pre></div>
       </div>
@@ -1000,7 +1004,7 @@ done
       <div class="code-block">
         <div class="code-header">
           <span class="code-lang">funkcje.hl</span>
-          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <button class="copy-btn">Copy</button>
         </div>
         <div class="code-body"><pre><span class="hl-comment">! Definicja zwykłej funkcji</span>
 <span class="hl-prefix">:</span><span class="hl-func">powitaj</span> def
@@ -1026,7 +1030,7 @@ done
       <div class="code-block">
         <div class="code-header">
           <span class="code-lang">funkcje-zwrot.hl</span>
-          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <button class="copy-btn">Copy</button>
         </div>
         <div class="code-body"><pre><span class="hl-prefix">:</span><span class="hl-func">pobierz_date</span> def
   <span class="hl-prefix">&gt;</span> date +%Y-%m-%d
@@ -1044,7 +1048,7 @@ done
       <div class="code-block">
         <div class="code-header">
           <span class="code-lang">klasy.hl</span>
-          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <button class="copy-btn">Copy</button>
         </div>
         <div class="code-body"><pre><span class="hl-comment">! Definicja klasy</span>
 <span class="hl-op">;;</span><span class="hl-func">Plik</span> def
@@ -1067,7 +1071,7 @@ done
       <div class="code-block">
         <div class="code-header">
           <span class="code-lang">klasy-pola.hl</span>
-          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <button class="copy-btn">Copy</button>
         </div>
         <div class="code-body"><pre><span class="hl-op">;;</span><span class="hl-func">User</span> def
   <span class="hl-var">imie_</span>=<span class="hl-string">"Anon"</span>
@@ -1087,7 +1091,7 @@ done</pre></div>
       <div class="code-block">
         <div class="code-header">
           <span class="code-lang">try-catch.hl</span>
-          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <button class="copy-btn">Copy</button>
         </div>
         <div class="code-body"><pre><span class="hl-comment">! Prosta obsługa błędu</span>
 <span class="hl-keyword">try</span> curl -s https://api.example.com/data <span class="hl-keyword">catch</span> echo <span class="hl-string">"Błąd połączenia"</span>
@@ -1101,7 +1105,7 @@ done</pre></div>
       <div class="code-block">
         <div class="code-header">
           <span class="code-lang">try-loop.hl</span>
-          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <button class="copy-btn">Copy</button>
         </div>
         <div class="code-body"><pre><span class="hl-keyword">for</span> url <span class="hl-keyword">in</span> list_urls <span class="hl-prefix">&gt;</span> try curl $url catch log <span class="hl-string">"Błąd: $url"</span></pre></div>
       </div>
@@ -1116,7 +1120,7 @@ done</pre></div>
       <div class="code-block">
         <div class="code-header">
           <span class="code-lang">enum.hl</span>
-          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <button class="copy-btn">Copy</button>
         </div>
         <div class="code-body"><pre><span class="hl-comment">! Definicja enum</span>
 <span class="hl-op">==</span> Status [uruchomiony, zatrzymany, blad, oczekiwanie]
@@ -1128,7 +1132,7 @@ done</pre></div>
       <div class="code-block">
         <div class="code-header">
           <span class="code-lang">enum-uzycie.hl</span>
-          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <button class="copy-btn">Copy</button>
         </div>
         <div class="code-body"><pre><span class="hl-op">?</span> $status = Status.uruchomiony <span class="hl-prefix">&gt;</span> log <span class="hl-string">"System aktywny"</span></pre></div>
       </div>
@@ -1143,7 +1147,7 @@ done</pre></div>
       <div class="code-block">
         <div class="code-header">
           <span class="code-lang">struct.hl</span>
-          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <button class="copy-btn">Copy</button>
         </div>
         <div class="code-body"><pre><span class="hl-comment">! Definicja struktury użytkownika</span>
 <span class="hl-keyword">struct</span> Uzytkownik [imie:str, wiek:int, aktywny:bool]
@@ -1155,7 +1159,7 @@ done</pre></div>
       <div class="code-block">
         <div class="code-header">
           <span class="code-lang">struct-inst.hl</span>
-          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <button class="copy-btn">Copy</button>
         </div>
         <div class="code-body"><pre><span class="hl-var">user_</span>=Uzytkownik[imie="Jan", wiek=30, aktywny=true]</pre></div>
       </div>
@@ -1196,7 +1200,7 @@ done</pre></div>
       <div class="code-block">
         <div class="code-header">
           <span class="code-lang">biblioteki.hl</span>
-          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <button class="copy-btn">Copy</button>
         </div>
         <div class="code-body"><pre><span class="hl-comment">! Lokalna biblioteka source</span>
 <span class="hl-lib">#&lt;source/utils&gt;</span>
@@ -1209,8 +1213,6 @@ done</pre></div>
 <span class="hl-comment">! Biblioteka z GitHuba</span>
 <span class="hl-lib">#&lt;github/user/moja-lib:0.5&gt;</span></pre></div>
       </div>
-      <h3>Zarządzanie wersjami</h3>
-      <p>PLSA sprawdza wersje bibliotek podczas analizy.</p>
     </div>
     <!-- ZALEŻNOŚCI SYSTEMOWE -->
     <div class="section" id="sysdep">
@@ -1222,7 +1224,7 @@ done</pre></div>
       <div class="code-block">
         <div class="code-header">
           <span class="code-lang">sysdep.hl</span>
-          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <button class="copy-btn">Copy</button>
         </div>
         <div class="code-body"><pre><span class="hl-comment">! Wymagane narzędzia systemowe</span>
 <span class="hl-keyword">//</span> curl
@@ -1232,8 +1234,6 @@ done</pre></div>
 <span class="hl-comment">! Dalszy kod może korzystać z tych narzędzi</span>
 <span class="hl-prefix">&gt;</span> curl -s https://api.example.com | jq '.data'</pre></div>
       </div>
-      <h3>Sprawdzanie zależności</h3>
-      <p>Użyj <code>hl-plsa --check-deps</code> do weryfikacji.</p>
     </div>
     <!-- PLUGINY -->
     <div class="section" id="plugins">
@@ -1245,7 +1245,7 @@ done</pre></div>
       <div class="code-block">
         <div class="code-header">
           <span class="code-lang">plugins.hl</span>
-          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <button class="copy-btn">Copy</button>
         </div>
         <div class="code-body"><pre><span class="hl-comment">! Uruchom plugin "backup"</span>
 <span class="hl-prefix">\\</span>backup
@@ -1258,7 +1258,7 @@ done</pre></div>
       </div>
       <div class="callout callout-info">
         <div class="callout-icon">ℹ</div>
-        <div class="callout-body">Plugin może być plikiem <code>nazwa.hl</code> lub binarnym plikiem wykonywalnym <code>nazwa</code> w katalogu pluginów. PLSA sprawdza ich obecność przy użyciu flagi <code>--check-plugins</code>. Twórz własne pluginy dla modularności.</div>
+        <div class="callout-body">Plugin może być plikiem <code>nazwa.hl</code> lub binarnym plikiem wykonywalnym <code>nazwa</code> w katalogu pluginów. Twórz własne pluginy dla modularności.</div>
       </div>
     </div>
     <!-- EXTERN -->
@@ -1271,7 +1271,7 @@ done</pre></div>
       <div class="code-block">
         <div class="code-header">
           <span class="code-lang">extern.hl</span>
-          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <button class="copy-btn">Copy</button>
         </div>
         <div class="code-body"><pre><span class="hl-comment">! Dynamiczne linkowanie</span>
 <span class="hl-prefix">--</span> /usr/lib/libssl.so
@@ -1293,7 +1293,7 @@ done</pre></div>
       <div class="code-block">
         <div class="code-header">
           <span class="code-lang">sudo.hl</span>
-          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <button class="copy-btn">Copy</button>
         </div>
         <div class="code-body"><pre><span class="hl-comment">! Komenda z sudo</span>
 <span class="hl-op">^</span><span class="hl-prefix">&gt;</span> apt-get update
@@ -1305,7 +1305,7 @@ done</pre></div>
       </div>
       <div class="callout callout-danger">
         <div class="callout-icon">⚡</div>
-        <div class="callout-body"><strong>Ostrzeżenie:</strong> Komendy z <code>^</code> są wykonywane z prawami root. Analizator PLSA raportuje je jako <code>is_potentially_unsafe = true</code> i zbiera listę ostrzeżeń bezpieczeństwa. Używaj ostrożnie.</div>
+        <div class="callout-body"><strong>Ostrzeżenie:</strong> Analizator Hacker Lang raportuje je jako potencjalnie niebiezpieczny i zbiera listę ostrzeżeń bezpieczeństwa. Używaj ostrożnie.</div>
       </div>
     </div>
     <!-- LOCK / UNLOCK -->
@@ -1318,7 +1318,7 @@ done</pre></div>
       <div class="code-block">
         <div class="code-header">
           <span class="code-lang">lock.hl</span>
-          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <button class="copy-btn">Copy</button>
         </div>
         <div class="code-body"><pre><span class="hl-comment">! Zablokuj zmienną (ustaw jako stałą)</span>
 <span class="hl-keyword">lock</span> $WERSJA = <span class="hl-string">"1.0.0"</span>
@@ -1339,7 +1339,7 @@ done</pre></div>
       <div class="code-block">
         <div class="code-header">
           <span class="code-lang">rawblock.hl</span>
-          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <button class="copy-btn">Copy</button>
         </div>
         <div class="code-body"><pre><span class="hl-comment">! Raw block — zawartość nie jest parsowana przez hacker-lang</span>
 [
@@ -1363,7 +1363,7 @@ done
       <div class="code-block">
         <div class="code-header">
           <span class="code-lang">background.hl</span>
-          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <button class="copy-btn">Copy</button>
         </div>
         <div class="code-body"><pre><span class="hl-comment">! Uruchom serwer w tle</span>
 <span class="hl-op">&amp;</span> python3 -m http.server 8080
@@ -1385,7 +1385,7 @@ done
       <div class="code-block">
         <div class="code-header">
           <span class="code-lang">import.hl</span>
-          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <button class="copy-btn">Copy</button>
         </div>
         <div class="code-body"><pre><span class="hl-comment">! Import pliku konfiguracyjnego</span>
 <span class="hl-prefix">&lt;&lt;</span> <span class="hl-string">"config/app.conf"</span>
@@ -1404,7 +1404,7 @@ done
       <div class="code-block">
         <div class="code-header">
           <span class="code-lang">end.hl</span>
-          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <button class="copy-btn">Copy</button>
         </div>
         <div class="code-body"><pre><span class="hl-comment">! Zakończ z kodem 0 (sukces)</span>
 <span class="hl-keyword">end</span> 0
@@ -1426,7 +1426,7 @@ done
       <div class="code-block">
         <div class="code-header">
           <span class="code-lang">hello.hl</span>
-          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <button class="copy-btn">Copy</button>
         </div>
         <div class="code-body"><pre><span class="hl-comment">! hello.hl — pierwszy program w hacker-lang</span>
 <span class="hl-var">@NAZWA</span>=<span class="hl-string">"Świat"</span>
@@ -1448,7 +1448,7 @@ done
       <div class="code-block">
         <div class="code-header">
           <span class="code-lang">backup.hl</span>
-          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <button class="copy-btn">Copy</button>
         </div>
         <div class="code-body"><pre><span class="hl-comment">! backup.hl — skrypt tworzenia kopii zapasowych</span>
 <span class="hl-keyword">//</span> tar
@@ -1487,7 +1487,7 @@ done
       <div class="code-block">
         <div class="code-header">
           <span class="code-lang">parser.hl</span>
-          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <button class="copy-btn">Copy</button>
         </div>
         <div class="code-body"><pre><span class="hl-keyword">//</span> curl
 <span class="hl-keyword">//</span> jq
@@ -1580,6 +1580,17 @@ done
     });
   }, { threshold: 0.3 });
   sections.forEach(s => observer.observe(s));
+
+  // Copy button functionality
+  document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const code = btn.closest('.code-block').querySelector('pre').innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        btn.textContent = 'Copied!';
+        setTimeout(() => { btn.textContent = 'Copy'; }, 2000);
+      });
+    });
+  });
 </script>
 </body>
 </html>
