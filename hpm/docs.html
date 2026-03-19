@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HPM – Hacker Package Manager – Dokumentacja</title>
+  <link rel="icon" type="image/png" href="../HackerOS.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: #f8f9fc;
+            color: #1e2b3c;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        h1 {
+            font-size: 2.5rem;
+            color: #0b3b5c;
+            border-bottom: 3px solid #2a7faa;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+        h2 {
+            font-size: 1.8rem;
+            color: #0b3b5c;
+            margin-top: 40px;
+            margin-bottom: 15px;
+            padding-left: 10px;
+            border-left: 5px solid #2a7faa;
+        }
+        h3 {
+            font-size: 1.3rem;
+            margin-top: 25px;
+            margin-bottom: 10px;
+            color: #1e4e6f;
+        }
+        p {
+            margin-bottom: 15px;
+        }
+        ul, ol {
+            margin: 15px 0 15px 30px;
+        }
+        li {
+            margin-bottom: 5px;
+        }
+        code {
+            background: #eef3f7;
+            padding: 2px 6px;
+            border-radius: 5px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9em;
+            color: #c7254e;
+        }
+        pre {
+            background: #1e2b3c;
+            color: #f8f9fc;
+            padding: 15px;
+            border-radius: 10px;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9em;
+            margin: 20px 0;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
+        }
+        pre code {
+            background: transparent;
+            color: inherit;
+            padding: 0;
+        }
+        .note {
+            background: #fff3cd;
+            border-left: 6px solid #ffc107;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .tip {
+            background: #d4edda;
+            border-left: 6px solid #28a745;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th {
+            background: #2a7faa;
+            color: white;
+            padding: 10px;
+            text-align: left;
+        }
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        tr:nth-child(even) {
+            background: #f2f2f2;
+        }
+        .file-path {
+            font-family: monospace;
+            background: #e9ecef;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-weight: bold;
+            color: #0b3b5c;
+        }
+        .cmd {
+            background: #1e2b3c;
+            color: #9cdcfe;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            margin: 10px 0;
+        }
+        footer {
+            margin-top: 50px;
+            text-align: center;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📦 HPM – Hacker Package Manager</h1>
+        <p><strong>Wersja 0.8.0</strong> – nowoczesny menedżer pakietów oparty na repozytoriach git, z izolacją sandbox i wsparciem dla aplikacji GUI.</p>
+
+        <h2>Spis treści</h2>
+        <ul>
+            <li><a href="#instalacja">Instalacja HPM</a></li>
+            <li><a href="#podstawowe-polecenia">Podstawowe polecenia</a></li>
+            <li><a href="#tworzenie-repo">Tworzenie repozytorium pakietu</a>
+                <ul>
+                    <li><a href="#struktura">Struktura katalogów</a></li>
+                    <li><a href="#infohk">Plik <code>info.hk</code></a></li>
+                    <li><a href="#buildinfo">Plik <code>build.info</code></a></li>
+                    <li><a href="#zaleznosci-deb">Zależności systemowe (.deb)</a></li>
+                    <li><a href="#przyklad">Przykład kompletnego pakietu</a></li>
+                </ul>
+            </li>
+            <li><a href="#repo-centralne">Centralne repozytorium <code>repo.json</code></a>
+                <ul>
+                    <li><a href="#format-json">Format pliku</a></li>
+                    <li><a href="#dodawanie-pakietu">Dodawanie nowego pakietu</a></li>
+                </ul>
+            </li>
+            <li><a href="#publikacja">Publikacja własnego pakietu</a></li>
+        </ul>
+
+        <h2 id="instalacja">🔧 Instalacja HPM</h2>
+        <p>HPM instaluje się przez skompilowanie ze źródeł (wymaga Rust i Cargo):</p>
+        <pre><code>git clone https://github.com/HackerOS-Linux-System/Hacker-Package-Manager.git
+cd Hacker-Package-Manager/source-code
+cargo build --release
+sudo cp target/release/hpm /usr/bin/hpm
+sudo mkdir -p /usr/lib/HackerOS/hpm /var/lib/hpm /var/cache/hpm
+sudo chmod 755 /usr/bin/hpm</code></pre>
+        <p>Po instalacji możesz uruchomić <code>hpm --help</code>.</p>
+
+        <h2 id="podstawowe-polecenia">📘 Podstawowe polecenia</h2>
+        <table>
+            <tr><th>Polecenie</th><th>Opis</th></tr>
+            <tr><td><code>hpm refresh</code></td><td>Pobiera najnowszy indeks pakietów z centralnego repozytorium i aktualizuje lokalne kopie repozytoriów git.</td></tr>
+            <tr><td><code>hpm install &lt;pakiet&gt;[@wersja]</code></td><td>Instaluje pakiet (domyślnie najnowszą wersję).</td></tr>
+            <tr><td><code>hpm remove &lt;pakiet&gt;[@wersja]</code></td><td>Usuwa pakiet lub konkretną wersję.</td></tr>
+            <tr><td><code>hpm update</code></td><td>Aktualizuje wszystkie zainstalowane pakiety (z pominięciem przypiętych).</td></tr>
+            <tr><td><code>hpm switch &lt;pakiet&gt; &lt;wersja&gt;</code></td><td>Przełącza aktywną wersję pakietu.</td></tr>
+<tr><td><code>hpm run &lt;pakiet&gt; &lt;bin&gt; [args...]</code></td><td>Uruchamia binarkę z pakietu w izolowanym sandboxie.</td></tr>
+            <tr><td><code>hpm info &lt;pakiet&gt;</code></td><td>Wyświetla szczegółowe informacje o pakiecie.</td></tr>
+            <tr><td><code>hpm search &lt;fraza&gt;</code></td><td>Przeszukuje nazwy i opisy pakietów.</td></tr>
+            <tr><td><code>hpm list</code></td><td>Lista zainstalowanych pakietów.</td></tr>
+            <tr><td><code>hpm outdated</code></td><td>Pokazuje pakiety, dla których istnieje nowsza wersja.</td></tr>
+            <tr><td><code>hpm pin &lt;pakiet&gt; &lt;wersja&gt;</code></td><td>Przypina wersję (blokuje aktualizację).</td></tr>
+            <tr><td><code>hpm unpin &lt;pakiet&gt;</code></td><td>Usuwa przypięcie z bieżącej wersji.</td></tr>
+            <tr><td><code>hpm verify &lt;pakiet&gt;</code></td><td>Weryfikuje sumę kontrolną zainstalowanego pakietu.</td></tr>
+            <tr><td><code>hpm deps &lt;pakiet&gt;[@wersja]</code></td><td>Wyświetla drzewo zależności.</td></tr>
+        </table>
+
+        <h2 id="tworzenie-repo">📦 Tworzenie repozytorium pakietu</h2>
+        <p>Każdy pakiet w HPM to repozytorium git. Wersje są oznaczane tagami (np. <code>v1.0</code>, <code>1.0</code>). W katalogu głównym repozytorium muszą znajdować się odpowiednie pliki konfiguracyjne.</p>
+
+        <h3 id="struktura">Struktura katalogów</h3>
+        <pre><code>nazwa-pakietu/
+├── LICENSE              (opcjonalnie, ale zalecane)
+├── src/                 (opcjonalnie, kod źródłowy)
+├── build.info           (skrypt budowania – wykonywalny)
+└── info.hk              (główny plik metadanych)</code></pre>
+        <p>Po zbudowaniu pakietu, skrypt <code>build.info</code> powinien utworzyć katalog <strong><code>contents/</code></strong> z docelowymi plikami (np. binarki, biblioteki, pliki konfiguracyjne). To właśnie zawartość <code>contents/</code> zostanie skopiowana do katalogu store HPM.</p>
+
+        <h3 id="infohk">Plik <code>info.hk</code> – format</h3>
+        <p>Plik <code>info.hk</code> jest napisany w składni podobnej do TOML. Zawiera następujące sekcje:</p>
+        <pre><code>[metadata]
+name = "nazwa-pakietu"
+version = "1.0"
+authors = "Imię Nazwisko lub Zespół"
+license = "MIT"
+
+[description]
+summary = "Krótki opis, max 50 znaków"
+long = "Dłuższy opis, może być wieloliniowy"
+
+[build]
+commands = ["./build.info"]          # lista komend do wykonania w sandboxie
+deb_deps = ["build-essential", "libssl-dev"]   # pakiety .deb wymagane do budowania
+
+[runtime]
+deb_deps = ["libssl3", "libc6"]      # pakiety .deb wymagane do uruchomienia
+
+[sandbox]
+network = false                       # dostęp do sieci
+gui = false                           # podstawowe wsparcie GUI (X11)
+full_gui = true                        # pełne wsparcie GUI (X11, Wayland, D-Bus, PulseAudio, /dev/dri)
+filesystem = ["/etc/app/config"]      # dodatkowe ścieżki do montowania (bind)
+dev = false                            # czy montować /dev (urządzenia)
+
+[bins]
+nazwa-binarki = ""                     # lista binarek (klucz = nazwa pliku w contents/bin)</code></pre>
+
+        <div class="note">
+            <strong>Uwaga:</strong> Sekcje <code>build</code> i <code>runtime</code> są opcjonalne. Jeśli nie ma <code>build.commands</code>, HPM nie będzie budował – zakłada, że <code>contents/</code> istnieje już w repozytorium (np. dla pakietów binarnych).
+        </div>
+
+        <h3 id="buildinfo">Plik <code>build.info</code></h3>
+        <p>Jest to zwykły skrypt powłoki (powinien mieć ustawione prawo wykonywalności). Wykonuje się w sandboxie z zamontowanym katalogiem źródłowym w <code>/app</code>. Jego zadaniem jest utworzenie katalogu <code>/app/contents</code> z ostateczną zawartością pakietu. Przykład:</p>
+        <pre><code>#!/bin/sh
+# kompilacja
+gcc src/narzedzie.c -o narzedzie
+# utworzenie struktury
+mkdir -p contents/bin
+mv narzedzie contents/bin/
+# ewentualne pliki konfiguracyjne
+cp -r config/* contents/</code></pre>
+
+        <h3 id="zaleznosci-deb">Zależności systemowe (.deb)</h3>
+        <p>HPM potrafi automatycznie instalować brakujące pakiety .deb (przez <code>apt</code>) – zarówno na etapie budowania, jak i na etapie uruchamiania. Użytkownik jest pytany o zgodę przed instalacją. Dzięki temu pakiety mogą wymagać np. <code>libgtk-3-0</code> dla GUI, a HPM zadba o ich obecność w systemie.</p>
+
+        <h3 id="przyklad">Przykład kompletnego pakietu</h3>
+        <p>Załóżmy, że tworzymy narzędzie <strong>scanme</strong> – skaner portów. Repozytorium <code>scanme.git</code>:</p>
+        <pre><code>scanme/
+├── LICENSE (MIT)
+├── src/
+│   └── scanme.c
+├── build.info
+└── info.hk</code></pre>
+
+        <p><span class="file-path">build.info</span>:</p>
+        <pre><code>#!/bin/sh
+gcc src/scanme.c -o scanme -lpthread
+mkdir -p contents/bin
+mv scanme contents/bin/</code></pre>
+
+        <p><span class="file-path">info.hk</span>:</p>
+        <pre><code>[metadata]
+name = "scanme"
+version = "1.2"
+authors = "John Doe"
+license = "MIT"
+
+[description]
+summary = "Szybki skaner portów"
+long = "Narzędzie do skanowania portów TCP/UDP z obsługą wątków."
+
+[build]
+commands = ["./build.info"]
+deb_deps = ["build-essential"]
+
+[runtime]
+deb_deps = ["libc6"]
+
+[sandbox]
+network = true
+gui = false
+filesystem = []
+
+[bins]
+scanme = ""</code></pre>
+        <p>Następnie tagujemy wersję: <code>git tag 1.2</code> i wypychamy do zdalnego repozytorium.</p>
+
+        <h2 id="repo-centralne">🌐 Centralne repozytorium <code>repo.json</code></h2>
+        <p>Aby HPM wiedział, skąd pobierać pakiety, prowadzona jest centralna lista w pliku JSON dostępnym pod adresem:<br>
+        <code>https://raw.githubusercontent.com/HackerOS-Linux-System/Hacker-Package-Manager/main/repo/repo.json</code><br>
+        (możesz utworzyć własne lustro lub dodać swoje repozytorium do tej listy przez pull request).</p>
+
+        <h3 id="format-json">Format pliku <code>repo.json</code></h3>
+        <pre><code>{
+  "packages": {
+    "nazwa-pakietu": {
+      "repo": "https://github.com/użytkownik/nazwa-pakietu.git",
+      "versions": ["1.0", "1.1", "2.0"]
+    },
+    "inny-pakiet": {
+      "repo": "https://gitlab.com/inny/inny-pakiet.git",
+      "versions": ["0.9", "1.0"]
+    }
+  }
+}</code></pre>
+        <p>Pole <code>versions</code> to lista tagów, które HPM ma traktować jako dostępne wersje. Najnowsza wersja (do domyślnej instalacji) to ostatni element listy (zakładając, że lista jest posortowana rosnąco). Możesz podać wszystkie tagi lub tylko wybrane.</p>
+
+        <h3 id="dodawanie-pakietu">Dodawanie nowego pakietu do centralnego repo</h3>
+        <ol>
+            <li>Przygotuj repozytorium git z pakietem zgodnie z powyższymi zasadami.</li>
+            <li>Utwórz tag wersji (np. <code>git tag 1.0</code>).</li>
+            <li>Dodaj wpis w pliku <code>repo.json</code> (możesz zgłosić pull request do oficjalnego repozytorium HPM).</li>
+            <li>Po zaakceptowaniu PR, użytkownicy wykonają <code>hpm refresh</code> i będą mogli instalować twój pakiet.</li>
+        </ol>
+        <div class="tip">
+            <strong>Wskazówka:</strong> Możesz także hostować własną kopię <code>repo.json</code> i skonfigurować HPM, aby używał innego URL – wystarczy zmienić stałą <code>REPO_JSON_URL</code> w kodzie źródłowym lub dodać opcję konfiguracji (w przyszłych wersjach).
+        </div>
+
+        <h2 id="publikacja">📢 Publikacja własnego pakietu</h2>
+        <p>Aby twoje narzędzie było dostępne dla społeczności HPM:</p>
+        <ul>
+            <li>Udostępnij repozytorium publicznie (GitHub, GitLab, własny serwer).</li>
+            <li>Dodaj wpis do centralnego <code>repo.json</code> – możesz to zrobić przez Pull Request w <a href="https://github.com/HackerOS-Linux-System/Hacker-Package-Manager">oficjalnym repozytorium HPM</a>.</li>
+            <li>Upewnij się, że twój pakiet buduje się poprawnie w sandboxie (przetestuj lokalnie).</li>
+            <li>Opisz swoje narzędzie w pliku <code>info.hk</code> – dobre opisy ułatwiają wyszukiwanie.</li>
+        </ul>
+        <p>Po dodaniu, użytkownicy HPM na całym świecie będą mogli zainstalować twoje oprogramowanie jednym poleceniem:</p>
+        <div class="cmd">hpm install twoj-pakiet</div>
+
+        <footer>
+            &copy; 2025 HackerOS Team. Dokumentacja HPM w wersji 0.8.0. Ostatnia aktualizacja: marzec 2025.
+        </footer>
+    </div>
+</body>
+</html>
