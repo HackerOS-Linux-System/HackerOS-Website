@@ -144,6 +144,12 @@
             margin-bottom: 30px;
             color: #B0B0B0;
         }
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
         .btn {
             display: inline-block;
             padding: 12px 24px;
@@ -273,7 +279,6 @@
                 <li><a href="download.html">Download</a></li>
                 <li><a href="releases.html">Releases</a></li>
                 <li><a href="hackeros-team.html">HackerOS Team</a></li>
-                <li><a href="privacy-policy-hackeros.html">Privacy Policy</a></li>
                 <li><a href="hackeros-documentation.html">Documentation</a></li>
             </ul>
         </nav>
@@ -282,7 +287,10 @@
         <div class="hero-content">
             <h1 id="title">Witaj w HackerOS.</h1>
             <p><span id="prefix">Dystrybucja Linuksa dla: </span><span id="typing"></span><span class="cursor">|</span></p>
-            <a href="download.html" class="btn">Pobierz Teraz</a>
+            <div class="hero-buttons">
+                <a href="download.html" class="btn">Pobierz Teraz</a>
+                <a href="hackeros-documentation.html" class="btn">Dokumentacja</a>
+            </div>
         </div>
     </section>
     <footer>
