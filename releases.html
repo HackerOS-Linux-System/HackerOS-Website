@@ -131,13 +131,166 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const userLang = navigator.language || navigator.userLanguage;
-            if (userLang.startsWith('pl')) {
-                document.documentElement.lang = 'pl';
-            } else {
+            const isPolish = userLang.startsWith('pl');
+            
+            if (!isPolish) {
                 document.documentElement.lang = 'en';
-                document.querySelector('.releases-section h1').textContent = 'HackerOS Releases';
+                
+                // Tłumaczenie nagłówka głównego
+                const mainTitle = document.querySelector('.releases-section h1');
+                if (mainTitle) mainTitle.textContent = 'HackerOS Releases';
+                
+                // Tłumaczenie wszystkich wydań (release)
                 const releases = document.querySelectorAll('.release');
-                // cały skrypt tłumaczeniowy (bez zmian)
+                releases.forEach(release => {
+                    // Tłumaczenie opisu (p)
+                    const descParagraph = release.querySelector('p');
+                    if (descParagraph) {
+                        const polishText = descParagraph.textContent;
+                        if (polishText.includes('Nowa edycja głównie z poprawkami')) {
+                            descParagraph.textContent = 'New edition mainly with fixes.';
+                        } else if (polishText.includes('Nowa wersja z zaktualizowaną edycją cybersecurity oraz narzędziami GUI')) {
+                            descParagraph.textContent = 'New version with updated cybersecurity edition and GUI tools.';
+                        } else if (polishText.includes('Nowa wersja z zaktualizowanymi narzędziami CLI i nowymi funkcjami')) {
+                            descParagraph.textContent = 'New version with updated CLI tools and new features.';
+                        } else if (polishText.includes('Nowa wersja z naprawionymi błędami i nowymi funkcjami')) {
+                            descParagraph.textContent = 'New version with fixed bugs and new features.';
+                        } else if (polishText.includes('Nowa wersja z zaktualizowanymi narzędziami oraz aplikacjami')) {
+                            descParagraph.textContent = 'New version with updated tools and applications.';
+                        } else if (polishText.includes('Nowa wersja z rozbudowanymi narzędziami')) {
+                            descParagraph.textContent = 'New version with expanded tools.';
+                        } else if (polishText.includes('Nowa wersja z zaktualizowanymi narzędziami i naprawionymi skryptami')) {
+                            descParagraph.textContent = 'New version with updated tools and fixed scripts.';
+                        } else if (polishText.includes('Nowa wersja z naprawionymi skryptami oraz rozbudowanymi narzędziami hacker, hackerc')) {
+                            descParagraph.textContent = 'New version with fixed scripts and expanded hacker, hackerc tools.';
+                        } else if (polishText.includes('Nowa wersja z naprawionymi błędami i modyfikacjami')) {
+                            descParagraph.textContent = 'New version with bug fixes and modifications.';
+                        } else if (polishText.includes('Nowa wersja z aktualizacją bazy, dodanym językiem programowania hacker lang oraz innymi zmianami')) {
+                            descParagraph.textContent = 'New version with base update, added hacker lang programming language and other changes.';
+                        } else if (polishText.includes('Usunięto edycję Nvidia, wiele zmian')) {
+                            descParagraph.textContent = 'Removed Nvidia edition, many changes.';
+                        } else if (polishText.includes('Dodano nową edycję Nvidia')) {
+                            descParagraph.textContent = 'Added new Nvidia edition.';
+                        } else if (polishText.includes('Dodano nową edycję Hydra Edition oraz zaktualizowano tapety')) {
+                            descParagraph.textContent = 'Added new Hydra Edition and updated wallpapers.';
+                        } else if (polishText.includes('Najnowsza wersja, poprawiono wiele znanych błędów z HackerOS V3.0')) {
+                            descParagraph.textContent = 'Latest version, fixed many known bugs from HackerOS V3.0.';
+                        } else if (polishText.includes('Najnowsza główna wersja z znacznymi ulepszeniami: zmieniono z jądra xanmod na xanmod lts (lepsza obsługa urządzeń)')) {
+                            descParagraph.textContent = 'Latest major version with significant improvements: changed kernel from xanmod to xanmod lts (better device support).';
+                        }
+                    }
+                    
+                    // Tłumaczenie nagłówków h3 "Data wydania:" na "Release date:"
+                    const dateHeaders = release.querySelectorAll('h3');
+                    dateHeaders.forEach(header => {
+                        if (header.textContent === 'Data wydania:') {
+                            header.textContent = 'Release date:';
+                        } else if (header.textContent === 'Changelog:') {
+                            header.textContent = 'Changelog:';
+                        }
+                    });
+                    
+                    // Tłumaczenie elementów list (w changelogach i datach) - pozostawiam oryginalne daty, bo są w formacie liczbowym, ale changelog ma polskie słowa
+                    const listItems = release.querySelectorAll('ul li');
+                    listItems.forEach(li => {
+                        let text = li.textContent;
+                        if (text.includes('Naprawiono błędy w narzędziach z AppImage')) {
+                            li.textContent = 'Fixed bugs in AppImage tools';
+                        } else if (text.includes('Zaktualizowano narzędzia CLI')) {
+                            li.textContent = 'Updated CLI tools';
+                        } else if (text.includes('Zaktualizowano język programowania HackerOS')) {
+                            li.textContent = 'Updated HackerOS programming language';
+                        } else if (text.includes('Zaktualizowano narzędzia GUI')) {
+                            li.textContent = 'Updated GUI tools';
+                        } else if (text.includes('Nowy prerelease dla edycji atomic')) {
+                            li.textContent = 'New prerelease for atomic edition';
+                        } else if (text.includes('Dodano nową edycję NVIDIA')) {
+                            li.textContent = 'Added new NVIDIA edition';
+                        } else if (text.includes('Dodano nową aplikację HackerOS App')) {
+                            li.textContent = 'Added new HackerOS App';
+                        } else if (text.includes('Naprawiono narzędzie CLI o nazwie HackerOS-Steam')) {
+                            li.textContent = 'Fixed CLI tool named HackerOS-Steam';
+                        } else if (text.includes('Dodano prerelease dla edycji atomic')) {
+                            li.textContent = 'Added prerelease for atomic edition';
+                        } else if (text.includes('Zaktualizowano edycję cybersecurity o nowe narzędzia i lepszą przeglądarkę')) {
+                            li.textContent = 'Updated cybersecurity edition with new tools and better browser';
+                        } else if (text.includes('Naprawiono błędy z MOTD')) {
+                            li.textContent = 'Fixed MOTD bugs';
+                        } else if (text.includes('Dodano nową edycję LTS')) {
+                            li.textContent = 'Added new LTS edition';
+                        } else if (text.includes('Zaktualizowano bazę Debiana do Debian Forky')) {
+                            li.textContent = 'Updated Debian base to Debian Forky';
+                        } else if (text.includes('Dodano zaktualizowane narzędzia')) {
+                            li.textContent = 'Added updated tools';
+                        } else if (text.includes('Zaktualizowano narzędzia hacker, hli, hackerc, bytes, hpm oraz aplikacje')) {
+                            li.textContent = 'Updated hacker, hli, hackerc, bytes, hpm tools and applications';
+                        } else if (text.includes('Dodano MOTD')) {
+                            li.textContent = 'Added MOTD';
+                        } else if (text.includes('Zaktualizowano bazę do najnowszego Debiana')) {
+                            li.textContent = 'Updated base to the latest Debian';
+                        } else if (text.includes('Rozbudowano skrypty: unpack-xanmod i unpack-liquorix. Rozbudowano narzędzie hacker oraz zaktualizowano aplikację update system')) {
+                            li.textContent = 'Expanded scripts: unpack-xanmod and unpack-liquorix. Expanded hacker tool and updated update system application';
+                        } else if (text.includes('Zaktualizowano narzędzia - hacker, hackerc')) {
+                            li.textContent = 'Updated tools - hacker, hackerc';
+                        } else if (text.includes('Naprawiono skrypty')) {
+                            li.textContent = 'Fixed scripts';
+                        } else if (text.includes('Zaktualizowano bazę do najnowszego Debiana, dodano najnowsze narzędzia: HackerOS Welcome, hacker oraz narzędzia dla języka programowania hacker - hackerc')) {
+                            li.textContent = 'Updated base to the latest Debian, added latest tools: HackerOS Welcome, hacker, and tools for hacker programming language - hackerc';
+                        } else if (text.includes('Naprawiono skrypty uruchamiające hacker mode')) {
+                            li.textContent = 'Fixed scripts launching hacker mode';
+                        } else if (text.includes('Zaktualizowano bazę do najnowszego Debiana')) {
+                            li.textContent = 'Updated base to the latest Debian';
+                        } else if (text.includes('Naprawiono błędy w aplikacji hacker launcher')) {
+                            li.textContent = 'Fixed bugs in hacker launcher application';
+                        } else if (text.includes('Naprawiono błędy w hacker mode')) {
+                            li.textContent = 'Fixed bugs in hacker mode';
+                        } else if (text.includes('Naprawiono/Rozbudowano skrypty')) {
+                            li.textContent = 'Fixed/Expanded scripts';
+                        } else if (text.includes('Dodano język programowania hacker lang')) {
+                            li.textContent = 'Added hacker lang programming language';
+                        } else if (text.includes('Zaktualizowano hacker mode aby działał tylko i wyłącznie na x11 (hacker mode będzie działać zarówno na nowych gpu jak i na starych)')) {
+                            li.textContent = 'Updated hacker mode to work only on x11 (hacker mode will work on both new and old GPUs)';
+                        } else if (text.includes('Zaktualizowano permisje dla plików')) {
+                            li.textContent = 'Updated file permissions';
+                        } else if (text.includes('Usunięto narzędzie hacker-update')) {
+                            li.textContent = 'Removed hacker-update tool';
+                        } else if (text.includes('Od teraz nie będzie wbudowanego jądra xanmod, zainstaluj je i ustaw jako domyślne za pomocą polecenia set-xanmod-default')) {
+                            li.textContent = 'From now on, there will be no built-in xanmod kernel, install it and set as default using set-xanmod-default command';
+                        } else if (text.includes('Rozbudowano narzędzie hacker')) {
+                            li.textContent = 'Expanded hacker tool';
+                        } else if (text.includes('Usunięto gry HackerOS, dodano jedną aplikację która uruchamia wszystkie gry HackerOS')) {
+                            li.textContent = 'Removed HackerOS games, added one application that launches all HackerOS games';
+                        } else if (text.includes('Od teraz hacker mode nie będzie odpalał za pomocą gamescope tylko cage')) {
+                            li.textContent = 'From now on, hacker mode will not use gamescope but cage';
+                        } else if (text.includes('Dodano aplikację inspirowaną ASUS Armoury Crate o nazwie HackerOS Game Mode')) {
+                            li.textContent = 'Added application inspired by ASUS Armoury Crate called HackerOS Game Mode';
+                        } else if (text.includes('Rozbudowano Hacker Launcher, gotowy do uruchamiania gier i plików .exe')) {
+                            li.textContent = 'Expanded Hacker Launcher, ready to run games and .exe files';
+                        } else if (text.includes('Naprawiono i przebudowano Hacker Mode')) {
+                            li.textContent = 'Fixed and rebuilt Hacker Mode';
+                        } else if (text.includes('Zaktualizowano skrypty')) {
+                            li.textContent = 'Updated scripts';
+                        } else if (text.includes('Zaktualizowano tapety')) {
+                            li.textContent = 'Updated wallpapers';
+                        } else if (text.includes('Naprawiono kilka błędów')) {
+                            li.textContent = 'Fixed several bugs';
+                        } else if (text.includes('Naprawiono błędy z tapetami')) {
+                            li.textContent = 'Fixed wallpaper bugs';
+                        } else if (text.includes('Naprawiono błędy z jądrem')) {
+                            li.textContent = 'Fixed kernel bugs';
+                        } else if (text.includes('Dodano nową grę The Racer i nową aplikację HackerOS Welcome')) {
+                            li.textContent = 'Added new game The Racer and new HackerOS Welcome application';
+                        } else if (text.includes('Poprawiono wsparcie dla sterowników Nvidia dla lepszej wydajności w grach')) {
+                            li.textContent = 'Improved Nvidia driver support for better gaming performance';
+                        } else if (text.includes('Dodano zaawansowane narzędzia cybersecurity, takie jak ulepszone firewalle i wykrywanie intruzów')) {
+                            li.textContent = 'Added advanced cybersecurity tools such as improved firewalls and intrusion detection';
+                        } else if (text.includes('Poprawki błędów, dodano i ulepszono narzędzia cli oraz gry hackeros')) {
+                            li.textContent = 'Bug fixes, added and improved cli tools and hackeros games';
+                        } else if (text.includes('Poprawki błędów i ulepszenia stabilności na podstawie opinii użytkowników')) {
+                            li.textContent = 'Bug fixes and stability improvements based on user feedback';
+                        }
+                    });
+                });
             }
         });
     </script>
@@ -151,7 +304,6 @@
                 <li><a href="download.html">Download</a></li>
                 <li><a href="releases.html">Releases</a></li>
                 <li><a href="hackeros-team.html">HackerOS Team</a></li>
-                <li><a href="privacy-policy-hackeros.html">Privacy Policy</a></li>
                 <li><a href="hackeros-documentation.html">Documentation</a></li>
             </ul>
         </nav>
