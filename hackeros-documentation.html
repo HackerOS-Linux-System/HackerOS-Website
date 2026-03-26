@@ -168,7 +168,7 @@
             background-color: #1A1A1A;
             padding: 2px 6px;
             border-radius: 4px;
-            color: #AA6DFF; /* jaśniejszy fiolet */
+            color: #AA6DFF;
         }
         .tab-pane img {
             max-width: 100%;
@@ -251,14 +251,14 @@
         /* Styl dla bloku informacji o cyklu wydawniczym */
         .release-cycle {
             background: #121212;
-            border-left: 4px solid #AA6DFF; /* jaśniejszy fiolet */
+            border-left: 4px solid #AA6DFF;
             padding: 20px;
             margin-top: 30px;
             border-radius: 8px;
         }
         .release-cycle h3 {
             margin-top: 0;
-            color: #AA6DFF; /* jaśniejszy fiolet */
+            color: #AA6DFF;
         }
         .release-cycle p {
             margin-bottom: 0;
@@ -663,8 +663,8 @@ sudo lpm clean</span> <button class="copy-button" data-command="sudo lpm install
                     </ul>
                     <p><strong>Przykład użycia:</strong></p>
                     <pre><span>&gt; hacker update</span> <button class="copy-button" data-command="> hacker update">Kopiuj</button></pre>
-                    <p>Więcej szczegółów znajdziesz w <a href="https://hackeros-linux-system.github.io/HackerOS-Website/h#/docs.html" target="_blank">dokumentacji H#</a>.</p>
-
+                    <p>Więcej szczegółów znajdziesz w <a href="https://hackeros-linux-system.github.io/HackerOS-Website/h-sharp/docs.html" target="_blank">dokumentacji H#</a>.</p>
+                    
                     <p><strong>Ekosystem bibliotek H#:</strong><br>
                     <code>bytes</code> – ekosystem bibliotek dla H#, rozwijany przez zespół HackerOS oraz zewnętrznych współtwórców (ekosystem skierowany głównie do cyberbezpieczeństwa).</p>
 
@@ -723,31 +723,32 @@ sudo lpm clean</span> <button class="copy-button" data-command="sudo lpm install
                     <h2>12. Komendy HackerOS</h2>
                     <p>Oto pełna, aktualna lista najważniejszych komend dostępnych w systemie:</p>
                     <table>
-                        <thead>痕<th>Komenda</th><th>Opis</th><th>Akcja</th> </tr>
+                        <thead>
+                            <tr><th>Komenda</th><th>Opis</th><th>Akcja</th></tr>
                         </thead>
                         <tbody>
-                            <tr><td><code>hacker update</code></td><td>Aktualizuje snapa, apt, flatpaka, firmware – narzędzie napisane w Crystal/Go/Rust.</td><td><button class="copy-button" data-command="hacker update">Kopiuj</button></td> </tr>
-                            <tr><td><code>hacker</code></td><td>Manager pakietów – możesz go używać zamiast apt.</td><td><button class="copy-button" data-command="hacker">Kopiuj</button></td> </tr>
-                            <tr><td><code>hacker unpack</code></td><td>Instaluje narzędzia do gier, cyberbezpieczeństwa i inne polecane narzędzia przez HackerOS.</td><td><button class="copy-button" data-command="hacker unpack">Kopiuj</button></td> </tr>
-                            <tr><td><code>hacker unpack cybersecurity</code></td><td>Instaluje narzędzia do cyberbezpieczeństwa.</td><td><button class="copy-button" data-command="hacker unpack cybersecurity">Kopiuj</button></td> </tr>
-                            <tr><td><code>hacker unpack gaming</code></td><td>Instaluje narzędzia do gier.</td><td><button class="copy-button" data-command="hacker unpack gaming">Kopiuj</button></td> </tr>
-                            <tr><td><code>hacker unpack gaming with-roblox</code></td><td>Instaluje narzędzia do gier z Roblox.</td><td><button class="copy-button" data-command="hacker unpack gaming with-roblox">Kopiuj</button></td> </tr>
-                            <tr><td><code>hacker unpack emulators</code></td><td>Instaluje emulatory.</td><td><button class="copy-button" data-command="hacker unpack emulators">Kopiuj</button></td> </tr>
-                            <tr><td><code>hacker syslog</code></td><td>Pokazuje logi systemowe.</td><td><button class="copy-button" data-command="hacker syslog">Kopiuj</button></td> </tr>
-                            <tr><td><code>hacker help</code></td><td>Pokazuje listę komend.</td><td><button class="copy-button" data-command="hacker help">Kopiuj</button></td> </tr>
-                            <tr><td><code>hacker help-ui</code></td><td>Pokazuje listę komend w ładnym UI.</td><td><button class="copy-button" data-command="hacker help-ui">Kopiuj</button></td> </tr>
-                            <tr><td><code>hacker unpack devtools</code></td><td>Instaluje narzędzia do programowania.</td><td><button class="copy-button" data-command="hacker unpack devtools">Kopiuj</button></td> </tr>
-                            <tr><td><code>hacker unpack add-ons</code></td><td>Instaluje dodatki polecane przez HackerOS.</td><td><button class="copy-button" data-command="hacker unpack add-ons">Kopiuj</button></td> </tr>
-                            <tr><td><code>hacker unpack gs</code></td><td>Instaluje narzędzia do gier i cyberbezpieczeństwa.</td><td><button class="copy-button" data-command="hacker unpack gs">Kopiuj</button></td> </tr>
-                            <tr><td><code>hacker unpack hacker-mode</code></td><td>Zainstaluj Hacker Mode.</td><td><button class="copy-button" data-command="hacker unpack hacker-mode">Kopiuj</button></td> </tr>
-                            <tr><td><code>chker</code></td><td>Usuwa aktualne jądro i instaluje nowe jądro xanmod lub liquorix.</td><td><button class="copy-button" data-command="chker">Kopiuj</button></td> </tr>
-                            <tr><td><code>hl</code></td><td>Proste narzędzie do uruchamiania i kompilowania skryptów/programów napisanych w języku H#.</td><td><button class="copy-button" data-command="hl">Kopiuj</button></td> </tr>
-                            <tr><td><code>virus</code></td><td>Manager pakietów i kompilator/runtime dla HackerScript.</td><td><button class="copy-button" data-command="virus">Kopiuj</button></td> </tr>
-                            <tr><td><code>hlh</code></td><td>Dokumentacja oraz informacje o narzędziach H#.</td><td><button class="copy-button" data-command="hlh">Kopiuj</button></td> </tr>
-                            <tr><td><code>hedit</code></td><td>Edytor tekstu inspirowany nano.</td><td><button class="copy-button" data-command="hedit">Kopiuj</button></td> </tr>
-                            <tr><td><code>ngt</code></td><td>Terminalowy menedżer plików (TUI) z wbudowanym edytorem tekstu i konsolą poleceń.</td><td><button class="copy-button" data-command="ngt">Kopiuj</button></td> </tr>
-                            <tr><td><code>HackerOS-Steam</code></td><td>Uruchom Steam w kontenerze.</td><td><button class="copy-button" data-command="HackerOS-Steam">Kopiuj</button></td> </tr>
-                            <tr><td><code>hbuild</code></td><td>Własny następca cmake lub meson (nowoczesny).</td><td><button class="copy-button" data-command="hbuild">Kopiuj</button></td> </tr>
+                            <tr><td><code>hacker update</code></td><td>Aktualizuje snapa, apt, flatpaka, firmware – narzędzie napisane w Crystal/Go/Rust.</td><td><button class="copy-button" data-command="hacker update">Kopiuj</button></td></tr>
+                            <tr><td><code>hacker</code></td><td>Manager pakietów – możesz go używać zamiast apt.</td><td><button class="copy-button" data-command="hacker">Kopiuj</button></td></tr>
+                            <tr><td><code>hacker unpack</code></td><td>Instaluje narzędzia do gier, cyberbezpieczeństwa i inne polecane narzędzia przez HackerOS.</td><td><button class="copy-button" data-command="hacker unpack">Kopiuj</button></td></tr>
+                            <tr><td><code>hacker unpack cybersecurity</code></td><td>Instaluje narzędzia do cyberbezpieczeństwa.</td><td><button class="copy-button" data-command="hacker unpack cybersecurity">Kopiuj</button></td></tr>
+                            <tr><td><code>hacker unpack gaming</code></td><td>Instaluje narzędzia do gier.</td><td><button class="copy-button" data-command="hacker unpack gaming">Kopiuj</button></td></tr>
+                            <tr><td><code>hacker unpack gaming with-roblox</code></td><td>Instaluje narzędzia do gier z Roblox.</td><td><button class="copy-button" data-command="hacker unpack gaming with-roblox">Kopiuj</button></td></tr>
+                            <tr><td><code>hacker unpack emulators</code></td><td>Instaluje emulatory.</td><td><button class="copy-button" data-command="hacker unpack emulators">Kopiuj</button></td></tr>
+                            <tr><td><code>hacker syslog</code></td><td>Pokazuje logi systemowe.</td><td><button class="copy-button" data-command="hacker syslog">Kopiuj</button></td></tr>
+                            <tr><td><code>hacker help</code></td><td>Pokazuje listę komend.</td><td><button class="copy-button" data-command="hacker help">Kopiuj</button></td></tr>
+                            <tr><td><code>hacker help-ui</code></td><td>Pokazuje listę komend w ładnym UI.</td><td><button class="copy-button" data-command="hacker help-ui">Kopiuj</button></td></tr>
+                            <tr><td><code>hacker unpack devtools</code></td><td>Instaluje narzędzia do programowania.</td><td><button class="copy-button" data-command="hacker unpack devtools">Kopiuj</button></td></tr>
+                            <tr><td><code>hacker unpack add-ons</code></td><td>Instaluje dodatki polecane przez HackerOS.</td><td><button class="copy-button" data-command="hacker unpack add-ons">Kopiuj</button></td></tr>
+                            <tr><td><code>hacker unpack gs</code></td><td>Instaluje narzędzia do gier i cyberbezpieczeństwa.</td><td><button class="copy-button" data-command="hacker unpack gs">Kopiuj</button></td></tr>
+                            <tr><td><code>hacker unpack hacker-mode</code></td><td>Zainstaluj Hacker Mode.</td><td><button class="copy-button" data-command="hacker unpack hacker-mode">Kopiuj</button></td></tr>
+                            <tr><td><code>chker</code></td><td>Usuwa aktualne jądro i instaluje nowe jądro xanmod lub liquorix.</td><td><button class="copy-button" data-command="chker">Kopiuj</button></td></tr>
+                            <tr><td><code>hl</code></td><td>Proste narzędzie do uruchamiania i kompilowania skryptów/programów napisanych w języku H#.</td><td><button class="copy-button" data-command="hl">Kopiuj</button></td></tr>
+                            <tr><td><code>virus</code></td><td>Manager pakietów i kompilator/runtime dla HackerScript.</td><td><button class="copy-button" data-command="virus">Kopiuj</button></td></tr>
+                            <tr><td><code>hlh</code></td><td>Dokumentacja oraz informacje o narzędziach H#.</td><td><button class="copy-button" data-command="hlh">Kopiuj</button></td></tr>
+                            <tr><td><code>hedit</code></td><td>Edytor tekstu inspirowany nano.</td><td><button class="copy-button" data-command="hedit">Kopiuj</button></td></tr>
+                            <tr><td><code>ngt</code></td><td>Terminalowy menedżer plików (TUI) z wbudowanym edytorem tekstu i konsolą poleceń.</td><td><button class="copy-button" data-command="ngt">Kopiuj</button></td></tr>
+                            <tr><td><code>HackerOS-Steam</code></td><td>Uruchom Steam w kontenerze.</td><td><button class="copy-button" data-command="HackerOS-Steam">Kopiuj</button></td></tr>
+                            <tr><td><code>hbuild</code></td><td>Własny następca cmake lub meson (nowoczesny).</td><td><button class="copy-button" data-command="hbuild">Kopiuj</button></td></tr>
                         </tbody>
                     </table>
                 </div>
