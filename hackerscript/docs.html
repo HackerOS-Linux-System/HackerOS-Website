@@ -1,1 +1,1404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HackerScript — Language Documentation</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
 
+:root {
+  --bg: #08090d;
+  --bg2: #0d0f17;
+  --bg3: #12151f;
+  --surface: #161926;
+  --surface2: #1e2333;
+  --border: #252a3d;
+  --border2: #2f3652;
+  --accent: #4d9fff;
+  --accent2: #a0c8ff;
+  --silver: #c8d4e8;
+  --silver2: #8fa0ba;
+  --text: #dde4f0;
+  --text2: #8fa0ba;
+  --green: #4ecb71;
+  --orange: #f0a040;
+  --red: #f05060;
+  --purple: #a088f0;
+  --code-bg: #0a0c14;
+  --hs-blue: #1a3060;
+  --hs-chrome: #c0cce0;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  line-height: 1.7;
+  min-height: 100vh;
+}
+
+/* ── Sidebar ── */
+#sidebar {
+  position: fixed;
+  top: 0; left: 0;
+  width: 260px;
+  height: 100vh;
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+}
+
+#sidebar::-webkit-scrollbar { width: 4px; }
+#sidebar::-webkit-scrollbar-track { background: transparent; }
+#sidebar::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+.sidebar-logo {
+  padding: 28px 24px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-decoration: none;
+}
+
+.logo-hs {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 26px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #6080c0 0%, #c0cce0 50%, #e0e8f8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 2px;
+}
+
+.logo-text {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--silver2);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.sidebar-version {
+  font-size: 10px;
+  color: var(--text2);
+  letter-spacing: 0.5px;
+}
+
+nav { padding: 16px 0; flex: 1; }
+
+.nav-section {
+  padding: 6px 24px 2px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text2);
+  margin-top: 10px;
+}
+
+nav a {
+  display: block;
+  padding: 6px 24px 6px 28px;
+  font-size: 13.5px;
+  color: var(--silver2);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: all 0.15s ease;
+  line-height: 1.4;
+}
+
+nav a:hover { color: var(--accent2); border-left-color: var(--accent); background: rgba(77,159,255,0.04); }
+nav a.active { color: var(--accent); border-left-color: var(--accent); background: rgba(77,159,255,0.07); }
+
+/* ── Main ── */
+main {
+  margin-left: 260px;
+  padding: 0;
+  max-width: calc(100vw - 260px);
+}
+
+/* ── Hero ── */
+.hero {
+  background: linear-gradient(180deg, #0d1428 0%, #08090d 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 80px 72px 64px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -100px; right: -100px;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(77,159,255,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.hero-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  background: rgba(77,159,255,0.1);
+  border: 1px solid rgba(77,159,255,0.2);
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 24px;
+}
+
+.hero h1 {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 52px;
+  font-weight: 700;
+  line-height: 1.1;
+  margin-bottom: 20px;
+  background: linear-gradient(135deg, #e0e8f8 0%, #c0cce0 40%, #8090b0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero p {
+  font-size: 17px;
+  color: var(--text2);
+  max-width: 640px;
+  margin-bottom: 36px;
+  line-height: 1.7;
+}
+
+.hero-pills {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.pill {
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  border: 1px solid;
+}
+.pill-blue { background: rgba(77,159,255,0.08); border-color: rgba(77,159,255,0.25); color: var(--accent2); }
+.pill-green { background: rgba(78,203,113,0.08); border-color: rgba(78,203,113,0.25); color: var(--green); }
+.pill-orange { background: rgba(240,160,64,0.08); border-color: rgba(240,160,64,0.25); color: var(--orange); }
+.pill-purple { background: rgba(160,136,240,0.08); border-color: rgba(160,136,240,0.25); color: var(--purple); }
+
+/* ── Content ── */
+.content { padding: 64px 72px; max-width: 960px; }
+
+section { margin-bottom: 80px; }
+
+h2 {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--silver);
+  margin-bottom: 8px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+  letter-spacing: 0.5px;
+}
+
+h3 {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--accent2);
+  margin: 32px 0 12px;
+  letter-spacing: 0.3px;
+}
+
+h4 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--silver2);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 24px 0 8px;
+}
+
+p { color: var(--text2); margin-bottom: 16px; line-height: 1.75; }
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ── Code ── */
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px 24px;
+  overflow-x: auto;
+  margin: 16px 0 24px;
+  position: relative;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13.5px;
+  line-height: 1.7;
+}
+
+pre::before {
+  content: attr(data-lang);
+  position: absolute;
+  top: 10px; right: 14px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--border2);
+}
+
+code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  background: var(--surface);
+  padding: 2px 7px;
+  border-radius: 4px;
+  color: var(--accent2);
+  border: 1px solid var(--border);
+}
+
+pre code { background: none; padding: 0; border: none; font-size: inherit; color: inherit; }
+
+/* Syntax highlighting */
+.k { color: #5599ff; } /* keyword */
+.kw { color: #4d9fff; font-weight: 600; } /* keyword strong */
+.t { color: #60d080; } /* type */
+.s { color: #f0c060; } /* string */
+.c { color: #506070; font-style: italic; } /* comment */
+.n { color: #90c8f0; } /* number */
+.f { color: #c080f0; } /* function name */
+.op { color: #80a0c0; } /* operator */
+.p { color: var(--text2); } /* punctuation */
+.var { color: #e0e8f8; } /* variable */
+.field { color: #80d0c0; } /* field */
+.mac { color: #f0a040; } /* macro/builtin */
+
+/* ── Tables ── */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0 24px;
+  font-size: 14px;
+}
+th {
+  text-align: left;
+  padding: 10px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--silver2);
+}
+td {
+  padding: 10px 16px;
+  border: 1px solid var(--border);
+  color: var(--text2);
+  vertical-align: top;
+}
+tr:nth-child(even) td { background: rgba(255,255,255,0.015); }
+td code { font-size: 12px; }
+
+/* ── Info boxes ── */
+.info, .warn, .tip {
+  padding: 16px 20px;
+  border-radius: 6px;
+  margin: 16px 0;
+  border-left: 3px solid;
+  font-size: 14px;
+  line-height: 1.7;
+}
+.info { background: rgba(77,159,255,0.06); border-color: var(--accent); color: var(--accent2); }
+.warn { background: rgba(240,160,64,0.06); border-color: var(--orange); color: var(--orange); }
+.tip  { background: rgba(78,203,113,0.06); border-color: var(--green); color: var(--green); }
+.info strong, .warn strong, .tip strong { display: block; margin-bottom: 4px; font-weight: 700; }
+
+/* ── Command ref ── */
+.cmd-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin: 16px 0;
+}
+
+.cmd-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px 18px;
+}
+
+.cmd-card .cmd-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+
+.cmd-card p { font-size: 13px; margin: 0; color: var(--text2); }
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+
+@media (max-width: 900px) {
+  #sidebar { display: none; }
+  main { margin-left: 0; max-width: 100vw; }
+  .content { padding: 40px 24px; }
+  .hero { padding: 48px 24px 40px; }
+  .hero h1 { font-size: 36px; }
+  .cmd-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── SIDEBAR ── -->
+<aside id="sidebar">
+  <a class="sidebar-logo" href="#">
+    <div>
+      <div class="logo-hs">HS</div>
+    </div>
+    <div>
+      <div class="logo-text">HackerScript</div>
+      <div class="sidebar-version">v0.2.0 — Language Reference</div>
+    </div>
+  </a>
+  <nav>
+    <div class="nav-section">Getting Started</div>
+    <a href="#intro">Introduction</a>
+    <a href="#install">Installation</a>
+    <a href="#hello">Hello World</a>
+    <a href="#project">Project Structure</a>
+
+    <div class="nav-section">Language</div>
+    <a href="#types">Types</a>
+    <a href="#variables">Variables</a>
+    <a href="#functions">Functions</a>
+    <a href="#control">Control Flow</a>
+    <a href="#loops">Loops</a>
+    <a href="#objects">Objects &amp; Methods</a>
+    <a href="#enums">Enums</a>
+    <a href="#pattern">Pattern Matching</a>
+    <a href="#pointers">Pointers</a>
+    <a href="#extern">Extern &amp; FFI</a>
+    <a href="#direct">Direct C Blocks</a>
+
+    <div class="nav-section">Standard Library</div>
+    <a href="#std-str">Str</a>
+    <a href="#std-vec">Vec</a>
+    <a href="#std-hashmap">HashMap</a>
+    <a href="#std-io">I/O</a>
+
+    <div class="nav-section">Tooling</div>
+    <a href="#virus">virus — Package Manager</a>
+    <a href="#registry">Registry &amp; Libraries</a>
+    <a href="#workspace">Workspaces</a>
+    <a href="#cmake">Build Systems</a>
+  </nav>
+</aside>
+
+<!-- ── MAIN ── -->
+<main>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">Documentation</div>
+  <h1>HackerScript</h1>
+  <p>A fast, C-targeting systems language with modern syntax. Write clean, expressive code that compiles to portable C99 — no runtime, no GC, full control.</p>
+  <div class="hero-pills">
+    <span class="pill pill-blue">Compiles to C99</span>
+    <span class="pill pill-green">No Runtime</span>
+    <span class="pill pill-orange">Self-Hosted</span>
+    <span class="pill pill-purple">Arena Memory</span>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- ── INTRO ── -->
+<section id="intro">
+<h2>Introduction</h2>
+<p>HackerScript (HCS) is a statically typed, compiled language that transpiles to C99. It gives you modern language ergonomics — objects, pattern matching, closures, a package manager — while staying close to the metal. Every HCS program becomes readable, portable C that you can inspect, optimize, and link against anything.</p>
+
+<h3>Design Goals</h3>
+<table>
+<tr><th>Goal</th><th>Approach</th></tr>
+<tr><td>Zero hidden costs</td><td>No GC, no reference counting — arena-based memory with explicit lifetimes</td></tr>
+<tr><td>C interoperability</td><td>Native FFI via <code>extern</code>, <code>direct {}</code> blocks for raw C injection</td></tr>
+<tr><td>Readable output</td><td>Generated C is clean, named, and debuggable with standard tools</td></tr>
+<tr><td>Self-hosting</td><td>The HCS compiler is itself written in HCS</td></tr>
+</table>
+</section>
+
+<!-- ── INSTALL ── -->
+<section id="install">
+<h2>Installation</h2>
+
+<h3>From Binary (recommended)</h3>
+<pre data-lang="sh"><span class="c"># Linux / macOS</span>
+curl -fsSL https://hackerscript.dev/install.sh | sh
+
+<span class="c"># Then verify:</span>
+hackerc version
+virus version</pre>
+
+<h3>From Source</h3>
+<pre data-lang="sh">git clone https://github.com/hackerscript/hackerc
+cd hackerc
+cargo build --release
+<span class="c"># Binary at: ./target/release/hackerc</span></pre>
+
+<h3>Requirements</h3>
+<table>
+<tr><th>Tool</th><th>Version</th><th>Purpose</th></tr>
+<tr><td>GCC or Clang</td><td>≥ 8</td><td>Compile generated C</td></tr>
+<tr><td>CMake</td><td>≥ 3.20</td><td>Project builds (default)</td></tr>
+<tr><td>curl</td><td>any</td><td>Package downloads</td></tr>
+</table>
+</section>
+
+<!-- ── HELLO ── -->
+<section id="hello">
+<h2>Hello World</h2>
+
+<pre data-lang="hcs"><span class="c">/// My first HackerScript program</span>
+
+<span class="kw">fn</span> <span class="f">main</span>(argc: <span class="t">i32</span>, argv: <span class="t">ptr</span>(<span class="t">ptr</span>(<span class="t">u8</span>))) : <span class="t">i32</span>
+  <span class="mac">write</span> [Hello, HackerScript!]
+  <span class="kw">return</span> <span class="n">0</span>
+<span class="kw">end</span></pre>
+
+<pre data-lang="sh"><span class="c"># Compile and run a single file:</span>
+hackerc build main.hcs
+./main
+
+<span class="c"># Or use a project:</span>
+virus init myapp
+cd myapp
+virus build
+./myapp</pre>
+
+<h3>Slightly More Interesting</h3>
+<pre data-lang="hcs"><span class="kw">from</span> [std] <span class="kw">require</span> [core]
+
+<span class="kw">fn</span> <span class="f">greet</span>(name: <span class="t">ref</span>(<span class="t">Str</span>)) : <span class="t">void</span>
+  <span class="kw">let mut</span> msg : <span class="t">Str</span> = Str.new()
+  msg.push(<span class="n">72</span>)  <span class="c">// 'H'</span>
+  msg.push_str([ello, ])
+  msg.append(name)
+  msg.push(<span class="n">33</span>)  <span class="c">// '!'</span>
+  msg.println()
+  msg.free()
+<span class="kw">end</span>
+
+<span class="kw">fn</span> <span class="f">main</span>(argc: <span class="t">i32</span>, argv: <span class="t">ptr</span>(<span class="t">ptr</span>(<span class="t">u8</span>))) : <span class="t">i32</span>
+  <span class="kw">let</span> name : <span class="t">Str</span> = Str.from_cstr([World])
+  greet(name)
+  name.free()
+  <span class="kw">return</span> <span class="n">0</span>
+<span class="kw">end</span></pre>
+</section>
+
+<!-- ── PROJECT ── -->
+<section id="project">
+<h2>Project Structure</h2>
+
+<pre data-lang="sh">myapp/
+├── Project.toml        <span class="c"># Project manifest</span>
+├── src/
+│   └── main.hcs       <span class="c"># Entry point</span>
+├── .cache/            <span class="c"># Generated C files (cmake)</span>
+└── build/             <span class="c"># Final binaries</span></pre>
+
+<h3>Project.toml</h3>
+<pre data-lang="toml">[project]
+name = "myapp"
+version = "0.1.0"
+description = "My HackerScript application"
+entry = "src/main.hcs"
+is_lib = false
+build_system = "cmake"    <span class="c"># cmake | make | meson | none</span>
+standalone = false
+
+[dependencies]
+json = "0.1.0"
+http = "0.1.0"
+cli = { git = "https://github.com/me/cli-lib" }</pre>
+
+<h3>Build System Options</h3>
+<table>
+<tr><th>Value</th><th>Behavior</th></tr>
+<tr><td><code>cmake</code></td><td>Default. Generates CMakeLists.txt, compiled C goes to <code>.cache/</code>, binary to <code>build/</code></td></tr>
+<tr><td><code>make</code></td><td>Generates Makefile, same directory layout</td></tr>
+<tr><td><code>meson</code></td><td>Generates meson.build, <code>meson setup build .cache/</code></td></tr>
+<tr><td><code>none</code></td><td>Direct <code>hackerc</code> invocation, no intermediate build system</td></tr>
+</table>
+</section>
+
+<!-- ── TYPES ── -->
+<section id="types">
+<h2>Types</h2>
+
+<h3>Primitive Types</h3>
+<table>
+<tr><th>Type</th><th>C equivalent</th><th>Size</th><th>Description</th></tr>
+<tr><td><code>i8</code></td><td><code>int8_t</code></td><td>1 byte</td><td>Signed 8-bit integer</td></tr>
+<tr><td><code>i16</code></td><td><code>int16_t</code></td><td>2 bytes</td><td>Signed 16-bit integer</td></tr>
+<tr><td><code>i32</code></td><td><code>int32_t</code></td><td>4 bytes</td><td>Signed 32-bit integer</td></tr>
+<tr><td><code>i64</code></td><td><code>int64_t</code></td><td>8 bytes</td><td>Signed 64-bit integer</td></tr>
+<tr><td><code>u8</code></td><td><code>uint8_t</code></td><td>1 byte</td><td>Unsigned byte</td></tr>
+<tr><td><code>u16</code></td><td><code>uint16_t</code></td><td>2 bytes</td><td>Unsigned 16-bit</td></tr>
+<tr><td><code>u32</code></td><td><code>uint32_t</code></td><td>4 bytes</td><td>Unsigned 32-bit</td></tr>
+<tr><td><code>u64</code></td><td><code>uint64_t</code></td><td>8 bytes</td><td>Unsigned 64-bit</td></tr>
+<tr><td><code>f32</code></td><td><code>float</code></td><td>4 bytes</td><td>32-bit float</td></tr>
+<tr><td><code>f64</code></td><td><code>double</code></td><td>8 bytes</td><td>64-bit float</td></tr>
+<tr><td><code>bool</code></td><td><code>bool</code></td><td>1 byte</td><td><code>true</code> / <code>false</code></td></tr>
+<tr><td><code>void</code></td><td><code>void</code></td><td>—</td><td>No value</td></tr>
+</table>
+
+<h3>Compound Types</h3>
+<pre data-lang="hcs"><span class="c">// Pointer to T</span>
+<span class="kw">let</span> p : <span class="t">ptr</span>(<span class="t">i32</span>)
+
+<span class="c">// Reference (pointer to T, caller-managed)</span>
+<span class="kw">let</span> r : <span class="t">ref</span>(<span class="t">Str</span>)
+
+<span class="c">// Mutable reference</span>
+<span class="kw">let</span> mr : <span class="t">ref</span>(<span class="t">mut</span> <span class="t">Vec</span>)
+
+<span class="c">// Function pointer</span>
+<span class="kw">let</span> cb : <span class="t">fn</span>(<span class="t">i32</span>, <span class="t">i32</span>) : <span class="t">i32</span>
+
+<span class="c">// Named struct type (defined with obj)</span>
+<span class="kw">let</span> node : <span class="t">Node</span></pre>
+
+<h3>String Literals</h3>
+<p>String literals use square brackets: <code>[hello world]</code>. They produce a raw <code>char*</code> C string (null-terminated) usable with C functions. The <code>Str</code> type (from <code>std/core</code>) wraps them for dynamic use.</p>
+<pre data-lang="hcs"><span class="kw">let</span> greeting : <span class="t">ptr</span>(<span class="t">u8</span>) = [Hello, world!]
+
+<span class="c">// Str (dynamic, heap-managed)</span>
+<span class="kw">let mut</span> s : <span class="t">Str</span> = Str.from_cstr([Hello])
+s.push(<span class="n">33</span>)   <span class="c">// append '!'</span>
+s.println()
+s.free()</pre>
+</section>
+
+<!-- ── VARIABLES ── -->
+<section id="variables">
+<h2>Variables</h2>
+
+<pre data-lang="hcs"><span class="c">// Immutable binding (const in C)</span>
+<span class="kw">let</span> x : <span class="t">i32</span> = <span class="n">42</span>
+
+<span class="c">// Mutable binding</span>
+<span class="kw">let mut</span> count : <span class="t">u64</span> = <span class="n">0</span>
+count = count + <span class="n">1</span>
+
+<span class="c">// Type inference (uses __auto_type in C)</span>
+<span class="kw">let</span> result = some_function()
+
+<span class="c">// Multiple assignment</span>
+<span class="kw">let mut</span> a : <span class="t">i32</span> = <span class="n">0</span>
+<span class="kw">let mut</span> b : <span class="t">i32</span> = <span class="n">0</span>
+a = <span class="n">10</span>
+b = <span class="n">20</span>
+
+<span class="c">// Compound assignment operators</span>
+count += <span class="n">1</span>
+count -= <span class="n">1</span>
+count *= <span class="n">2</span>
+
+<span class="c">// Constants</span>
+<span class="kw">const</span> MAX_SIZE : <span class="t">u64</span> = <span class="n">1024</span></pre>
+
+<h3>Type Casting</h3>
+<pre data-lang="hcs"><span class="kw">let</span> x : <span class="t">i32</span> = <span class="n">100</span>
+<span class="kw">let</span> y : <span class="t">u64</span> = x <span class="kw">as</span> <span class="t">u64</span>
+<span class="kw">let</span> p : <span class="t">ptr</span>(<span class="t">u8</span>) = some_ptr <span class="kw">as</span> <span class="t">ptr</span>(<span class="t">u8</span>)
+<span class="kw">let</span> f : <span class="t">f64</span> = x <span class="kw">as</span> <span class="t">f64</span></pre>
+
+<h3>Nil</h3>
+<pre data-lang="hcs"><span class="kw">let mut</span> p : <span class="t">ptr</span>(<span class="t">Node</span>) = <span class="kw">nil</span>
+
+<span class="kw">if</span> p == <span class="kw">nil</span>
+  <span class="mac">write</span> [pointer is null]
+<span class="kw">end</span></pre>
+</section>
+
+<!-- ── FUNCTIONS ── -->
+<section id="functions">
+<h2>Functions</h2>
+
+<h3>Basic Function</h3>
+<pre data-lang="hcs"><span class="kw">fn</span> <span class="f">add</span>(a: <span class="t">i32</span>, b: <span class="t">i32</span>) : <span class="t">i32</span>
+  <span class="kw">return</span> a + b
+<span class="kw">end</span>
+
+<span class="c">// Call:</span>
+<span class="kw">let</span> sum : <span class="t">i32</span> = add(<span class="n">3</span>, <span class="n">7</span>)</pre>
+
+<h3>Void Function</h3>
+<pre data-lang="hcs"><span class="kw">fn</span> <span class="f">print_line</span>(s: <span class="t">ref</span>(<span class="t">Str</span>)) : <span class="t">void</span>
+  s.println()
+<span class="kw">end</span></pre>
+
+<h3>Default Parameters &amp; Multiple Returns</h3>
+<pre data-lang="hcs"><span class="c">// Simulate multiple returns via out-params</span>
+<span class="kw">fn</span> <span class="f">divide</span>(a: <span class="t">i64</span>, b: <span class="t">i64</span>, out_rem: <span class="t">ptr</span>(<span class="t">i64</span>)) : <span class="t">i64</span>
+  let _ptr : ptr(i64) = out_rem
+  direct { *_ptr = a % b; }
+  <span class="kw">return</span> a / b
+<span class="kw">end</span>
+
+<span class="kw">let mut</span> rem : <span class="t">i64</span> = <span class="n">0</span>
+<span class="kw">let</span> q : <span class="t">i64</span> = divide(<span class="n">17</span>, <span class="n">5</span>, <span class="op">&amp;</span>rem)
+<span class="c">// q = 3, rem = 2</span></pre>
+
+<h3>Passing Strings</h3>
+<pre data-lang="hcs"><span class="c">// By reference (read-only): use ref(Str)</span>
+<span class="kw">fn</span> <span class="f">print_name</span>(name: <span class="t">ref</span>(<span class="t">Str</span>)) : <span class="t">void</span>
+  name.println()
+<span class="kw">end</span>
+
+<span class="c">// By mutable reference: use ptr(Str)</span>
+<span class="kw">fn</span> <span class="f">uppercase</span>(s: <span class="t">ptr</span>(<span class="t">Str</span>)) : <span class="t">void</span>
+  <span class="kw">let</span> up : <span class="t">Str</span> = s.to_upper()
+  s.free()
+  <span class="c">// *s = up would require direct block</span>
+<span class="kw">end</span></pre>
+
+<h3>Recursive Functions</h3>
+<pre data-lang="hcs"><span class="kw">fn</span> <span class="f">factorial</span>(n: <span class="t">u64</span>) : <span class="t">u64</span>
+  <span class="kw">if</span> n == <span class="n">0</span>
+    <span class="kw">return</span> <span class="n">1</span>
+  <span class="kw">end</span>
+  <span class="kw">return</span> n * factorial(n - <span class="n">1</span>)
+<span class="kw">end</span>
+
+<span class="kw">fn</span> <span class="f">fib</span>(n: <span class="t">u64</span>) : <span class="t">u64</span>
+  <span class="kw">if</span> n <= <span class="n">1</span>
+    <span class="kw">return</span> n
+  <span class="kw">end</span>
+  <span class="kw">return</span> fib(n - <span class="n">1</span>) + fib(n - <span class="n">2</span>)
+<span class="kw">end</span></pre>
+</section>
+
+<!-- ── CONTROL FLOW ── -->
+<section id="control">
+<h2>Control Flow</h2>
+
+<h3>If / Elsif / Else</h3>
+<pre data-lang="hcs"><span class="kw">if</span> score >= <span class="n">90</span>
+  <span class="mac">write</span> [Grade: A]
+<span class="kw">elsif</span> score >= <span class="n">80</span>
+  <span class="mac">write</span> [Grade: B]
+<span class="kw">elsif</span> score >= <span class="n">70</span>
+  <span class="mac">write</span> [Grade: C]
+<span class="kw">else</span>
+  <span class="mac">write</span> [Grade: F]
+<span class="kw">end</span></pre>
+
+<h3>If as Expression</h3>
+<pre data-lang="hcs"><span class="kw">let</span> status : <span class="t">ptr</span>(<span class="t">u8</span>) = <span class="kw">if</span> ok [success] <span class="kw">else</span> [failure] <span class="kw">end</span>
+
+<span class="kw">let</span> abs_val : <span class="t">i64</span> = <span class="kw">if</span> x >= <span class="n">0</span>
+  x
+<span class="kw">else</span>
+  <span class="n">-1</span> * x
+<span class="kw">end</span></pre>
+
+<h3>Comparison &amp; Logic Operators</h3>
+<table>
+<tr><th>Operator</th><th>Meaning</th><th>Example</th></tr>
+<tr><td><code>==</code></td><td>Equal</td><td><code>a == b</code></td></tr>
+<tr><td><code>!=</code></td><td>Not equal</td><td><code>a != b</code></td></tr>
+<tr><td><code>&lt;</code> <code>&gt;</code> <code>&lt;=</code> <code>&gt;=</code></td><td>Comparison</td><td><code>x &lt; 100</code></td></tr>
+<tr><td><code>and</code></td><td>Logical AND</td><td><code>a > 0 and b > 0</code></td></tr>
+<tr><td><code>or</code></td><td>Logical OR</td><td><code>a == 0 or b == 0</code></td></tr>
+<tr><td><code>!</code></td><td>Logical NOT</td><td><code>!flag</code></td></tr>
+</table>
+</section>
+
+<!-- ── LOOPS ── -->
+<section id="loops">
+<h2>Loops</h2>
+
+<h3>While Loop</h3>
+<pre data-lang="hcs"><span class="kw">let mut</span> i : <span class="t">u64</span> = <span class="n">0</span>
+<span class="kw">while</span> i < <span class="n">10</span>
+  <span class="mac">write</span> [tick]
+  i = i + <span class="n">1</span>
+<span class="kw">end</span></pre>
+
+<h3>For Loop (range)</h3>
+<pre data-lang="hcs"><span class="c">// Exclusive range: 0..10 = 0,1,2,...,9</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="n">0</span>..<span class="n">10</span>
+  <span class="mac">write</span> [iteration]
+<span class="kw">end</span>
+
+<span class="c">// Inclusive range: 1...5 = 1,2,3,4,5</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="n">1</span>...<span class="n">5</span>
+  <span class="mac">write</span> [item]
+<span class="kw">end</span></pre>
+
+<h3>Loop (infinite)</h3>
+<pre data-lang="hcs"><span class="kw">loop</span>
+  <span class="kw">let</span> input : <span class="t">Str</span> = read_input()
+  <span class="kw">if</span> input.eq_cstr([quit])
+    <span class="kw">break</span>
+  <span class="kw">end</span>
+  process(input)
+  input.free()
+<span class="kw">end</span></pre>
+
+<h3>Break &amp; Next</h3>
+<pre data-lang="hcs"><span class="kw">let mut</span> j : <span class="t">i32</span> = <span class="n">0</span>
+<span class="kw">while</span> j < <span class="n">100</span>
+  j = j + <span class="n">1</span>
+  <span class="kw">if</span> j % <span class="n">2</span> == <span class="n">0</span>
+    <span class="kw">next</span>   <span class="c">// continue in other languages</span>
+  <span class="kw">end</span>
+  <span class="kw">if</span> j > <span class="n">10</span>
+    <span class="kw">break</span>  <span class="c">// exit loop</span>
+  <span class="kw">end</span>
+  <span class="mac">write</span> [odd number]
+<span class="kw">end</span></pre>
+</section>
+
+<!-- ── OBJECTS ── -->
+<section id="objects">
+<h2>Objects &amp; Methods</h2>
+
+<h3>Defining a Struct</h3>
+<pre data-lang="hcs"><span class="kw">obj</span> <span class="t">Point</span>
+  <span class="kw">pub</span> x : <span class="t">f64</span>
+  <span class="kw">pub</span> y : <span class="t">f64</span>
+<span class="kw">end</span>
+
+<span class="kw">obj</span> <span class="t">Rectangle</span>
+  <span class="kw">pub</span> origin : <span class="t">Point</span>
+  <span class="kw">pub</span> width  : <span class="t">f64</span>
+  <span class="kw">pub</span> height : <span class="t">f64</span>
+<span class="kw">end</span></pre>
+
+<h3>Instantiation</h3>
+<pre data-lang="hcs"><span class="kw">let</span> p : <span class="t">Point</span> = Point { x: <span class="n">1.0</span>, y: <span class="n">2.5</span> }
+
+<span class="kw">let</span> rect : <span class="t">Rectangle</span> = Rectangle {
+  origin: Point { x: <span class="n">0.0</span>, y: <span class="n">0.0</span> },
+  width: <span class="n">100.0</span>,
+  height: <span class="n">50.0</span>
+}</pre>
+
+<h3>Methods (impl block)</h3>
+<pre data-lang="hcs"><span class="kw">impl</span> <span class="t">Point</span>
+  <span class="kw">fn</span> <span class="f">new</span>(self: <span class="t">ref</span>(<span class="t">Point</span>), x: <span class="t">f64</span>, y: <span class="t">f64</span>) : <span class="t">Point</span>
+    <span class="kw">return</span> Point { x: x, y: y }
+  <span class="kw">end</span>
+
+  <span class="kw">fn</span> <span class="f">distance</span>(self: <span class="t">ref</span>(<span class="t">Point</span>), other: <span class="t">ref</span>(<span class="t">Point</span>)) : <span class="t">f64</span>
+    <span class="kw">let</span> dx : <span class="t">f64</span> = self.x - other.x
+    <span class="kw">let</span> dy : <span class="t">f64</span> = self.y - other.y
+    <span class="kw">return</span> sqrt(dx*dx + dy*dy)
+  <span class="kw">end</span>
+
+  <span class="kw">fn</span> <span class="f">scale</span>(self: <span class="t">ref</span>(<span class="t">Point</span>), factor: <span class="t">f64</span>) : <span class="t">Point</span>
+    <span class="kw">return</span> Point { x: self.x * factor, y: self.y * factor }
+  <span class="kw">end</span>
+<span class="kw">end</span>
+
+<span class="c">// Usage:</span>
+<span class="kw">let</span> a : <span class="t">Point</span> = Point.new(<span class="n">0.0</span>, <span class="n">0.0</span>)
+<span class="kw">let</span> b : <span class="t">Point</span> = Point.new(<span class="n">3.0</span>, <span class="n">4.0</span>)
+<span class="kw">let</span> d : <span class="t">f64</span> = a.distance(b)  <span class="c">// 5.0</span></pre>
+
+<h3>Inline Methods in obj</h3>
+<pre data-lang="hcs"><span class="kw">obj</span> <span class="t">Stack</span>
+  <span class="kw">pub</span> data : <span class="t">Vec</span>
+  <span class="kw">pub</span> size : <span class="t">u64</span>
+
+  <span class="kw">fn</span> <span class="f">new</span>(self: <span class="t">ref</span>(<span class="t">Stack</span>)) : <span class="t">Stack</span>
+    <span class="kw">return</span> Stack { data: Vec.new(), size: <span class="n">0</span> }
+  <span class="kw">end</span>
+
+  <span class="kw">fn</span> <span class="f">push</span>(self: <span class="t">ref</span>(<span class="t">Stack</span>), val: <span class="t">u64</span>) : <span class="t">void</span>
+    self.data.push(val)
+    self.size = self.size + <span class="n">1</span>
+  <span class="kw">end</span>
+
+  <span class="kw">fn</span> <span class="f">pop</span>(self: <span class="t">ref</span>(<span class="t">Stack</span>)) : <span class="t">u64</span>
+    self.size = self.size - <span class="n">1</span>
+    <span class="kw">return</span> self.data.pop()
+  <span class="kw">end</span>
+
+  <span class="kw">fn</span> <span class="f">is_empty</span>(self: <span class="t">ref</span>(<span class="t">Stack</span>)) : <span class="t">bool</span>
+    <span class="kw">return</span> self.size == <span class="n">0</span>
+  <span class="kw">end</span>
+<span class="kw">end</span>
+
+<span class="kw">let mut</span> s : <span class="t">Stack</span> = Stack.new()
+s.push(<span class="n">42</span>)
+s.push(<span class="n">100</span>)
+<span class="mac">write</span> [popped value]    <span class="c">// pops 100</span></pre>
+</section>
+
+<!-- ── ENUMS ── -->
+<section id="enums">
+<h2>Enums</h2>
+
+<h3>Simple Enum</h3>
+<pre data-lang="hcs"><span class="kw">enum</span> <span class="t">Direction</span>
+  North
+  South
+  East
+  West
+<span class="kw">end</span>
+
+<span class="kw">let</span> dir : <span class="t">Direction</span> = Direction.North
+
+<span class="kw">if</span> dir == Direction.North
+  <span class="mac">write</span> [heading north]
+<span class="kw">end</span></pre>
+
+<h3>Enum with Data (Tagged Union)</h3>
+<pre data-lang="hcs"><span class="kw">enum</span> <span class="t">Shape</span>
+  Circle(radius: <span class="t">f64</span>)
+  Rectangle(w: <span class="t">f64</span>, h: <span class="t">f64</span>)
+  Triangle(base: <span class="t">f64</span>, height: <span class="t">f64</span>)
+<span class="kw">end</span>
+
+<span class="kw">fn</span> <span class="f">area</span>(s: <span class="t">ref</span>(<span class="t">Shape</span>)) : <span class="t">f64</span>
+  <span class="kw">match</span> s
+  <span class="kw">when</span> Shape.Circle(r) <span class="kw">then</span>
+    <span class="kw">return</span> <span class="n">3.14159</span> * r * r
+  <span class="kw">when</span> Shape.Rectangle(w, h) <span class="kw">then</span>
+    <span class="kw">return</span> w * h
+  <span class="kw">when</span> Shape.Triangle(b, h) <span class="kw">then</span>
+    <span class="kw">return</span> <span class="n">0.5</span> * b * h
+  <span class="kw">end</span>
+<span class="kw">end</span></pre>
+</section>
+
+<!-- ── PATTERN MATCHING ── -->
+<section id="pattern">
+<h2>Pattern Matching</h2>
+
+<h3>Match on Integer</h3>
+<pre data-lang="hcs"><span class="kw">match</span> status_code
+<span class="kw">when</span> <span class="n">200</span> <span class="kw">then</span>
+  <span class="mac">write</span> [OK]
+<span class="kw">when</span> <span class="n">404</span> <span class="kw">then</span>
+  <span class="mac">write</span> [Not Found]
+<span class="kw">when</span> <span class="n">500</span> <span class="kw">then</span>
+  <span class="mac">write</span> [Server Error]
+<span class="kw">when</span> _ <span class="kw">then</span>
+  <span class="mac">write</span> [Unknown]
+<span class="kw">end</span></pre>
+
+<h3>Match on Enum</h3>
+<pre data-lang="hcs"><span class="kw">enum</span> <span class="t">Token</span>
+  Ident(name: <span class="t">Str</span>)
+  Number(val: <span class="t">i64</span>)
+  Eof
+<span class="kw">end</span>
+
+<span class="kw">fn</span> <span class="f">describe</span>(tok: <span class="t">ref</span>(<span class="t">Token</span>)) : <span class="t">void</span>
+  <span class="kw">match</span> tok
+  <span class="kw">when</span> Token.Ident(n) <span class="kw">then</span>
+    <span class="mac">write</span> [identifier]
+  <span class="kw">when</span> Token.Number(v) <span class="kw">then</span>
+    <span class="mac">write</span> [number]
+  <span class="kw">when</span> Token.Eof <span class="kw">then</span>
+    <span class="mac">write</span> [end of file]
+  <span class="kw">end</span>
+<span class="kw">end</span></pre>
+
+<h3>Guards</h3>
+<pre data-lang="hcs"><span class="kw">match</span> value
+<span class="kw">when</span> n <span class="kw">if</span> n < <span class="n">0</span> <span class="kw">then</span>
+  <span class="mac">write</span> [negative]
+<span class="kw">when</span> <span class="n">0</span> <span class="kw">then</span>
+  <span class="mac">write</span> [zero]
+<span class="kw">when</span> n <span class="kw">if</span> n > <span class="n">0</span> <span class="kw">then</span>
+  <span class="mac">write</span> [positive]
+<span class="kw">end</span></pre>
+
+<h3>OR patterns</h3>
+<pre data-lang="hcs"><span class="kw">match</span> ch
+<span class="kw">when</span> <span class="n">65</span> | <span class="n">69</span> | <span class="n">73</span> | <span class="n">79</span> | <span class="n">85</span> <span class="kw">then</span>
+  <span class="mac">write</span> [uppercase vowel]
+<span class="kw">when</span> _ <span class="kw">then</span>
+  <span class="mac">write</span> [other]
+<span class="kw">end</span></pre>
+</section>
+
+<!-- ── POINTERS ── -->
+<section id="pointers">
+<h2>Pointers</h2>
+
+<h3>Raw Pointers</h3>
+<pre data-lang="hcs"><span class="kw">let mut</span> val : <span class="t">i32</span> = <span class="n">42</span>
+<span class="kw">let</span> p : <span class="t">ptr</span>(<span class="t">i32</span>) = <span class="op">&amp;</span>val      <span class="c">// take address</span>
+<span class="kw">let</span> deref : <span class="t">i32</span> = <span class="op">*</span>p         <span class="c">// dereference</span>
+
+<span class="c">// Pointer arithmetic via ptr_at()</span>
+<span class="kw">let</span> buf : <span class="t">ptr</span>(<span class="t">u8</span>) = some_buffer()
+<span class="kw">let</span> byte_3 : <span class="t">u8</span> = ptr_at(buf, <span class="n">3</span>)
+<span class="kw">let</span> byte_4 : <span class="t">u8</span> = *(buf + <span class="n">4</span>)</pre>
+
+<h3>Pointer to Struct</h3>
+<pre data-lang="hcs"><span class="kw">let</span> node_ptr : <span class="t">ptr</span>(<span class="t">Node</span>) = make_node()
+
+<span class="c">// Access fields through pointer:</span>
+<span class="kw">let</span> val : <span class="t">i32</span> = node_ptr.value   <span class="c">// auto-deref</span>
+<span class="kw">let</span> next : <span class="t">ptr</span>(<span class="t">Node</span>) = node_ptr.next</pre>
+
+<h3>ref vs ptr</h3>
+<table>
+<tr><th>Type</th><th>Meaning</th><th>Use when</th></tr>
+<tr><td><code>ref(T)</code></td><td>Borrowed reference to T (read-only pointer)</td><td>Function parameters that won't be stored</td></tr>
+<tr><td><code>ptr(T)</code></td><td>Owning or mutable raw pointer to T</td><td>Heap allocation, mutable out-params, linked structures</td></tr>
+</table>
+</section>
+
+<!-- ── EXTERN ── -->
+<section id="extern">
+<h2>Extern &amp; FFI</h2>
+
+<h3>Calling C Functions</h3>
+<pre data-lang="hcs"><span class="kw">extern</span> [c] <span class="kw">header</span> [stdio.h] {
+  <span class="kw">fn</span> <span class="f">printf</span>(fmt: <span class="t">ptr</span>(<span class="t">u8</span>), ...) : <span class="t">i32</span>
+  <span class="kw">fn</span> <span class="f">fflush</span>(stream: <span class="t">ptr</span>(<span class="t">u8</span>)) : <span class="t">i32</span>
+}
+
+<span class="kw">extern</span> [c] <span class="kw">header</span> [math.h] {
+  <span class="kw">fn</span> <span class="f">sqrt</span>(x: <span class="t">f64</span>) : <span class="t">f64</span>
+  <span class="kw">fn</span> <span class="f">sin</span>(x: <span class="t">f64</span>) : <span class="t">f64</span>
+  <span class="kw">fn</span> <span class="f">pow</span>(base: <span class="t">f64</span>, exp: <span class="t">f64</span>) : <span class="t">f64</span>
+}
+
+<span class="c">// Usage:</span>
+<span class="kw">let</span> root : <span class="t">f64</span> = sqrt(<span class="n">144.0</span>)   <span class="c">// 12.0</span></pre>
+
+<h3>Linking a Library</h3>
+<pre data-lang="hcs"><span class="kw">extern</span> [c] <span class="kw">link</span> [pthread] <span class="kw">header</span> [pthread.h] {
+  <span class="kw">fn</span> <span class="f">pthread_create</span>(
+    thread: <span class="t">ptr</span>(<span class="t">u64</span>),
+    attr: <span class="t">ptr</span>(<span class="t">u8</span>),
+    start: <span class="t">fn</span>(<span class="t">ptr</span>(<span class="t">u8</span>)) : <span class="t">ptr</span>(<span class="t">u8</span>),
+    arg: <span class="t">ptr</span>(<span class="t">u8</span>)
+  ) : <span class="t">i32</span>
+}</pre>
+
+<h3>Extern Variables</h3>
+<pre data-lang="hcs"><span class="kw">extern</span> [c] <span class="kw">header</span> [errno.h] {
+  <span class="kw">var</span> errno : <span class="t">i32</span>
+}</pre>
+</section>
+
+<!-- ── DIRECT C ── -->
+<section id="direct">
+<h2>Direct C Blocks</h2>
+<p>When you need to write raw C, use a <code>direct {}</code> block. The content is copied verbatim into the generated C. Use this for unsafe operations, assembly, or C-specific patterns.</p>
+
+<pre data-lang="hcs"><span class="c">// Write to a pointer without the HCS type system</span>
+<span class="kw">let</span> p : <span class="t">ptr</span>(<span class="t">i32</span>) = allocate_int()
+<span class="kw">direct</span> { *p = 99; }
+
+<span class="c">// Arena allocation</span>
+<span class="kw">let mut</span> node_ptr : <span class="t">ptr</span>(<span class="t">Node</span>) = <span class="kw">nil</span>
+<span class="kw">let</span> sz : <span class="t">u64</span> = <span class="n">32</span>
+<span class="kw">direct</span> { node_ptr = malloc(sz); }
+
+<span class="c">// Memset</span>
+<span class="kw">direct</span> {
+  alloc _buf : <span class="t">u8</span> * <span class="n">1024</span>
+  memset _buf <span class="n">0</span> <span class="n">1024</span>
+}</pre>
+
+<div class="warn"><strong>⚠ Warning</strong> Direct blocks bypass the type system. Use with care — wrong pointer arithmetic or missing null-checks will crash at runtime.</div>
+</section>
+
+<!-- ── STD STR ── -->
+<section id="std-str">
+<h2>Str — Dynamic String</h2>
+<p><code>Str</code> is the primary string type in HackerScript. It owns its buffer, supports efficient appending, and must be freed when no longer needed.</p>
+
+<h3>Creating Strings</h3>
+<pre data-lang="hcs"><span class="kw">let</span> empty : <span class="t">Str</span> = Str.new()
+<span class="kw">let</span> from_literal : <span class="t">Str</span> = Str.from_cstr([hello])
+<span class="kw">let</span> with_capacity : <span class="t">Str</span> = Str.with_cap(<span class="n">256</span>)
+<span class="kw">let</span> copy : <span class="t">Str</span> = original.clone()</pre>
+
+<h3>Building Strings</h3>
+<pre data-lang="hcs"><span class="kw">let mut</span> s : <span class="t">Str</span> = Str.new()
+
+<span class="c">// Push a single byte</span>
+s.push(<span class="n">72</span>)   <span class="c">// 'H'</span>
+
+<span class="c">// Push a string literal</span>
+s.push_str([ello, World!])
+
+<span class="c">// Append another Str</span>
+s.append(other_str)
+
+<span class="c">// Append a C string</span>
+s.append_cstr(some_cstr_ptr)
+
+<span class="c">// Push formatted number</span>
+s.push_u64(<span class="n">42</span>)
+s.push_i64(<span class="n">-7</span>)
+s.push_f64(<span class="n">3.14</span>)</pre>
+
+<h3>Querying Strings</h3>
+<pre data-lang="hcs"><span class="kw">let</span> len : <span class="t">u64</span>  = s.len          <span class="c">// byte length</span>
+<span class="kw">let</span> b   : <span class="t">u8</span>   = s.at(<span class="n">0</span>)        <span class="c">// byte at index</span>
+<span class="kw">let</span> raw : <span class="t">ptr</span>(<span class="t">u8</span>) = s.buf       <span class="c">// raw pointer</span>
+<span class="kw">let</span> eq  : <span class="t">bool</span> = s.eq(other)    <span class="c">// structural equality</span>
+<span class="kw">let</span> has : <span class="t">bool</span> = s.contains_byte(<span class="n">47</span>)  <span class="c">// has '/'</span>
+<span class="kw">let</span> idx : <span class="t">i64</span>  = s.index_of_byte(<span class="n">46</span>)  <span class="c">// find '.'</span></pre>
+
+<h3>Transforming Strings</h3>
+<pre data-lang="hcs"><span class="kw">let</span> trimmed : <span class="t">Str</span>  = s.trim()
+<span class="kw">let</span> lower   : <span class="t">Str</span>  = s.to_lower()
+<span class="kw">let</span> upper   : <span class="t">Str</span>  = s.to_upper()
+<span class="kw">let</span> sub     : <span class="t">Str</span>  = s.slice(<span class="n">2</span>, <span class="n">8</span>)    <span class="c">// bytes 2..8</span>
+<span class="kw">let</span> no_pfx  : <span class="t">Str</span>  = s.strip_prefix([Hello])
+<span class="kw">let</span> no_sfx  : <span class="t">Str</span>  = s.strip_suffix([!])</pre>
+
+<h3>Output</h3>
+<pre data-lang="hcs">s.print()    <span class="c">// stdout, no newline</span>
+s.println()  <span class="c">// stdout + \n</span>
+s.eprint()   <span class="c">// stderr, no newline</span>
+s.eprintln() <span class="c">// stderr + \n</span></pre>
+
+<h3>Memory</h3>
+<pre data-lang="hcs">s.free()  <span class="c">// always free when done!</span></pre>
+
+<div class="tip"><strong>✓ Convention</strong> Always call <code>s.free()</code> before the owning scope exits. The HCS runtime uses arena allocation internally, but <code>Str.buf</code> is heap-allocated and must be freed manually.</div>
+</section>
+
+<!-- ── STD VEC ── -->
+<section id="std-vec">
+<h2>Vec — Dynamic Array</h2>
+<p><code>Vec</code> stores <code>u64</code> values. Cast pointers to/from <code>u64</code> to store any heap-allocated type.</p>
+
+<pre data-lang="hcs"><span class="kw">let mut</span> v : <span class="t">Vec</span> = Vec.new()
+
+<span class="c">// Push integers</span>
+v.push(<span class="n">10</span>)
+v.push(<span class="n">20</span>)
+v.push(<span class="n">30</span>)
+
+<span class="c">// Push a pointer (cast to u64)</span>
+<span class="kw">let</span> node : <span class="t">ptr</span>(<span class="t">Node</span>) = make_node()
+v.push(node <span class="kw">as</span> <span class="t">u64</span>)
+
+<span class="c">// Access by index</span>
+<span class="kw">let</span> val : <span class="t">u64</span> = v.get(<span class="n">0</span>)                   <span class="c">// raw u64</span>
+<span class="kw">let</span> ptr : <span class="t">ptr</span>(<span class="t">Node</span>) = v.get(<span class="n">1</span>) <span class="kw">as</span> <span class="t">ptr</span>(<span class="t">Node</span>)  <span class="c">// cast back</span>
+
+<span class="c">// Mutate</span>
+v.set(<span class="n">0</span>, <span class="n">99</span>)
+
+<span class="c">// Iterate</span>
+<span class="kw">let mut</span> i : <span class="t">u64</span> = <span class="n">0</span>
+<span class="kw">while</span> i < v.len
+  <span class="kw">let</span> item : <span class="t">u64</span> = v.get(i)
+  i = i + <span class="n">1</span>
+<span class="kw">end</span>
+
+<span class="c">// Pop last element</span>
+<span class="kw">let</span> last : <span class="t">u64</span> = v.pop()
+
+v.free()</pre>
+
+<table>
+<tr><th>Method</th><th>Signature</th><th>Description</th></tr>
+<tr><td><code>Vec.new()</code></td><td><code>→ Vec</code></td><td>Create empty vector</td></tr>
+<tr><td><code>v.push(val)</code></td><td><code>(u64) → void</code></td><td>Append element</td></tr>
+<tr><td><code>v.get(i)</code></td><td><code>(u64) → u64</code></td><td>Element at index</td></tr>
+<tr><td><code>v.set(i, val)</code></td><td><code>(u64, u64) → void</code></td><td>Set element at index</td></tr>
+<tr><td><code>v.pop()</code></td><td><code>→ u64</code></td><td>Remove and return last</td></tr>
+<tr><td><code>v.len</code></td><td>field <code>u64</code></td><td>Current length</td></tr>
+<tr><td><code>v.is_empty()</code></td><td><code>→ bool</code></td><td>True if len == 0</td></tr>
+<tr><td><code>v.free()</code></td><td><code>→ void</code></td><td>Free backing storage</td></tr>
+</table>
+</section>
+
+<!-- ── STD HASHMAP ── -->
+<section id="std-hashmap">
+<h2>HashMap — Hash Table</h2>
+<p>HashMap maps <code>Str</code> keys to <code>u64</code> values. Keys are stored by value (cloned on insert).</p>
+
+<pre data-lang="hcs"><span class="kw">let mut</span> map : <span class="t">HashMap</span> = HashMap.new()
+
+<span class="c">// Insert</span>
+map.set_cstr([name], some_str_ptr <span class="kw">as</span> <span class="t">u64</span>)
+map.set_cstr([count], <span class="n">42</span>)
+
+<span class="c">// Check presence</span>
+<span class="kw">if</span> map.has_cstr([name])
+  <span class="kw">let</span> v : <span class="t">u64</span> = map.get_cstr([name])
+  <span class="kw">let</span> s : <span class="t">ptr</span>(<span class="t">Str</span>) = v <span class="kw">as</span> <span class="t">ptr</span>(<span class="t">Str</span>)
+<span class="kw">end</span>
+
+<span class="c">// Delete</span>
+map.del_cstr([name])
+
+map.free()</pre>
+</section>
+
+<!-- ── STD IO ── -->
+<section id="std-io">
+<h2>I/O</h2>
+
+<h3>Output</h3>
+<pre data-lang="hcs"><span class="c">// Builtin write statement — prints a string literal</span>
+<span class="mac">write</span> [Hello, world!]
+<span class="mac">write</span> []   <span class="c">// blank line</span>
+
+<span class="c">// Str methods for dynamic content</span>
+<span class="kw">let mut</span> msg : <span class="t">Str</span> = Str.from_cstr([Result: ])
+msg.push_u64(answer)
+msg.println()
+msg.free()
+
+<span class="c">// Write to stderr</span>
+<span class="kw">let</span> err : <span class="t">Str</span> = Str.from_cstr([error: something went wrong])
+err.eprintln()
+err.free()</pre>
+
+<h3>File I/O</h3>
+<pre data-lang="hcs"><span class="c">// Read entire file into Str</span>
+<span class="kw">let</span> content : <span class="t">Str</span> = read_file([data.txt])
+<span class="mac">write</span> [file read]
+content.free()
+
+<span class="c">// Write Str to file</span>
+<span class="kw">let mut</span> out : <span class="t">Str</span> = Str.from_cstr([Hello, file!])
+write_file([output.txt], out)
+out.free()
+
+<span class="c">// Check file existence</span>
+<span class="kw">if</span> file_exists([config.toml])
+  <span class="mac">write</span> [config found]
+<span class="kw">end</span></pre>
+</section>
+
+<!-- ── VIRUS ── -->
+<section id="virus">
+<h2>virus — Package Manager</h2>
+<p><code>virus</code> is the official HackerScript package manager and project tool. It handles project creation, dependency management, and building.</p>
+
+<h3>Commands</h3>
+<div class="cmd-grid">
+  <div class="cmd-card"><div class="cmd-name">virus init NAME</div><p>Create a new project with Project.toml and src/ structure</p></div>
+  <div class="cmd-card"><div class="cmd-name">virus build</div><p>Build the current project. Compiles to .cache/, binary to build/</p></div>
+  <div class="cmd-card"><div class="cmd-name">virus build --release</div><p>Optimized build with -O2</p></div>
+  <div class="cmd-card"><div class="cmd-name">virus add NAME</div><p>Add a package from the registry to Project.toml</p></div>
+  <div class="cmd-card"><div class="cmd-name">virus remove NAME</div><p>Remove a package from Project.toml</p></div>
+  <div class="cmd-card"><div class="cmd-name">virus search QUERY</div><p>Search the registry for packages</p></div>
+  <div class="cmd-card"><div class="cmd-name">virus info NAME</div><p>Show package details and available versions</p></div>
+  <div class="cmd-card"><div class="cmd-name">virus fetch</div><p>Download all dependencies declared in Project.toml</p></div>
+  <div class="cmd-card"><div class="cmd-name">virus emit-c</div><p>Transpile .hcs → C without compiling</p></div>
+  <div class="cmd-card"><div class="cmd-name">virus check</div><p>Type-check without building</p></div>
+  <div class="cmd-card"><div class="cmd-name">virus clean</div><p>Remove .cache/ and build/</p></div>
+  <div class="cmd-card"><div class="cmd-name">virus version</div><p>Print virus version</p></div>
+</div>
+
+<h3>Build Flow</h3>
+<pre data-lang="sh"><span class="c"># Default cmake flow:</span>
+virus build
+<span class="c">#   1. hackerc cmake src/main.hcs --out-dir .cache/</span>
+<span class="c">#   2. cmake -S .cache -B build</span>
+<span class="c">#   3. cmake --build build</span>
+<span class="c">#   → binary in build/</span>
+
+<span class="c"># Standalone (no cmake):</span>
+virus build --standalone
+<span class="c">#   1. hackerc build src/main.hcs -o build/myapp</span></pre>
+</section>
+
+<!-- ── REGISTRY ── -->
+<section id="registry">
+<h2>Registry &amp; Libraries</h2>
+<p>The official registry is at <code>https://github.com/virus-repo/repository</code>. Libraries are distributed as pre-built <code>.a</code> static archives.</p>
+
+<h3>Declaring Dependencies</h3>
+<pre data-lang="toml">[dependencies]
+<span class="c"># Pin to exact version</span>
+json = "0.1.0"
+
+<span class="c"># Latest version</span>
+http = "*"
+
+<span class="c"># Git source</span>
+mylib = { git = "https://github.com/me/mylib" }
+
+<span class="c"># Local path</span>
+utils = { path = "../utils" }</pre>
+
+<h3>Available Libraries</h3>
+<table>
+<tr><th>Name</th><th>Description</th><th>Versions</th></tr>
+<tr><td><code>json</code></td><td>JSON parser</td><td>0.1.0</td></tr>
+<tr><td><code>yaml</code></td><td>YAML parser</td><td>0.1.0</td></tr>
+<tr><td><code>toml</code></td><td>TOML parser</td><td>0.1.0</td></tr>
+<tr><td><code>http</code></td><td>HTTP client/server</td><td>0.1.0</td></tr>
+<tr><td><code>regex</code></td><td>Regular expressions</td><td>0.1.0</td></tr>
+<tr><td><code>cli</code></td><td>CLI argument parsing</td><td>0.0.1, 0.1.0</td></tr>
+<tr><td><code>tui</code></td><td>Terminal UI</td><td>0.1.0, 0.2, 0.3.1</td></tr>
+<tr><td><code>crunch</code></td><td>TUI (ratatui-inspired)</td><td>0.1.0</td></tr>
+<tr><td><code>nidus</code></td><td>Error handling</td><td>0.0.1</td></tr>
+<tr><td><code>XML</code></td><td>XML parser</td><td>0.1.0</td></tr>
+<tr><td><code>lattice</code></td><td>Prompt toolkit</td><td>0.1.0</td></tr>
+<tr><td><code>progress-bar</code></td><td>Progress bars</td><td>0.1.0</td></tr>
+<tr><td><code>podman-api</code></td><td>Podman container API</td><td>0.1.0</td></tr>
+</table>
+
+<h3>Adding a Package</h3>
+<pre data-lang="sh"><span class="c"># Add to Project.toml and fetch:</span>
+virus add json
+virus add tui
+
+<span class="c"># Specify version:</span>
+virus add cli@0.1.0
+
+<span class="c"># Then build (deps fetched automatically):</span>
+virus build</pre>
+</section>
+
+<!-- ── WORKSPACE ── -->
+<section id="workspace">
+<h2>Workspaces</h2>
+<p>Workspaces let you manage multiple related HCS projects as a single unit. A workspace root contains a <code>workspace.toml</code> and member projects in subdirectories.</p>
+
+<h3>Creating a Workspace</h3>
+<pre data-lang="sh">virus workspace init myworkspace
+cd myworkspace
+
+<span class="c"># Create member projects:</span>
+virus init server
+virus init client
+virus init shared
+
+<span class="c"># Add them to workspace:</span>
+virus workspace add server
+virus workspace add client
+virus workspace add shared</pre>
+
+<h3>workspace.toml</h3>
+<pre data-lang="toml">[workspace]
+name = "myworkspace"
+members = [
+  "server",
+  "client",
+  "shared"
+]</pre>
+
+<h3>Building the Workspace</h3>
+<pre data-lang="sh"><span class="c"># Build ALL members in order:</span>
+virus workspace build
+
+<span class="c"># Release build of all members:</span>
+virus workspace build --release</pre>
+
+<h3>Workspace Commands</h3>
+<table>
+<tr><th>Command</th><th>Description</th></tr>
+<tr><td><code>virus workspace init NAME</code></td><td>Create a new workspace directory with workspace.toml</td></tr>
+<tr><td><code>virus workspace build</code></td><td>Build all member projects in sequence</td></tr>
+<tr><td><code>virus workspace add NAME</code></td><td>Add an existing project directory as a workspace member</td></tr>
+</table>
+</section>
+
+<!-- ── CMAKE ── -->
+<section id="cmake">
+<h2>Build Systems</h2>
+
+<h3>CMake (default)</h3>
+<pre data-lang="toml">[project]
+build_system = "cmake"   <span class="c"># default</span>
+standalone = false</pre>
+<pre data-lang="sh">virus build
+<span class="c"># .cache/ — generated C files + CMakeLists.txt</span>
+<span class="c"># build/  — final binary</span></pre>
+
+<h3>Make</h3>
+<pre data-lang="toml">build_system = "make"</pre>
+<pre data-lang="sh">virus build
+<span class="c"># .cache/ — generated C + Makefile</span>
+<span class="c"># build/myapp — binary</span></pre>
+
+<h3>Meson</h3>
+<pre data-lang="toml">build_system = "meson"</pre>
+<pre data-lang="sh">virus build
+<span class="c"># .cache/ — generated C + meson.build</span>
+<span class="c"># build/  — binary via meson</span></pre>
+
+<h3>Standalone (direct hackerc)</h3>
+<pre data-lang="toml">standalone = true</pre>
+<pre data-lang="sh">virus build --standalone
+<span class="c"># Directly calls: hackerc build src/main.hcs -o ./myapp</span>
+<span class="c"># No cmake/make/meson involved</span></pre>
+
+<h3>hackerc CLI</h3>
+<pre data-lang="sh"><span class="c"># Build a single file:</span>
+hackerc build main.hcs
+
+<span class="c"># Emit C only (no compilation):</span>
+hackerc emit-c main.hcs
+
+<span class="c"># CMake integration mode:</span>
+hackerc cmake main.hcs --out-dir .cache/
+
+<span class="c"># Build as static library:</span>
+hackerc build --lib mylib.hcs
+
+<span class="c"># Check types only:</span>
+hackerc check main.hcs</pre>
+</section>
+
+</div><!-- .content -->
+</main>
+
+<script>
+// Highlight active nav link based on scroll
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('nav a');
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      navLinks.forEach(a => a.classList.remove('active'));
+      const id = e.target.getAttribute('id');
+      const link = document.querySelector(`nav a[href="#${id}"]`);
+      if (link) link.classList.add('active');
+    }
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+
+sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
