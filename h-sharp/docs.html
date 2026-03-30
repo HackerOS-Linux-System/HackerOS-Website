@@ -3,12 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hacker Lang — Dokumentacja v2</title>
+  <title>H# Language — Dokumentacja v0.1</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Anybody:wght@400;700;900&family=Oxanium:wght@300;400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
-  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/HackerOS-Linux-System/H-Sharp/main/images/icon.png">
   <script src="sections-js/intro.js"></script>
   <script src="sections-js/install.js"></script>
   <script src="sections-js/struktura.js"></script>
@@ -21,102 +20,96 @@
   <script src="sections-js/przyklady.js"></script>
   <script src="sections-js/gramatyka.js"></script>
   <script src="script.js" defer></script>
+  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/HackerOS-Linux-System/H-Sharp/main/images/icon.png">
 </head>
 <body>
 <div class="layout">
   <nav class="sidebar">
     <div class="sb-logo">
       <div class="sb-logo-eyebrow">Dokumentacja</div>
-      <div class="sb-logo-name">Hacker<em>Lang</em></div>
-      <div class="sb-logo-sub">v2 &middot; HackerOS Language</div>
+      <div class="sb-logo-name">H<em>#</em></div>
+      <div class="sb-logo-sub">v0.1 &middot; Cybersecurity-first language</div>
       <div class="sb-actions">
-        <a class="sb-btn back" href="https://hackeros-linux-system.github.io/HackerOS-Website/Home-page.html">&#8592; Home</a>
-        <a class="sb-btn primary" href="https://github.com/hackeros-linux-system" target="_blank">GitHub</a>
+        <a class="sb-btn back" href="https://github.com/HackerOS-Linux-System/H-Sharp">&#8592; GitHub</a>
+        <a class="sb-btn primary" href="https://github.com/HackerOS-Linux-System/H-Sharp" target="_blank">Repo</a>
       </div>
     </div>
     <div class="nav-group">
       <div class="nav-group-label">Wprowadzenie</div>
-      <a class="nav-link" href="#intro"><span class="nav-mono">00</span>O języku</a>
+      <a class="nav-link" href="#intro"><span class="nav-mono">00</span>O języku H#</a>
       <a class="nav-link" href="#install"><span class="nav-mono">01</span>Instalacja &amp; narzędzia</a>
-      <a class="nav-link" href="#struktura"><span class="nav-mono">02</span>Struktura pliku</a>
+      <a class="nav-link" href="#struktura"><span class="nav-mono">02</span>Struktura projektu</a>
     </div>
     <div class="nav-group">
       <div class="nav-group-label">Podstawy</div>
       <a class="nav-link" href="#komentarze"><span class="nav-mono">03</span>Komentarze</a>
-      <a class="nav-link" href="#zmienne"><span class="nav-mono">04</span>Zmienne i sta&#322;e <span class="nav-new">v2</span></a>
-      <a class="nav-link" href="#komendy"><span class="nav-mono">05</span>Komendy (prefiksy)</a>
-      <a class="nav-link" href="#log"><span class="nav-mono">06</span>Log / Out / End</a>
+      <a class="nav-link" href="#zmienne"><span class="nav-mono">04</span>Zmienne &amp; typy</a>
+      <a class="nav-link" href="#importy"><span class="nav-mono">05</span>Import system</a>
+      <a class="nav-link" href="#output"><span class="nav-mono">06</span>Wyjście / builtins</a>
     </div>
     <div class="nav-group">
       <div class="nav-group-label">Sterowanie</div>
-      <a class="nav-link" href="#if"><span class="nav-mono">07</span>If / Elif / Else</a>
-      <a class="nav-link" href="#match"><span class="nav-mono">08</span>Match / Case <span class="nav-new">v2</span></a>
-      <a class="nav-link" href="#loop"><span class="nav-mono">09</span>P&#281;tla N razy</a>
-      <a class="nav-link" href="#while"><span class="nav-mono">10</span>While</a>
-      <a class="nav-link" href="#for"><span class="nav-mono">11</span>For</a>
+      <a class="nav-link" href="#if"><span class="nav-mono">07</span>If / Elsif / Else</a>
+      <a class="nav-link" href="#match"><span class="nav-mono">08</span>Match <span class="nav-new">pattern</span></a>
+      <a class="nav-link" href="#while"><span class="nav-mono">09</span>While</a>
+      <a class="nav-link" href="#for"><span class="nav-mono">10</span>For &amp; zakresy</a>
     </div>
     <div class="nav-group">
       <div class="nav-group-label">Organizacja kodu</div>
-      <a class="nav-link" href="#funkcje"><span class="nav-mono">12</span>Funkcje <span class="nav-new">v2</span></a>
-      <a class="nav-link" href="#klasy"><span class="nav-mono">13</span>Klasy &amp; impl <span class="nav-new">v2</span></a>
-      <a class="nav-link" href="#try"><span class="nav-mono">14</span>Try / Assert / Defer <span class="nav-new">v2</span></a>
-      <a class="nav-link" href="#pipe"><span class="nav-mono">15</span>Pipe / Do block <span class="nav-new">v2</span></a>
+      <a class="nav-link" href="#funkcje"><span class="nav-mono">11</span>Funkcje</a>
+      <a class="nav-link" href="#struktury"><span class="nav-mono">12</span>Structs &amp; impl</a>
+      <a class="nav-link" href="#traits"><span class="nav-mono">13</span>Traits</a>
     </div>
     <div class="nav-group">
-      <div class="nav-group-label">Async</div>
-      <a class="nav-link" href="#spawn"><span class="nav-mono">16</span>Spawn / Await <span class="nav-new">v2</span></a>
-    </div>
-    <div class="nav-group">
-      <div class="nav-group-label">System typ&#243;w</div>
-      <a class="nav-link" href="#enum"><span class="nav-mono">17</span>Enum</a>
-      <a class="nav-link" href="#struct"><span class="nav-mono">18</span>Struct &amp; ADT <span class="nav-new">v2</span></a>
+      <div class="nav-group-label">System typów</div>
+      <a class="nav-link" href="#enum"><span class="nav-mono">14</span>Enum</a>
+      <a class="nav-link" href="#typy-prim"><span class="nav-mono">15</span>Typy &amp; operatory</a>
     </div>
     <div class="nav-group">
       <div class="nav-group-label">Zaawansowane</div>
-      <a class="nav-link" href="#lambdy"><span class="nav-mono">19</span>Lambdy <span class="nav-new">v2</span></a>
-      <a class="nav-link" href="#destrukt"><span class="nav-mono">20</span>Destrukturyzacja <span class="nav-new">v2</span></a>
-      <a class="nav-link" href="#scope"><span class="nav-mono">21</span>Zakres leksykalny <span class="nav-new">v2</span></a>
-      <a class="nav-link" href="#testy"><span class="nav-mono">22</span>Testy ==test <span class="nav-new">v2</span></a>
-      <a class="nav-link" href="#biblioteki"><span class="nav-mono">23</span>Biblioteki</a>
-      <a class="nav-link" href="#import"><span class="nav-mono">24</span>Import</a>
-      <a class="nav-link" href="#lock"><span class="nav-mono">25</span>Lock / Unlock</a>
-      <a class="nav-link" href="#sysdep"><span class="nav-mono">26</span>SysDep / Pluginy / Extern</a>
-      <a class="nav-link" href="#raw"><span class="nav-mono">27</span>Raw Block / Modu&#322;y</a>
+      <a class="nav-link" href="#unsafe"><span class="nav-mono">16</span>Unsafe &amp; Arena <span class="nav-new">mem</span></a>
+      <a class="nav-link" href="#optional"><span class="nav-mono">17</span>Optional &amp; błędy</a>
+      <a class="nav-link" href="#generics"><span class="nav-mono">18</span>Generics</a>
+      <a class="nav-link" href="#closures"><span class="nav-mono">19</span>Closures</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">Biblioteka std</div>
+      <a class="nav-link" href="#spawn"><span class="nav-mono">20</span>std — wszystkie moduły</a>
     </div>
     <div class="nav-group">
       <div class="nav-group-label">Referencja</div>
-      <a class="nav-link" href="#gramatyka"><span class="nav-mono">29</span>Gramatyka PEG</a>
-      <a class="nav-link" href="#bledy"><span class="nav-mono">30</span>B&#322;&#281;dy &amp; diagnostyka</a>
-      <a class="nav-link" href="#typy-prim"><span class="nav-mono">31</span>Typy &amp; operatory</a>
+      <a class="nav-link" href="#gramatyka"><span class="nav-mono">29</span>Gramatyka &amp; parsowanie</a>
+      <a class="nav-link" href="#bledy"><span class="nav-mono">30</span>Błędy &amp; diagnostyka</a>
     </div>
     <div class="nav-group">
-      <div class="nav-group-label">Przyk&#322;ady</div>
+      <div class="nav-group-label">Przykłady</div>
       <a class="nav-link" href="#ex1"><span class="nav-mono">E1</span>Hello World</a>
-      <a class="nav-link" href="#ex2"><span class="nav-mono">E2</span>REST API Client</a>
-      <a class="nav-link" href="#ex3"><span class="nav-mono">E3</span>Pipeline CI/CD</a>
-      <a class="nav-link" href="#ex4"><span class="nav-mono">E4</span>WebSocket + ADT</a>
-      <a class="nav-link" href="#ex5"><span class="nav-mono">E5</span>Monitor systemu</a>
-      <a class="nav-link" href="#ex6"><span class="nav-mono">E6</span>Procesor danych</a>
+      <a class="nav-link" href="#ex2"><span class="nav-mono">E2</span>Port Scanner</a>
+      <a class="nav-link" href="#ex3"><span class="nav-mono">E3</span>XOR Cipher</a>
+      <a class="nav-link" href="#ex4"><span class="nav-mono">E4</span>Struct + Trait + Enum</a>
+      <a class="nav-link" href="#ex5"><span class="nav-mono">E5</span>Algorytmy</a>
+      <a class="nav-link" href="#ex6"><span class="nav-mono">E6</span>CyberSec Tool</a>
       <a class="nav-link" href="#cheatsheet"><span class="nav-mono">&#9733;</span>Cheat Sheet</a>
     </div>
     <div class="sb-footer">
-      HackerOS Linux System<br>
-      <a href="https://github.com/hackeros-linux-system/hacker-lang/docs" target="_blank">hackeros/hacker-lang/docs</a><br>
-      Hacker Lang v2
+      H# Language &mdash; cybersec-first compiled<br>
+      <a href="https://github.com/HackerOS-Linux-System/H-Sharp" target="_blank">github/HackerOS/H#</a><br>
+      H# v0.1.0 &middot; Rust backend
     </div>
   </nav>
   <main class="main">
-    <div id="sec-intro"       class="section-loading">&#8203;</div>
-    <div id="sec-install"     class="section-loading">&#8203;</div>
-    <div id="sec-struktura"   class="section-loading">&#8203;</div>
-    <div id="sec-podstawy"    class="section-loading">&#8203;</div>
-    <div id="sec-sterowanie"  class="section-loading">&#8203;</div>
-    <div id="sec-organizacja" class="section-loading">&#8203;</div>
-    <div id="sec-async"       class="section-loading">&#8203;</div>
-    <div id="sec-typy"        class="section-loading">&#8203;</div>
-    <div id="sec-zaawansowane"class="section-loading">&#8203;</div>
-    <div id="sec-przyklady"   class="section-loading">&#8203;</div>
-    <div id="sec-gramatyka"   class="section-loading">&#8203;</div>
+    <div id="sec-intro"        class="section-loading">&#8203;</div>
+    <div id="sec-install"      class="section-loading">&#8203;</div>
+    <div id="sec-struktura"    class="section-loading">&#8203;</div>
+    <div id="sec-podstawy"     class="section-loading">&#8203;</div>
+    <div id="sec-sterowanie"   class="section-loading">&#8203;</div>
+    <div id="sec-organizacja"  class="section-loading">&#8203;</div>
+    <div id="sec-async"        class="section-loading">&#8203;</div>
+    <div id="sec-typy"         class="section-loading">&#8203;</div>
+    <div id="sec-zaawansowane" class="section-loading">&#8203;</div>
+    <div id="sec-przyklady"    class="section-loading">&#8203;</div>
+    <div id="sec-gramatyka"    class="section-loading">&#8203;</div>
   </main>
-</div></body>
+</div>
+</body>
 </html>
