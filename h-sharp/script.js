@@ -1,6 +1,5 @@
 (function () {
     'use strict';
-
     var SECTIONS = [
         ['sec-intro',        'intro'],
         ['sec-install',      'install'],
@@ -14,7 +13,6 @@
         ['sec-przyklady',    'przyklady'],
         ['sec-gramatyka',    'gramatyka'],
     ];
-
     function injectSections() {
         var reg = window.__HL_SECTIONS || {};
         SECTIONS.forEach(function(pair) {
@@ -29,7 +27,6 @@
             }
         });
     }
-
     function initCopyButtons() {
         document.querySelectorAll('.copy-btn').forEach(function(btn) {
             btn.addEventListener('click', function() {
@@ -50,7 +47,6 @@
             });
         });
     }
-
     function fallbackCopy(text, btn) {
         var ta = document.createElement('textarea');
         ta.value = text;
@@ -63,7 +59,6 @@
         document.body.removeChild(ta);
         setTimeout(function() { btn.textContent = 'Copy'; }, 1800);
     }
-
     function initActiveNav() {
         var links = document.querySelectorAll('.nav-link');
         var sectionIds = [];
@@ -71,7 +66,6 @@
             var href = a.getAttribute('href');
             if (href && href.startsWith('#')) sectionIds.push(href.slice(1));
         });
-
             function setActive() {
                 var scrollY = window.scrollY + 100;
                 var current = '';
@@ -88,19 +82,17 @@
             window.addEventListener('scroll', setActive, { passive: true });
             setActive();
     }
-
     function init() {
         injectSections();
-        initCopyButtons();
-        initActiveNav();
+        // Re-init after sections injected (copy buttons live in injected HTML)
+        setTimeout(function() {
+            initCopyButtons();
+            initActiveNav();
+        }, 0);
     }
-
-    // Work on file:// and http:// — run as soon as DOM is ready
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
     } else {
-        // DOMContentLoaded already fired (common on file://)
         init();
     }
-
 })();
