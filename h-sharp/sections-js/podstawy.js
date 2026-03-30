@@ -3,208 +3,181 @@ window.__HL_SECTIONS['podstawy'] = `
 <!-- ─ KOMENTARZE ─────────────────────────────────────────────────────────── -->
 <div class="section" id="komentarze">
 <div class="sec-header"><span class="sec-num">03</span><h2>Komentarze</h2></div>
-<p>Dwa rodzaje komentarzy: liniowe i blokowe. Pomijane przez interpreter i kompilator, widoczne przez PLSA przy indeksowaniu dokumentacji.</p>
+<p>H# używa znaku <code>#</code> jako komentarza liniowego. Brak komentarzy blokowych — używaj kolejnych linii <code>#</code>.</p>
 <table class="ref-table">
 <tr><th>Składnia</th><th>Typ</th><th>Opis</th></tr>
-<tr><td><span class="td-syntax">! tekst</span></td><td><span class="pill p-cyan">liniowy</span></td><td class="td-desc">Cała linia ignorowana. Musi zaczynać się od <code>!</code> po trim(). <strong>Nie można komentować inline.</strong></td></tr>
-<tr><td><span class="td-syntax">!!</span></td><td><span class="pill p-purple">blokowy</span></td><td class="td-desc">Przełącza tryb komentarza blokowego — wszystko między dwoma <code>!!</code> jest ignorowane (włącznie z kodem).</td></tr>
+<tr><td><span class="td-syntax"># tekst</span></td><td><span class="pill p-cyan">liniowy</span></td><td class="td-desc">Cała linia ignorowana. Może być na początku linii lub po kodzie (inline).</td></tr>
 </table>
 <div class="code-block">
-<div class="code-header"><span class="code-filename">komentarze.hl</span><button class="copy-btn">Copy</button></div>
-<div class="code-body"><div class="line-nums"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span></div>
-<div class="code-inner"><pre><span class="t-comment">! Komentarz liniowy — cała linia jest ignorowana</span>
-<span class="t-var">@AUTOR</span>=<span class="t-str">"Jan"</span>
+<div class="code-header"><span class="code-filename">komentarze.h#</span><button class="copy-btn">Copy</button></div>
+<div class="code-body"><div class="line-nums"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span></div>
+<div class="code-inner"><pre><span class="t-comment"># To jest komentarz liniowy</span>
 
-<span class="t-comment">!!</span>
-<span class="t-comment">Blok komentarza — wszystkie linie między !! ignorowane.</span>
-<span class="t-comment">Możesz pisać cokolwiek: notatki, TODO, stary kod.</span>
-<span class="t-comment">log "ta linia NIE wykona się"</span>
-<span class="t-comment">@ZMIENNA = "też zignorowane"</span>
-<span class="t-comment">!!</span>
+<span class="t-kw">fn</span> <span class="t-func">main</span>() <span class="t-kw">do</span>
+<span class="t-kw">let</span> x: int = <span class="t-num">42</span>  <span class="t-comment"># komentarz inline po kodzie</span>
 
-<span class="t-comment">! HL nie ma komentarzy inline — poniżej jest błąd składni:</span>
-<span class="t-comment">! log "abc" ! to nie jest komentarz ← BŁĄD</span></pre></div></div>
+<span class="t-comment"># Blok komentarzy — używaj kilku linii:</span>
+<span class="t-comment"># To jest opis algorytmu</span>
+<span class="t-comment"># który robi coś ważnego</span>
+println(to_string(x))
+<span class="t-kw">end</span></pre></div></div>
 </div>
-<div class="callout c-warn"><div class="ci">⚠</div><div class="cb"><strong>Uwaga:</strong> <code>!</code> musi być pierwszym znakiem linii (po ewentualnych białych znakach). Nie ma komentarzy wewnątrz linii z kodem.</div></div>
 </div>
 
 <!-- ─ ZMIENNE ────────────────────────────────────────────────────────────── -->
 <div class="section" id="zmienne">
-<div class="sec-header"><span class="sec-num">04</span><h2>Zmienne i stałe</h2><span class="sec-badge">v2: % stałe · wyrażenia · interpolacja</span></div>
-<p>Trzy kategorie zmiennych z różnym zakresem i semantyką. Wszystkie wartości są stringami (jak bash), ale PLSA rozumie typy z sygnatur.</p>
+<div class="sec-header"><span class="sec-num">04</span><h2>Zmienne i typy podstawowe</h2></div>
+<p>H# jest <strong>statycznie typowany</strong>. Zmienne deklaruje się przez <code>let</code> (niemutowalna) lub <code>let mut</code> (mutowalna). Typy są opcjonalne gdy kompilator może je wywnioskować.</p>
 <div class="grid3">
-<div class="card">
-<div class="card-title">@ — Globalna (env)</div>
-<div class="card-body">Eksportowana do środowiska. Dostępna w całym programie i subshellach. Konwencja: <code>WIELKIE_LITERY</code>. Prefiks <code>@</code> w definicji, <code>$NAZWA</code> w użyciu.</div>
+<div class="card"><div class="card-title">let — niemutowalna</div><div class="card-body">Domyślna forma. Nie można nadpisać po inicjalizacji. Preferowana w większości przypadków dla bezpieczeństwa.</div></div>
+<div class="card"><div class="card-title">let mut — mutowalna</div><div class="card-body">Zmienna którą można modyfikować. Wymagana dla liczników, akumulatorów, i zmiennych w pętlach.</div></div>
+<div class="card"><div class="card-title">Typy prymitywne</div><div class="card-body"><code>int</code>, <code>uint</code>, <code>i8..i128</code>, <code>u8..u128</code>, <code>f32</code>, <code>f64</code>, <code>bool</code>, <code>string</code>, <code>bytes</code>, <code>void</code></div></div>
 </div>
-<div class="card">
-<div class="card-title">$ — Lokalna</div>
-<div class="card-body">Dostępna w bieżącym zakresie. Nie eksportowana. Używana do obliczeń, spawn/await, pętli i argumentów funkcji. Prefiks <code>$</code> zarówno w definicji jak i użyciu.</div>
-</div>
-<div class="card">
-<div class="card-title">% — Stała <span class="pill p-red" style="font-size:9px">v2</span></div>
-<div class="card-body">Ustawiana raz. VM ostrzega przy próbie nadpisania. Idealna dla konfiguracji niezmiennej przez cały czas życia programu (timeouty, limity, ścieżki).</div>
-</div>
-</div>
+
 <div class="code-block">
-<div class="code-header"><span class="code-filename">zmienne.hl</span><button class="copy-btn">Copy</button></div>
-<div class="code-body"><div class="line-nums"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span><span>15</span><span>16</span><span>17</span><span>18</span><span>19</span><span>20</span><span>21</span><span>22</span><span>23</span><span>24</span><span>25</span><span>26</span><span>27</span><span>28</span><span>29</span><span>30</span></div>
-<div class="code-inner"><pre><span class="t-comment">! ── Globalne (eksportowane do env) ──────────────</span>
-<span class="t-var">@HOST</span>=<span class="t-str">"localhost"</span>
-<span class="t-var">@PORT</span>=<span class="t-str">"8080"</span>
-<span class="t-var">@DEBUG</span>=<span class="t-str">"false"</span>
-<span class="t-var">@DEPLOY_ENV</span>=<span class="t-str">"production"</span>
+<div class="code-header"><span class="code-filename">zmienne.h#</span><button class="copy-btn">Copy</button></div>
+<div class="code-body"><div class="line-nums"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span><span>15</span><span>16</span><span>17</span><span>18</span><span>19</span><span>20</span><span>21</span><span>22</span><span>23</span><span>24</span><span>25</span><span>26</span><span>27</span><span>28</span></div>
+<div class="code-inner"><pre><span class="t-comment"># ── Niemutowalne ──────────────────────────────────</span>
+<span class="t-kw">let</span> x: int = <span class="t-num">42</span>
+<span class="t-kw">let</span> nazwa: string = <span class="t-str">"hacker"</span>
+<span class="t-kw">let</span> ratio: f64 = <span class="t-num">3.14</span>
+<span class="t-kw">let</span> aktywny: bool = <span class="t-kw">true</span>
 
-<span class="t-comment">! ── Lokalne (zakres bieżący) ─────────────────────</span>
-<span class="t-var">$nazwa</span>=<span class="t-str">"serwer-01"</span>
-<span class="t-var">$wersja</span>=<span class="t-str">"2.1.0"</span>
-<span class="t-var">$aktywny</span>=<span class="t-str">"true"</span>
+<span class="t-comment"># ── Mutowalne ─────────────────────────────────────</span>
+<span class="t-kw">let</span> <span class="t-kw">mut</span> licznik: int = <span class="t-num">0</span>
+<span class="t-kw">let</span> <span class="t-kw">mut</span> suma: f64 = <span class="t-num">0.0</span>
+<span class="t-kw">let</span> <span class="t-kw">mut</span> wynik: string = <span class="t-str">""</span>
 
-<span class="t-comment">! ── Stałe % (v2) — nie można nadpisać ───────────</span>
-<span class="t-const">%</span>MAX_CONN=<span class="t-str">"100"</span>
-<span class="t-const">%</span>TIMEOUT_MS=<span class="t-str">"5000"</span>
-<span class="t-const">%</span>API_BASE=<span class="t-str">"https://api.example.com/v2"</span>
-<span class="t-const">%</span>LOG_DIR=<span class="t-str">"/var/log/hackeros"</span>
+<span class="t-comment"># ── Wnioskowanie typów ────────────────────────────</span>
+<span class="t-kw">let</span> a = <span class="t-num">10</span>          <span class="t-comment"># int</span>
+<span class="t-kw">let</span> b = <span class="t-num">3.14</span>        <span class="t-comment"># f64</span>
+<span class="t-kw">let</span> c = <span class="t-str">"tekst"</span>     <span class="t-comment"># string</span>
+<span class="t-kw">let</span> d = <span class="t-kw">true</span>        <span class="t-comment"># bool</span>
 
-<span class="t-comment">! ── Wyrażenia arytmetyczne / logiczne (v2) ───────</span>
-<span class="t-var">$suma</span> = <span class="t-num">10</span> + <span class="t-num">20</span> * <span class="t-num">3</span>
-<span class="t-var">$ratio</span> = <span class="t-var">$hits</span> / <span class="t-var">$total</span>
-<span class="t-var">$aktywny</span> = <span class="t-var">$port</span> &gt; <span class="t-num">1024</span> &amp;&amp; <span class="t-var">$port</span> &lt;= <span class="t-num">65535</span>
-<span class="t-var">$reszta</span> = <span class="t-var">$n</span> % <span class="t-num">2</span>
+<span class="t-comment"># ── Typy całkowite ────────────────────────────────</span>
+<span class="t-kw">let</span> port: u16 = <span class="t-num">8080</span>
+<span class="t-kw">let</span> bajt: u8 = <span class="t-num">0xFF</span>
+<span class="t-kw">let</span> wielki: i128 = <span class="t-num">9999999999999</span>
 
-<span class="t-comment">! ── Interpolacja stringów (v2) ───────────────────</span>
-<span class="t-var">$info</span>=<span class="t-str">"Serwer: $(HOST):$(PORT)"</span>
-<span class="t-var">$wynik</span>=<span class="t-str">"Suma: $($suma + 5)"</span>
-<span class="t-var">$raport</span>=<span class="t-str">"Debug=$DEBUG v=$wersja"</span>
-<span class="t-var">$czas</span>=<span class="t-str">"Czas: $(date +%H:%M:%S)"</span>
-<span class="t-kw">log</span> <span class="t-str">"$info — $raport"</span></pre></div></div>
+<span class="t-comment"># ── Bytes (raw binary data) ───────────────────────</span>
+<span class="t-kw">let</span> data: bytes = [<span class="t-num">0xDE</span>, <span class="t-num">0xAD</span>, <span class="t-num">0xBE</span>, <span class="t-num">0xEF</span>]
+<span class="t-kw">let</span> hex: string = data.to_hex()
+
+<span class="t-comment"># ── Hex i binary literały ────────────────────────</span>
+<span class="t-kw">let</span> h: int = <span class="t-num">0xFF</span>         <span class="t-comment"># hex</span>
+<span class="t-kw">let</span> bin: int = <span class="t-num">0b1010</span>    <span class="t-comment"># binary</span>
+<span class="t-kw">let</span> big: int = <span class="t-num">1_000_000</span> <span class="t-comment"># separator _</span></pre></div></div>
 </div>
 
-<h3>Dostęp do pól i kolekcje wieloliniowe</h3>
+<h3>Typy tablicowe i tuple</h3>
 <div class="code-block">
-<div class="code-header"><span class="code-filename">kolekcje.hl</span><button class="copy-btn">Copy</button></div>
-<div class="code-body"><div class="line-nums"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span><span>15</span><span>16</span><span>17</span><span>18</span><span>19</span><span>20</span><span>21</span><span>22</span><span>23</span><span>24</span><span>25</span><span>26</span><span>27</span><span>28</span><span>29</span><span>30</span></div>
-<div class="code-inner"><pre><span class="t-comment">! ── Listy ────────────────────────────────────────</span>
-<span class="t-var">$lista</span> = [<span class="t-str">"a"</span>, <span class="t-str">"b"</span>, <span class="t-str">"c"</span>]
-<span class="t-var">$pierwszy</span>=<span class="t-str">"$(lista.0)"</span>
-<span class="t-var">$drugi</span>=<span class="t-str">"$(lista.1)"</span>
+<div class="code-header"><span class="code-filename">kolekcje.h#</span><button class="copy-btn">Copy</button></div>
+<div class="code-body"><div class="line-nums"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span></div>
+<div class="code-inner"><pre><span class="t-comment"># Tablica (jednolity typ)</span>
+<span class="t-kw">let</span> porty: [int] = [<span class="t-num">22</span>, <span class="t-num">80</span>, <span class="t-num">443</span>, <span class="t-num">8080</span>]
+<span class="t-kw">let</span> hosty: [string] = [<span class="t-str">"localhost"</span>, <span class="t-str">"192.168.1.1"</span>]
 
-<span class="t-comment">! ── Mapy ─────────────────────────────────────────</span>
-<span class="t-var">$cfg</span> = {host: <span class="t-str">"prod"</span>, port: <span class="t-str">"443"</span>, ssl: <span class="t-str">"true"</span>}
-<span class="t-var">$host</span>=<span class="t-str">"$(cfg.host)"</span>
-<span class="t-var">$port</span>=<span class="t-str">"$(cfg.port)"</span>
+<span class="t-comment"># Tuple (różne typy)</span>
+<span class="t-kw">let</span> addr: (string, int) = (<span class="t-str">"localhost"</span>, <span class="t-num">8080</span>)
+<span class="t-kw">let</span> (host, port) = addr  <span class="t-comment"># destrukturyzacja tuple</span>
 
-<span class="t-comment">! ── Mutacje kolekcji (v2) ────────────────────────</span>
-<span class="t-var">$serwisy</span> = [<span class="t-str">"nginx"</span>, <span class="t-str">"redis"</span>]
-<span class="t-var">$serwisy</span>.<span class="t-func">push</span> <span class="t-str">"postgres"</span>
-<span class="t-var">$serwisy</span>.<span class="t-func">pop</span>
-<span class="t-var">$mapa</span>.<span class="t-func">set</span> <span class="t-str">"klucz"</span> <span class="t-str">"wartość"</span>
-<span class="t-var">$mapa</span>.<span class="t-func">del</span> <span class="t-str">"stary"</span>
-<span class="t-var">$mapa</span>.<span class="t-func">get</span> <span class="t-str">"klucz"</span>
-
-<span class="t-comment">! ── Wieloliniowe (multiline) ──────────────────────</span>
-<span class="t-var">$hosty</span> = [
-    prod-01.example.com,
-prod-02.example.com,
-prod-03.example.com
-]
-
-<span class="t-var">$konfiguracja</span> = {
-    host: <span class="t-str">"prod.example.com"</span>,
-    port: <span class="t-str">"443"</span>,
-    ssl: <span class="t-str">"true"</span>,
-    timeout: <span class="t-str">"30"</span>
-}</pre></div></div>
+<span class="t-comment"># Optional — typ T? (może być nil)</span>
+<span class="t-kw">let</span> user_id: int? = <span class="t-kw">nil</span>
+<span class="t-kw">let</span> maybe: string? = <span class="t-str">"wartość"</span></pre></div></div>
 </div>
 </div>
 
-<!-- ─ KOMENDY ─────────────────────────────────────────────────────────────── -->
-<div class="section" id="komendy">
-<div class="sec-header"><span class="sec-num">05</span><h2>Komendy</h2></div>
-<p>Hacker Lang rozróżnia cztery tryby uruchamiania komend systemowych przez prefiksy. Prefiksy są wymagane — brak prefiksu = wywołanie funkcji lub błąd składni.</p>
+<!-- ─ IMPORTY ─────────────────────────────────────────────────────────────── -->
+<div class="section" id="importy">
+<div class="sec-header"><span class="sec-num">05</span><h2>System importów</h2></div>
+<p>H# posiada ujednolicony system importów z wyraźnymi schematami. Każdy schemat oznacza inne źródło biblioteki.</p>
 <table class="ref-table">
-<tr><th>Prefix</th><th>Nazwa</th><th>Opis</th></tr>
-<tr><td><span class="td-syntax">&gt; cmd</span></td><td><span class="pill p-cyan">raw_sub</span></td><td class="td-desc">Uruchamia komendę z podstawianiem zmiennych (<code>$VAR</code>). <strong>Najczęściej używany tryb.</strong></td></tr>
-<tr><td><span class="td-syntax">&gt;&gt; cmd</span></td><td><span class="pill p-purple">raw_no_sub</span></td><td class="td-desc">Uruchamia komendę <em>bez</em> podstawiania. Zmienne traktowane literalnie — przydatne dla wzorców grep/awk.</td></tr>
-<tr><td><span class="td-syntax">&gt;&gt;&gt; cmd</span></td><td><span class="pill p-orange">isolated</span></td><td class="td-desc">Izolowana komenda — własne środowisko, bez dostępu do zmiennych rodzica.</td></tr>
-<tr><td><span class="td-syntax">^ cmd</span></td><td><span class="pill p-red">sudo</span></td><td class="td-desc">Prefiks sudo — PLSA flaguje jako potencjalnie niebezpieczny. Łączy się z innymi prefiksami.</td></tr>
-<tr><td><span class="td-syntax">&amp; cmd</span></td><td><span class="pill p-green">background</span></td><td class="td-desc">Uruchamia w tle bez synchronizacji. Brak handle — użyj <code>spawn</code> jeśli chcesz await.</td></tr>
+<tr><th>Schemat</th><th>Opis</th><th>Przykład</th></tr>
+<tr><td class="td-syntax">std:</td><td class="td-desc">Standardowa biblioteka H# (wbudowana)</td><td class="td-note">import "std:io::keyboard"</td></tr>
+<tr><td class="td-syntax">bytes:</td><td class="td-desc">Ekosystem Bytes (pobieranie przez <code>bytes add</code>)</td><td class="td-note">import "bytes:scanner/1.2"</td></tr>
+<tr><td class="td-syntax">file:</td><td class="td-desc">Lokalny plik <code>.h#</code></td><td class="td-note">import "file:lib.h#"</td></tr>
+<tr><td class="td-syntax">lib:static::</td><td class="td-desc">Natywna biblioteka — linkowanie statyczne</td><td class="td-note">import "lib:static::openssl.a"</td></tr>
+<tr><td class="td-syntax">lib:dynamic::</td><td class="td-desc">Natywna biblioteka — linkowanie dynamiczne</td><td class="td-note">import "lib:dynamic::libssl.so"</td></tr>
 </table>
 <div class="code-block">
-<div class="code-header"><span class="code-filename">komendy.hl</span><button class="copy-btn">Copy</button></div>
-<div class="code-body"><div class="line-nums"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span><span>15</span><span>16</span><span>17</span><span>18</span><span>19</span><span>20</span><span>21</span><span>22</span><span>23</span><span>24</span></div>
-<div class="code-inner"><pre><span class="t-var">@ENV</span>=<span class="t-str">"production"</span>
-<span class="t-var">$plik</span>=<span class="t-str">"dane.txt"</span>
-<span class="t-var">$PATTERN</span>=<span class="t-str">"error"</span>
+<div class="code-header"><span class="code-filename">importy.h#</span><button class="copy-btn">Copy</button></div>
+<div class="code-body"><div class="line-nums"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span><span>15</span><span>16</span><span>17</span><span>18</span><span>19</span><span>20</span><span>21</span><span>22</span></div>
+<div class="code-inner"><pre><span class="t-comment"># ── Biblioteka standardowa ────────────────────────</span>
+<span class="t-kw">import</span> <span class="t-str">"std:io::keyboard"</span>
+<span class="t-kw">import</span> <span class="t-str">"std:io::net"</span>
+<span class="t-kw">import</span> <span class="t-str">"std:crypto::hash"</span>
+<span class="t-kw">import</span> <span class="t-str">"std:crypto::hex"</span>
+<span class="t-kw">import</span> <span class="t-str">"std:encoding::base64"</span>
+<span class="t-kw">import</span> <span class="t-str">"std:encoding::url"</span>
+<span class="t-kw">import</span> <span class="t-str">"std:time"</span>
+<span class="t-kw">import</span> <span class="t-str">"std:fs"</span>
+<span class="t-kw">import</span> <span class="t-str">"std:process"</span>
 
-<span class="t-comment">! ── Z podstawianiem (najczęstszy) ───────────────</span>
-<span class="t-prefix">&gt;</span> echo <span class="t-str">"Środowisko: $ENV"</span>
-<span class="t-prefix">&gt;</span> cat <span class="t-var">$plik</span>
-<span class="t-prefix">&gt;</span> systemctl status nginx
+<span class="t-comment"># ── Ekosystem Bytes ───────────────────────────────</span>
+<span class="t-kw">import</span> <span class="t-str">"bytes:scanner"</span>       <span class="t-comment"># najnowsza wersja</span>
+<span class="t-kw">import</span> <span class="t-str">"bytes:scanner/1.2"</span>   <span class="t-comment"># konkretna wersja</span>
+<span class="t-kw">import</span> <span class="t-str">"bytes:exploit-db/0.9"</span>
 
-<span class="t-comment">! ── Bez podstawiania ─────────────────────────────</span>
-<span class="t-prefix">&gt;&gt;</span> grep -r '$PATTERN' /etc/
-<span class="t-prefix">&gt;&gt;</span> awk '{print $1, $NF}' /var/log/syslog
+<span class="t-comment"># ── Lokalne pliki ─────────────────────────────────</span>
+<span class="t-kw">import</span> <span class="t-str">"file:lib.h#"</span>
+<span class="t-kw">import</span> <span class="t-str">"file:../utils.h#"</span>
 
-<span class="t-comment">! ── Izolowana (własne env) ───────────────────────</span>
-<span class="t-prefix">&gt;&gt;&gt;</span> env -i PATH=/usr/bin make clean
-
-<span class="t-comment">! ── Sudo z prefiksem komendowym ──────────────────</span>
-<span class="t-op">^</span><span class="t-prefix">&gt;</span> systemctl restart nginx
-<span class="t-op">^</span><span class="t-prefix">&gt;</span> apt-get install -y curl
-
-<span class="t-comment">! ── Background (fire and forget) ─────────────────</span>
-<span class="t-kw2">&amp;</span> <span class="t-prefix">&gt;</span> tail -f /var/log/app.log
-<span class="t-kw2">&amp;</span> <span class="t-prefix">.</span><span class="t-func">monitoruj_metryki</span>
-
-<span class="t-comment">! ── Pipe inline ──────────────────────────────────</span>
-<span class="t-prefix">&gt;</span> cat /etc/passwd <span class="t-prefix">|&gt;</span> grep root <span class="t-prefix">|&gt;</span> cut -d: -f1</pre></div></div>
-</div>
+<span class="t-comment"># ── Natywne biblioteki ────────────────────────────</span>
+<span class="t-kw">import</span> <span class="t-str">"lib:static::libssl.a"</span>
+<span class="t-kw">import</span> <span class="t-str">"lib:dynamic::libpcap.so"</span></pre></div></div>
 </div>
 
-<!-- ─ LOG / OUT ────────────────────────────────────────────────────────────── -->
-<div class="section" id="log">
-<div class="sec-header"><span class="sec-num">06</span><h2>Log / Out</h2></div>
-<p><code>log</code> wypisuje wiadomość z timestamp do stdout. <code>out</code> zwraca wartość z funkcji (odpowiednik <code>return</code>). <code>end</code> kończy program z kodem wyjścia.</p>
+<h3>Dyrektywy kompilacji</h3>
+<div class="code-block">
+<div class="code-header"><span class="code-filename">dyrektywy.h#</span><button class="copy-btn">Copy</button></div>
+<div class="code-body"><div class="code-inner"><pre><span class="t-comment"># ~ "dynamic:..." — dynamiczne linkowanie konkretnej lib</span>
+~ <span class="t-str">"dynamic:openssl"</span>
+~ <span class="t-str">"dynamic:libpcap"</span>
+
+<span class="t-comment"># ~ "dynamic" — wszystkie biblioteki dynamicznie</span>
+~ <span class="t-str">"dynamic"</span>
+
+<span class="t-comment"># ~~ "fast:..." — szybsza kompilacja, większa binarka (jak Go)</span>
+~~ <span class="t-str">"fast:all"</span>
+~~ <span class="t-str">"fast:debug"</span></pre></div></div>
+</div>
+<div class="callout c-info"><div class="ci">ℹ</div><div class="cb">Dyrektywy <code>~</code> i <code>~~</code> muszą być na początku pliku przed importami. <strong>~ "dynamic"</strong> = większa binarka ale szybsza kompilacja. <strong>~~ "fast"</strong> = wyłącza LTO i optymalizacje — do developmentu.</div></div>
+</div>
+
+<!-- ─ OUTPUT ─────────────────────────────────────────────────────────────── -->
+<div class="section" id="output">
+<div class="sec-header"><span class="sec-num">06</span><h2>Wyjście / println / print</h2></div>
+<p>H# posiada wbudowane funkcje do wypisywania — dostępne bez importów (prelude).</p>
 <table class="ref-table">
-<tr><th>Składnia</th><th>Opis</th></tr>
-<tr><td><span class="td-syntax">log "tekst"</span></td><td class="td-desc">Wypisz string do logu. Obsługuje interpolację <code>$VAR</code> i <code>$(expr)</code>.</td></tr>
-<tr><td><span class="td-syntax">out $zmienna</span></td><td class="td-desc">Zwróć wartość z funkcji — wychwytywana przez <code>$x = await .func</code>.</td></tr>
-<tr><td><span class="td-syntax">out</span></td><td class="td-desc">Early return bez wartości (void). Zatrzymuje wykonanie funkcji.</td></tr>
-<tr><td><span class="td-syntax">end 0</span></td><td class="td-desc">Zakończ program z kodem 0 (sukces). <code>end 1</code> — błąd.</td></tr>
-<tr><td><span class="td-syntax">end</span></td><td class="td-desc">Zakończ z domyślnym kodem 0.</td></tr>
+<tr><th>Funkcja</th><th>Opis</th></tr>
+<tr><td class="td-syntax">println(s: string)</td><td class="td-desc">Wypisuje string z nową linią na końcu</td></tr>
+<tr><td class="td-syntax">print(s: string)</td><td class="td-desc">Wypisuje string bez nowej linii</td></tr>
+<tr><td class="td-syntax">to_string(v: any) -> string</td><td class="td-desc">Konwertuje wartość na string</td></tr>
+<tr><td class="td-syntax">len(c: any) -> int</td><td class="td-desc">Zwraca długość stringa, tablicy lub bytes</td></tr>
+<tr><td class="td-syntax">panic(msg: string)</td><td class="td-desc">Kończy program z błędem i komunikatem</td></tr>
+<tr><td class="td-syntax">assert(cond: bool, msg: string)</td><td class="td-desc">Przerywa z msg gdy warunek fałszywy</td></tr>
+<tr><td class="td-syntax">exit(code: int)</td><td class="td-desc">Kończy program z kodem wyjścia</td></tr>
 </table>
 <div class="code-block">
-<div class="code-header"><span class="code-filename">log-out.hl</span><button class="copy-btn">Copy</button></div>
-<div class="code-body"><div class="line-nums"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span><span>15</span><span>16</span><span>17</span><span>18</span><span>19</span><span>20</span><span>21</span><span>22</span><span>23</span><span>24</span><span>25</span></div>
-<div class="code-inner"><pre><span class="t-var">$host</span>=<span class="t-str">"db.prod"</span>
-<span class="t-var">$port</span>=<span class="t-str">"5432"</span>
+<div class="code-header"><span class="code-filename">output.h#</span><button class="copy-btn">Copy</button></div>
+<div class="code-body"><div class="line-nums"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span><span>15</span><span>16</span><span>17</span></div>
+<div class="code-inner"><pre><span class="t-kw">fn</span> <span class="t-func">main</span>() <span class="t-kw">do</span>
+println(<span class="t-str">"Hello from H#!"</span>)
 
-<span class="t-comment">! ── Log z interpolacją ──────────────────────────</span>
-<span class="t-kw">log</span> <span class="t-str">"Połączono z $host:$port"</span>
-<span class="t-kw">log</span> <span class="t-str">"Czas: $(date +%H:%M:%S)"</span>
-<span class="t-kw">log</span> <span class="t-str">"Suma: $($a + $b)"</span>
+<span class="t-kw">let</span> port: int = <span class="t-num">8080</span>
+println(<span class="t-str">"Port: "</span> + to_string(port))
 
-<span class="t-comment">! ── Funkcja zwracająca przez out ─────────────────</span>
-<span class="t-kw2">:</span><span class="t-func">oblicz_checksum</span> def
-<span class="t-var">$plik</span>=<span class="t-str">"$1"</span>
-<span class="t-kw">assert</span> <span class="t-str">-f "$plik"</span> <span class="t-str">"Plik nie istnieje: $plik"</span>
-<span class="t-var">$hash</span>=<span class="t-str">"$(sha256sum $plik | cut -d' ' -f1)"</span>
-<span class="t-kw">out</span> <span class="t-var">$hash</span>
-done
+<span class="t-kw">let</span> data: bytes = [<span class="t-num">0xDE</span>, <span class="t-num">0xAD</span>, <span class="t-num">0xBE</span>, <span class="t-num">0xEF</span>]
+println(<span class="t-str">"Hex: "</span> + data.to_hex())
 
-<span class="t-var">$sum</span> = await .<span class="t-func">oblicz_checksum</span> /etc/passwd
-<span class="t-kw">log</span> <span class="t-str">"SHA256: $sum"</span>
+<span class="t-kw">let</span> n: int = <span class="t-num">10</span>
+assert(n > <span class="t-num">0</span>, <span class="t-str">"n musi być dodatnie"</span>)
 
-<span class="t-comment">! ── Early return — out bez wartości ──────────────</span>
-<span class="t-kw2">:</span><span class="t-func">waliduj</span> def
-<span class="t-op">?</span> <span class="t-str">"$1" = ""</span> <span class="t-prefix">&gt;</span> <span class="t-kw">log</span> <span class="t-str">"Pusty argument"</span>
-<span class="t-op">?</span> <span class="t-str">"$1" = ""</span> <span class="t-prefix">&gt;</span> <span class="t-kw">out</span>
-<span class="t-kw">log</span> <span class="t-str">"Walidacja OK: $1"</span>
-done
+<span class="t-kw">let</span> port2: u16 = <span class="t-num">8080</span>
+assert(port2 >= <span class="t-num">1</span> && port2 <= <span class="t-num">65535</span>, <span class="t-str">"nieprawidłowy port"</span>)
 
-<span class="t-comment">! ── Zakończenie programu ─────────────────────────</span>
-<span class="t-kw">end</span> 0</pre></div></div>
+exit(<span class="t-num">0</span>)
+<span class="t-kw">end</span></pre></div></div>
 </div>
 </div>
 `;
