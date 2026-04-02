@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HackerOS Containers — Dokumentacja</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c0f;
+    --bg2: #0f1318;
+    --bg3: #141920;
+    --border: #1e2830;
+    --accent: #00e5a0;
+    --accent2: #00b8ff;
+    --accent3: #ff4e6a;
+    --text: #c8d8e8;
+    --text-dim: #5a7080;
+    --text-bright: #eaf4ff;
+    --code-bg: #0c1016;
+    --warn: #ffb347;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* Scanline overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,229,160,0.015) 2px,
+      rgba(0,229,160,0.015) 4px
+    );
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* BACK BUTTON (top right) */
+  .back-btn {
+    position: fixed;
+    top: 20px;
+    right: 24px;
+    z-index: 10000;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--accent);
+    border-radius: 40px;
+    padding: 8px 18px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--accent);
+    text-decoration: none;
+    letter-spacing: 0.08em;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 0 8px rgba(0,229,160,0.2);
+  }
+  .back-btn:hover {
+    background: var(--accent);
+    color: var(--bg);
+    border-color: var(--accent);
+    text-decoration: none;
+    box-shadow: 0 0 14px rgba(0,229,160,0.5);
+  }
+  .back-btn::before {
+    content: '←';
+    font-size: 1rem;
+    font-weight: normal;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    width: 260px;
+    height: 100vh;
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sidebar-logo {
+    padding: 24px 20px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sidebar-logo .logo-text {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 1.1rem;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+  }
+
+  .sidebar-logo .logo-sub {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  .version-badge {
+    display: inline-block;
+    background: rgba(0,229,160,0.1);
+    border: 1px solid rgba(0,229,160,0.3);
+    color: var(--accent);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    padding: 2px 8px;
+    border-radius: 2px;
+    margin-top: 8px;
+    letter-spacing: 0.05em;
+  }
+
+  .nav-section-label {
+    padding: 16px 20px 6px;
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  .nav-link {
+    display: block;
+    padding: 7px 20px 7px 28px;
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    border-left: 2px solid transparent;
+    transition: all 0.15s;
+    position: relative;
+  }
+
+  .nav-link::before {
+    content: '›';
+    position: absolute;
+    left: 16px;
+    color: var(--border);
+    transition: color 0.15s;
+  }
+
+  .nav-link:hover, .nav-link.active {
+    color: var(--accent);
+    border-left-color: var(--accent);
+    background: rgba(0,229,160,0.05);
+  }
+
+  .nav-link:hover::before, .nav-link.active::before {
+    color: var(--accent);
+  }
+
+  /* ── MAIN ── */
+  .main {
+    margin-left: 260px;
+    min-height: 100vh;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(135deg, #0a0c0f 0%, #0d1520 50%, #0a0f14 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 80px 60px 60px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::after {
+    content: 'HCO';
+    position: absolute;
+    right: -20px; top: -30px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 18rem;
+    font-weight: 700;
+    color: rgba(0,229,160,0.03);
+    line-height: 1;
+    user-select: none;
+    pointer-events: none;
+  }
+
+  .hero-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .hero h1 {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: var(--text-bright);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    margin-bottom: 20px;
+  }
+
+  .hero h1 span { color: var(--accent); }
+
+  .hero-desc {
+    font-size: 1.15rem;
+    color: var(--text);
+    max-width: 600px;
+    margin-bottom: 36px;
+    line-height: 1.6;
+  }
+
+  .hero-badges {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    padding: 4px 12px;
+    border-radius: 2px;
+    letter-spacing: 0.05em;
+  }
+
+  .badge-green { background: rgba(0,229,160,0.12); color: var(--accent); border: 1px solid rgba(0,229,160,0.25); }
+  .badge-blue  { background: rgba(0,184,255,0.12); color: var(--accent2); border: 1px solid rgba(0,184,255,0.25); }
+  .badge-red   { background: rgba(255,78,106,0.12); color: var(--accent3); border: 1px solid rgba(255,78,106,0.25); }
+  .badge-warn  { background: rgba(255,179,71,0.12); color: var(--warn); border: 1px solid rgba(255,179,71,0.25); }
+
+  /* ── CONTENT ── */
+  .content {
+    padding: 60px;
+    max-width: 920px;
+  }
+
+  section { margin-bottom: 72px; }
+
+  h2 {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.9rem;
+    font-weight: 700;
+    color: var(--text-bright);
+    letter-spacing: 0.02em;
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  h2 .section-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--accent);
+    background: rgba(0,229,160,0.1);
+    border: 1px solid rgba(0,229,160,0.2);
+    padding: 2px 8px;
+    border-radius: 2px;
+  }
+
+  h3 {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--accent2);
+    margin: 28px 0 12px;
+    letter-spacing: 0.04em;
+  }
+
+  p { margin-bottom: 14px; color: var(--text); }
+
+  a { color: var(--accent2); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ── CODE ── */
+  pre, code {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.85rem;
+  }
+
+  code {
+    background: rgba(0,229,160,0.08);
+    color: var(--accent);
+    padding: 1px 6px;
+    border-radius: 2px;
+    border: 1px solid rgba(0,229,160,0.15);
+  }
+
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    padding: 20px 24px;
+    overflow-x: auto;
+    border-radius: 0 4px 4px 0;
+    margin: 16px 0;
+    position: relative;
+  }
+
+  pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    color: #a8d8b0;
+    font-size: 0.85rem;
+    line-height: 1.6;
+  }
+
+  .pre-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  /* ── TABLES ── */
+  .table-wrap { overflow-x: auto; margin: 20px 0; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+
+  thead tr {
+    background: var(--bg3);
+    border-bottom: 2px solid var(--accent);
+  }
+
+  th {
+    padding: 10px 16px;
+    text-align: left;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  td {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    vertical-align: top;
+  }
+
+  tr:hover td { background: rgba(0,229,160,0.03); }
+
+  td code { font-size: 0.8rem; }
+
+  /* ── CALLOUTS ── */
+  .callout {
+    padding: 16px 20px;
+    border-radius: 2px;
+    margin: 20px 0;
+    border-left: 3px solid;
+    font-size: 0.93rem;
+  }
+
+  .callout-warn {
+    background: rgba(255,179,71,0.07);
+    border-color: var(--warn);
+    color: var(--warn);
+  }
+
+  .callout-info {
+    background: rgba(0,184,255,0.07);
+    border-color: var(--accent2);
+    color: var(--accent2);
+  }
+
+  .callout-danger {
+    background: rgba(255,78,106,0.07);
+    border-color: var(--accent3);
+    color: var(--accent3);
+  }
+
+  .callout strong { display: block; margin-bottom: 4px; font-size: 0.8rem; letter-spacing: 0.1em; }
+
+  /* ── CMD CARDS ── */
+  .cmd-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 12px;
+    margin: 20px 0;
+  }
+
+  .cmd-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-top: 2px solid var(--accent);
+    padding: 16px;
+    transition: border-color 0.2s;
+  }
+
+  .cmd-card:hover { border-color: var(--accent); }
+
+  .cmd-name {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.9rem;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+
+  .cmd-desc {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  /* ── MODULE GRID (unused but kept style) ── */
+  .module-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+    margin: 20px 0;
+  }
+
+  .module-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 14px 16px;
+    border-radius: 2px;
+    transition: all 0.15s;
+  }
+
+  .module-card:hover {
+    background: var(--bg3);
+    border-color: rgba(0,229,160,0.3);
+  }
+
+  .module-file {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--accent2);
+    margin-bottom: 4px;
+  }
+
+  .module-desc {
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    line-height: 1.4;
+  }
+
+  /* ── ENDPOINT TABLE ── */
+  .method {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 2px;
+    display: inline-block;
+  }
+
+  .method-get    { background: rgba(0,229,160,0.15); color: var(--accent); }
+  .method-post   { background: rgba(0,184,255,0.15); color: var(--accent2); }
+  .method-delete { background: rgba(255,78,106,0.15); color: var(--accent3); }
+
+  /* ── FOOTER ── */
+  .footer {
+    border-top: 1px solid var(--border);
+    padding: 30px 60px;
+    color: var(--text-dim);
+    font-size: 0.8rem;
+    font-family: 'IBM Plex Mono', monospace;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .footer span { color: var(--accent); }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+  @media (max-width: 768px) {
+    .sidebar { transform: translateX(-100%); }
+    .main { margin-left: 0; }
+    .hero, .content { padding: 30px 20px; }
+    .footer { padding: 20px; }
+    .hero h1 { font-size: 2.2rem; }
+    .hero::after { display: none; }
+    .back-btn { top: 12px; right: 16px; padding: 5px 12px; font-size: 0.7rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- BACK BUTTON (top right) -->
+<a href="https://hackeros-linux-system.github.io/HackerOS-Website/tools-docs/index.html" class="back-btn">BACK</a>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-text">HackerOS Containers</div>
+    <div class="logo-sub">Runtime Documentation</div>
+    <div class="version-badge">v0.3.0</div>
+  </div>
+
+  <div class="nav-section-label">Wprowadzenie</div>
+  <a class="nav-link" href="#overview">Przegląd</a>
+  <a class="nav-link" href="#installation">Instalacja</a>
+  <a class="nav-link" href="#architecture">Architektura</a>
+
+  <div class="nav-section-label">Użycie</div>
+  <a class="nav-link" href="#cli">CLI — Komendy</a>
+  <a class="nav-link" href="#config">Pliki konfiguracyjne</a>
+  <a class="nav-link" href="#pods">Pods</a>
+
+  <div class="nav-section-label">API & Integracja</div>
+  <a class="nav-link" href="#api">REST API</a>
+  <a class="nav-link" href="#metrics">Metryki Prometheus</a>
+  <a class="nav-link" href="#seccomp">Seccomp / Bezpieczeństwo</a>
+
+  <div class="nav-section-label">Moduły</div>
+  <a class="nav-link" href="#network">Sieć / CNI</a>
+  <a class="nav-link" href="#images">Obrazy OCI</a>
+
+  <div class="nav-section-label">Referencja</div>
+  <a class="nav-link" href="#errors">Błędy i diagnostyka</a>
+  <a class="nav-link" href="#license">Licencja</a>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-tag">// HackerOS Project — Container Runtime</div>
+    <h1>HackerOS <span>Containers</span></h1>
+    <p class="hero-desc">
+      Zaawansowane środowisko uruchomieniowe dla kontenerów napisane w języku Rust.
+      Obsługuje przestrzenie nazw Linux, OverlayFS, cgroups v2, seccomp, CNI,
+      REST API oraz automatyczne restartowanie procesów.
+    </p>
+    <div class="hero-badges">
+      <span class="badge badge-green">Rust 2021</span>
+      <span class="badge badge-blue">Linux Namespaces</span>
+      <span class="badge badge-blue">OverlayFS</span>
+      <span class="badge badge-green">cgroups v2</span>
+      <span class="badge badge-red">Seccomp</span>
+      <span class="badge badge-warn">REST API</span>
+      <span class="badge badge-blue">CNI</span>
+      <span class="badge badge-green">Prometheus</span>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- OVERVIEW -->
+    <section id="overview">
+      <h2><span class="section-num">01</span> Przegląd</h2>
+      <p>
+        <code>hco</code> (HackerOS Containers) to lekki, niskopoziomowy runtime kontenerów
+        napisany w Rust. Nie zależy od Dockera ani containerd — zarządza cyklem życia
+        kontenerów bezpośrednio przez syscalle Linuksa.
+      </p>
+      <p>Główne możliwości:</p>
+      <ul style="margin-left:20px; margin-bottom:14px; color: var(--text);">
+        <li>Izolacja przez przestrzenie nazw (UTS, PID, MNT, NET, IPC, USER)</li>
+        <li>OverlayFS — wielowarstwowy system plików jak w Dockerze</li>
+        <li>Ograniczenia zasobów przez cgroups v2 (pamięć, CPU)</li>
+        <li>Pobieranie obrazów OCI z rejestrów (Docker Hub, własne)</li>
+        <li>Przekierowanie portów przez iptables/DNAT</li>
+        <li>Seccomp — filtrowanie syscalli z profili JSON</li>
+        <li>Tryb rootless (user namespaces)</li>
+        <li>Pods — grupy kontenerów ze wspólną siecią/PID/IPC</li>
+        <li>REST API (axum) do zarządzania przez HTTP</li>
+        <li>Eksport metryk w formacie Prometheus</li>
+        <li>Automatyczne restartowanie (<code>auto_restart</code>)</li>
+        <li>PTY shell — wejście do działającego kontenera</li>
+      </ul>
+      <div class="callout callout-warn">
+        <strong>⚠ WYMAGANIA</strong>
+        Uruchomienie <code>hco</code> wymaga uprawnień root lub odpowiednio skonfigurowanych
+        user namespaces. Większość funkcji sieciowych wymaga roota.
+      </div>
+    </section>
+
+    <!-- INSTALLATION (zmienione) -->
+    <section id="installation">
+      <h2><span class="section-num">02</span> Instalacja</h2>
+      <div class="pre-label">HackerOS Linux — instalacja</div>
+      <pre><code>hacker unpack hackeros-containers</code></pre>
+      <p>Powyższa komenda pobierze i zainstaluje najnowszą wersję <code>hco</code> wraz ze wszystkimi zależnościami. Po zakończeniu procesu <code>hco</code> będzie dostępne w systemie.</p>
+      <div class="callout callout-info">
+        <strong>ℹ Uwaga</strong>
+        Jeśli używasz innej dystrybucji, skompiluj ze źródeł lub pobierz binaria z repozytorium GitHub.
+      </div>
+    </section>
+
+    <!-- ARCHITECTURE -->
+    <section id="architecture">
+      <h2><span class="section-num">03</span> Architektura</h2>
+      <p>
+        Kontener jest tworzony przez wywołanie <code>nix::sched::clone()</code> z odpowiednimi
+        flagami przestrzeni nazw. Proces potomny wywołuje <code>child_entrypoint()</code>,
+        który konfiguruje sieć, montuje OverlayFS, wykonuje <code>pivot_root</code>
+        i uruchamia docelowy program przez <code>execve</code>.
+      </p>
+      <pre><code>hco run
+  │
+  ├─ ImageManager::resolve_image_layers()   ← pobierz/cache OCI
+  ├─ setup_overlayfs()                      ← zmontuj rootfs
+  ├─ setup_bridge() / setup_cni()           ← skonfiguruj sieć
+  ├─ setup_cgroups()                        ← ogranicz zasoby
+  ├─ clone(CLONE_NEWUTS|PID|NS|NET|IPC)     ← nowe namespaces
+  │     └─ child_entrypoint()
+  │           ├─ setup_namespaces()         ← user ns (rootless)
+  │           ├─ seccomp_setup()            ← załaduj profil
+  │           ├─ sethostname()
+  │           ├─ bind mounts
+  │           ├─ pivot_root → /
+  │           └─ execve(cmd)
+  ├─ create_veth_pair()                     ← sieć host↔kontener
+  ├─ setup_port_forwarding()                ← iptables DNAT
+  └─ ContainerLogger::start_capture()      ← capture stdout</code></pre>
+
+      <div class="callout callout-info">
+        <strong>ℹ OVERLAYFS</strong>
+        Warstwy obrazu są montowane jako <code>lowerdir</code> (read-only).
+        Zmiany trafiają do katalogu <code>upper/</code> konkretnego kontenera.
+        Po zatrzymaniu kontenera katalog <code>upper/</code> jest usuwany.
+      </div>
+    </section>
+
+    <!-- CLI -->
+    <section id="cli">
+      <h2><span class="section-num">04</span> CLI — Komendy</h2>
+
+      <div class="cmd-grid">
+        <div class="cmd-card">
+          <div class="cmd-name">run</div>
+          <div class="cmd-desc">Uruchom nowy kontener z obrazu OCI</div>
+        </div>
+        <div class="cmd-card">
+          <div class="cmd-name">stop</div>
+          <div class="cmd-desc">Zatrzymaj działający kontener</div>
+        </div>
+        <div class="cmd-card">
+          <div class="cmd-name">list</div>
+          <div class="cmd-desc">Wyświetl wszystkie kontenery</div>
+        </div>
+        <div class="cmd-card">
+          <div class="cmd-name">enter</div>
+          <div class="cmd-desc">Wejdź do kontenera przez PTY shell</div>
+        </div>
+        <div class="cmd-card">
+          <div class="cmd-name">stats</div>
+          <div class="cmd-desc">Monitoruj zasoby kontenera (live)</div>
+        </div>
+        <div class="cmd-card">
+          <div class="cmd-name">pod</div>
+          <div class="cmd-desc">Zarządzaj grupami kontenerów (pods)</div>
+        </div>
+        <div class="cmd-card">
+          <div class="cmd-name">api</div>
+          <div class="cmd-desc">Uruchom serwer REST API</div>
+        </div>
+      </div>
+
+      <h3>hco run</h3>
+      <div class="pre-label">składnia</div>
+      <pre><code>hco run &lt;name&gt; -i &lt;image&gt; [opcje]</code></pre>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Flaga</th><th>Opis</th><th>Przykład</th></tr></thead>
+          <tbody>
+            <tr><td><code>-i / --image</code></td><td>Obraz OCI do uruchomienia</br><tr><code>alpine:latest</code></td></tr>
+            <tr><td><code>-d / --detached</code></br><td>Uruchom w tle (daemon)</br><td></br></td></tr>
+            <tr><td><code>-p / --publish</code></br><td>Przekierowanie portu host:kontener</br><td><code>8080:80</code></br></td></tr>
+            <tr><td><code>-v / --volume</code></br><td>Montowanie katalogu host:kontener</br><td><code>/data:/mnt/data</code></br></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pre-label">przykłady</div>
+      <pre><code># Uruchom nginx w tle z przekierowaniem portu
+hco run my-nginx -i nginx:alpine -p 8080:80 -d
+
+# Uruchom Alpine z wolumenem
+hco run dev-box -i alpine:latest -v /home/user/code:/app -d
+
+# Uruchom w trybie interaktywnym (foreground)
+hco run test -i alpine:latest</code></pre>
+
+      <h3>hco stop</h3>
+      <div class="pre-label">składnia</div>
+      <pre><code>hco stop &lt;name_lub_id_prefix&gt;</code></pre>
+      <p>Wysyła <code>SIGTERM</code>, czeka 5 sekund, następnie wysyła <code>SIGKILL</code>. Czyści iptables, OverlayFS i cgroups.</p>
+
+      <h3>hco enter</h3>
+      <div class="pre-label">składnia</div>
+      <pre><code>hco enter &lt;name_lub_id&gt;</code></pre>
+      <p>Otwiera interaktywną sesję PTY w przestrzeniach nazw działającego kontenera. Wymaga roota.</p>
+
+      <h3>hco stats</h3>
+      <div class="pre-label">składnia</div>
+      <pre><code>hco stats &lt;name_lub_id&gt;</code></pre>
+      <p>Wyświetla live statystyki pamięci i CPU z cgroups v2 (odświeżanie co 1s).</p>
+
+      <h3>hco api</h3>
+      <div class="pre-label">składnia</div>
+      <pre><code>hco api [--api-addr 0.0.0.0:8080]</code></pre>
+      <p>Uruchamia serwer HTTP REST API. Domyślny adres: <code>127.0.0.1:8080</code>.</p>
+    </section>
+
+    <!-- CONFIG -->
+    <section id="config">
+      <h2><span class="section-num">05</span> Pliki konfiguracyjne (.hk)</h2>
+      <p>
+        Kontenery można opisywać plikami <code>.hk</code> — własnym formatem konfiguracyjnym
+        HackerOS. Pliki te są ładowane przez <code>HkConfig::from_file()</code>.
+      </p>
+
+      <div class="pre-label">przykład — myapp.hk</div>
+      <pre><code>[Metadata]
+-> name = "my-app"
+-> version = "1.0"
+-> authors = "devops@example.com"
+-> license = "MIT"
+
+[Specs]
+-> base_image = "alpine:latest"
+-> memory_limit = "256MB"
+-> cpu_percent = 50
+-> mounts = "/data:/mnt/data"
+-> port_mappings = "8080:80"
+-> env = "APP_ENV=production,LOG_LEVEL=info"
+-> cmd = "/usr/bin/myapp,--config,/etc/app.conf"
+
+[Runtime]
+-> auto_restart = true
+-> network_mode = "bridge"
+
+[Security]
+-> rootless = false
+-> readonly_root = false
+-> drop_caps = "CAP_SYS_ADMIN"
+
+[Network]
+-> bridge_name = "hkbr0"
+-> subnet = "10.10.0.0/24"
+-> gateway = "10.10.0.1"</code></pre>
+
+      <h3>Sekcje konfiguracji</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Sekcja</th><th>Pole</th><th>Typ</th><th>Opis</th></tr></thead>
+          <tbody>
+            <tr><td rowspan="4"><code>[Metadata]</code></td><td><code>name</code></td><td>string</br><td>Nazwa kontenera</br></tr>
+            <tr><td><code>version</code></br><td>string</br><td>Wersja obrazu/konfiguracji</br></tr>
+            <tr><td><code>authors</code></br><td>string</br><td>Autorzy</br></tr>
+            <tr><td><code>license</code></br><td>string</br><td>Licencja</br></tr>
+            <tr><td rowspan="7"><code>[Specs]</code></td><td><code>base_image</code></br><td>string</br><td>Obraz OCI (np. <code>alpine:latest</code>)</br></tr>
+            <tr><td><code>memory_limit</code></br><td>string</br><td>Limit pamięci: <code>256MB</code>, <code>1GB</code></br></tr>
+            <tr><td><code>cpu_percent</code></br><td>number</br><td>Limit CPU w procentach (0–100)</br></tr>
+            <tr><td><code>mounts</code></br><td>string</br><td>Montowania oddzielone przecinkami</br></tr>
+            <tr><td><code>port_mappings</code></br><td>string</br><td>Przekierowania portów <code>host:kontenera</code></br></tr>
+            <tr><td><code>env</code></br><td>string</br><td>Zmienne środowiskowe <code>KEY=val</code></br></tr>
+            <tr><td><code>cmd</code></br><td>string</br><td>Komenda do uruchomienia</br></tr>
+            <tr><td rowspan="3"><code>[Runtime]</code></br><td><code>auto_restart</code></br><td>bool</br><td>Automatyczny restart po zakończeniu</br></tr>
+            <tr><td><code>network_mode</code></br><td>string</br><td><code>bridge</code> | <code>cni</code> | <code>none</code></br></tr>
+            <tr><td><code>cni_network</code></br><td>string</br><td>Nazwa sieci CNI (opcjonalne)</br></tr>
+            <tr><td rowspan="5"><code>[Security]</code></br><td><code>rootless</code></br><td>bool</br><td>Tryb bez roota (user namespaces)</br></tr>
+            <tr><td><code>readonly_root</code></br><td>bool</br><td>Read-only rootfs</br></tr>
+            <tr><td><code>drop_caps</code></br><td>string</br><td>Capabilities do usunięcia</br></tr>
+            <tr><td><code>allow_raw_sockets</code></br><td>bool</br><td>Zezwól na gniazda raw</br></tr>
+            <tr><td><code>seccomp_profile</code></br><td>string</br><td>Ścieżka do profilu JSON seccomp</br></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- PODS -->
+    <section id="pods">
+      <h2><span class="section-num">06</span> Pods</h2>
+      <p>
+        Pod to grupa kontenerów współdzielących przestrzenie nazw sieci, PID i/lub IPC.
+        Wzorowane na Kubernetes Pods — kontenery w jednym podzie widzą się nawzajem
+        przez <code>localhost</code>.
+      </p>
+
+      <h3>Plik specyfikacji poda (YAML)</h3>
+      <div class="pre-label">my-pod.yaml</div>
+      <pre><code>name: web-pod
+shared_network: true
+shared_pid: false
+shared_ipc: true
+containers:
+  - metadata:
+      name: web
+      version: "1.0"
+      authors: ""
+      license: ""
+    specs:
+      base_image: nginx:alpine
+      port_mappings: ["80:80"]
+      mounts: []
+      env: []
+      cmd: []
+    runtime:
+      auto_restart: false
+      network_mode: none
+    security:
+      rootless: false
+      readonly_root: false
+      allow_raw_sockets: true
+      drop_caps: []
+  - metadata:
+      name: sidecar
+    specs:
+      base_image: alpine:latest
+      cmd: ["/bin/sh", "-c", "while true; do sleep 5; done"]</code></pre>
+
+      <h3>Komendy pod</h3>
+      <div class="pre-label">bash</div>
+      <pre><code># Utwórz i uruchom poda ze specyfikacji YAML
+hco pod create my-pod -f my-pod.yaml
+
+# Wyświetl działające pods
+hco pod list
+
+# Zatrzymaj poda (i wszystkie jego kontenery)
+hco pod stop my-pod</code></pre>
+
+      <div class="callout callout-info">
+        <strong>ℹ SHARED NETWORK</strong>
+        Gdy <code>shared_network: true</code>, tworzony jest dedykowany network namespace
+        dla całego poda przez <code>ip netns add pod-&lt;name&gt;</code>. Wszystkie kontenery
+        w podzie używają <code>network_mode: none</code> i wchodzą do wspólnego netns.
+      </div>
+    </section>
+
+    <!-- REST API -->
+    <section id="api">
+      <h2><span class="section-num">07</span> REST API</h2>
+      <p>
+        Po uruchomieniu <code>hco api</code> dostępny jest serwer HTTP (axum) z endpointami
+        do zarządzania kontenerami i podami.
+      </p>
+
+      <div class="pre-label">uruchomienie</div>
+      <pre><code>hco api --api-addr 0.0.0.0:8080</code></pre>
+
+      <h3>Endpointy — Kontenery</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Metoda</th><th>Ścieżka</th><th>Opis</th></tr></thead>
+          <tbody>
+            <tr><td><span class="method method-get">GET</span></br><td><code>/containers</code></br><td>Lista wszystkich kontenerów</br></tr>
+            <tr><td><span class="method method-post">POST</span></br><td><code>/containers</code></br><td>Utwórz i uruchom nowy kontener</br></tr>
+            <tr><td><span class="method method-delete">DELETE</span></br><td><code>/containers/:id</code></br><td>Zatrzymaj i usuń kontener</br></tr>
+            <tr><td><span class="method method-post">POST</span></br><td><code>/containers/:id/start</code></br><td>Uruchom zatrzymany kontener (TODO)</br></tr>
+            <tr><td><span class="method method-post">POST</span></br><td><code>/containers/:id/stop</code></br><td>Zatrzymaj kontener</br></tr>
+            <tr><td><span class="method method-get">GET</span></br><td><code>/containers/:id/logs</code></br><td>Pobierz logi stdout kontenera</br></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Endpointy — Pods</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Metoda</th><th>Ścieżka</th><th>Opis</th></tr></thead>
+          <tbody>
+            <tr><td><span class="method method-get">GET</span></br><td><code>/pods</code></br><td>Lista wszystkich podów</br></tr>
+            <tr><td><span class="method method-post">POST</span></br><td><code>/pods</code></br><td>Utwórz i uruchom nowego poda</br></tr>
+            <tr><td><span class="method method-delete">DELETE</span></br><td><code>/pods/:name</code></br><td>Zatrzymaj i usuń poda</br></tr>
+            <tr><td><span class="method method-post">POST</span></br><td><code>/pods/:name/stop</code></br><td>Zatrzymaj poda</br></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Endpointy — System</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Metoda</th><th>Ścieżka</th><th>Opis</th></tr></thead>
+          <tbody>
+            <tr><td><span class="method method-get">GET</span></br><td><code>/metrics</code></br><td>Metryki w formacie Prometheus text</br></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Przykład — tworzenie kontenera (curl)</h3>
+      <div class="pre-label">bash</div>
+      <pre><code>curl -X POST http://localhost:8080/containers \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "my-nginx",
+    "image": "nginx:alpine",
+    "ports": ["8080:80"],
+    "memory_limit": "128MB",
+    "cpu_percent": 25,
+    "auto_restart": true,
+    "detached": true
+  }'</code></pre>
+
+      <div class="pre-label">odpowiedź — 201 Created</div>
+      <pre><code>{ "id": "a3f7c2d1-8b4e-..." }</code></pre>
+
+      <h3>Schemat błędu</h3>
+      <div class="pre-label">JSON — 500 Internal Server Error</div>
+      <pre><code>{ "error": "Container not found: my-nginx" }</code></pre>
+    </section>
+
+    <!-- METRICS -->
+    <section id="metrics">
+      <h2><span class="section-num">08</span> Metryki Prometheus</h2>
+      <p>
+        Serwer API eksportuje metryki pod <code>GET /metrics</code> w formacie
+        Prometheus text. Można je zbierać standardowym scrapingiem.
+      </p>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Metryka</th><th>Typ</th><th>Opis</th></tr></thead>
+          <tbody>
+            <tr><td><code>containers_total</code></br><td>Gauge</br><td>Łączna liczba kiedykolwiek stworzonych kontenerów</br></tr>
+            <tr><td><code>containers_running</code></br><td>Gauge</br><td>Aktualnie działające kontenery</br></tr>
+            <tr><td><code>container_memory_bytes</code></br><td>GaugeVec</br><td>Użycie pamięci (labels: <code>id</code>, <code>name</code>)</br></tr>
+            <tr><td><code>container_cpu_usage_percent</code></br><td>GaugeVec</br><td>Użycie CPU w % (labels: <code>id</code>, <code>name</code>)</br></tr>
+            <tr><td><code>container_start_total</code></br><td>Counter</br><td>Łączna liczba startów kontenerów</br></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pre-label">przykładowe dane</div>
+      <pre><code># HELP containers_running Number of currently running containers
+# TYPE containers_running gauge
+containers_running 3
+
+# HELP container_memory_bytes Memory usage in bytes
+# TYPE container_memory_bytes gauge
+container_memory_bytes{id="a3f7...",name="my-nginx"} 1.24e+07</code></pre>
+    </section>
+
+    <!-- SECCOMP -->
+    <section id="seccomp">
+      <h2><span class="section-num">09</span> Seccomp / Bezpieczeństwo</h2>
+      <p>
+        <code>hco</code> obsługuje filtrowanie syscalli przez seccomp przy użyciu
+        biblioteki <code>libseccomp</code>. Profile są plikami JSON kompatybilnymi
+        ze schematem Docker/Podman.
+      </p>
+
+      <h3>Format profilu seccomp (JSON)</h3>
+      <div class="pre-label">default-profile.json</div>
+      <pre><code>{
+  "default_action": "SCMP_ACT_ERRNO",
+  "architectures": ["x86_64", "aarch64"],
+  "syscalls": [
+    {
+      "names": ["read", "write", "open", "close", "stat",
+                "fstat", "lstat", "poll", "lseek", "mmap",
+                "mprotect", "munmap", "brk", "rt_sigaction",
+                "rt_sigprocmask", "ioctl", "access", "pipe",
+                "select", "nanosleep", "getpid", "fork",
+                "execve", "exit", "exit_group", "getdents64"],
+      "action": "SCMP_ACT_ALLOW"
+    }
+  ]
+}</code></pre>
+
+      <h3>Dostępne akcje</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Akcja</th><th>Efekt</th></tr></thead>
+          <tbody>
+            <tr><td><code>SCMP_ACT_ALLOW</code></br><td>Przepuść syscall</br></tr>
+            <tr><td><code>SCMP_ACT_ERRNO</code></br><td>Zwróć EPERM (domyślny błąd)</br></tr>
+            <tr><td><code>SCMP_ACT_ERRNO(N)</code></br><td>Zwróć errno o numerze N</br></tr>
+            <tr><td><code>SCMP_ACT_KILL</code></br><td>Zabij wątek</br></tr>
+            <tr><td><code>SCMP_ACT_KILL_PROCESS</code></br><td>Zabij cały proces</br></tr>
+            <tr><td><code>SCMP_ACT_TRAP</code></br><td>Wyślij SIGSYS</br></tr>
+            <tr><td><code>SCMP_ACT_LOG</code></br><td>Loguj (przepuść)</br></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Użycie profilu w konfiguracji</h3>
+      <div class="pre-label">myapp.hk — sekcja [Security]</div>
+      <pre><code>[Security]
+-> seccomp_profile = "/etc/hco/profiles/default.json"
+-> rootless = false
+-> readonly_root = false</code></pre>
+
+      <div class="callout callout-danger">
+        <strong>🔒 BEZPIECZEŃSTWO</strong>
+        Domyślnie, jeśli nie podano profilu seccomp, kontener nie ma żadnych ograniczeń
+        na poziomie syscalli. Zawsze stosuj profil seccomp w środowiskach produkcyjnych.
+      </div>
+    </section>
+
+    <!-- NETWORK -->
+    <section id="network">
+      <h2><span class="section-num">10</span> Sieć / CNI</h2>
+      <p>
+        Domyślny tryb sieciowy to <code>bridge</code>. Każdy kontener dostaje
+        parę interfejsów veth: jeden po stronie hosta (podłączony do mostu <code>hkbr0</code>),
+        drugi wewnątrz kontenera jako <code>eth0</code>.
+      </p>
+
+      <h3>Tryby sieci</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Tryb</th><th>Opis</th></tr></thead>
+          <tbody>
+            <tr><td><code>bridge</code></br><td>Domyślny. Most <code>hkbr0</code>, veth, iptables NAT/DNAT</br></tr>
+            <tr><td><code>cni</code></br><td>Zewnętrzne wtyczki CNI przez <code>cnitool</code></br></tr>
+            <tr><td><code>none</code></br><td>Brak sieci (używane przez kontenery w podach ze shared_network)</br></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Konfiguracja mostu</h3>
+      <p>Most jest tworzony automatycznie przy pierwszym uruchomieniu:</p>
+      <pre><code>Domyślna podsieć: 10.10.0.0/24
+Gateway:         10.10.0.1  (przypisany do hkbr0)
+IP kontenerów:   10.10.0.2 — 10.10.0.254
+NAT:             iptables MASQUERADE na ruch wychodzący</code></pre>
+
+      <div class="callout callout-info">
+        <strong>ℹ IP DETERMINIZM</strong>
+        Adres IP kontenera jest wyznaczany jako <code>10.10.0.(container_id[0] % 250 + 2)</code>.
+        Nie jest to deterministyczne między restartami — używaj DNS lub serwis discovery
+        dla stabilnych adresów.
+      </div>
+    </section>
+
+    <!-- IMAGES -->
+    <section id="images">
+      <h2><span class="section-num">11</span> Obrazy OCI</h2>
+      <p>
+        <code>hco</code> pobiera obrazy bezpośrednio z rejestrów OCI (Docker Hub, prywatne)
+        bez potrzeby instalowania Dockera.
+      </p>
+
+      <h3>Format referencji obrazu</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Format</th><th>Przykład</th><th>Rozwinięcie</th></tr></thead>
+          <tbody>
+            <tr><td><code>name</code></br><td><code>alpine</code></br><td><code>registry-1.docker.io/library/alpine:latest</code></br></tr>
+            <tr><td><code>name:tag</code></br><td><code>nginx:alpine</code></br><td><code>registry-1.docker.io/library/nginx:alpine</code></br></tr>
+            <tr><td><code>user/repo:tag</code></br><td><code>myuser/myapp:v1</code></br><td><code>registry-1.docker.io/myuser/myapp:v1</code></br></tr>
+            <tr><td><code>registry/repo:tag</code></br><td><code>ghcr.io/org/app:latest</code></br><td>Bezpośrednie użycie rejestru</br></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Cache obrazów</h3>
+      <p>
+        Warstwy obrazów są zapisywane w <code>/var/lib/hackeros/images/</code>
+        i <code>/var/lib/hackeros/layers/</code>. Przy ponownym uruchomieniu
+        tego samego obrazu pobieranie jest pomijane.
+      </p>
+
+      <h3>Import z archiwum tar</h3>
+      <div class="pre-label">API</div>
+      <pre><code>// Programatycznie (Rust)
+ImageManager::import_tar(Path::new("/tmp/myimage.tar"), "myimage:local")?;</code></pre>
+    </section>
+
+    <!-- ERRORS -->
+    <section id="errors">
+      <h2><span class="section-num">12</span> Błędy i diagnostyka</h2>
+      <p>
+        <code>hco</code> używa biblioteki <code>miette</code> do czytelnych komunikatów błędów
+        z kontekstem i wskazówkami.
+      </p>
+
+      <h3>Logi kontenerów</h3>
+      <p>Stdout kontenera jest przechwytywany do pliku:</p>
+      <pre><code>/var/log/hackeros/&lt;container-id&gt;.log</code></pre>
+      <div class="pre-label">bash — podgląd logów</div>
+      <pre><code>tail -f /var/log/hackeros/a3f7c2d1-8b4e-4f2a-b1c3-d5e6f7a8b9c0.log
+
+# Lub przez API:
+curl http://localhost:8080/containers/a3f7c/logs | jq .logs</code></pre>
+
+      <h3>Typowe błędy</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Błąd</th><th>Przyczyna</th><th>Rozwiązanie</th></tr></thead>
+          <tbody>
+            <tr><td><code>Failed to clone container process</code></br><td>Brak uprawnień root lub brak obsługi namespace</br><td>Uruchom jako root lub włącz user namespaces w kernelu</br></tr>
+            <tr><td><code>Failed to bind to addr</code></br><td>Port zajęty lub brak uprawnień</br><td>Sprawdź <code>ss -tlnp</code>, zmień port API</br></tr>
+            <tr><td><code>Failed to get manifest</code></br><td>Brak dostępu do rejestru lub zły tag obrazu</br><td>Sprawdź połączenie i nazwę obrazu</br></tr>
+            <tr><td><code>Digest mismatch</code></br><td>Uszkodzona warstwa podczas pobierania</br><td>Usuń cache: <code>rm -rf /var/lib/hackeros/images/&lt;img&gt;</code></br></tr>
+            <tr><td><code>Container not found</code></br><td>Podany ID/nazwa nie istnieje w <code>/var/run/hackeros/</code></br><td>Sprawdź <code>hco list</code></br></tr>
+            <tr><td><code>Failed to create seccomp filter</code></br><td>Kernel nie obsługuje seccomp lub brak <code>libseccomp</code></br><td>Sprawdź <code>CONFIG_SECCOMP</code> i zainstaluj libseccomp-dev</br></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- LICENSE -->
+    <section id="license">
+      <h2><span class="section-num">13</span> Licencja</h2>
+      <p>
+        HackerOS Containers jest udostępniany na licencji <strong>MIT</strong>.
+      </p>
+      <pre><code>Copyright (c) HackerOS Team &lt;hackeros068@gmail.com&gt;
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.</code></pre>
+    </section>
+
+  </div><!-- /content -->
+
+  <footer class="footer">
+    <div>HackerOS Containers <span>v0.3.0</span> — dokumentacja</div>
+    <div><span>HackerOS Team</span> &lt;hackeros068@gmail.com&gt; — MIT License</div>
+  </footer>
+</div><!-- /main -->
+
+<script>
+  // Active nav link on scroll
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-link');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(link => link.classList.remove('active'));
+        const active = document.querySelector(`.nav-link[href="#${entry.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
