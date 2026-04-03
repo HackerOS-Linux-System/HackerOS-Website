@@ -1,1 +1,566 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>HackerOS · Ekosystem & narzędzia</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            background-color: #0c0f14;   /* głęboka ciemna szarość, prawie czarny */
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, 'Roboto', sans-serif;
+            line-height: 1.55;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: #eef2f8;
+        }
+
+        /* ---------- GÓRNY PASEK (czarny z subtelnym połyskiem) ---------- */
+        .top-bar {
+            background-color: #05070a;
+            width: 100%;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+            position: relative;
+            z-index: 100;
+            border-bottom: 1px solid #20262e;
+        }
+
+        .navbar-container {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0 28px;
+            min-height: 74px;
+            gap: 2rem;
+        }
+
+        /* logo lewy górny róg – teraz klikalne */
+        .logo-area {
+            flex-shrink: 0;
+            line-height: 0;
+            transition: filter 0.2s;
+        }
+        .logo-area:hover {
+            filter: brightness(0.92);
+        }
+        .logo-area a {
+            display: inline-block;
+            text-decoration: none;
+        }
+        .logo-area img {
+            display: block;
+            max-height: 54px;
+            width: auto;
+            height: auto;
+            filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.5));
+            border-radius: 8px;
+            background: transparent;
+            cursor: pointer;
+        }
+
+        /* nawigacja – ciemny, stonowany */
+        .nav-menu {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+        .nav-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.3rem;
+            list-style: none;
+        }
+        .nav-list li {
+            margin: 0;
+        }
+        .nav-list a {
+            display: inline-block;
+            padding: 8px 18px;
+            font-weight: 550;
+            font-size: 0.95rem;
+            letter-spacing: 0.2px;
+            text-decoration: none;
+            color: #e3e9f2;
+            background-color: transparent;
+            border-radius: 60px;
+            transition: all 0.22s ease;
+            font-family: inherit;
+            backdrop-filter: blur(2px);
+        }
+        .nav-list a:hover {
+            background-color: #2a313c;
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+        }
+        .nav-list a:focus-visible {
+            outline: 2px solid #7f8c9a;
+            outline-offset: 2px;
+        }
+
+        /* GŁÓWNY BLOK – ciemniejszy, elegancki */
+        .main-content {
+            flex: 1;
+            max-width: 1300px;
+            margin: 2rem auto;
+            padding: 2rem 2rem 2.5rem;
+            background-color: #13181f;
+            border-radius: 44px;
+            box-shadow: 0 25px 40px -12px rgba(0, 0, 0, 0.5);
+            border: 1px solid #242c34;
+            transition: all 0.2s;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .section-header h2 {
+            font-size: 2.3rem;
+            font-weight: 650;
+            background: linear-gradient(125deg, #eef2fc, #b9c4d1);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.4px;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        /* ---------- SLIDER / KARUZELA (ciemny design, poprawione strzałki) ---------- */
+        .slider-shell {
+            position: relative;
+            margin: 1rem 0 0.8rem;
+            border-radius: 2rem;
+        }
+        .slider-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 2rem;
+            background: #0e131a;
+            box-shadow: 0 18px 30px -12px rgba(0, 0, 0, 0.5);
+            border: 1px solid #2c3540;
+            margin: 0 4px;
+        }
+        .slides-wrapper {
+            overflow: hidden;
+            width: 100%;
+        }
+        .slides-track {
+            display: flex;
+            transition: transform 0.4s cubic-bezier(0.2, 0.85, 0.4, 1);
+            will-change: transform;
+        }
+        .slide {
+            flex: 0 0 100%;
+            padding: 2.2rem 3rem;
+            background: #10161e;
+            min-height: 280px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-radius: 1.5rem;
+        }
+        .slide h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            background: linear-gradient(130deg, #ffffff, #cbdae6);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 1rem;
+            border-left: 4px solid #5f7f9e;
+            padding-left: 1.2rem;
+        }
+        .slide p {
+            font-size: 1.05rem;
+            line-height: 1.55;
+            color: #cfdeed;
+            max-width: 92%;
+            margin-bottom: 0.2rem;
+        }
+
+        /* przyciski nawigacji slidera – poprawione, nie nachodzą na treść */
+        .slider-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #1f2a33dd;
+            backdrop-filter: blur(8px);
+            border: 1px solid #3a4451;
+            width: 44px;
+            height: 44px;
+            border-radius: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            z-index: 12;
+            color: #f0f4fa;
+            font-size: 2rem;
+            font-weight: 400;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            left: 12px;
+            right: auto;
+        }
+        .slider-btn.btn-next {
+            left: auto;
+            right: 12px;
+        }
+        .slider-btn:hover {
+            background: #2c3846;
+            transform: translateY(-50%) scale(1.02);
+            border-color: #6f8aac;
+        }
+        @media (max-width: 700px) {
+            .slider-btn {
+                width: 38px;
+                height: 38px;
+                font-size: 1.7rem;
+                left: 6px;
+            }
+            .slider-btn.btn-next {
+                right: 6px;
+            }
+            .slide {
+                padding: 1.5rem 2rem;
+            }
+            .slide h3 {
+                font-size: 1.6rem;
+            }
+            .slide p {
+                font-size: 0.95rem;
+                max-width: 100%;
+            }
+        }
+        @media (max-width: 550px) {
+            .slide {
+                padding: 1.2rem 1.5rem;
+            }
+            .slider-btn {
+                width: 34px;
+                height: 34px;
+                font-size: 1.5rem;
+                left: 4px;
+            }
+            .slider-btn.btn-next {
+                right: 4px;
+            }
+        }
+
+        .dots-container {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 1.6rem;
+            flex-wrap: wrap;
+        }
+        .dot {
+            width: 10px;
+            height: 10px;
+            background-color: #3f4a57;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .dot.active {
+            background-color: #cbdae9;
+            width: 28px;
+            border-radius: 20px;
+        }
+        .dot:hover {
+            background-color: #8fa0b5;
+        }
+
+        /* stopka – nowy tekst */
+        footer {
+            text-align: center;
+            font-size: 0.75rem;
+            color: #8c9aaa;
+            padding: 1.5rem;
+            background: transparent;
+            border-top: 1px solid #20262e;
+            margin-top: 0.5rem;
+        }
+
+        /* responsywność ogólna */
+        @media (max-width: 880px) {
+            .navbar-container {
+                flex-wrap: wrap;
+                padding: 10px 20px;
+                gap: 0.8rem;
+            }
+            .logo-area {
+                margin-right: auto;
+            }
+            .nav-menu {
+                flex: 1 1 100%;
+                justify-content: center;
+            }
+            .nav-list a {
+                padding: 6px 13px;
+                font-size: 0.85rem;
+            }
+            .main-content {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+            .section-header h2 {
+                font-size: 1.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header class="top-bar">
+    <div class="navbar-container">
+        <!-- LEWY GÓRNY RÓG – zdjęcie klikalne, przekierowuje na stronę główną HackerOS -->
+        <div class="logo-area">
+            <a href="https://hackeros-linux-system.github.io/HackerOS-Website/Home-page.html" target="_blank" rel="noopener noreferrer">
+                <img src="../HackerOS.png" alt="HackerOS - strona główna" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20120%2040%22%20fill%3D%22%23333%22%3E%3Crect%20width%3D%22120%22%20height%3D%2240%22%20fill%3D%22%230d1117%22%20rx%3D%228%22%2F%3E%3Ctext%20x%3D%2210%22%20y%3D%2225%22%20fill%3D%22%23f0f3fa%22%20font-size%3D%2214%22%20font-family%3D%27monospace%27%3EHackerOS%3C%2Ftext%3E%3C%2Fsvg%3E';">
+            </a>
+        </div>
+        <!-- MENU: wszystkie wymagane pozycje + .hk oraz hsh -->
+        <nav class="nav-menu" aria-label="Menu ekosystemu HackerOS">
+            <ul class="nav-list">
+                <li><a href="hpm.html">HPM</a></li>
+                <li><a href="hackeros-containers.html">HackerOS Containers</a></li>
+                <li><a href="lpm.html">lpm</a></li>
+                <li><a href="hammer.html">hammer</a></li>
+                <li><a href="hacker.html">hacker</a></li>
+                <li><a href="hbuild.html">hbuild</a></li>
+                <li><a href="ulb.html">ULB</a></li>
+                <li><a href="hk.html">.hk</a></li>
+                <li><a href="hsh.html">hsh</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main class="main-content">
+    <div class="section-header">
+        <h2>Poznaj ekosystem HackerOS.</h2>
+    </div>
+
+    <!-- SLIDER z rozbudowanymi opisami -->
+    <div class="slider-shell">
+        <div class="slider-container" id="sliderContainer">
+            <div class="slides-wrapper">
+                <div class="slides-track" id="slidesTrack"></div>
+            </div>
+            <button class="slider-btn btn-prev" id="prevSlideBtn" aria-label="poprzedni slajd">‹</button>
+            <button class="slider-btn btn-next" id="nextSlideBtn" aria-label="następny slajd">›</button>
+        </div>
+        <div class="dots-container" id="dotsContainer"></div>
+    </div>
+</main>
+
+<footer>
+    <span>HackerOS · © 2026 HackerOS. Wszelkie prawa zastrzeżone. | Dokumentacja ekosystemu HackerOS.</span>
+</footer>
+
+<script>
+    // ----- DANE SŁAJDÓW (pełne opisy, bez numerków/badge'y) -----
+    const slidesData = [
+        {
+            title: "HPM",
+            desc: "HackerOS Package Manager – repozytorium społecznościowe dla HackerOS. Każdy użytkownik może tworzyć, udostępniać i instalować pakiety, budując otwarty, dynamiczny ekosystem."
+        },
+        {
+            title: "HackerOS Containers",
+            desc: "Autorski system kontenerów zaprojektowany z myślą o lekkiej izolacji, wysokiej wydajności i łatwym zarządzaniu środowiskami aplikacji. W pełni zintegrowany z jądrem HackerOS."
+        },
+        {
+            title: "lpm",
+            desc: "Legendary Package Manager – nowoczesny następca APT. Łączy prostotę klasycznych menedżerów z zaawansowanym rozwiązywaniem zależności, wsparciem dla wielu źródeł i błyskawiczną instalacją."
+        },
+        {
+            title: "hammer",
+            desc: "Narzędzie do atomowej instalacji oraz aktualizacji pakietów. Wykorzystywane wyłącznie w edycji Atomic HackerOS – gwarantuje nieuszkadzalne aktualizacje i możliwość przywracania poprzednich stanów systemu."
+        },
+        {
+            title: "hacker",
+            desc: "hacker – serce systemu. Zaawansowane narzędzie do monitorowania, zarządzania procesami i konfiguracją w czasie rzeczywistym. Stanowi fundament interakcji z jądrem oraz usprawnia diagnostykę."
+        },
+        {
+            title: "hbuild",
+            desc: "Własna, autorska alternatywa dla Meson, CMake, Make oraz Ninja. Upraszcza proces kompilacji oprogramowania dzięki deklaratywnym skryptom, inteligentnemu cache'owaniu i modułowej architekturze."
+        },
+        {
+            title: "ULB",
+            desc: "Universal Live Builder – elitarne narzędzie do budowania obrazów ISO HackerOS. Umożliwia tworzenie w pełni konfigurowalnych, przenośnych środowisk live oraz obrazów do wdrożeń masowych."
+        },
+        {
+            title: ".hk",
+            desc: "Format plików .hk używany do konfiguracji systemu oraz aplikacji. Zapewnia czytelną, hierarchiczną składnię, natywne wsparcie w narzędziach HackerOS oraz możliwość rozszerzeń poprzez wbudowane schematy."
+        },
+        {
+            title: "hsh",
+            desc: "hsh – nowoczesna powłoka systemowa, zaawansowana alternatywa dla ZSH i Bash. Oferuje rozszerzone możliwości skryptowe, lepszą autokompletację, wbudowane wsparcie dla kontenerów i natywne integracje z .hk."
+        }
+    ];
+
+    // DOM elementy
+    const slidesTrack = document.getElementById('slidesTrack');
+    const dotsContainer = document.getElementById('dotsContainer');
+    const prevBtn = document.getElementById('prevSlideBtn');
+    const nextBtn = document.getElementById('nextSlideBtn');
+
+    let currentIndex = 0;
+    let autoPlayInterval = null;
+    let isHovering = false;
+
+    function renderSlides() {
+        slidesTrack.innerHTML = '';
+        slidesData.forEach((slide) => {
+            const slideDiv = document.createElement('div');
+            slideDiv.className = 'slide';
+            const titleElem = document.createElement('h3');
+            titleElem.textContent = slide.title;
+            const descElem = document.createElement('p');
+            descElem.textContent = slide.desc;
+            slideDiv.appendChild(titleElem);
+            slideDiv.appendChild(descElem);
+            slidesTrack.appendChild(slideDiv);
+        });
+        updateSliderPosition();
+    }
+
+    function updateSliderPosition() {
+        if (!slidesTrack) return;
+        const offset = -currentIndex * 100;
+        slidesTrack.style.transform = `translateX(${offset}%)`;
+        updateDots();
+    }
+
+    function updateDots() {
+        const dots = document.querySelectorAll('.dot');
+        dots.forEach((dot, i) => {
+            if (i === currentIndex) {
+                dot.classList.add('active');
+            } else {
+                dot.classList.remove('active');
+            }
+        });
+    }
+
+    function buildDots() {
+        dotsContainer.innerHTML = '';
+        for (let i = 0; i < slidesData.length; i++) {
+            const dot = document.createElement('div');
+            dot.classList.add('dot');
+            if (i === currentIndex) dot.classList.add('active');
+            dot.addEventListener('click', () => {
+                goToSlide(i);
+                resetAutoPlay();
+            });
+            dotsContainer.appendChild(dot);
+        }
+    }
+
+    function goToSlide(index) {
+        if (index < 0) index = slidesData.length - 1;
+        if (index >= slidesData.length) index = 0;
+        currentIndex = index;
+        updateSliderPosition();
+    }
+
+    function nextSlide() {
+        goToSlide(currentIndex + 1);
+    }
+
+    function prevSlide() {
+        goToSlide(currentIndex - 1);
+    }
+
+    function startAutoPlay() {
+        if (autoPlayInterval) clearInterval(autoPlayInterval);
+        if (isHovering) return;
+        autoPlayInterval = setInterval(() => {
+            if (!isHovering) {
+                nextSlide();
+            }
+        }, 20000);
+    }
+
+    function stopAutoPlay() {
+        if (autoPlayInterval) {
+            clearInterval(autoPlayInterval);
+            autoPlayInterval = null;
+        }
+    }
+
+    function resetAutoPlay() {
+        stopAutoPlay();
+        if (!isHovering) {
+            startAutoPlay();
+        }
+    }
+
+    function bindHoverEvents() {
+        const container = document.querySelector('.slider-container');
+        if (!container) return;
+        container.addEventListener('mouseenter', () => {
+            isHovering = true;
+            stopAutoPlay();
+        });
+        container.addEventListener('mouseleave', () => {
+            isHovering = false;
+            startAutoPlay();
+        });
+    }
+
+    function bindControls() {
+        if (prevBtn) prevBtn.addEventListener('click', () => {
+            prevSlide();
+            resetAutoPlay();
+        });
+        if (nextBtn) nextBtn.addEventListener('click', () => {
+            nextSlide();
+            resetAutoPlay();
+        });
+    }
+
+    function bindKeyboard() {
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') {
+                prevSlide();
+                resetAutoPlay();
+                e.preventDefault();
+            } else if (e.key === 'ArrowRight') {
+                nextSlide();
+                resetAutoPlay();
+                e.preventDefault();
+            }
+        });
+    }
+
+    function initSlider() {
+        renderSlides();
+        buildDots();
+        bindControls();
+        bindHoverEvents();
+        bindKeyboard();
+        isHovering = false;
+        startAutoPlay();
+    }
+
+    window.addEventListener('resize', () => {
+        updateSliderPosition();
+    });
+
+    document.addEventListener('DOMContentLoaded', initSlider);
+</script>
+</body>
+</html>
