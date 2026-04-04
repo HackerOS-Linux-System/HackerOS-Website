@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>lpm — Legendary Package Manager</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;700;900&display=swap');
+
+:root {
+  --black:   #0a0a0a;
+  --dark:    #111111;
+  --dark2:   #1a1a1a;
+  --dark3:   #222222;
+  --border:  #2a2a2a;
+  --white:   #f0f0f0;
+  --dim:     #555555;
+  --yellow:  #f5c400;
+  --orange:  #f57c00;
+  --red:     #e03030;
+  --amber:   #ffb300;
+  --cream:   #fdf6e3;
+  --green:   #4caf50;
+  --mono: 'IBM Plex Mono', monospace;
+  --sans: 'Space Grotesk', sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--black);
+  color: var(--white);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ── SCANLINE OVERLAY ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.08) 2px,
+    rgba(0,0,0,0.08) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  background: rgba(10,10,10,0.95);
+  border-bottom: 1px solid var(--border);
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+  backdrop-filter: blur(8px);
+}
+
+.nav-logo {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--yellow);
+  letter-spacing: -0.02em;
+}
+
+.nav-logo span { color: var(--dim); }
+
+.nav-links {
+  display: flex;
+  gap: 2rem;
+  list-style: none;
+}
+
+.nav-links a {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  color: var(--dim);
+  text-decoration: none;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition: color 0.15s;
+}
+
+.nav-links a:hover { color: var(--yellow); }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 7rem 2rem 4rem;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Grid background */
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(245,196,0,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(245,196,0,0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+  animation: gridDrift 20s linear infinite;
+}
+
+@keyframes gridDrift {
+  from { background-position: 0 0; }
+  to   { background-position: 40px 40px; }
+}
+
+/* Corner decorations */
+.hero::after {
+  content: '';
+  position: absolute;
+  top: 6rem; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--yellow), transparent);
+  opacity: 0.3;
+}
+
+.hero-content {
+  text-align: center;
+  position: relative;
+  z-index: 1;
+  max-width: 900px;
+}
+
+.hero-badge {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--orange);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.hero-badge::before, .hero-badge::after {
+  content: '';
+  width: 30px;
+  height: 1px;
+  background: var(--orange);
+  opacity: 0.5;
+}
+
+h1 {
+  font-family: var(--mono);
+  font-size: clamp(3.5rem, 10vw, 7rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 0.9;
+  margin-bottom: 1.5rem;
+}
+
+h1 .lpm { color: var(--yellow); }
+h1 .dot { color: var(--orange); }
+h1 .ver { font-size: 0.35em; color: var(--dim); vertical-align: super; }
+
+.hero-sub {
+  font-family: var(--sans);
+  font-size: clamp(1rem, 2.5vw, 1.3rem);
+  color: var(--dim);
+  max-width: 600px;
+  margin: 0 auto 3rem;
+  font-weight: 400;
+}
+
+.hero-sub strong { color: var(--white); font-weight: 500; }
+
+.hero-cta {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 4rem;
+}
+
+.btn {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-decoration: none;
+  padding: 0.8rem 2rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.15s;
+  cursor: pointer;
+  border: none;
+}
+
+.btn-primary {
+  background: var(--yellow);
+  color: var(--black);
+  clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+}
+
+.btn-primary:hover {
+  background: var(--amber);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(245,196,0,0.3);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--dim);
+  border: 1px solid var(--border);
+  clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+}
+
+.btn-secondary:hover {
+  color: var(--white);
+  border-color: var(--dim);
+}
+
+/* Terminal hero demo */
+.hero-terminal {
+  background: var(--dark);
+  border: 1px solid var(--border);
+  max-width: 680px;
+  width: 100%;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-terminal::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--red), var(--orange), var(--yellow));
+}
+
+.term-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  background: var(--dark2);
+  border-bottom: 1px solid var(--border);
+}
+
+.term-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+}
+
+.term-dot.r { background: var(--red); }
+.term-dot.y { background: var(--yellow); }
+.term-dot.g { background: var(--green); }
+
+.term-title {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--dim);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.term-body {
+  padding: 1.2rem 1.5rem;
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  line-height: 1.8;
+}
+
+.term-line { display: flex; gap: 0.5rem; }
+.prompt { color: var(--yellow); user-select: none; }
+.cmd { color: var(--white); }
+.out { color: var(--dim); }
+.out-g { color: var(--green); }
+.out-y { color: var(--amber); }
+.out-r { color: var(--red); }
+.out-o { color: var(--orange); }
+
+.cursor {
+  display: inline-block;
+  width: 8px; height: 1em;
+  background: var(--yellow);
+  vertical-align: text-bottom;
+  animation: blink 1s step-end infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+/* ── SECTIONS ── */
+section {
+  padding: 6rem 2rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.section-label {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--orange);
+  margin-bottom: 0.5rem;
+}
+
+h2 {
+  font-family: var(--mono);
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  margin-bottom: 3rem;
+  color: var(--white);
+}
+
+h2 .accent { color: var(--yellow); }
+
+/* ── FEATURES GRID ── */
+.features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+}
+
+.feature {
+  background: var(--dark);
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.2s;
+}
+
+.feature:hover { background: var(--dark2); }
+
+.feature::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 3px; height: 0;
+  background: var(--yellow);
+  transition: height 0.3s;
+}
+
+.feature:hover::before { height: 100%; }
+
+.feature-icon {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.feature h3 {
+  font-family: var(--mono);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--yellow);
+  margin-bottom: 0.5rem;
+}
+
+.feature p {
+  font-size: 0.88rem;
+  color: var(--dim);
+  line-height: 1.6;
+}
+
+/* ── COMMANDS REFERENCE ── */
+.cmd-section {
+  background: var(--dark);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.cmd-group {
+  border-bottom: 1px solid var(--border);
+}
+
+.cmd-group:last-child { border-bottom: none; }
+
+.cmd-group-header {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--orange);
+  padding: 0.8rem 1.5rem;
+  background: var(--dark2);
+  border-bottom: 1px solid var(--border);
+}
+
+.cmd-row {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.15s;
+}
+
+.cmd-row:last-child { border-bottom: none; }
+.cmd-row:hover { background: var(--dark2); }
+
+.cmd-name {
+  padding: 0.9rem 1.5rem;
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  color: var(--yellow);
+  border-right: 1px solid var(--border);
+}
+
+.cmd-name .flag { color: var(--orange); }
+.cmd-name .arg  { color: var(--amber); }
+
+.cmd-desc {
+  padding: 0.9rem 1.5rem;
+  font-size: 0.85rem;
+  color: var(--dim);
+}
+
+.cmd-desc em {
+  color: var(--white);
+  font-style: normal;
+  font-weight: 500;
+}
+
+/* ── CODE BLOCKS ── */
+.code-block {
+  background: var(--dark);
+  border: 1px solid var(--border);
+  padding: 1.5rem;
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  line-height: 1.8;
+  overflow-x: auto;
+  position: relative;
+}
+
+.code-block::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--red), var(--orange), var(--yellow));
+}
+
+.code-block .comment { color: var(--dim); }
+.code-block .key     { color: var(--orange); }
+.code-block .val     { color: var(--amber); }
+.code-block .str     { color: var(--green); }
+
+/* ── MULTIARCH GUIDE ── */
+.guide-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.guide-step {
+  display: grid;
+  grid-template-columns: 60px 1fr;
+  gap: 1.5rem;
+  padding: 2rem 0;
+  border-bottom: 1px solid var(--border);
+  align-items: start;
+}
+
+.guide-step:last-child { border-bottom: none; }
+
+.step-num {
+  font-family: var(--mono);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--border);
+  line-height: 1;
+  padding-top: 0.2rem;
+}
+
+.guide-step:hover .step-num { color: var(--yellow); }
+
+.step-content h4 {
+  font-family: var(--mono);
+  font-size: 0.9rem;
+  color: var(--white);
+  margin-bottom: 0.5rem;
+}
+
+.step-content p {
+  font-size: 0.85rem;
+  color: var(--dim);
+  margin-bottom: 0.8rem;
+}
+
+.inline-cmd {
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  background: var(--dark2);
+  color: var(--yellow);
+  padding: 0.6rem 1rem;
+  display: block;
+  border-left: 3px solid var(--yellow);
+}
+
+/* ── CONFIG REFERENCE ── */
+.config-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+@media (max-width: 700px) {
+  .config-grid { grid-template-columns: 1fr; }
+  .cmd-row { grid-template-columns: 1fr; }
+  .cmd-name { border-right: none; border-bottom: 1px solid var(--border); }
+}
+
+.config-card {
+  background: var(--dark);
+  border: 1px solid var(--border);
+  padding: 1.5rem;
+}
+
+.config-card h4 {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--orange);
+  margin-bottom: 1rem;
+}
+
+.config-card ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.config-card li {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.82rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+  gap: 1rem;
+}
+
+.config-card li:last-child { border-bottom: none; padding-bottom: 0; }
+
+.config-card .ckey { color: var(--dim); white-space: nowrap; }
+.config-card .cval { color: var(--yellow); font-family: var(--mono); font-size: 0.78rem; text-align: right; word-break: break-all; }
+
+/* ── WARNING BOXES ── */
+.warn-box {
+  border: 1px solid;
+  padding: 1rem 1.5rem;
+  margin: 1.5rem 0;
+  font-size: 0.88rem;
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.warn-box.yellow { border-color: var(--yellow); background: rgba(245,196,0,0.06); color: var(--amber); }
+.warn-box.red    { border-color: var(--red);    background: rgba(224,48,48,0.06);  color: #ff6b6b; }
+.warn-box.orange { border-color: var(--orange); background: rgba(245,124,0,0.06); color: var(--orange); }
+
+.warn-icon { font-size: 1rem; flex-shrink: 0; margin-top: 0.1rem; }
+
+/* ── DIVIDER ── */
+.divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* ── FOOTER ── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 2rem;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--dim);
+}
+
+footer .accent { color: var(--yellow); }
+
+/* ── SCROLL ANIMATIONS ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.5s, transform 0.5s;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ── BADGES ── */
+.badge {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  padding: 0.2rem 0.5rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  vertical-align: middle;
+  margin-left: 0.5rem;
+}
+
+.badge-new  { background: var(--yellow); color: var(--black); }
+.badge-beta { background: var(--orange); color: var(--black); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">lpm<span>://</span>docs</div>
+  <ul class="nav-links">
+    <li><a href="#start">Start</a></li>
+    <li><a href="#commands">Komendy</a></li>
+    <li><a href="#multiarch">Multiarch</a></li>
+    <li><a href="#config">Konfiguracja</a></li>
+    <li><a href="#sources">Repozytoria</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-content">
+    <div class="hero-badge">Legendary Package Manager</div>
+    <h1>
+      <span class="lpm">lpm</span><span class="dot">.</span><span class="ver">v0.4</span>
+    </h1>
+    <p class="hero-sub">
+      Menedżer pakietów dla Debiana napisany w <strong>Rust</strong>.
+      Pełna niezależność od <strong>apt</strong> i <strong>dpkg</strong>.
+      Multiarch. SAT solver. Blazing fast.
+    </p>
+    <div class="hero-cta">
+      <a href="#start" class="btn btn-primary">▶ Zacznij tutaj</a>
+      <a href="#commands" class="btn btn-secondary">Referencja komend</a>
+    </div>
+
+    <div class="hero-terminal">
+      <div class="term-bar">
+        <div class="term-dot r"></div>
+        <div class="term-dot y"></div>
+        <div class="term-dot g"></div>
+        <span class="term-title">bash — michal@debian</span>
+      </div>
+      <div class="term-body">
+        <div class="term-line"><span class="prompt">$</span><span class="cmd"> sudo lpm update</span></div>
+        <div class="term-line"><span class="out-g">  ● Updated 32, 0 failed.</span></div>
+        <div class="term-line"><span class="out">  Metadata cache created.</span></div>
+        <br>
+        <div class="term-line"><span class="prompt">$</span><span class="cmd"> sudo lpm install vim</span></div>
+        <div class="term-line"><span class="out">  Loaded 69917 packages from 32 index files.</span></div>
+        <div class="term-line"><span class="out">  Dependencies resolved.</span></div>
+        <div class="term-line"><span class="out-y">  Install  3 Packages</span></div>
+        <div class="term-line"><span class="out">  Total download size: <span class="out-y">4.2 M</span></span></div>
+        <div class="term-line"><span class="out-g">  Complete!</span></div>
+        <br>
+        <div class="term-line"><span class="prompt">$</span><span class="cmd"> sudo lpm arch add i386 &amp;&amp; sudo lpm install steam-installer</span></div>
+        <div class="term-line"><span class="out-g">  Architecture 'i386' added.</span></div>
+        <div class="term-line"><span class="out">  <span class="cursor"></span></span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="section-label">Dlaczego lpm</div>
+  <h2>Designed to <span class="accent">replace</span> apt</h2>
+
+  <div class="features reveal">
+    <div class="feature">
+      <div class="feature-icon">🦀</div>
+      <h3>Napisany w Rust</h3>
+      <p>Brak garbage collectora, brak memory leaks. Szybkie parsowanie indeksów, asynchroniczne pobieranie pakietów.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">🔗</div>
+      <h3>Zero zależności</h3>
+      <p>Nie wymaga <code>apt</code>, <code>dpkg</code>, <code>libapt-pkg</code> ani żadnych zewnętrznych narzędzi. Działa samodzielnie.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">🧮</div>
+      <h3>SAT Solver</h3>
+      <p>Rozwiązywanie zależności oparte na SAT solverze (varisat). Fallback do algorytmu zachłannego gdy SAT zwróci UNSAT.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">🏗️</div>
+      <h3>Multiarch</h3>
+      <p>Pełna obsługa wielu architektur (i386, arm64, ...). Własny odpowiednik <code>dpkg --add-architecture</code>. Wymagane przez Steam.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">📦</div>
+      <h3>Kompatybilność z .deb</h3>
+      <p>Parsuje pliki .deb, uruchamia skrypty maintainera, aktualizuje <code>/var/lib/dpkg/status</code>. Narzędzia Debiana działają normalnie.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">📋</div>
+      <h3>Historia transakcji</h3>
+      <p>Pełna historia operacji. Undo/redo, diff między transakcjami, eksport do JSON. Nigdy nie zgub się co zainstalowałeś.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">🗃️</div>
+      <h3>SQLite Database</h3>
+      <p>Zainstalowane pakiety przechowywane w SQLite. Szybkie zapytania, atomiczne transakcje, brak korupcji danych.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">⚡</div>
+      <h3>Równoległe pobieranie</h3>
+      <p>Do 8 równoległych połączeń HTTP. Automatyczny retry z backoffem. Cache pobranych plików .deb.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- QUICK START -->
+<section id="start">
+  <div class="section-label">Instalacja i pierwsze kroki</div>
+  <h2>Quick <span class="accent">Start</span></h2>
+
+  <div class="guide-steps reveal">
+    <div class="guide-step">
+      <div class="step-num">01</div>
+      <div class="step-content">
+        <h4>Skonfiguruj repozytoria</h4>
+        <p>Edytuj <code>/etc/lpm/sources-list.toml</code> i ustaw suite odpowiednie dla swojego systemu.</p>
+        <code class="inline-cmd">sudo nano /etc/lpm/sources-list.toml</code>
+        <div class="warn-box yellow">
+          <span class="warn-icon">⚠</span>
+          <span>Dla Debian 14 "Forky" ustaw <strong>suite = "forky"</strong>. Plik jest tworzony automatycznie przy pierwszym uruchomieniu z domyślną konfiguracją dla <code>stable</code>.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="guide-step">
+      <div class="step-num">02</div>
+      <div class="step-content">
+        <h4>Pobierz indeksy pakietów</h4>
+        <p>Pobiera listy pakietów ze wszystkich skonfigurowanych repozytoriów i wszystkich włączonych architektur.</p>
+        <code class="inline-cmd">sudo lpm update</code>
+      </div>
+    </div>
+
+    <div class="guide-step">
+      <div class="step-num">03</div>
+      <div class="step-content">
+        <h4>Zainstaluj pakiety</h4>
+        <p>lpm automatycznie rozwiązuje zależności i pobiera wszystkie wymagane pakiety.</p>
+        <code class="inline-cmd">sudo lpm install vim curl htop</code>
+      </div>
+    </div>
+
+    <div class="guide-step">
+      <div class="step-num">04</div>
+      <div class="step-content">
+        <h4>Aktualizuj system</h4>
+        <p>Sprawdza dostępne aktualizacje i instaluje je wszystkie jednym poleceniem.</p>
+        <code class="inline-cmd">sudo lpm upgrade</code>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- COMMANDS -->
+<section id="commands">
+  <div class="section-label">Referencja</div>
+  <h2>Wszystkie <span class="accent">komendy</span></h2>
+
+  <div class="cmd-section reveal">
+
+    <div class="cmd-group">
+      <div class="cmd-group-header">▸ zarządzanie pakietami</div>
+
+      <div class="cmd-row">
+        <div class="cmd-name">install <span class="arg">&lt;pakiet...&gt;</span></div>
+        <div class="cmd-desc">Instaluje pakiety i wszystkie zależności. Obsługuje <em>pkg:i386</em> dla multiarch.</div>
+      </div>
+      <div class="cmd-row">
+        <div class="cmd-name"><span class="flag">-y</span>, <span class="flag">--yes</span></div>
+        <div class="cmd-desc">Nie pytaj o potwierdzenie. Przydatne w skryptach.</div>
+      </div>
+      <div class="cmd-row">
+        <div class="cmd-name"><span class="flag">--no-install-recommends</span></div>
+        <div class="cmd-desc">Pomiń pakiety rekomendowane, instaluj tylko wymagane.</div>
+      </div>
+      <div class="cmd-row">
+        <div class="cmd-name">remove <span class="arg">&lt;pakiet...&gt;</span></div>
+        <div class="cmd-desc">Usuwa pakiety. Pliki konfiguracyjne zostają zachowane.</div>
+      </div>
+      <div class="cmd-row">
+        <div class="cmd-name"><span class="flag">--purge</span></div>
+        <div class="cmd-desc">Usuwa pakiet wraz z plikami konfiguracyjnymi w <code>/etc/</code>.</div>
+      </div>
+      <div class="cmd-row">
+        <div class="cmd-name">upgrade</div>
+        <div class="cmd-desc">Aktualizuje wszystkie zainstalowane pakiety do najnowszych wersji.</div>
+      </div>
+      <div class="cmd-row">
+        <div class="cmd-name"><span class="flag">--security</span></div>
+        <div class="cmd-desc">Instaluj tylko aktualizacje z repozytoriów security.</div>
+      </div>
+      <div class="cmd-row">
+        <div class="cmd-name"><span class="flag">--only <span class="arg">&lt;pkg&gt;</span></span></div>
+        <div class="cmd-desc">Zaktualizuj tylko jeden konkretny pakiet.</div>
+      </div>
+      <div class="cmd-row">
+        <div class="cmd-name">autoremove</div>
+        <div class="cmd-desc">Usuwa pakiety zainstalowane automatycznie jako zależności, które nie są już potrzebne.</div>
+      </div>
+    </div>
+
+    <div class="cmd-group">
+      <div class="cmd-group-header">▸ repozytoria i cache</div>
+
+      <div class="cmd-row">
+        <div class="cmd-name">update</div>
+        <div class="cmd-desc">Pobiera indeksy pakietów z wszystkich repozytoriów dla wszystkich aktywnych architektur.</div>
+      </div>
+      <div class="cmd-row">
+        <div class="cmd-name">clean</div>
+        <div class="cmd-desc">Usuwa pobrane pliki .deb z <code>/var/cache/lpm/archives/</code>.</div>
+      </div>
+      <div class="cmd-row">
+        <div class="cmd-name">repo list</div>
+        <div class="cmd-desc">Wyświetla wszystkie skonfigurowane repozytoria z ich statusem.</div>
+      </div>
+      <div class="cmd-row">
+        <div class="cmd-name">repo add <span class="arg">&lt;uri&gt; &lt;suite&gt; &lt;comp...&gt;</span></div>
+        <div class="cmd-desc">Dodaje nowe repozytorium do <code>sources-list.toml</code>.</div>
+      </div>
+      <div class="cmd-row">
+        <div class="cmd-name">repo remove <span class="arg">&lt;id&gt;</span></div>
+        <div class="cmd-desc">Usuwa repozytorium o podanym numerze (z listy <code>repo list</code>).</div>
+      </div>
+      <div class="cmd-row">
+        <div class="cmd-name">repo enable / disable <span class="arg">&lt;id&gt;</span></div>
+        <div class="cmd-desc">Włącza lub wyłącza repozytorium bez usuwania go z konfiguracji.</div>
+      </div>
+    </div>
+
+    <div class="cmd-group">
+      <div class="cmd-group-header">▸ multiarch <span class="badge badge-new">nowe</span></div>
+
+      <div class="cmd-row">
+        <div class="cmd-name">arch list</div>
+        <div class="cmd-desc">Wyświetla natywną architekturę systemu i wszystkie włączone obce architektury.</div>
+      </div>
+      <div class="cmd-row">
+        <div class="cmd-name">arch add <span class="arg">&lt;arch&gt;</span></div>
+        <div class="cmd-desc">Włącza obcą architekturę (np. <em>i386</em>). Odpowiednik <code>dpkg --add-architecture</code>. Wymaga <code>lpm update</code> po dodaniu.</div>
+      </div>
+      <div class="cmd-row">
+        <div class="cmd-name">arch remove <span class="arg">&lt;arch&gt;</span></div>
+        <div class="cmd-desc">Wyłącza obcą architekturę. Nie usuwa już zainstalowanych pakietów.</div>
+      </div>
+    </div>
+
+    <div class="cmd-group">
+      <div class="cmd-group-header">▸ wyszukiwanie i informacje</div>
+
+      <div class="cmd-row">
+        <div class="cmd-name">search <span class="arg">&lt;zapytanie&gt;</span></div>
+        <div class="cmd-desc">Wyszukuje pakiety po nazwie i opisie. Obsługuje <em>--installed</em>, <em>--exact</em>, <em>--section</em>.</div>
+      </div>
+      <div class="cmd-row">
+        <div class="cmd-name">info <span class="arg">&lt;pakiet&gt;</span></div>
+        <div class="cmd-desc">Wyświetla szczegółowe informacje o pakiecie: wersja, rozmiar, zależności, opis.</div>
+      </div>
+      <div class="cmd-row">
+        <div class="cmd-name">list</div>
+        <div class="cmd-desc">Lista pakietów. Flagi: <em>--installed</em>, <em>--upgrades</em>, <em>--available</em>.</div>
+      </div>
+      <div class="cmd-row">
+        <div class="cmd-name">check-update</div>
+        <div class="cmd-desc">Sprawdza dostępne aktualizacje bez ich instalowania.</div>
+      </div>
+      <div class="cmd-row">
+        <div class="cmd-name">whatprovides <span class="arg">&lt;plik&gt;</span></div>
+        <div class="cmd-desc">Znajduje pakiet zawierający podany plik (z indeksu repozytoriów).</div>
+      </div>
+      <div class="cmd-row">
+        <div class="cmd-name">provides <span class="arg">&lt;plik&gt;</span></div>
+        <div class="cmd-desc">Znajduje <em>zainstalowany</em> pakiet zawierający podany plik.</div>
+      </div>
+    </div>
+
+    <div class="cmd-group">
+      <div class="cmd-group-header">▸ historia transakcji</div>
+
+      <div class="cmd-row">
+        <div class="cmd-name">history</div>
+        <div class="cmd-desc">Wyświetla ostatnie 50 transakcji (install/remove/upgrade) z datami.</div>
+      </div>
+      <div class="cmd-row">
+        <div class="cmd-name">history undo <span class="arg">&lt;id&gt;</span></div>
+        <div class="cmd-desc">Cofa transakcję: odinstalowuje zainstalowane lub reinstaluje usunięte pakiety.</div>
+      </div>
+      <div class="cmd-row">
+        <div class="cmd-name">history redo <span class="arg">&lt;id&gt;</span></div>
+        <div class="cmd-desc">Ponawia cofniętą transakcję.</div>
+      </div>
+      <div class="cmd-row">
+        <div class="cmd-name">history export <span class="arg">&lt;plik.json&gt;</span></div>
+        <div class="cmd-desc">Eksportuje historię do pliku JSON.</div>
+      </div>
+      <div class="cmd-row">
+        <div class="cmd-name">import-dpkg</div>
+        <div class="cmd-desc">Importuje pakiety z <code>/var/lib/dpkg/status</code> do bazy lpm. Uruchom raz po migracji z apt.</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- MULTIARCH -->
+<section id="multiarch">
+  <div class="section-label">Multiarch</div>
+  <h2>Instalacja <span class="accent">Steam</span> i pakietów i386</h2>
+
+  <div class="warn-box orange reveal">
+    <span class="warn-icon">ℹ</span>
+    <span>lpm zarządza architekturami samodzielnie — nie potrzebuje <code>dpkg --add-architecture</code> ani apt. Wszystko dzieje się przez <code>lpm arch add</code>.</span>
+  </div>
+
+  <div class="guide-steps reveal">
+    <div class="guide-step">
+      <div class="step-num">01</div>
+      <div class="step-content">
+        <h4>Włącz architekturę i386</h4>
+        <p>Dodaje i386 do <code>/etc/lpm/foreign-architectures</code>. lpm będzie teraz pobierać indeksy i386 przy każdym <code>update</code>.</p>
+        <code class="inline-cmd">sudo lpm arch add i386</code>
+      </div>
+    </div>
+
+    <div class="guide-step">
+      <div class="step-num">02</div>
+      <div class="step-content">
+        <h4>Pobierz indeksy dla i386</h4>
+        <p>Automatycznie pobiera indeksy Packages dla architektury i386 ze wszystkich skonfigurowanych repozytoriów. Liczba pobranych indeksów podwoi się.</p>
+        <code class="inline-cmd">sudo lpm update</code>
+      </div>
+    </div>
+
+    <div class="guide-step">
+      <div class="step-num">03</div>
+      <div class="step-content">
+        <h4>Zainstaluj Steam</h4>
+        <p>lpm automatycznie znajdzie i zainstaluje <code>steam-libs-i386</code> i wszystkie 32-bitowe biblioteki. Nie trzeba niczego robić ręcznie.</p>
+        <code class="inline-cmd">sudo lpm install steam-installer</code>
+      </div>
+    </div>
+
+    <div class="guide-step">
+      <div class="step-num">04</div>
+      <div class="step-content">
+        <h4>Lub zainstaluj konkretny pakiet i386</h4>
+        <p>Użyj notacji <code>nazwa:arch</code> aby zainstalować pakiet dla konkretnej architektury.</p>
+        <code class="inline-cmd">sudo lpm install libc6:i386 libstdc++6:i386</code>
+      </div>
+    </div>
+  </div>
+
+  <div class="warn-box red reveal">
+    <span class="warn-icon">⚠</span>
+    <span>Steam wymaga ponadto poprawnego pliku <code>/etc/os-release</code> z ustawioną zmienną <strong>VERSION_ID</strong>. Jeśli brakuje tej zmiennej, dodaj ją ręcznie: <code>echo 'VERSION_ID="14"' | sudo tee -a /etc/os-release</code></span>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CONFIG -->
+<section id="config">
+  <div class="section-label">Konfiguracja</div>
+  <h2>Pliki <span class="accent">konfiguracyjne</span></h2>
+
+  <div class="config-grid reveal">
+    <div class="config-card">
+      <h4>Ścieżki systemowe</h4>
+      <ul>
+        <li><span class="ckey">Repozytoria (TOML)</span><span class="cval">/etc/lpm/sources-list.toml</span></li>
+        <li><span class="ckey">Repozytoria (lista)</span><span class="cval">/etc/lpm/sources.list</span></li>
+        <li><span class="ckey">Dodatkowe repo</span><span class="cval">/etc/lpm/sources.list.d/</span></li>
+        <li><span class="ckey">Obce architektury</span><span class="cval">/etc/lpm/foreign-architectures</span></li>
+        <li><span class="ckey">Baza danych</span><span class="cval">/var/lib/lpm/lpm.db</span></li>
+        <li><span class="ckey">Indeksy pakietów</span><span class="cval">/var/lib/lpm/lists/</span></li>
+        <li><span class="ckey">Cache .deb</span><span class="cval">/var/cache/lpm/archives/</span></li>
+        <li><span class="ckey">Log sesji</span><span class="cval">~/.cache/lpm/logs/lpm.log</span></li>
+      </ul>
+    </div>
+
+    <div class="config-card">
+      <h4>Kompatybilność z dpkg</h4>
+      <ul>
+        <li><span class="ckey">Status pakietów</span><span class="cval">/var/lib/dpkg/status</span></li>
+        <li><span class="ckey">Listy plików</span><span class="cval">/var/lib/dpkg/info/*.list</span></li>
+        <li><span class="ckey">Symliki altern.</span><span class="cval">/etc/alternatives/</span></li>
+        <li><span class="ckey">ldconfig</span><span class="cval">auto po instalacji .so</span></li>
+        <li><span class="ckey">preinst/postinst</span><span class="cval">uruchamiane automatycznie</span></li>
+        <li><span class="ckey">GPG klucze</span><span class="cval">/etc/apt/trusted.gpg.d/</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SOURCES CONFIG -->
+<section id="sources">
+  <div class="section-label">sources-list.toml</div>
+  <h2>Format <span class="accent">repozytoriów</span></h2>
+
+  <p style="color:var(--dim); margin-bottom:2rem; font-size:0.9rem;">
+    Plik <code style="color:var(--yellow)">/etc/lpm/sources-list.toml</code> to główne źródło konfiguracji repozytoriów.
+    Ma wyższy priorytet niż <code>/etc/lpm/sources.list</code> i jest zawsze parsowany jako pierwszy.
+  </p>
+
+  <div class="code-block reveal">
+<span class="comment"># /etc/lpm/sources-list.toml</span>
+<span class="comment"># Konfiguracja repozytoriów dla Debian 14 "Forky"</span>
+
+[[<span class="key">repo</span>]]
+<span class="key">name</span>       = <span class="str">"debian-forky-main"</span>
+<span class="key">baseurl</span>    = <span class="str">"https://deb.debian.org/debian"</span>
+<span class="key">suite</span>      = <span class="str">"forky"</span>
+<span class="key">components</span> = [<span class="str">"main"</span>, <span class="str">"contrib"</span>, <span class="str">"non-free"</span>, <span class="str">"non-free-firmware"</span>]
+<span class="key">arch</span>       = [<span class="str">"amd64"</span>]   <span class="comment"># i386 dodawany automatycznie po `lpm arch add i386`</span>
+<span class="key">enabled</span>    = <span class="val">true</span>
+
+[[<span class="key">repo</span>]]
+<span class="key">name</span>       = <span class="str">"debian-forky-security"</span>
+<span class="key">baseurl</span>    = <span class="str">"https://security.debian.org/debian-security"</span>
+<span class="key">suite</span>      = <span class="str">"forky-security"</span>
+<span class="key">components</span> = [<span class="str">"main"</span>, <span class="str">"contrib"</span>, <span class="str">"non-free"</span>, <span class="str">"non-free-firmware"</span>]
+<span class="key">arch</span>       = [<span class="str">"amd64"</span>]
+<span class="key">enabled</span>    = <span class="val">true</span>
+
+[[<span class="key">repo</span>]]
+<span class="key">name</span>       = <span class="str">"debian-forky-updates"</span>
+<span class="key">baseurl</span>    = <span class="str">"https://deb.debian.org/debian"</span>
+<span class="key">suite</span>      = <span class="str">"forky-updates"</span>
+<span class="key">components</span> = [<span class="str">"main"</span>, <span class="str">"contrib"</span>, <span class="str">"non-free"</span>, <span class="str">"non-free-firmware"</span>]
+<span class="key">arch</span>       = [<span class="str">"amd64"</span>]
+<span class="key">enabled</span>    = <span class="val">true</span>
+
+[[<span class="key">repo</span>]]
+<span class="key">name</span>       = <span class="str">"debian-forky-backports"</span>
+<span class="key">baseurl</span>    = <span class="str">"https://deb.debian.org/debian"</span>
+<span class="key">suite</span>      = <span class="str">"forky-backports"</span>
+<span class="key">components</span> = [<span class="str">"main"</span>, <span class="str">"contrib"</span>, <span class="str">"non-free"</span>, <span class="str">"non-free-firmware"</span>]
+<span class="key">arch</span>       = [<span class="str">"amd64"</span>]
+<span class="key">enabled</span>    = <span class="val">false</span>   <span class="comment"># wyłącz jeśli nie potrzebujesz backportów</span>
+  </div>
+
+  <div class="warn-box yellow" style="margin-top:1.5rem;">
+    <span class="warn-icon">💡</span>
+    <span>Po <code>lpm arch add i386</code> lpm <strong>automatycznie</strong> dołącza i386 do każdego repozytorium przy pobieraniu indeksów. Nie musisz tworzyć osobnych wpisów <code>[[repo]]</code> dla architektury i386.</span>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<footer>
+  <p><span class="accent">lpm</span> v0.4.0 — Legendary Package Manager &nbsp;·&nbsp; Napisany w Rust &nbsp;·&nbsp; GPL-3.0 &nbsp;·&nbsp; <a href="https://github.com/HackerOS-Linux-System/lpm/" style="color:var(--yellow);text-decoration:none;">GitHub</a></p>
+  <p style="margin-top:0.5rem;color:#333">Brak zewnętrznych zależności. Brak reklam. Brak telemetrii.</p>
+</footer>
+
+<script>
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      // Stagger children
+      e.target.querySelectorAll('.feature, .guide-step, .cmd-row').forEach((el, i) => {
+        el.style.transitionDelay = (i * 0.05) + 's';
+        el.style.opacity = '';
+        el.style.transform = '';
+      });
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Smooth nav highlight
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-links a');
+
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 100) current = s.id;
+  });
+  navLinks.forEach(a => {
+    a.style.color = a.getAttribute('href') === '#' + current
+      ? 'var(--yellow)' : '';
+  });
+});
+</script>
+</body>
+</html>
