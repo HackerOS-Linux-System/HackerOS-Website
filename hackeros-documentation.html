@@ -248,7 +248,6 @@
             align-items: center;
             background: #121212;
         }
-        /* Styl dla bloku informacji o cyklu wydawniczym */
         .release-cycle {
             background: #121212;
             border-left: 4px solid #AA6DFF;
@@ -288,7 +287,6 @@
     </style>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // BARDZO INTELIGENTNE LIVE SEARCH
             const searchInput = document.getElementById('search-input');
             const clearBtn = document.getElementById('clear-search');
             const tabLinks = document.querySelectorAll('.tab-link');
@@ -330,7 +328,6 @@
                 });
                 searchInput.focus();
             });
-            // Kopiuj do schowka
             const copyButtons = document.querySelectorAll('.copy-button');
             copyButtons.forEach(button => {
                 button.addEventListener('click', () => {
@@ -342,7 +339,6 @@
                     });
                 });
             });
-            // Tab switching
             const tabMenuLinks = document.querySelectorAll('.tab-link');
             const tabPanes = document.querySelectorAll('.tab-pane');
             tabMenuLinks.forEach(link => {
@@ -353,33 +349,43 @@
                     document.getElementById(link.dataset.tab).classList.add('active');
                 });
             });
-            // English fallback
+            // English fallback (po usunięciu zakładki Komendy)
             const userLang = navigator.language || navigator.userLanguage;
             if (!userLang.startsWith('pl')) {
                 document.documentElement.lang = 'en';
                 document.title = 'HackerOS - Documentation';
                 const tabs = document.querySelectorAll('.tab-link');
-                tabs[0].textContent = 'Introduction';
-                tabs[1].textContent = 'Hardware Requirements';
-                tabs[2].textContent = 'Installation';
-                tabs[3].textContent = 'First Steps';
-                tabs[4].textContent = 'Graphical Environment';
-                tabs[5].textContent = 'Configuration';
-                tabs[6].textContent = 'Troubleshooting';
-                tabs[7].textContent = 'License';
-                tabs[8].textContent = 'Tools and Applications';
-                tabs[9].textContent = 'Programming Languages';
-                tabs[10].textContent = 'Editions';
-                tabs[11].textContent = 'Commands';
-                tabs[12].textContent = 'Gaming';
-                tabs[13].textContent = 'Gallery';
+                if (tabs.length >= 13) {
+                    tabs[0].textContent = 'Introduction';
+                    tabs[1].textContent = 'Hardware Requirements';
+                    tabs[2].textContent = 'Installation';
+                    tabs[3].textContent = 'First Steps';
+                    tabs[4].textContent = 'Graphical Environment';
+                    tabs[5].textContent = 'Configuration';
+                    tabs[6].textContent = 'Troubleshooting';
+                    tabs[7].textContent = 'License';
+                    tabs[8].textContent = 'Tools and Applications';
+                    tabs[9].textContent = 'Programming Languages';
+                    tabs[10].textContent = 'Editions';
+                    tabs[11].textContent = 'Gaming';
+                    tabs[12].textContent = 'Gallery';
+                }
                 const panes = document.querySelectorAll('.tab-pane');
-                panes[0].querySelector('h2').textContent = '1. Introduction';
-                panes[9].querySelector('h2').textContent = '10. Programming Languages';
-                panes[10].querySelector('h2').textContent = '11. Editions';
-                panes[11].querySelector('h2').textContent = '12. Commands';
-                panes[12].querySelector('h2').textContent = '13. Gaming';
-                panes[13].querySelector('h2').textContent = '14. Gallery';
+                if (panes.length >= 13) {
+                    panes[0].querySelector('h2').textContent = '1. Introduction';
+                    panes[1].querySelector('h2').textContent = '2. Hardware Requirements';
+                    panes[2].querySelector('h2').textContent = '3. Installation';
+                    panes[3].querySelector('h2').textContent = '4. First Steps';
+                    panes[4].querySelector('h2').textContent = '5. Graphical Environment';
+                    panes[5].querySelector('h2').textContent = '6. Configuration';
+                    panes[6].querySelector('h2').textContent = '7. Troubleshooting';
+                    panes[7].querySelector('h2').textContent = '8. License';
+                    panes[8].querySelector('h2').textContent = '9. Tools and Applications';
+                    panes[9].querySelector('h2').textContent = '10. Programming Languages';
+                    panes[10].querySelector('h2').textContent = '11. Editions';
+                    panes[11].querySelector('h2').textContent = '12. Gaming';
+                    panes[12].querySelector('h2').textContent = '13. Gallery';
+                }
                 document.querySelector('footer p').textContent = '© 2026 HackerOS. All rights reserved.';
             }
         });
@@ -401,7 +407,7 @@
     <section class="main-section">
         <div class="search-bar">
             <div class="search-wrapper">
-                <input type="text" id="search-input" placeholder="🔍 Wyszukaj w dokumentacji (np. gaming, komendy, edycje, hacker update...)">
+                <input type="text" id="search-input" placeholder="🔍 Wyszukaj w dokumentacji (np. gaming, edycje, hacker update...)">
                 <button id="clear-search" class="clear-btn">✕</button>
             </div>
         </div>
@@ -419,7 +425,6 @@
                     <li class="tab-link" data-tab="tools">Narzędzia i aplikacje</li>
                     <li class="tab-link" data-tab="programming">Języki programowania</li>
                     <li class="tab-link" data-tab="editions">Edycje</li>
-                    <li class="tab-link" data-tab="commands">Komendy</li>
                     <li class="tab-link" data-tab="gaming">Gaming</li>
                     <li class="tab-link" data-tab="gallery">Galeria</li>
                 </ul>
@@ -568,7 +573,7 @@ sudo lpm clean</span> <button class="copy-button" data-command="sudo lpm install
                     <h3>Instalacja dodatkowego oprogramowania</h3>
                     <ul>
                         <li>Z poziomu GUI: otwórz <code>Software</code> i zainstaluj wybrane aplikacje.</li>
-                        <li>Z CLI: <code>sudo apt install &lt;pakiet&gt;</code> lub <code>sudo hacker install &lt;pakiet&gt;</code> lub <code>sudo lpm install &lt;pakiet&gt;</code> (HackerOS posiada własnego następcę apt o nazwie lpm).</li>
+                        <li>Z CLI: <code>sudo apt install &lt;pakiet&gt;</code> lub <code>sudo hacker install &lt;pakiet&gt;</code> lub <code>sudo lpm install &lt;pakiet&gt;</code>.</li>
                         <li>Możesz także instalować za pomocą <strong>Flatpak</strong>, <strong>Snap</strong> lub <strong>brew</strong>.</li>
                     </ul>
                 </div>
@@ -612,7 +617,7 @@ sudo lpm clean</span> <button class="copy-button" data-command="sudo lpm install
                         <li><strong>Znak towarowy / nazwa:</strong> zastrzeżona przez projekt.</li>
                     </ul>
                 </div>
-                <!-- 9. Narzędzia i aplikacje -->
+                <!-- 9. Narzędzia i aplikacje (zaktualizowane: osobny wiersz dla h# i vira/bytes) -->
                 <div id="tools" class="tab-pane">
                     <h2>9. Narzędzia i aplikacje</h2>
                     <p>Oto pełna lista autorskich narzędzi i aplikacji HackerOS wraz z opisami i informacjami o instalacji:</p>
@@ -627,12 +632,12 @@ sudo lpm clean</span> <button class="copy-button" data-command="sudo lpm install
                             <tr><td><code>hacker</code></td><td>Główne narzędzie HackerOS (instaluj, usuwaj, napraw system, szybka aktualizacja).</td><td>Wbudowane we wszystkich edycjach</td></tr>
                             <tr><td><code>HackerOS-Steam</code></td><td>Uruchom Steam w izolowanym środowisku (kontener).</td><td>wbudowane we wszystkich edycjach</td></tr>
                             <tr><td><code>lpm</code></td><td>Własny następca apt (szybszy i zoptymalizowany pod HackerOS).</td><td><code>hacker unpack lpm</code></td></tr>
-                            <!-- NOWE WPISY: hl i h# rozdzielone -->
-                            <tr><td><code>h#</code></td><td>Własny język programowania H# (Język programowania do cyberbezpieczeństwa).</td><td><code>hacker unpack h#</code></td></tr>
-                            <tr><td><code>hl</code></td><td>Język programowania – następca shella (lub alternatywa).</td><td>wbudowany w każdej edycji</td></tr>
-                            <!-- virus i bit jako osobny wiersz, hackerc osobno -->
-                            <tr><td><code>virus</code> / <code>bit</code></td><td>Język programowania HackerScript (managerzy pakietów).</td><td><code>hacker unpack hackerscript-utils</code></td></tr>
-                            <tr><td><code>hackerc</code></td><td>Język programowania HackerScript (kompilator).</td><td><code>hacker unpack hackerscript</code></td></tr>
+                            <!-- Język H# -->
+                            <tr><td><code>h#</code></td><td>Własny język programowania H# (Język programowania do ogólnego zastosowania w HackerOS).</td><td><code>hacker unpack h#</code></td></tr>
+                            <!-- Osobny wiersz dla menedżerów pakietów vira/bytes -->
+                            <tr><td><code>vira/bytes</code></td><td>Managery pakietów dla H# (bytes: interpretacja, vira: kompilacja do binarki).</td><td><code>hacker unpack h#</code></td></tr>
+                            <!-- Hacker Lang -->
+                            <tr><td><code>hl</code></td><td>Język programowania Hacker Lang – następca shella (lub alternatywa).</td><td>wbudowany w każdej edycji</td></tr>
                             <tr><td><code>hexai</code></td><td>AI dla HackerOS – lokalny asystent oparty na modelach językowych.</td><td><code>hacker unpack hexai</code></td></tr>
                             <tr><td><code>hammer</code></td><td>Atomowy manager pakietów (dla edycji Atomic).</td><td>Wbudowane tylko w edycji Atomic</td></tr>
                             <tr><td><code>anvil</code></td><td>Narzędzie do zarządzania systemem readonly (dla edycji Atomic).</td><td>Wbudowane tylko w edycji Atomic</td></tr>
@@ -649,45 +654,38 @@ sudo lpm clean</span> <button class="copy-button" data-command="sudo lpm install
                             <tr><td><code>chker</code></td><td>Narzędzie CLI do zmiany jądra systemowego (Debian → XanMod lub Liquorix).</td><td>wbudowane we wszystkich edycjach</td></tr>
                             <tr><td><code>eiq</code></td><td>Narzędzie do cyberbezpieczeństwa (szyfrowanie w tle).</td><td>Tylko w edycji Cybersecurity</td></tr>
                             <tr><td><code>HackerOS-Store</code></td><td>Sklep HackerOS z programami i dodatkami.</td><td>wbudowany we wszystkich edycjach</td></tr>
-                            <tr><td><code>HackerOS-Containers</code></td><td>Własny system kontenerów – lekka, zintegrowana platforma do uruchamiania izolowanych środowisk i aplikacji w HackerOS.</td><td><code>hacker unpack hackeros-containers</code></td></tr>
-                            <tr><td><code>HackerOS-Game-Mode</code></td><td>Nakładka inspirowana Motorola Gametime lub ASUS Armoury Crate – optymalizuje system pod kątem grania, wyświetla FPS, pozwala na szybkie dostosowanie wydajności.</td><td><code>hacker unpack hackeros-game-mode</code></td></tr>
+                            <tr><td><code>HackerOS-Containers</code></td><td>Własny system kontenerów – lekka, zintegrowana platforma do uruchamiania izolowanych środowisk.</td><td><code>hacker unpack hackeros-containers</code></td></tr>
+                            <tr><td><code>HackerOS-Game-Mode</code></td><td>Nakładka optymalizująca system pod kątem grania, wyświetla FPS.</td><td><code>hacker unpack hackeros-game-mode</code></td></tr>
                         </tbody>
                     </table>
                     <p>dla tych zaawansowanych narzędzi jest specjalna dokumentacja (<a href="https://hackeros-linux-system.github.io/HackerOS-Website/tools-docs/index.html" target="_blank">tutaj</a>)</p>
                 </div>
-                <!-- 10. Języki programowania -->
+                <!-- 10. Języki programowania (zaktualizowany H#: dodano tryb JIT) -->
                 <div id="programming" class="tab-pane">
                     <h2>10. Języki programowania</h2>
-                    
-                    <!-- Hacker Lang (nowa sekcja, nad HackerScript) -->
+
+                    <!-- Hacker Lang -->
                     <h3>Hacker Lang</h3>
                     <p>Jest to wydajna alternatywa dla shella z wyjątkową składnią. Hacker Lang ma zarówno własną unikalną składnię, jak i własną powłokę.</p>
                     <p><strong>Przykład użycia:</strong></p>
                     <pre><span>&gt; hacker update</span> <button class="copy-button" data-command="hacker update">Kopiuj</button></pre>
                     <p>Więcej informacji o składni i narzędziach Hacker Lang znajdziesz w <a href="https://hackeros-linux-system.github.io/HackerOS-Website/hacker-lang/docs.html" target="_blank">oficjalnej dokumentacji Hacker Lang</a>.</p>
-                    
-                    <!-- HackerScript (zaktualizowany) -->
-                    <h3>HackerScript</h3>
-                    <p><strong>HackerScript</strong> to drugi język programowania rozwijany w ramach ekosystemu HackerOS. Stanowi on alternatywę dla języków takich jak Rust czy C, oferując przystępną składnię i zaawansowane zarządzanie pamięcią. Obecnie HackerScript jest transpilowany do <strong>Rust</strong>, co zapewnia wysoką przenośność i wydajność.</p>
-                    <p>Język wspiera <strong>chained areny</strong> oraz możliwość używania areny allocator w wydzielonych blokach kodu (<em>direct</em>), dając programiście pełną kontrolę tam, gdzie jest to potrzebne.</p>
-                    <p><strong>Ekosystem i narzędzia:</strong></p>
-                    <ul>
-                        <li><strong>virus</strong> – zaawansowany menedżer pakietów dla HackerScript, wykorzystujący ekosystem <strong>vira</strong> (biblioteki dostępne w repozytoriach GitHub).</li>
-                        <li><strong>bit</strong> – uniwersalny menedżer pakietów obsługujący zarówno virus, vira, jak i bytes, ułatwiający zarządzanie zależnościami.</li>
-                        <li><strong>hackerc</strong> – kompilator HackerScript, umożliwiający generowanie plików binarnych, bibliotek statycznych (<code>.a</code>) oraz współdzielonych (<code>.so</code>).</li>
-                    </ul>
-                    <p>Więcej informacji o składni, narzędziach i ekosystemie HackerScript znajdziesz w <a href="https://hackeros-linux-system.github.io/HackerOS-Website/hackerscript/docs.html" target="_blank">oficjalnej dokumentacji HackerScript</a>.</p>
-                    
-                    <!-- H# (zaktualizowany, usunięty JIT, tylko kompilowany i podgląd) -->
+
+                    <!-- H# (zaktualizowany) -->
                     <h3>H#</h3>
-                    <p>HackerOS posiada własny, w pełni zintegrowany z systemem język programowania o nazwie <strong>H#</strong>. Jego głównym celem jest dostarczenie wydajnego i elastycznego narzędzia do automatyzacji zadań, które stanowi alternatywę dla shella w środowisku HackerOS. Możesz w nim pisać zarówno proste skrypty, jak i rozbudowane aplikacje (ekosystem skierowany głównie do cyberbezpieczeństwa).</p>
+                    <p>HackerOS posiada własny, w pełni zintegrowany z systemem język programowania o nazwie <strong>H#</strong>. Jego głównym celem (w przyszłości) będzie zastosowanie w ogólnych narzędziach HackerOS (w całym ekosystemie) oraz w ekosystemie HackerOS cybersecurity.</p>
                     <p><strong>Możliwości uruchomienia:</strong></p>
                     <ul>
                         <li><strong>Kompilowany</strong> – kompilacja zaawansowanych programów w H# do natywnego kodu binarnego.</li>
+                        <li><strong>Interpretowany (wydajny - JIT)</strong> - wydajne uruchomienie programów H# w sposób interpretowany.</li>
                         <li><strong>Interpretowany (podgląd)</strong> – szybki podgląd efektów dla zaawansowanych programów w H#.</li>
                     </ul>
-                    <p><strong>Ekosystem bibliotek H#:</strong><br>
-                    <code>bytes</code> – ekosystem bibliotek dla H#, rozwijany przez zespół HackerOS oraz zewnętrznych współtwórców (ekosystem skierowany głównie do cyberbezpieczeństwa).</p>
+                    <p><strong>Managerzy pakietów H#:</strong></p>
+                    <ul>
+                        <li><code>bytes</code> – manager pakietów pozwala na uruchomienie kodu w sposób wydajny programów w H#.</li>
+                        <li><code>vira</code> – manager pakietów (kompiluje kod do jednej statycznej binarki).</li>
+                    </ul>
+                    <p>Więcej informacji o składni, narzędziach i ekosystemie H# znajdziesz w <a href="https://hackeros-linux-system.github.io/HackerOS-Website/h-sharp/docs.html" target="_blank">oficjalnej dokumentacji H#</a>.</p>
                 </div>
                 <!-- 11. Edycje -->
                 <div id="editions" class="tab-pane">
@@ -718,8 +716,6 @@ sudo lpm clean</span> <button class="copy-button" data-command="sudo lpm install
                     <p>Edycja Atomic bazuje na gałęzi Debiana stabilnego lub testowego. Jest okrojona z części narzędzi HackerOS i posiada własne narzędzie do instalacji aktualizacji – <strong>hammer</strong>. <strong>UWAGA:</strong> Aktualnie edycja Atomic jest w fazie pre-release. Użyj <code>hammer issue</code>, aby zgłosić błąd.</p>
                     <h3>Edycja NVIDIA</h3>
                     <p>Edycja NVIDIA zawiera wszystko to samo co wersja Official (Debian Testing), ale posiada preinstalowane sterowniki NVIDIA.</p>
-
-                    <!-- Cykl wydawniczy -->
                     <div class="release-cycle">
                         <h3>Cykl wydawniczy</h3>
                         <p>Standardowe edycje – <strong>Official, Cybersecurity oraz NVIDIA</strong> – są wydawane co miesiąc (każda wersja).<br>
@@ -728,49 +724,15 @@ sudo lpm clean</span> <button class="copy-button" data-command="sudo lpm install
                         Edycja <strong>Atomic</strong> nie posiada jeszcze stabilnego harmonogramu wydawniczego – jest w fazie intensywnego rozwoju.</p>
                     </div>
                 </div>
-                <!-- 12. Komendy -->
-                <div id="commands" class="tab-pane">
-                    <h2>12. Komendy HackerOS</h2>
-                    <p>Oto pełna, aktualna lista najważniejszych komend dostępnych w systemie:</p>
-                    <table>
-                        <thead>
-                            <tr><th>Komenda</th><th>Opis</th><th>Akcja</th></tr>
-                        </thead>
-                        <tbody>
-                            <tr><td><code>hacker update</code></td><td>Aktualizuje snapa, apt, flatpaka, firmware – narzędzie napisane w Crystal/Go/Rust.</td><td><button class="copy-button" data-command="hacker update">Kopiuj</button></td></tr>
-                            <tr><td><code>hacker</code></td><td>Manager pakietów – możesz go używać zamiast apt.</td><td><button class="copy-button" data-command="hacker">Kopiuj</button></td></tr>
-                            <tr><td><code>hacker unpack</code></td><td>Instaluje narzędzia do gier, cyberbezpieczeństwa i inne polecane narzędzia przez HackerOS.</td><td><button class="copy-button" data-command="hacker unpack">Kopiuj</button></td></tr>
-                            <tr><td><code>hacker unpack cybersecurity</code></td><td>Instaluje narzędzia do cyberbezpieczeństwa.</td><td><button class="copy-button" data-command="hacker unpack cybersecurity">Kopiuj</button></td></tr>
-                            <tr><td><code>hacker unpack gaming</code></td><td>Instaluje narzędzia do gier.</td><td><button class="copy-button" data-command="hacker unpack gaming">Kopiuj</button></td></tr>
-                            <tr><td><code>hacker unpack gaming with-roblox</code></td><td>Instaluje narzędzia do gier z Roblox.</td><td><button class="copy-button" data-command="hacker unpack gaming with-roblox">Kopiuj</button></td></tr>
-                            <tr><td><code>hacker unpack emulators</code></td><td>Instaluje emulatory.</td><td><button class="copy-button" data-command="hacker unpack emulators">Kopiuj</button></td></tr>
-                            <tr><td><code>hacker syslog</code></td><td>Pokazuje logi systemowe.</td><td><button class="copy-button" data-command="hacker syslog">Kopiuj</button></td></tr>
-                            <tr><td><code>hacker help</code></td><td>Pokazuje listę komend.</td><td><button class="copy-button" data-command="hacker help">Kopiuj</button></td></tr>
-                            <tr><td><code>hacker help-ui</code></td><td>Pokazuje listę komend w ładnym UI.</td><td><button class="copy-button" data-command="hacker help-ui">Kopiuj</button></td></tr>
-                            <tr><td><code>hacker unpack devtools</code></td><td>Instaluje narzędzia do programowania.</td><td><button class="copy-button" data-command="hacker unpack devtools">Kopiuj</button></td></tr>
-                            <tr><td><code>hacker unpack add-ons</code></td><td>Instaluje dodatki polecane przez HackerOS.</td><td><button class="copy-button" data-command="hacker unpack add-ons">Kopiuj</button></td></tr>
-                            <tr><td><code>hacker unpack gs</code></td><td>Instaluje narzędzia do gier i cyberbezpieczeństwa.</td><td><button class="copy-button" data-command="hacker unpack gs">Kopiuj</button></td></tr>
-                            <tr><td><code>hacker unpack hacker-mode</code></td><td>Zainstaluj Hacker Mode.</td><td><button class="copy-button" data-command="hacker unpack hacker-mode">Kopiuj</button></td></tr>
-                            <tr><td><code>chker</code></td><td>Usuwa aktualne jądro i instaluje nowe jądro xanmod lub liquorix.</td><td><button class="copy-button" data-command="chker">Kopiuj</button></td></tr>
-                            <tr><td><code>hl</code></td><td>Proste narzędzie do uruchamiania i kompilowania skryptów/programów napisanych w języku H#.</td><td><button class="copy-button" data-command="hl">Kopiuj</button></td></tr>
-                            <tr><td><code>virus</code></td><td>Manager pakietów i kompilator/runtime dla HackerScript.</td><td><button class="copy-button" data-command="virus">Kopiuj</button></td></tr>
-                            <tr><td><code>hlh</code></td><td>Dokumentacja oraz informacje o narzędziach H#.</td><td><button class="copy-button" data-command="hlh">Kopiuj</button></td></tr>
-                            <tr><td><code>hedit</code></td><td>Edytor tekstu inspirowany nano.</td><td><button class="copy-button" data-command="hedit">Kopiuj</button></td></tr>
-                            <tr><td><code>ngt</code></td><td>Terminalowy menedżer plików (TUI) z wbudowanym edytorem tekstu i konsolą poleceń.</td><td><button class="copy-button" data-command="ngt">Kopiuj</button></td></tr>
-                            <tr><td><code>HackerOS-Steam</code></td><td>Uruchom Steam w kontenerze.</td><td><button class="copy-button" data-command="HackerOS-Steam">Kopiuj</button></td></tr>
-                            <tr><td><code>hbuild</code></td><td>Własny następca cmake lub meson (nowoczesny).</td><td><button class="copy-button" data-command="hbuild">Kopiuj</button></td></tr>
-                        </tbody>
-                    </table>
-                </div>
-                <!-- 13. Gaming -->
+                <!-- 12. Gaming -->
                 <div id="gaming" class="tab-pane">
-                    <h2>13. Gaming</h2>
+                    <h2>12. Gaming</h2>
                     <p>HackerOS jest świetny do gier dzięki bazie Debian Testing oraz specjalnym narzędziom, takim jak <strong>Hacker Launcher</strong> (narzędzie do uruchamiania gier .exe za pomocą konkretnych wersji Proton). HackerOS posiada również specjalne edycje, takie jak <strong>Gaming Edition</strong> i <strong>NVIDIA Edition</strong>.</p>
                     <p>Ponadto HackerOS ma własne gry, takie jak <strong>Bark Squadron</strong>, <strong>The Racer</strong>, <strong>Bit Jump</strong>, <strong>StarBlaster</strong> – możesz je uruchomić za pomocą <strong>HackerOS Games</strong>.</p>
                 </div>
-                <!-- 14. Galeria -->
+                <!-- 13. Galeria -->
                 <div id="gallery" class="tab-pane">
-                    <h2>14. Galeria</h2>
+                    <h2>13. Galeria</h2>
                     <p>Galeria zrzutów ekranu, zdjęć i materiałów wizualnych z HackerOS (edycje, interfejs, gry, narzędzia).</p>
                     <p><strong>Placeholder</strong> – sekcja w budowie. Wkrótce pojawią się tutaj prawdziwe zdjęcia i galerie!</p>
                 </div>
