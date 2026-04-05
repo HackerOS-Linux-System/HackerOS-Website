@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>HackerOS · Ekosystem & narzędzia</title>
     <link rel="icon" type="image/png" href="../HackerOS.png">
+    <!-- Font Awesome 6 (free) dla ikon społecznościowych -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -13,7 +15,7 @@
         }
 
         body {
-            background-color: #0c0f14;   /* głęboka ciemna szarość, prawie czarny */
+            background-color: #0c0f14;
             font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, 'Roboto', sans-serif;
             line-height: 1.55;
             min-height: 100vh;
@@ -22,7 +24,7 @@
             color: #eef2f8;
         }
 
-        /* ---------- GÓRNY PASEK (czarny z subtelnym połyskiem) ---------- */
+        /* ---------- GÓRNY PASEK ---------- */
         .top-bar {
             background-color: #05070a;
             width: 100%;
@@ -43,7 +45,6 @@
             gap: 2rem;
         }
 
-        /* logo lewy górny róg – teraz klikalne */
         .logo-area {
             flex-shrink: 0;
             line-height: 0;
@@ -67,7 +68,6 @@
             cursor: pointer;
         }
 
-        /* nawigacja – ciemny, stonowany */
         .nav-menu {
             flex: 1;
             display: flex;
@@ -79,9 +79,11 @@
             justify-content: center;
             gap: 0.3rem;
             list-style: none;
+            align-items: center;
         }
         .nav-list li {
             margin: 0;
+            position: relative;
         }
         .nav-list a {
             display: inline-block;
@@ -95,7 +97,7 @@
             border-radius: 60px;
             transition: all 0.22s ease;
             font-family: inherit;
-            backdrop-filter: blur(2px);
+            white-space: nowrap;
         }
         .nav-list a:hover {
             background-color: #2a313c;
@@ -103,12 +105,80 @@
             transform: translateY(-1px);
             box-shadow: 0 2px 8px rgba(0,0,0,0.4);
         }
-        .nav-list a:focus-visible {
-            outline: 2px solid #7f8c9a;
-            outline-offset: 2px;
+
+        /* DROPDOWN dla języków programowania */
+        .dropdown {
+            position: relative;
+        }
+        .dropdown-btn {
+            background: transparent;
+            border: none;
+            font-family: inherit;
+            font-weight: 550;
+            font-size: 0.95rem;
+            letter-spacing: 0.2px;
+            color: #e3e9f2;
+            padding: 8px 18px;
+            border-radius: 60px;
+            cursor: pointer;
+            transition: all 0.22s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+        .dropdown-btn i {
+            font-size: 0.75rem;
+            transition: transform 0.2s;
+        }
+        .dropdown-btn:hover {
+            background-color: #2a313c;
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+        }
+        .dropdown-content {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            background-color: #0f151e;
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            min-width: 210px;
+            padding: 0.5rem 0;
+            box-shadow: 0 20px 30px -12px rgba(0,0,0,0.6);
+            border: 1px solid #2c3540;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-8px);
+            transition: all 0.2s ease;
+            z-index: 200;
+        }
+        .dropdown.open .dropdown-content {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .dropdown-content a {
+            display: block;
+            padding: 10px 20px;
+            color: #e0e8f2;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: background 0.15s;
+            white-space: nowrap;
+            background: transparent;
+            border-radius: 0;
+        }
+        .dropdown-content a:hover {
+            background-color: #1f2a36;
+            color: white;
+            transform: none;
+            box-shadow: none;
         }
 
-        /* GŁÓWNY BLOK – ciemniejszy, elegancki */
+        /* GŁÓWNY BLOK */
         .main-content {
             flex: 1;
             max-width: 1300px;
@@ -118,7 +188,6 @@
             border-radius: 44px;
             box-shadow: 0 25px 40px -12px rgba(0, 0, 0, 0.5);
             border: 1px solid #242c34;
-            transition: all 0.2s;
         }
 
         .section-header {
@@ -133,10 +202,9 @@
             -webkit-background-clip: text;
             color: transparent;
             letter-spacing: -0.4px;
-            text-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
 
-        /* ---------- SLIDER / KARUZELA (ciemny design, poprawione strzałki) ---------- */
+        /* SLIDER / KARUZELA */
         .slider-shell {
             position: relative;
             margin: 1rem 0 0.8rem;
@@ -190,7 +258,7 @@
             margin-bottom: 0.2rem;
         }
 
-        /* przyciski nawigacji slidera – poprawione, nie nachodzą na treść */
+        /* przyciski slidera */
         .slider-btn {
             position: absolute;
             top: 50%;
@@ -224,39 +292,14 @@
             border-color: #6f8aac;
         }
         @media (max-width: 700px) {
-            .slider-btn {
-                width: 38px;
-                height: 38px;
-                font-size: 1.7rem;
-                left: 6px;
-            }
-            .slider-btn.btn-next {
-                right: 6px;
-            }
-            .slide {
-                padding: 1.5rem 2rem;
-            }
-            .slide h3 {
-                font-size: 1.6rem;
-            }
-            .slide p {
-                font-size: 0.95rem;
-                max-width: 100%;
-            }
+            .slider-btn { width: 38px; height: 38px; font-size: 1.7rem; left: 6px; }
+            .slider-btn.btn-next { right: 6px; }
+            .slide { padding: 1.5rem 2rem; }
+            .slide h3 { font-size: 1.6rem; }
         }
         @media (max-width: 550px) {
-            .slide {
-                padding: 1.2rem 1.5rem;
-            }
-            .slider-btn {
-                width: 34px;
-                height: 34px;
-                font-size: 1.5rem;
-                left: 4px;
-            }
-            .slider-btn.btn-next {
-                right: 4px;
-            }
+            .slide { padding: 1.2rem 1.5rem; }
+            .slider-btn { width: 34px; height: 34px; font-size: 1.5rem; }
         }
 
         .dots-container {
@@ -283,42 +326,82 @@
             background-color: #8fa0b5;
         }
 
-        /* stopka – nowy tekst */
+        /* STOPKA */
         footer {
-            text-align: center;
-            font-size: 0.75rem;
-            color: #8c9aaa;
-            padding: 1.5rem;
             background: transparent;
             border-top: 1px solid #20262e;
             margin-top: 0.5rem;
+            padding: 1.2rem 2rem 1.8rem;
+        }
+        .footer-copyright {
+            text-align: center;
+            font-size: 0.75rem;
+            color: #8c9aaa;
+            margin-bottom: 1.2rem;
+        }
+        .footer-social-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1.5rem;
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+        .footer-left, .footer-right {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.8rem;
+            align-items: center;
+        }
+        .social-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #b4c4da;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: 0.2s;
+            background: #0f141c60;
+            padding: 5px 12px;
+            border-radius: 40px;
+            backdrop-filter: blur(2px);
+        }
+        .social-link i {
+            font-size: 1.2rem;
+            width: 1.3rem;
+            text-align: center;
+        }
+        .social-link:hover {
+            color: white;
+            background: #1f2a36;
+            transform: translateY(-1px);
+        }
+        @media (max-width: 800px) {
+            .footer-social-row {
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+            }
+            .footer-left, .footer-right {
+                justify-content: center;
+                gap: 1rem;
+            }
         }
 
-        /* responsywność ogólna */
         @media (max-width: 880px) {
             .navbar-container {
                 flex-wrap: wrap;
                 padding: 10px 20px;
                 gap: 0.8rem;
             }
-            .logo-area {
-                margin-right: auto;
-            }
-            .nav-menu {
-                flex: 1 1 100%;
-                justify-content: center;
-            }
-            .nav-list a {
-                padding: 6px 13px;
-                font-size: 0.85rem;
-            }
-            .main-content {
-                margin: 1rem;
-                padding: 1.5rem;
-            }
-            .section-header h2 {
-                font-size: 1.9rem;
-            }
+            .logo-area { margin-right: auto; }
+            .nav-menu { flex: 1 1 100%; justify-content: center; }
+            .nav-list a, .dropdown-btn { padding: 6px 13px; font-size: 0.85rem; }
+            .dropdown-content { left: 0; right: auto; min-width: 180px; }
+            .main-content { margin: 1rem; padding: 1.5rem; }
+            .section-header h2 { font-size: 1.9rem; }
         }
     </style>
 </head>
@@ -326,13 +409,11 @@
 
 <header class="top-bar">
     <div class="navbar-container">
-        <!-- LEWY GÓRNY RÓG – zdjęcie klikalne, przekierowuje na stronę główną HackerOS -->
         <div class="logo-area">
             <a href="https://hackeros-linux-system.github.io/HackerOS-Website/Home-page.html" target="_blank" rel="noopener noreferrer">
                 <img src="../HackerOS.png" alt="HackerOS - strona główna" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20120%2040%22%20fill%3D%22%23333%22%3E%3Crect%20width%3D%22120%22%20height%3D%2240%22%20fill%3D%22%230d1117%22%20rx%3D%228%22%2F%3E%3Ctext%20x%3D%2210%22%20y%3D%2225%22%20fill%3D%22%23f0f3fa%22%20font-size%3D%2214%22%20font-family%3D%27monospace%27%3EHackerOS%3C%2Ftext%3E%3C%2Fsvg%3E';">
             </a>
         </div>
-        <!-- MENU: wszystkie wymagane pozycje + .hk oraz hsh -->
         <nav class="nav-menu" aria-label="Menu ekosystemu HackerOS">
             <ul class="nav-list">
                 <li><a href="hpm.html">HPM</a></li>
@@ -344,6 +425,20 @@
                 <li><a href="ulb.html">ULB</a></li>
                 <li><a href="hk.html">.hk</a></li>
                 <li><a href="hsh.html">hsh</a></li>
+                <!-- NOWE POZYCJE WG ZYCZENIA -->
+                <li><a href="hackerdeck.html">HackerDeck</a></li>
+                <li><a href="ghostfs.html">GhostFS</a></li>
+                <li><a href="hexai.html">HexAI</a></li>
+                <!-- DROPDOWN z wyborem języków programowania (na górze, obok HackerDeck) -->
+                <li class="dropdown" id="langDropdown">
+                    <button class="dropdown-btn" id="langDropdownBtn">
+                        Języki programowania <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="dropdown-content">
+                        <a href="https://hackeros-linux-system.github.io/HackerOS-Website/h-sharp/docs.html" target="_blank" rel="noopener noreferrer">📘 H# – dokumentacja</a>
+                        <a href="https://hackeros-linux-system.github.io/HackerOS-Website/hackerscript/docs.html" target="_blank" rel="noopener noreferrer">📜 Hacker Lang – dokumentacja</a>
+                    </div>
+                </li>
             </ul>
         </nav>
     </div>
@@ -354,7 +449,6 @@
         <h2>Poznaj ekosystem HackerOS.</h2>
     </div>
 
-    <!-- SLIDER z rozbudowanymi opisami -->
     <div class="slider-shell">
         <div class="slider-container" id="sliderContainer">
             <div class="slides-wrapper">
@@ -368,51 +462,42 @@
 </main>
 
 <footer>
-    <span>HackerOS · © 2026 HackerOS. Wszelkie prawa zastrzeżone. | Dokumentacja ekosystemu HackerOS.</span>
+    <div class="footer-copyright">
+        HackerOS · © 2026 HackerOS. Wszelkie prawa zastrzeżone. | Dokumentacja ekosystemu HackerOS.
+    </div>
+    <div class="footer-social-row">
+        <div class="footer-left">
+            <a href="https://sourceforge.net/projects/hackeros/" target="_blank" rel="noopener noreferrer" class="social-link"><i class="fab fa-sourceforge"></i> SourceForge</a>
+            <a href="https://discord.com/invite/8yHNcBaEKy" target="_blank" rel="noopener noreferrer" class="social-link"><i class="fab fa-discord"></i> Discord</a>
+            <a href="https://linuxiarze.pl/distro-hackeros/" target="_blank" rel="noopener noreferrer" class="social-link"><i class="fas fa-globe"></i> Linuxiarze</a>
+        </div>
+        <div class="footer-right">
+            <a href="https://github.com/HackerOS-Linux-System" target="_blank" rel="noopener noreferrer" class="social-link"><i class="fab fa-github"></i> GitHub</a>
+            <a href="https://x.com/hackeros_linux" target="_blank" rel="noopener noreferrer" class="social-link"><i class="fab fa-x-twitter"></i> X</a>
+            <a href="https://distrowatch.com/table.php?distribution=hackeros" target="_blank" rel="noopener noreferrer" class="social-link"><i class="fas fa-chart-line"></i> DistroWatch</a>
+            <a href="https://www.reddit.com/r/HackerOS_/" target="_blank" rel="noopener noreferrer" class="social-link"><i class="fab fa-reddit-alien"></i> Reddit</a>
+        </div>
+    </div>
 </footer>
 
 <script>
-    // ----- DANE SŁAJDÓW (pełne opisy, bez numerków/badge'y) -----
+    // ----- DANE SŁAJDÓW (USUNIĘTO slajd z językami + cały dropdown z opisem) -----
+    // Pozostają oryginalne 9 + HexAI, GhostFS, HackerDeck = 12 slajdów.
     const slidesData = [
-        {
-            title: "HPM",
-            desc: "HackerOS Package Manager – repozytorium społecznościowe dla HackerOS. Każdy użytkownik może tworzyć, udostępniać i instalować pakiety, budując otwarty, dynamiczny ekosystem."
-        },
-        {
-            title: "HackerOS Containers",
-            desc: "Autorski system kontenerów zaprojektowany z myślą o lekkiej izolacji, wysokiej wydajności i łatwym zarządzaniu środowiskami aplikacji. W pełni zintegrowany z jądrem HackerOS."
-        },
-        {
-            title: "lpm",
-            desc: "Legendary Package Manager – nowoczesny następca APT. Łączy prostotę klasycznych menedżerów z zaawansowanym rozwiązywaniem zależności, wsparciem dla wielu źródeł i błyskawiczną instalacją."
-        },
-        {
-            title: "hammer",
-            desc: "Narzędzie do atomowej instalacji oraz aktualizacji pakietów. Wykorzystywane wyłącznie w edycji Atomic HackerOS – gwarantuje nieuszkadzalne aktualizacje i możliwość przywracania poprzednich stanów systemu."
-        },
-        {
-            title: "hacker",
-            desc: "hacker – serce systemu. Zaawansowane narzędzie do monitorowania, zarządzania procesami i konfiguracją w czasie rzeczywistym. Stanowi fundament interakcji z jądrem oraz usprawnia diagnostykę."
-        },
-        {
-            title: "hbuild",
-            desc: "Własna, autorska alternatywa dla Meson, CMake, Make oraz Ninja. Upraszcza proces kompilacji oprogramowania dzięki deklaratywnym skryptom, inteligentnemu cache'owaniu i modułowej architekturze."
-        },
-        {
-            title: "ULB",
-            desc: "Universal Live Builder – elitarne narzędzie do budowania obrazów ISO HackerOS. Umożliwia tworzenie w pełni konfigurowalnych, przenośnych środowisk live oraz obrazów do wdrożeń masowych."
-        },
-        {
-            title: ".hk",
-            desc: "Format plików .hk używany do konfiguracji systemu oraz aplikacji. Zapewnia czytelną, hierarchiczną składnię, natywne wsparcie w narzędziach HackerOS oraz możliwość rozszerzeń poprzez wbudowane schematy."
-        },
-        {
-            title: "hsh",
-            desc: "hsh – nowoczesna powłoka systemowa, zaawansowana alternatywa dla ZSH i Bash. Oferuje rozszerzone możliwości skryptowe, lepszą autokompletację, wbudowane wsparcie dla kontenerów i natywne integracje z .hk."
-        }
+        { title: "HPM", desc: "HackerOS Package Manager – repozytorium społecznościowe dla HackerOS. Każdy użytkownik może tworzyć, udostępniać i instalować pakiety, budując otwarty, dynamiczny ekosystem." },
+        { title: "HackerOS Containers", desc: "Autorski system kontenerów zaprojektowany z myślą o lekkiej izolacji, wysokiej wydajności i łatwym zarządzaniu środowiskami aplikacji. W pełni zintegrowany z jądrem HackerOS." },
+        { title: "lpm", desc: "Legendary Package Manager – nowoczesny następca APT. Łączy prostotę klasycznych menedżerów z zaawansowanym rozwiązywaniem zależności, wsparciem dla wielu źródeł i błyskawiczną instalacją." },
+        { title: "hammer", desc: "Narzędzie do atomowej instalacji oraz aktualizacji pakietów. Wykorzystywane wyłącznie w edycji Atomic HackerOS – gwarantuje nieuszkadzalne aktualizacje i możliwość przywracania poprzednich stanów systemu." },
+        { title: "hacker", desc: "hacker – serce systemu. Zaawansowane narzędzie do monitorowania, zarządzania procesami i konfiguracją w czasie rzeczywistym. Stanowi fundament interakcji z jądrem oraz usprawnia diagnostykę." },
+        { title: "hbuild", desc: "Własna, autorska alternatywa dla Meson, CMake, Make oraz Ninja. Upraszcza proces kompilacji oprogramowania dzięki deklaratywnym skryptom, inteligentnemu cache'owaniu i modułowej architekturze." },
+        { title: "ULB", desc: "Universal Live Builder – elitarne narzędzie do budowania obrazów ISO HackerOS. Umożliwia tworzenie w pełni konfigurowalnych, przenośnych środowisk live oraz obrazów do wdrożeń masowych." },
+        { title: ".hk", desc: "Format plików .hk używany do konfiguracji systemu oraz aplikacji. Zapewnia czytelną, hierarchiczną składnię, natywne wsparcie w narzędziach HackerOS oraz możliwość rozszerzeń poprzez wbudowane schematy." },
+        { title: "hsh", desc: "hsh – nowoczesna powłoka systemowa, zaawansowana alternatywa dla ZSH i Bash. Oferuje rozszerzone możliwości skryptowe, lepszą autokompletację, wbudowane wsparcie dla kontenerów i natywne integracje z .hk." },
+        { title: "HexAI", desc: "HexAI – Zintegrowany asystent AI dla HackerOS, wymagający wydajnego komputera. Oferuje lokalne wnioskowanie, analizę kodu źródłowego, generowanie skryptów oraz inteligentne wsparcie administracji z zachowaniem pełnej prywatności." },
+        { title: "GhostFS", desc: "GhostFS – Zaawansowany system plików dla HackerOS, dostępny w dwóch edycjach: Cybersecurity (szyfrowanie, ukrywanie śladów, steganografia) oraz Normal (szybkość, niezawodność i pełna zgodność z aplikacjami). Idealny do zarządzania danymi." },
+        { title: "HackerDeck", desc: "HackerDeck – nakładka środowiskowa dla Waydroid, pozwalająca uruchamiać aplikacje Android w HackerOS z pełną integracją, optymalizacją wydajności i dedykowanymi ustawieniami dla graczy oraz programistów." }
     ];
 
-    // DOM elementy
     const slidesTrack = document.getElementById('slidesTrack');
     const dotsContainer = document.getElementById('dotsContainer');
     const prevBtn = document.getElementById('prevSlideBtn');
@@ -422,16 +507,17 @@
     let autoPlayInterval = null;
     let isHovering = false;
 
+    // RENDER SLIDES (bez żadnych dropdownów, tylko tytuł i opis)
     function renderSlides() {
         slidesTrack.innerHTML = '';
-        slidesData.forEach((slide) => {
+        slidesData.forEach((slide, idx) => {
             const slideDiv = document.createElement('div');
             slideDiv.className = 'slide';
             const titleElem = document.createElement('h3');
             titleElem.textContent = slide.title;
+            slideDiv.appendChild(titleElem);
             const descElem = document.createElement('p');
             descElem.textContent = slide.desc;
-            slideDiv.appendChild(titleElem);
             slideDiv.appendChild(descElem);
             slidesTrack.appendChild(slideDiv);
         });
@@ -448,11 +534,8 @@
     function updateDots() {
         const dots = document.querySelectorAll('.dot');
         dots.forEach((dot, i) => {
-            if (i === currentIndex) {
-                dot.classList.add('active');
-            } else {
-                dot.classList.remove('active');
-            }
+            if (i === currentIndex) dot.classList.add('active');
+            else dot.classList.remove('active');
         });
     }
 
@@ -477,21 +560,14 @@
         updateSliderPosition();
     }
 
-    function nextSlide() {
-        goToSlide(currentIndex + 1);
-    }
-
-    function prevSlide() {
-        goToSlide(currentIndex - 1);
-    }
+    function nextSlide() { goToSlide(currentIndex + 1); }
+    function prevSlide() { goToSlide(currentIndex - 1); }
 
     function startAutoPlay() {
         if (autoPlayInterval) clearInterval(autoPlayInterval);
         if (isHovering) return;
         autoPlayInterval = setInterval(() => {
-            if (!isHovering) {
-                nextSlide();
-            }
+            if (!isHovering) nextSlide();
         }, 20000);
     }
 
@@ -504,9 +580,7 @@
 
     function resetAutoPlay() {
         stopAutoPlay();
-        if (!isHovering) {
-            startAutoPlay();
-        }
+        if (!isHovering) startAutoPlay();
     }
 
     function bindHoverEvents() {
@@ -523,26 +597,40 @@
     }
 
     function bindControls() {
-        if (prevBtn) prevBtn.addEventListener('click', () => {
-            prevSlide();
-            resetAutoPlay();
-        });
-        if (nextBtn) nextBtn.addEventListener('click', () => {
-            nextSlide();
-            resetAutoPlay();
-        });
+        if (prevBtn) prevBtn.addEventListener('click', () => { prevSlide(); resetAutoPlay(); });
+        if (nextBtn) nextBtn.addEventListener('click', () => { nextSlide(); resetAutoPlay(); });
     }
 
     function bindKeyboard() {
         window.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowLeft') {
-                prevSlide();
-                resetAutoPlay();
-                e.preventDefault();
-            } else if (e.key === 'ArrowRight') {
-                nextSlide();
-                resetAutoPlay();
-                e.preventDefault();
+            if (e.key === 'ArrowLeft') { prevSlide(); resetAutoPlay(); e.preventDefault(); }
+            else if (e.key === 'ArrowRight') { nextSlide(); resetAutoPlay(); e.preventDefault(); }
+        });
+    }
+
+    // Obsługa dropdownu języków programowania (kliknięcie, zamykanie po kliknięciu poza)
+    function initLangDropdown() {
+        const dropdown = document.getElementById('langDropdown');
+        const btn = document.getElementById('langDropdownBtn');
+        if (!dropdown || !btn) return;
+
+        const toggleDropdown = (e) => {
+            e.stopPropagation();
+            dropdown.classList.toggle('open');
+        };
+        btn.addEventListener('click', toggleDropdown);
+
+        // Zamknij dropdown po kliknięciu gdziekolwiek indziej
+        document.addEventListener('click', function(event) {
+            if (!dropdown.contains(event.target)) {
+                dropdown.classList.remove('open');
+            }
+        });
+
+        // Dodatkowo: zamknij po naciśnięciu ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && dropdown.classList.contains('open')) {
+                dropdown.classList.remove('open');
             }
         });
     }
@@ -555,12 +643,10 @@
         bindKeyboard();
         isHovering = false;
         startAutoPlay();
+        initLangDropdown();   // aktywacja dropdownu języków w pasku
     }
 
-    window.addEventListener('resize', () => {
-        updateSliderPosition();
-    });
-
+    window.addEventListener('resize', () => updateSliderPosition());
     document.addEventListener('DOMContentLoaded', initSlider);
 </script>
 </body>
