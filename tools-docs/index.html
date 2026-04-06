@@ -425,11 +425,14 @@
                 <li><a href="ulb.html">ULB</a></li>
                 <li><a href="hk.html">.hk</a></li>
                 <li><a href="hsh.html">hsh</a></li>
-                <!-- NOWE POZYCJE WG ZYCZENIA -->
+                <!-- NOWE NARZĘDZIA: hedit i ngt (zgodnie z życzeniem) -->
+                <li><a href="hedit.html">hedit</a></li>
+                <li><a href="ngt.html">ngt</a></li>
+                <!-- Pozostałe narzędzia -->
                 <li><a href="hackerdeck.html">HackerDeck</a></li>
                 <li><a href="ghostfs.html">GhostFS</a></li>
                 <li><a href="hexai.html">HexAI</a></li>
-                <!-- DROPDOWN z wyborem języków programowania (na górze, obok HackerDeck) -->
+                <!-- DROPDOWN z wyborem języków programowania -->
                 <li class="dropdown" id="langDropdown">
                     <button class="dropdown-btn" id="langDropdownBtn">
                         Języki programowania <i class="fas fa-chevron-down"></i>
@@ -481,8 +484,8 @@
 </footer>
 
 <script>
-    // ----- DANE SŁAJDÓW (USUNIĘTO slajd z językami + cały dropdown z opisem) -----
-    // Pozostają oryginalne 9 + HexAI, GhostFS, HackerDeck = 12 slajdów.
+    // ----- DANE SŁAJDÓW (DODANO hedit i ngt z poprawnymi gramatycznie opisami) -----
+    // Zachowano wszystkie oryginalne slajdy + dwa nowe narzędzia
     const slidesData = [
         { title: "HPM", desc: "HackerOS Package Manager – repozytorium społecznościowe dla HackerOS. Każdy użytkownik może tworzyć, udostępniać i instalować pakiety, budując otwarty, dynamiczny ekosystem." },
         { title: "HackerOS Containers", desc: "Autorski system kontenerów zaprojektowany z myślą o lekkiej izolacji, wysokiej wydajności i łatwym zarządzaniu środowiskami aplikacji. W pełni zintegrowany z jądrem HackerOS." },
@@ -495,7 +498,10 @@
         { title: "hsh", desc: "hsh – nowoczesna powłoka systemowa, zaawansowana alternatywa dla ZSH i Bash. Oferuje rozszerzone możliwości skryptowe, lepszą autokompletację, wbudowane wsparcie dla kontenerów i natywne integracje z .hk." },
         { title: "HexAI", desc: "HexAI – Zintegrowany asystent AI dla HackerOS, wymagający wydajnego komputera. Oferuje lokalne wnioskowanie, analizę kodu źródłowego, generowanie skryptów oraz inteligentne wsparcie administracji z zachowaniem pełnej prywatności." },
         { title: "GhostFS", desc: "GhostFS – Zaawansowany system plików dla HackerOS, dostępny w dwóch edycjach: Cybersecurity (szyfrowanie, ukrywanie śladów, steganografia) oraz Normal (szybkość, niezawodność i pełna zgodność z aplikacjami). Idealny do zarządzania danymi." },
-        { title: "HackerDeck", desc: "HackerDeck – nakładka środowiskowa dla Waydroid, pozwalająca uruchamiać aplikacje Android w HackerOS z pełną integracją, optymalizacją wydajności i dedykowanymi ustawieniami dla graczy oraz programistów." }
+        { title: "HackerDeck", desc: "HackerDeck – nakładka środowiskowa dla Waydroid, pozwalająca uruchamiać aplikacje Android w HackerOS z pełną integracją, optymalizacją wydajności i dedykowanymi ustawieniami dla graczy oraz programistów." },
+        // === NOWE SŁAJDY: hedit i ngt (zgodnie z wymaganiami i poprawą gramatyczną) ===
+        { title: "hedit", desc: "hedit – edytor tekstu inspirowany klasycznym nano, w pełni zintegrowany z HackerOS. Łączy prostotę obsługi z zaawansowanymi funkcjami, takimi jak podświetlanie składni, obsługa makr oraz bezpośrednia edycja plików systemowych w trybie tekstowym." },
+        { title: "ngt", desc: "ngt – narzędzie do zarządzania plikami inspirowane Midnight Commanderem (MC). Oferuje dwupanelowy interfejs, szybką nawigację, zaawansowane operacje na plikach (kopiowanie, przenoszenie, uprawnienia) oraz wbudowany podgląd plików i archiwów – niezbędne w codziennej pracy administratora." }
     ];
 
     const slidesTrack = document.getElementById('slidesTrack');
@@ -507,7 +513,7 @@
     let autoPlayInterval = null;
     let isHovering = false;
 
-    // RENDER SLIDES (bez żadnych dropdownów, tylko tytuł i opis)
+    // RENDER SLIDES (tylko tytuł i opis)
     function renderSlides() {
         slidesTrack.innerHTML = '';
         slidesData.forEach((slide, idx) => {
@@ -608,7 +614,7 @@
         });
     }
 
-    // Obsługa dropdownu języków programowania (kliknięcie, zamykanie po kliknięciu poza)
+    // Obsługa dropdownu języków programowania (kliknięcie, zamykanie poza)
     function initLangDropdown() {
         const dropdown = document.getElementById('langDropdown');
         const btn = document.getElementById('langDropdownBtn');
@@ -620,14 +626,12 @@
         };
         btn.addEventListener('click', toggleDropdown);
 
-        // Zamknij dropdown po kliknięciu gdziekolwiek indziej
         document.addEventListener('click', function(event) {
             if (!dropdown.contains(event.target)) {
                 dropdown.classList.remove('open');
             }
         });
 
-        // Dodatkowo: zamknij po naciśnięciu ESC
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape' && dropdown.classList.contains('open')) {
                 dropdown.classList.remove('open');
@@ -643,7 +647,7 @@
         bindKeyboard();
         isHovering = false;
         startAutoPlay();
-        initLangDropdown();   // aktywacja dropdownu języków w pasku
+        initLangDropdown();   // aktywacja dropdownu języków
     }
 
     window.addEventListener('resize', () => updateSliderPosition());
