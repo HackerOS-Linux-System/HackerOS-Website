@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HexAi – Dokumentacja</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-base:     #1a1916;
+      --bg-surface:  #211f1c;
+      --bg-elevated: #2a2825;
+      --bg-hover:    #312f2b;
+      --border:      #3a3835;
+      --border-sub:  #2d2b28;
+      --accent:      #d97706;
+      --accent-dim:  #92400e;
+      --accent-glow: rgba(217,119,6,.15);
+      --text-pri:    #f5f0e8;
+      --text-sec:    #a89880;
+      --text-muted:  #6b6057;
+      --text-accent: #f59e0b;
+      --code-bg:     #1e1c19;
+      --green:       #4ade80;
+      --red:         #f87171;
+      --blue:        #60a5fa;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background: var(--bg-base);
+      color: var(--text-pri);
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    /* ── Layout ── */
+    .layout { display: flex; min-height: 100vh; }
+
+    /* ── Sidebar nav ── */
+    .nav {
+      width: 260px;
+      min-width: 260px;
+      background: var(--bg-surface);
+      border-right: 1px solid var(--border-sub);
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      padding: 0 0 40px;
+    }
+    .nav::-webkit-scrollbar { width: 3px; }
+    .nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    .nav-logo {
+      padding: 28px 24px 20px;
+      border-bottom: 1px solid var(--border-sub);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .nav-hex { font-size: 26px; color: var(--accent); line-height: 1; }
+    .nav-title {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-size: 22px;
+      color: var(--text-pri);
+      letter-spacing: -0.02em;
+    }
+    .nav-version {
+      font-size: 10px;
+      color: var(--text-muted);
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .nav-section {
+      padding: 16px 16px 4px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .nav a {
+      display: block;
+      padding: 6px 24px;
+      color: var(--text-sec);
+      text-decoration: none;
+      font-size: 13.5px;
+      border-left: 2px solid transparent;
+      transition: color .15s, border-color .15s, background .15s;
+    }
+    .nav a:hover {
+      color: var(--text-pri);
+      background: var(--bg-hover);
+      border-left-color: var(--border);
+    }
+    .nav a.active {
+      color: var(--text-accent);
+      border-left-color: var(--accent);
+      background: var(--accent-glow);
+    }
+
+    /* ── Main content ── */
+    .content {
+      flex: 1;
+      max-width: 860px;
+      padding: 60px 64px 100px;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      margin-bottom: 80px;
+      padding-bottom: 48px;
+      border-bottom: 1px solid var(--border-sub);
+    }
+    .hero-eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .hero h1 {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-size: 52px;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      color: var(--text-pri);
+      margin-bottom: 20px;
+    }
+    .hero h1 em {
+      font-style: italic;
+      color: var(--text-accent);
+    }
+    .hero p {
+      font-size: 17px;
+      color: var(--text-sec);
+      max-width: 560px;
+      line-height: 1.7;
+    }
+    .badges { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 24px; }
+    .badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 99px;
+      border: 1px solid;
+    }
+    .badge-amber { color: var(--text-accent); border-color: var(--accent-dim); background: var(--accent-glow); }
+    .badge-green { color: var(--green); border-color: rgba(74,222,128,.3); background: rgba(74,222,128,.08); }
+    .badge-blue { color: var(--blue); border-color: rgba(96,165,250,.3); background: rgba(96,165,250,.08); }
+
+    /* ── Sections ── */
+    section { margin-bottom: 72px; scroll-margin-top: 32px; }
+    h2 {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-size: 34px;
+      letter-spacing: -0.02em;
+      color: var(--text-pri);
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-sub);
+    }
+    h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-pri);
+      margin: 28px 0 10px;
+    }
+    h4 {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-sec);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin: 20px 0 8px;
+    }
+    p { color: var(--text-sec); margin-bottom: 12px; }
+    p:last-child { margin-bottom: 0; }
+    strong { color: var(--text-pri); font-weight: 600; }
+    em { font-style: italic; color: var(--text-accent); }
+
+    /* ── Code ── */
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12.5px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      padding: 1px 6px;
+      border-radius: 4px;
+      color: var(--text-accent);
+    }
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border-sub);
+      border-radius: 10px;
+      padding: 20px 24px;
+      overflow-x: auto;
+      margin: 16px 0;
+    }
+    pre code {
+      background: none;
+      border: none;
+      padding: 0;
+      color: var(--text-pri);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+    .code-header {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-sub);
+      border-bottom: none;
+      border-radius: 10px 10px 0 0;
+      padding: 8px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .code-header + pre {
+      border-radius: 0 0 10px 10px;
+      margin-top: 0;
+    }
+
+    /* ── Cards / components ── */
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin: 20px 0; }
+    .card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-sub);
+      border-radius: 12px;
+      padding: 20px;
+      transition: border-color .2s;
+    }
+    .card:hover { border-color: var(--border); }
+    .card-icon { font-size: 22px; margin-bottom: 10px; }
+    .card h4 { margin: 0 0 6px; font-size: 14px; color: var(--text-pri); text-transform: none; letter-spacing: 0; }
+    .card p { font-size: 13px; margin: 0; }
+
+    /* ── Tables ── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+      margin: 16px 0;
+    }
+    th {
+      background: var(--bg-elevated);
+      color: var(--text-sec);
+      font-weight: 600;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 10px 14px;
+      border: 1px solid var(--border-sub);
+      text-align: left;
+    }
+    td {
+      padding: 10px 14px;
+      border: 1px solid var(--border-sub);
+      color: var(--text-sec);
+      vertical-align: top;
+    }
+    tr:hover td { background: var(--bg-hover); }
+
+    /* ── Callouts ── */
+    .callout {
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin: 20px 0;
+      border-left: 3px solid;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .callout-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .callout-body { flex: 1; }
+    .callout-body strong { display: block; margin-bottom: 4px; font-size: 14px; }
+    .callout-body p { margin: 0; font-size: 13.5px; }
+    .callout-info { background: rgba(96,165,250,.08); border-color: rgba(96,165,250,.4); }
+    .callout-info .callout-body strong { color: var(--blue); }
+    .callout-warn { background: rgba(251,191,36,.08); border-color: rgba(251,191,36,.4); }
+    .callout-warn .callout-body strong { color: var(--text-accent); }
+    .callout-danger { background: rgba(248,113,113,.08); border-color: rgba(248,113,113,.4); }
+    .callout-danger .callout-body strong { color: var(--red); }
+    .callout-success { background: rgba(74,222,128,.08); border-color: rgba(74,222,128,.4); }
+    .callout-success .callout-body strong { color: var(--green); }
+
+    /* ── Steps ── */
+    .steps { counter-reset: step; margin: 16px 0; }
+    .step {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+      align-items: flex-start;
+    }
+    .step-num {
+      counter-increment: step;
+      flex-shrink: 0;
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--accent-dim);
+      color: var(--text-accent);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .step-body { flex: 1; }
+    .step-body strong { color: var(--text-pri); display: block; margin-bottom: 4px; }
+    .step-body p { margin: 0; font-size: 13.5px; }
+
+    /* ── API endpoint ── */
+    .endpoint {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-sub);
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 16px 0;
+    }
+    .endpoint-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-sub);
+      background: var(--bg-elevated);
+    }
+    .method {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+    .method-post { background: rgba(74,222,128,.15); color: var(--green); }
+    .method-get { background: rgba(96,165,250,.15); color: var(--blue); }
+    .method-delete { background: rgba(248,113,113,.15); color: var(--red); }
+    .endpoint-path {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: var(--text-pri);
+    }
+    .endpoint-desc { padding: 12px 16px; font-size: 13.5px; color: var(--text-sec); }
+
+    /* ── Architecture diagram ── */
+    .arch-diagram {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-sub);
+      border-radius: 12px;
+      padding: 32px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-sec);
+      margin: 20px 0;
+      line-height: 2;
+    }
+    .arch-diagram .hl { color: var(--text-accent); }
+    .arch-diagram .dim { color: var(--text-muted); }
+
+    /* ── TOC ── */
+    ul.toc { list-style: none; padding: 0; }
+    ul.toc li { margin: 4px 0; }
+    ul.toc a { color: var(--text-sec); text-decoration: none; font-size: 14px; }
+    ul.toc a:hover { color: var(--text-pri); }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border-sub);
+      margin-top: 80px;
+      padding-top: 32px;
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+<div class="layout">
+
+  <!-- ── Navigation ── -->
+  <nav class="nav">
+    <div class="nav-logo">
+      <span class="nav-hex">⬡</span>
+      <div>
+        <div class="nav-title">HexAi</div>
+        <div class="nav-version">v2.0.0 · Dokumentacja</div>
+      </div>
+    </div>
+
+    <div class="nav-section">Wprowadzenie</div>
+    <a href="#overview">Przegląd</a>
+    <a href="#architecture">Architektura</a>
+    <a href="#quickstart">Szybki start</a>
+
+    <div class="nav-section">Komponenty</div>
+    <a href="#backend">Backend (Python)</a>
+    <a href="#desktop">GUI Desktop (Tauri)</a>
+    <a href="#tui">TUI (Rust)</a>
+    <a href="#builder">Builder</a>
+
+    <div class="nav-section">API</div>
+    <a href="#api-chat">Czat</a>
+    <a href="#api-engine">Silnik &amp; Tryb</a>
+    <a href="#api-rag">RAG</a>
+    <a href="#api-media">Media</a>
+    <a href="#api-stats">Statystyki</a>
+
+    <div class="nav-section">Konfiguracja</div>
+    <a href="#config-models">Modele</a>
+    <a href="#config-redis">Redis</a>
+    <a href="#config-docker">Docker</a>
+
+    <div class="nav-section">Wdrożenie</div>
+    <a href="#deploy">Produkcja</a>
+    <a href="#troubleshoot">Rozwiązywanie problemów</a>
+  </nav>
+
+  <!-- ── Content ── -->
+  <main class="content">
+
+    <!-- Hero -->
+    <div class="hero">
+      <div class="hero-eyebrow">Dokumentacja techniczna</div>
+      <h1>HexAi – <em>Inteligentny</em><br>Asystent AI</h1>
+      <p>Lokalny, prywatny asystent AI z interfejsem desktopowym, terminalowym i REST API. Obsługuje LLM, RAG, transkrypcję audio, generowanie obrazów i bezpieczne wykonywanie kodu.</p>
+      <div class="badges">
+        <span class="badge badge-amber">Python 3.11–3.12</span>
+        <span class="badge badge-green">FastAPI 0.115</span>
+        <span class="badge badge-green">Rust 2021</span>
+        <span class="badge badge-blue">Tauri 2.0</span>
+        <span class="badge badge-blue">Next.js 14</span>
+      </div>
+    </div>
+
+    <!-- Overview -->
+    <section id="overview">
+      <h2>Przegląd</h2>
+      <p>HexAi to w pełni lokalny asystent AI, który nie wysyła żadnych danych do zewnętrznych serwerów. System składa się z czterech głównych komponentów:</p>
+
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-icon">⚙️</div>
+          <h4>Backend Python</h4>
+          <p>FastAPI REST API z obsługą LLM, RAG, pamięci, narzędzi i multimediów.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🖥️</div>
+          <h4>Desktop GUI</h4>
+          <p>Aplikacja Tauri + Next.js z eleganckim, ciemnym interfejsem inspirowanym Claude.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">⌨️</div>
+          <h4>TUI (Rust)</h4>
+          <p>Terminalowy interfejs użytkownika oparty na ratatui – szybki i lekki.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">📦</div>
+          <h4>Builder</h4>
+          <p>Narzędzie Rust do pakowania backendu Python w samodzielny plik wykonywalny.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Architecture -->
+    <section id="architecture">
+      <h2>Architektura</h2>
+
+      <div class="arch-diagram">
+<span class="hl">┌────────────────────────────────────────────────────────────┐</span>
+<span class="hl">│</span>                    <span class="hl">HexAi System</span>                           <span class="hl">│</span>
+<span class="hl">├──────────────┬──────────────┬──────────────────────────────────┤</span>
+<span class="hl">│  Desktop GUI │   TUI Rust   │          Builder Rust            │</span>
+<span class="hl">│  Tauri+Next  │  (ratatui)   │       (PyOxidizer wrapper)       │</span>
+<span class="hl">├──────────────┴──────────────┴──────────────────────────────────┤</span>
+<span class="hl">│</span>              <span class="hl">REST API  http://localhost:8000</span>                   <span class="hl">│</span>
+<span class="hl">├────────────────────────────────────────────────────────────────┤</span>
+<span class="hl">│</span>                    <span class="hl">HexAI Core (Python)</span>                        <span class="hl">│</span>
+<span class="hl">│</span>  <span class="dim">ModelManager</span>  │  <span class="dim">AdvancedRAG</span>  │  <span class="dim">PersistentMemory</span>  │  <span class="dim">Tools</span>   <span class="hl">│</span>
+<span class="hl">│</span>  <span class="dim">TTL cache</span>     │  <span class="dim">Hybrid BM25</span>  │  <span class="dim">Redis sessions</span>    │  <span class="dim">Docker</span>  <span class="hl">│</span>
+<span class="hl">│</span>  <span class="dim">GPU/CPU</span>       │  <span class="dim">Reranking</span>   │  <span class="dim">30-day facts</span>      │  <span class="dim">Search</span>  <span class="hl">│</span>
+<span class="hl">├──────────────┬──────────────┬──────────────────────────────────┤</span>
+<span class="hl">│</span> <span class="dim">Transformers</span>  <span class="hl">│</span>  <span class="dim">Ollama API</span>  <span class="hl">│</span>  <span class="dim">ChromaDB</span>   <span class="hl">│</span>  <span class="dim">Redis</span>  <span class="hl">│</span>  <span class="dim">Docker</span>  <span class="hl">│</span>
+<span class="hl">│</span> <span class="dim">Mistral-7B</span>    <span class="hl">│</span>  <span class="dim">llama2/code</span> <span class="hl">│</span>  <span class="dim">Vector DB</span>  <span class="hl">│</span>        <span class="hl">│</span>         <span class="hl">│</span>
+<span class="hl">└──────────────┴──────────────┴────────────┴────────┴─────────────┘</span>
+      </div>
+
+      <h3>Przepływ danych – czat (streaming)</h3>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <strong>Klient → POST /chat</strong>
+            <p>Frontend lub TUI wysyła <code>{ message, session_id, stream: true }</code> do API.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <strong>Sanityzacja &amp; kontekst</strong>
+            <p>Prompt jest sanityzowany, pobierana jest historia sesji z Redis oraz fakty o użytkowniku.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <strong>Generowanie odpowiedzi</strong>
+            <p>Model (Transformers lub Ollama) generuje odpowiedź – tokeny są strumieniowane do klienta przez <code>StreamingResponse</code>.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <strong>Wywołania narzędzi</strong>
+            <p>Jeśli odpowiedź zawiera wzorzec <code>{tool:name arg="val"}</code>, narzędzie jest wykonywane i wyniki dołączane do kontekstu (maks. 3 iteracje).</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">5</div>
+          <div class="step-body">
+            <strong>Zapis do pamięci</strong>
+            <p>Para (user_msg, assistant_msg) trafia do Redis i ChromaDB dla przyszłego recall.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quickstart -->
+    <section id="quickstart">
+      <h2>Szybki start</h2>
+
+      <h3>Wymagania wstępne</h3>
+      <table>
+        <tr><th>Narzędzie</th><th>Wersja</th><th>Uwagi</th></tr>
+        <tr><td>Python</td><td>3.11 lub 3.12</td><td>3.13 nie jest obsługiwana przez whisper</td></tr>
+        <tr><td>Redis</td><td>≥ 7</td><td>Pamięć sesji i faktów</td></tr>
+        <tr><td>CUDA</td><td>≥ 12 (opcjonalnie)</td><td>Wymagane dla trybu GPU</td></tr>
+        <tr><td>Docker</td><td>≥ 24</td><td>Sandbox do wykonywania kodu</td></tr>
+        <tr><td>Rust</td><td>≥ 1.78</td><td>Kompilacja TUI i Buildera</td></tr>
+        <tr><td>Node.js</td><td>≥ 20</td><td>Kompilacja GUI</td></tr>
+      </table>
+
+      <h3>Instalacja backendu</h3>
+      <div class="code-header"><span>bash</span><span>terminal</span></div>
+      <pre><code># 1. Sklonuj repozytorium
+git clone https://github.com/hackeros/hexai.git
+cd hexai/source-code
+
+# 2. Utwórz środowisko wirtualne
+python3.12 -m venv .venv
+source .venv/bin/activate
+
+# 3. Zainstaluj zależności
+pip install -r requirements.txt
+
+# 4. Uruchom Redis (Docker)
+docker run -d --name hexai-redis -p 6379:6379 redis:7-alpine
+
+# 5. Uruchom backend
+python main.py</code></pre>
+
+      <h3>Uruchomienie GUI Desktop</h3>
+      <div class="code-header"><span>bash</span><span>terminal</span></div>
+      <pre><code>cd gui
+npm install
+npm run tauri-dev      # tryb deweloperski
+# lub
+npm run build && npm run tauri   # produkcja</code></pre>
+
+      <h3>Uruchomienie TUI (Rust)</h3>
+      <div class="code-header"><span>bash</span><span>terminal</span></div>
+      <pre><code>cd tui
+cargo run --release</code></pre>
+
+      <div class="callout callout-info">
+        <div class="callout-icon">💡</div>
+        <div class="callout-body">
+          <strong>Backend musi być uruchomiony</strong>
+          <p>Zarówno GUI jak i TUI wymagają działającego backendu pod <code>http://localhost:8000</code>. Uruchom <code>python main.py</code> przed otwarciem interfejsu.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Backend -->
+    <section id="backend">
+      <h2>Backend Python</h2>
+
+      <h3>Klasy główne</h3>
+
+      <h4>ModelManager</h4>
+      <p>Zarządza cyklem życia modelu Transformers. Ładuje model na żądanie i zwalnia go po <code>idle_timeout</code> sekundach bezczynności (domyślnie 600 s = 10 min). Zapobiega wyciekaniu pamięci GPU.</p>
+
+      <h4>AdvancedRAG</h4>
+      <p>Hybrydowe wyszukiwanie: wektorowe (ChromaDB + SentenceTransformers) + BM25 (lexicalne). Wyniki są rerankowane przez CrossEncoder (<code>ms-marco-MiniLM-L-6-v2</code>). Parametr <code>alpha</code> kontroluje balans vector/BM25.</p>
+
+      <h4>PersistentMemory</h4>
+      <p>Historia rozmów przechowywana w Redis jako listy JSON. TTL: 24 h (konfigurowalny). Obsługuje <code>get_history</code>, <code>add_message</code>, <code>clear_session</code>, <code>list_sessions</code>.</p>
+
+      <h4>UserProfiler</h4>
+      <p>Automatycznie ekstrahuje fakty o użytkowniku z rozmów (regex patterns: preferencje, stos technologiczny). Fakty przechowywane 30 dni.</p>
+
+      <h4>DockerExecutor</h4>
+      <p>Bezpieczne wykonywanie kodu Python w izolowanym kontenerze. Limity: 128 MB RAM, 50% CPU, brak dostępu do sieci, timeout 10 s, uruchomienie jako <code>nobody</code>.</p>
+
+      <h3>System promptów</h3>
+      <table>
+        <tr><th>Tryb</th><th>Opis</th></tr>
+        <tr><td><code>general</code></td><td>Asystent ogólnego przeznaczenia, zwięzły i pomocny</td></tr>
+        <tr><td><code>programista</code></td><td>Ekspert programistyczny, dokładny kod z obsługą błędów</td></tr>
+      </table>
+
+      <h3>Wywoływanie narzędzi</h3>
+      <p>Model może wywoływać narzędzia przez wzorzec w odpowiedzi:</p>
+      <pre><code>{tool:search_web query="Python async generators"}
+{tool:get_weather city="Warsaw"}</code></pre>
+
+      <div class="callout callout-warn">
+        <div class="callout-icon">⚠️</div>
+        <div class="callout-body">
+          <strong>Python 3.13 – niekompatybilność</strong>
+          <p>Biblioteki <code>openai-whisper</code> i <code>melo</code> nie obsługują Python 3.13. Użyj Python 3.11 lub 3.12 dla pełnej funkcjonalności audio/TTS.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Desktop -->
+    <section id="desktop">
+      <h2>GUI Desktop (Tauri)</h2>
+      <p>Aplikacja desktopowa zbudowana na Tauri 2 + Next.js 14 + TypeScript. Interfejs inspirowany Claude.ai: ciemny motyw, typografia Instrument Serif, akcenty w kolorze bursztynu.</p>
+
+      <h3>Funkcje UI</h3>
+      <div class="card-grid">
+        <div class="card"><div class="card-icon">💬</div><h4>Streaming czat</h4><p>Odpowiedzi są wyświetlane token po tokenie w czasie rzeczywistym.</p></div>
+        <div class="card"><div class="card-icon">📚</div><h4>Historia rozmów</h4><p>Ostatnie 20 rozmów zapisanych w localStorage z automatycznym tytułowaniem.</p></div>
+        <div class="card"><div class="card-icon">🎨</div><h4>Markdown + kod</h4><p>Renderowanie Markdown z podświetlaniem składni (react-syntax-highlighter).</p></div>
+        <div class="card"><div class="card-icon">📎</div><h4>Załączniki</h4><p>Transkrypcja audio i analiza obrazów z podglądem wyników w czacie.</p></div>
+        <div class="card"><div class="card-icon">⚙️</div><h4>Ustawienia inline</h4><p>Przełączanie silnika (GPU/CPU) i trybu (Ogólny/Dev) bez przeładowania.</p></div>
+        <div class="card"><div class="card-icon">📊</div><h4>Monitor VRAM</h4><p>Pasek zużycia pamięci GPU aktualizowany co 5 sekund.</p></div>
+      </div>
+
+      <h3>Struktura katalogów GUI</h3>
+      <pre><code>gui/
+├── src/
+│   ├── pages/
+│   │   └── index.tsx        # Główny interfejs czatu
+│   ├── lib/
+│   │   └── api.ts           # Klient API (axios + fetch streaming)
+│   └── styles/
+│       └── globals.css      # Tailwind base
+├── src-tauri/
+│   ├── src/main.rs          # Tauri host (minimalny)
+│   ├── tauri.conf.json      # Konfiguracja okna i CSP
+│   └── Cargo.toml
+├── next.config.js           # output: 'export' (static)
+└── package.json</code></pre>
+    </section>
+
+    <!-- TUI -->
+    <section id="tui">
+      <h2>TUI (Rust)</h2>
+      <p>Interfejs terminalowy napisany w Rust przy użyciu <strong>ratatui</strong> i <strong>crossterm</strong>. Asynchroniczny (Tokio) z obsługą streamingu. Przepisany z Go dla lepszej wydajności i bezpieczeństwa typów.</p>
+
+      <h3>Skróty klawiszowe</h3>
+      <table>
+        <tr><th>Klawisz</th><th>Akcja</th></tr>
+        <tr><td><code>Enter</code></td><td>Wyślij wiadomość</td></tr>
+        <tr><td><code>Shift+Enter</code></td><td>Nowa linia w wiadomości</td></tr>
+        <tr><td><code>Ctrl+N</code></td><td>Nowa rozmowa (czyści historię)</td></tr>
+        <tr><td><code>Ctrl+S</code></td><td>Otwórz ustawienia</td></tr>
+        <tr><td><code>↑ / ↓</code></td><td>Przewijanie historii czatu</td></tr>
+        <tr><td><code>PgUp / PgDn</code></td><td>Szybkie przewijanie (10 linii)</td></tr>
+        <tr><td><code>?</code></td><td>Pomoc</td></tr>
+        <tr><td><code>Ctrl+C / Ctrl+Q</code></td><td>Wyjście</td></tr>
+      </table>
+
+      <h3>Architektura TUI</h3>
+      <p>Aplikacja używa wzorca event-loop z kanałami Tokio (<code>mpsc</code>):</p>
+      <ul style="color:var(--text-sec);padding-left:20px;line-height:2">
+        <li><strong>Tick task</strong> – odświeżanie animacji (80 ms)</li>
+        <li><strong>Stats task</strong> – polling /stats co 5 s</li>
+        <li><strong>Key task</strong> – nieblokujące czytanie klawiatury</li>
+        <li><strong>Stream task</strong> – tokio::spawn na żądanie czatu</li>
+      </ul>
+
+      <h3>Kompilacja</h3>
+      <div class="code-header"><span>bash</span></div>
+      <pre><code>cd tui
+cargo build --release
+./target/release/hexai-tui</code></pre>
+    </section>
+
+    <!-- Builder -->
+    <section id="builder">
+      <h2>Builder</h2>
+      <p>Narzędzie Rust do pakowania backendu Python w samodzielny, przenośny plik binarny przy użyciu <strong>PyOxidizer</strong>.</p>
+
+      <h3>Użycie</h3>
+      <div class="code-header"><span>bash</span></div>
+      <pre><code>cd builder
+cargo run --release -- --source ./source-code --out ./dist</code></pre>
+
+      <h3>Opcje</h3>
+      <table>
+        <tr><th>Flaga</th><th>Opis</th><th>Domyślnie</th></tr>
+        <tr><td><code>--source &lt;dir&gt;</code></td><td>Katalog z kodem Python</td><td><code>./source-code</code></td></tr>
+        <tr><td><code>--out &lt;dir&gt;</code></td><td>Katalog docelowy</td><td><code>.</code></td></tr>
+        <tr><td><code>--no-cleanup</code></td><td>Zachowaj pliki tymczasowe</td><td>false</td></tr>
+      </table>
+
+      <h3>Kroki budowania</h3>
+      <div class="steps">
+        <div class="step"><div class="step-num">1</div><div class="step-body"><strong>Walidacja</strong><p>Sprawdza czy katalog źródłowy i <code>main.py</code> istnieją.</p></div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-body"><strong>requirements.txt</strong><p>Generuje automatycznie jeśli brakuje (wykrywa importy przez regex).</p></div></div>
+        <div class="step"><div class="step-num">3</div><div class="step-body"><strong>PyOxidizer</strong><p>Instaluje jeśli nie dostępny (<code>pip install pyoxidizer</code>).</p></div></div>
+        <div class="step"><div class="step-num">4</div><div class="step-body"><strong>Konfiguracja</strong><p>Zapisuje <code>pyoxidizer.bzl</code> do katalogu źródłowego.</p></div></div>
+        <div class="step"><div class="step-num">5</div><div class="step-body"><strong>Budowanie</strong><p>Uruchamia <code>pyoxidizer build</code> – może trwać kilka minut.</p></div></div>
+        <div class="step"><div class="step-num">6</div><div class="step-body"><strong>Kopiowanie</strong><p>Szuka pliku <code>hexai</code> w katalogu <code>build/</code> i kopiuje do <code>--out</code>.</p></div></div>
+        <div class="step"><div class="step-num">7</div><div class="step-body"><strong>Sprzątanie</strong><p>Usuwa pliki tymczasowe (chyba że <code>--no-cleanup</code>).</p></div></div>
+      </div>
+
+      <div class="callout callout-warn">
+        <div class="callout-icon">⚠️</div>
+        <div class="callout-body">
+          <strong>Ograniczenia PyOxidizer</strong>
+          <p>Nie wszystkie pakiety z <code>requirements.txt</code> mogą być poprawnie spakowane – szczególnie <code>torch</code>, <code>bitsandbytes</code> i <code>chromadb</code>. Zalecane jest wdrożenie przez <code>venv</code> lub Docker w środowiskach produkcyjnych.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- API: Chat -->
+    <section id="api-chat">
+      <h2>API – Czat</h2>
+
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method method-post">POST</span>
+          <span class="endpoint-path">/chat</span>
+        </div>
+        <div class="endpoint-desc">
+          <p>Główny endpoint konwersacji. Obsługuje tryb streaming i nieblokujący.</p>
+          <pre><code>// Request
+{
+  "session_id": "string | null",
+  "message": "string",
+  "stream": false         // true → StreamingResponse (text/plain)
+}
+
+// Response (stream=false)
+{
+  "session_id": "uuid",
+  "response": "string"
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method method-get">GET</span>
+          <span class="endpoint-path">/sessions</span>
+        </div>
+        <div class="endpoint-desc">Lista aktywnych sesji z Redis.</div>
+      </div>
+
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method method-delete">DELETE</span>
+          <span class="endpoint-path">/session/{session_id}</span>
+        </div>
+        <div class="endpoint-desc">Usuwa historię sesji z Redis.</div>
+      </div>
+    </section>
+
+    <!-- API: Engine & Mode -->
+    <section id="api-engine">
+      <h2>API – Silnik &amp; Tryb</h2>
+
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method method-post">POST</span>
+          <span class="endpoint-path">/engine</span>
+        </div>
+        <div class="endpoint-desc">
+          <pre><code>{ "engine": "transformers" }   // GPU
+{ "engine": "ollama" }         // CPU</code></pre>
+        </div>
+      </div>
+
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method method-post">POST</span>
+          <span class="endpoint-path">/mode</span>
+        </div>
+        <div class="endpoint-desc">
+          <pre><code>{ "mode": "general" }
+{ "mode": "programista" }</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- API: RAG -->
+    <section id="api-rag">
+      <h2>API – RAG</h2>
+
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method method-post">POST</span>
+          <span class="endpoint-path">/rag</span>
+        </div>
+        <div class="endpoint-desc">
+          <p>Zapytanie do bazy wiedzy (hybrydowe wyszukiwanie + reranking).</p>
+          <pre><code>{ "query": "string" }</code></pre>
+        </div>
+      </div>
+
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method method-post">POST</span>
+          <span class="endpoint-path">/ingest</span>
+        </div>
+        <div class="endpoint-desc">
+          <p>Indeksuje dokument (URL, PDF, plik tekstowy) w ChromaDB.</p>
+          <pre><code>{
+  "source": "https://example.com/doc.pdf",
+  "chunk_size": 500,
+  "chunk_overlap": 100
+}</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- API: Media -->
+    <section id="api-media">
+      <h2>API – Media</h2>
+
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method method-post">POST</span>
+          <span class="endpoint-path">/transcribe</span>
+        </div>
+        <div class="endpoint-desc">Transkrypcja audio (Whisper small). <code>multipart/form-data</code> – pole <code>file</code>.</div>
+      </div>
+
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method method-post">POST</span>
+          <span class="endpoint-path">/analyze_image</span>
+        </div>
+        <div class="endpoint-desc">Analiza obrazu (LLaVA 1.5-7B). Pola: <code>file</code> (obraz), <code>prompt</code> (tekst).</div>
+      </div>
+
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method method-post">POST</span>
+          <span class="endpoint-path">/generate_image</span>
+        </div>
+        <div class="endpoint-desc">Generowanie obrazu (Stable Diffusion v1.4). Zwraca <code>image_base64</code>.</div>
+      </div>
+
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method method-get">GET</span>
+          <span class="endpoint-path">/tts?text=...</span>
+        </div>
+        <div class="endpoint-desc">Synteza mowy (MeloTTS, język PL). Zwraca <code>audio/wav</code>.</div>
+      </div>
+    </section>
+
+    <!-- API: Stats -->
+    <section id="api-stats">
+      <h2>API – Statystyki</h2>
+
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method method-get">GET</span>
+          <span class="endpoint-path">/stats</span>
+        </div>
+        <div class="endpoint-desc">
+          <pre><code>{
+  "engine": "transformers",
+  "mode": "general",
+  "vram_used_gb": 4.2,
+  "vram_total_gb": 8.0,
+  "active_sessions": 3,
+  "history_len": 0,
+  "model_loaded": true,
+  "model_idle_seconds": 42.1
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method method-get">GET</span>
+          <span class="endpoint-path">/health</span>
+        </div>
+        <div class="endpoint-desc">Prosty health check. Zwraca <code>{ "status": "ok", "version": "2.0.0" }</code>.</div>
+      </div>
+    </section>
+
+    <!-- Config: Models -->
+    <section id="config-models">
+      <h2>Konfiguracja – Modele</h2>
+
+      <h3>Transformers (GPU)</h3>
+      <p>Domyślny model: <code>mistralai/Mistral-7B-v0.1</code> z kwantyzacją 4-bit (NF4). Wymaga VRAM ≥ 6 GB.</p>
+      <p>Aby zmienić model, edytuj <code>ModelManager._load_model()</code> w <code>main.py</code>:</p>
+      <pre><code>model_id = "meta-llama/Llama-3-8B-Instruct"  # przykład</code></pre>
+
+      <h3>Ollama (CPU)</h3>
+      <p>Ollama musi być zainstalowany i uruchomiony osobno:</p>
+      <div class="code-header"><span>bash</span></div>
+      <pre><code>curl -fsSL https://ollama.ai/install.sh | sh
+ollama pull llama2
+ollama pull codellama:7b-instruct   # dla trybu programista</code></pre>
+    </section>
+
+    <!-- Config: Redis -->
+    <section id="config-redis">
+      <h2>Konfiguracja – Redis</h2>
+      <p>Redis jest wymagany do przechowywania historii sesji i faktów o użytkownikach.</p>
+      <div class="code-header"><span>bash</span></div>
+      <pre><code># Docker (zalecane)
+docker run -d --name hexai-redis -p 6379:6379 redis:7-alpine
+
+# Ubuntu/Debian
+sudo apt install redis-server
+sudo systemctl start redis</code></pre>
+
+      <p>Zmiana hosta/portu Redis – edytuj w <code>main.py</code>:</p>
+      <pre><code>self.redis = redis.Redis(host="localhost", port=6379, ...)</code></pre>
+    </section>
+
+    <!-- Config: Docker -->
+    <section id="config-docker">
+      <h2>Konfiguracja – Docker (sandbox)</h2>
+      <p>Docker jest opcjonalny – używany tylko do bezpiecznego wykonywania kodu Python przez narzędzie <code>run_python</code>.</p>
+
+      <div class="callout callout-success">
+        <div class="callout-icon">✅</div>
+        <div class="callout-body">
+          <strong>Bezpieczeństwo sandboxu</strong>
+          <p>Każde wykonanie kodu działa w izolowanym kontenerze: brak sieci, limit 128 MB RAM, 50% CPU, uruchomione jako <code>nobody</code>, timeout 10 s, automatyczne usuwanie kontenera.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Deploy -->
+    <section id="deploy">
+      <h2>Wdrożenie produkcyjne</h2>
+
+      <h3>Systemd service</h3>
+      <div class="code-header"><span>ini</span><span>/etc/systemd/system/hexai.service</span></div>
+      <pre><code>[Unit]
+Description=HexAi Backend
+After=network.target redis.service
+
+[Service]
+User=hexai
+WorkingDirectory=/opt/hexai/source-code
+Environment="PATH=/opt/hexai/.venv/bin"
+ExecStart=/opt/hexai/.venv/bin/python main.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target</code></pre>
+
+      <div class="code-header"><span>bash</span></div>
+      <pre><code>sudo systemctl enable --now hexai</code></pre>
+
+      <h3>Nginx reverse proxy</h3>
+      <pre><code>server {
+    listen 80;
+    server_name hexai.local;
+
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_buffering off;   # wymagane dla streamingu
+        proxy_read_timeout 300s;
+    }
+}</code></pre>
+
+      <div class="callout callout-danger">
+        <div class="callout-icon">🔒</div>
+        <div class="callout-body">
+          <strong>Bezpieczeństwo</strong>
+          <p>Nie wystawiaj portu 8000 bezpośrednio na internet. Używaj Nginx z HTTPS i autoryzacją w środowiskach produkcyjnych. Klucze API (SERPER_API_KEY) przechowuj w zmiennych środowiskowych, nie w kodzie.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Troubleshoot -->
+    <section id="troubleshoot">
+      <h2>Rozwiązywanie problemów</h2>
+
+      <h3>SyntaxError: 'return' with value in async generator</h3>
+      <p>Naprawiono w v2.0.0. Metody generujące odpowiedzi są teraz konsekwentnie async generatorami (<code>yield</code> zamiast <code>return</code>).</p>
+
+      <h3>Cannot connect to Redis</h3>
+      <pre><code>docker start hexai-redis
+# lub sprawdź status:
+redis-cli ping</code></pre>
+
+      <h3>CUDA out of memory</h3>
+      <p>Zredukuj <code>max_new_tokens</code> w <code>_generate_transformers()</code> lub użyj silnika Ollama (CPU).</p>
+
+      <h3>Model nie ładuje się</h3>
+      <p>Upewnij się, że zaakceptowałeś warunki licencji Mistral na HuggingFace i masz token API ustawiony:</p>
+      <pre><code>huggingface-cli login</code></pre>
+
+      <h3>TUI – brak połączenia z API</h3>
+      <p>Upewnij się, że backend działa: <code>curl http://localhost:8000/health</code></p>
+    </section>
+
+    <footer>
+      <p>HexAi v2.0.0 · GPL-3.0 · HackerOS Team · <a href="mailto:hackeros068@gmail.com" style="color:var(--accent)">hackeros068@gmail.com</a></p>
+      <p style="margin-top:6px">Dokumentacja wygenerowana automatycznie. Ostatnia aktualizacja: 2025.</p>
+    </footer>
+
+  </main>
+</div>
+</body>
+</html>
