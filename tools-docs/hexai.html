@@ -404,7 +404,7 @@
     <div class="nav-section">Komponenty</div>
     <a href="#backend">Backend (Python)</a>
     <a href="#desktop">GUI Desktop (Tauri)</a>
-    <a href="#tui">TUI (Rust)</a>
+    <a href="#tui">TUI (Go)</a>
     <a href="#builder">Builder</a>
 
     <div class="nav-section">API</div>
@@ -459,8 +459,8 @@
         </div>
         <div class="card">
           <div class="card-icon">⌨️</div>
-          <h4>TUI (Rust)</h4>
-          <p>Terminalowy interfejs użytkownika oparty na ratatui – szybki i lekki.</p>
+          <h4>TUI (Go)</h4>
+          <p>Terminalowy interfejs użytkownika oparty na Bubble Tea – szybki i lekki.</p>
         </div>
         <div class="card">
           <div class="card-icon">📦</div>
@@ -479,7 +479,7 @@
 <span class="hl">│</span>                    <span class="hl">HexAi System</span>                           <span class="hl">│</span>
 <span class="hl">├──────────────┬──────────────┬──────────────────────────────────┤</span>
 <span class="hl">│  Desktop GUI │   TUI Rust   │          Builder Rust            │</span>
-<span class="hl">│  Tauri+Next  │  (ratatui)   │       (PyOxidizer wrapper)       │</span>
+<span class="hl">│  Tauri+Next  │  (Bubble Tea)   │       (PyOxidizer wrapper)       │</span>
 <span class="hl">├──────────────┴──────────────┴──────────────────────────────────┤</span>
 <span class="hl">│</span>              <span class="hl">REST API  http://localhost:8000</span>                   <span class="hl">│</span>
 <span class="hl">├────────────────────────────────────────────────────────────────┤</span>
@@ -537,56 +537,72 @@
     <section id="quickstart">
       <h2>Szybki start</h2>
 
-      <h3>Wymagania wstępne</h3>
-      <table>
-        <tr><th>Narzędzie</th><th>Wersja</th><th>Uwagi</th></tr>
-        <tr><td>Python</td><td>3.11 lub 3.12</td><td>3.13 nie jest obsługiwana przez whisper</td></tr>
-        <tr><td>Redis</td><td>≥ 7</td><td>Pamięć sesji i faktów</td></tr>
-        <tr><td>CUDA</td><td>≥ 12 (opcjonalnie)</td><td>Wymagane dla trybu GPU</td></tr>
-        <tr><td>Docker</td><td>≥ 24</td><td>Sandbox do wykonywania kodu</td></tr>
-        <tr><td>Rust</td><td>≥ 1.78</td><td>Kompilacja TUI i Buildera</td></tr>
-        <tr><td>Node.js</td><td>≥ 20</td><td>Kompilacja GUI</td></tr>
-      </table>
+      <h3>Instalacja w HackerOS</h3>
+      <p>HexAi jest natywną aplikacją HackerOS. Instalacja jedną komendą:</p>
+      <div class="code-header"><span>bash</span><span>HackerOS Terminal</span></div>
+      <pre><code>hacker unpack hexai</code></pre>
 
-      <h3>Instalacja backendu</h3>
-      <div class="code-header"><span>bash</span><span>terminal</span></div>
-      <pre><code># 1. Sklonuj repozytorium
-git clone https://github.com/hackeros/hexai.git
-cd hexai/source-code
+      <p>Aby usunąć HexAi z systemu:</p>
+      <div class="code-header"><span>bash</span></div>
+      <pre><code>hacker pack hexai</code></pre>
 
-# 2. Utwórz środowisko wirtualne
-python3.12 -m venv .venv
-source .venv/bin/activate
-
-# 3. Zainstaluj zależności
-pip install -r requirements.txt
-
-# 4. Uruchom Redis (Docker)
-docker run -d --name hexai-redis -p 6379:6379 redis:7-alpine
-
-# 5. Uruchom backend
-python main.py</code></pre>
-
-      <h3>Uruchomienie GUI Desktop</h3>
-      <div class="code-header"><span>bash</span><span>terminal</span></div>
-      <pre><code>cd gui
-npm install
-npm run tauri-dev      # tryb deweloperski
-# lub
-npm run build && npm run tauri   # produkcja</code></pre>
-
-      <h3>Uruchomienie TUI (Rust)</h3>
-      <div class="code-header"><span>bash</span><span>terminal</span></div>
-      <pre><code>cd tui
-cargo run --release</code></pre>
-
-      <div class="callout callout-info">
-        <div class="callout-icon">💡</div>
+      <div class="callout callout-success">
+        <div class="callout-icon">✅</div>
         <div class="callout-body">
-          <strong>Backend musi być uruchomiony</strong>
-          <p>Zarówno GUI jak i TUI wymagają działającego backendu pod <code>http://localhost:8000</code>. Uruchom <code>python main.py</code> przed otwarciem interfejsu.</p>
+          <strong>Automatyczne zarządzanie zależnościami</strong>
+          <p>Komendy <code>hacker unpack</code> i <code>hacker pack</code> automatycznie obsługują wszystkie zależności – Redis, Python venv, modele AI, sterowniki GPU i komponenty systemowe. Nie trzeba nic konfigurować ręcznie.</p>
         </div>
       </div>
+
+      <h3>Uruchomienie po instalacji</h3>
+      <p>Po wykonaniu <code>hacker unpack hexai</code> wszystkie komponenty są gotowe do użycia:</p>
+      <div class="code-header"><span>bash</span></div>
+      <pre><code># Backend API (wymagany dla GUI i TUI)
+hexai-server
+
+# GUI Desktop
+hexai-gui
+
+# Terminal UI
+hexai-tui
+
+# Weryfikacja działania API
+curl http://localhost:8000/health</code></pre>
+
+      <h3>Wymagania sprzętowe</h3>
+      <table>
+        <tr><th>Tryb</th><th>RAM</th><th>VRAM</th><th>Procesor</th></tr>
+        <tr><td>GPU (Transformers)</td><td>8 GB</td><td>≥ 6 GB</td><td>Dowolny x86-64</td></tr>
+        <tr><td>CPU (Ollama)</td><td>16 GB</td><td>Brak</td><td>x86-64 z AVX2</td></tr>
+      </table>
+
+      <h3>Instalacja manualna (poza HackerOS)</h3>
+      <p>Możliwa na innych dystrybucjach Linuksa ze źródeł:</p>
+      <div class="code-header"><span>bash</span></div>
+      <pre><code># Zależności
+python3.12 -m venv .venv && source .venv/bin/activate
+docker run -d --name hexai-redis -p 6379:6379 redis:7-alpine
+
+# Backend
+cd source-code
+pip install -r requirements.txt
+python main.py
+
+# GUI (w osobnym terminalu)
+cd gui && npm install && npm run tauri-dev
+
+# TUI (w osobnym terminalu)
+cd tui && go run main.go</code></pre>
+
+      <table>
+        <tr><th>Narzędzie</th><th>Wersja</th><th>Uwagi</th></tr>
+        <tr><td>Python</td><td>3.11 lub 3.12</td><td>3.13 nie obsługuje whisper/melo</td></tr>
+        <tr><td>Redis</td><td>≥ 7</td><td>Pamięć sesji i faktów</td></tr>
+        <tr><td>CUDA</td><td>≥ 12 (opt.)</td><td>Tryb GPU (Transformers)</td></tr>
+        <tr><td>Docker</td><td>≥ 24 (opt.)</td><td>Sandbox do wykonywania kodu</td></tr>
+        <tr><td>Go</td><td>≥ 1.22</td><td>Kompilacja TUI</td></tr>
+        <tr><td>Node.js</td><td>≥ 20</td><td>Kompilacja GUI</td></tr>
+      </table>
     </section>
 
     <!-- Backend -->
@@ -665,8 +681,8 @@ cargo run --release</code></pre>
 
     <!-- TUI -->
     <section id="tui">
-      <h2>TUI (Rust)</h2>
-      <p>Interfejs terminalowy napisany w Rust przy użyciu <strong>ratatui</strong> i <strong>crossterm</strong>. Asynchroniczny (Tokio) z obsługą streamingu. Przepisany z Go dla lepszej wydajności i bezpieczeństwa typów.</p>
+      <h2>TUI (Go)</h2>
+      <p>Interfejs terminalowy napisany w Go przy użyciu <strong>Bubble Tea</strong>, <strong>Bubbles</strong> i <strong>Lip Gloss</strong>. Streaming odpowiedzi w czasie rzeczywistym, piękny ciemny motyw inspirowany Claude.</p>
 
       <h3>Skróty klawiszowe</h3>
       <table>
@@ -674,27 +690,31 @@ cargo run --release</code></pre>
         <tr><td><code>Enter</code></td><td>Wyślij wiadomość</td></tr>
         <tr><td><code>Shift+Enter</code></td><td>Nowa linia w wiadomości</td></tr>
         <tr><td><code>Ctrl+N</code></td><td>Nowa rozmowa (czyści historię)</td></tr>
-        <tr><td><code>Ctrl+S</code></td><td>Otwórz ustawienia</td></tr>
-        <tr><td><code>↑ / ↓</code></td><td>Przewijanie historii czatu</td></tr>
-        <tr><td><code>PgUp / PgDn</code></td><td>Szybkie przewijanie (10 linii)</td></tr>
+        <tr><td><code>Ctrl+S</code></td><td>Otwórz / zamknij ustawienia</td></tr>
+        <tr><td><code>↑ / ↓ / PgUp / PgDn</code></td><td>Przewijanie historii czatu</td></tr>
         <tr><td><code>?</code></td><td>Pomoc</td></tr>
         <tr><td><code>Ctrl+C / Ctrl+Q</code></td><td>Wyjście</td></tr>
       </table>
 
       <h3>Architektura TUI</h3>
-      <p>Aplikacja używa wzorca event-loop z kanałami Tokio (<code>mpsc</code>):</p>
+      <p>Aplikacja oparta na architekturze Elm (Model–Update–View) z biblioteką Bubble Tea:</p>
       <ul style="color:var(--text-sec);padding-left:20px;line-height:2">
-        <li><strong>Tick task</strong> – odświeżanie animacji (80 ms)</li>
-        <li><strong>Stats task</strong> – polling /stats co 5 s</li>
-        <li><strong>Key task</strong> – nieblokujące czytanie klawiatury</li>
-        <li><strong>Stream task</strong> – tokio::spawn na żądanie czatu</li>
+        <li><strong>Model</strong> – niezmenny stan aplikacji (wiadomości, ustawienia, stats)</li>
+        <li><strong>Update</strong> – czysta funkcja reagująca na zdarzenia (klawiatura, sieć, timer)</li>
+        <li><strong>View</strong> – renderowanie terminala przez Lip Gloss (styled strings)</li>
+        <li><strong>Streaming</strong> – goroutine czyta odpowiedź chunkami i wysyła przez <code>p.Send()</code></li>
+        <li><strong>Stats polling</strong> – <code>tea.Tick</code> co 5 s odpytuje <code>/stats</code></li>
       </ul>
 
-      <h3>Kompilacja</h3>
+      <h3>Uruchomienie / kompilacja</h3>
       <div class="code-header"><span>bash</span></div>
       <pre><code>cd tui
-cargo build --release
-./target/release/hexai-tui</code></pre>
+# Tryb deweloperski
+go run main.go
+
+# Kompilacja binarna
+go build -o hexai-tui .
+./hexai-tui</code></pre>
     </section>
 
     <!-- Builder -->
