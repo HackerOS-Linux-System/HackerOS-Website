@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Hacker Term — Dokumentacja | HackerOS</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+  :root {
+    --bg:        #080810;
+    --bg2:       #0e0e1c;
+    --bg3:       #141426;
+    --glass:     rgba(20,20,40,0.6);
+    --glass2:    rgba(30,30,60,0.4);
+    --border:    rgba(80,80,160,0.25);
+    --accent:    #00ffd9;
+    --accent2:   #aa66ff;
+    --accent3:   #ff3d5c;
+    --fg:        #e2e8ff;
+    --fg-mid:    #99aadd;
+    --fg-dim:    #556688;
+    --mono:      'Space Mono', monospace;
+    --sans:      'Outfit', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--fg);
+    line-height: 1.7;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── Animated background ─────────────────────────────────────────────── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 15% 20%, rgba(0,255,217,0.07) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 60% at 85% 80%, rgba(170,102,255,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 50% 50%, rgba(255,61,92,0.04) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── Grid overlay ────────────────────────────────────────────────────── */
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,255,217,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,255,217,0.025) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrap {
+    position: relative; z-index: 1;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+  }
+
+  /* ── Hero ────────────────────────────────────────────────────────────── */
+  .hero {
+    padding: 80px 0 60px;
+    text-align: center;
+  }
+
+  .hero-eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    opacity: 0.8;
+  }
+
+  .hero h1 {
+    font-size: clamp(2.8rem, 6vw, 4.8rem);
+    font-weight: 800;
+    letter-spacing: -1px;
+    line-height: 1.05;
+    background: linear-gradient(135deg, var(--accent) 0%, #66ffee 40%, var(--accent2) 80%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 16px;
+  }
+
+  .hero-sub {
+    font-size: 1.15rem;
+    color: var(--fg-mid);
+    font-weight: 300;
+    max-width: 560px;
+    margin: 0 auto 36px;
+  }
+
+  .badge-row {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 48px;
+  }
+
+  .badge {
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--glass);
+    color: var(--fg-mid);
+    letter-spacing: 1px;
+  }
+  .badge.accent  { border-color: rgba(0,255,217,0.4); color: var(--accent);  background: rgba(0,255,217,0.06); }
+  .badge.accent2 { border-color: rgba(170,102,255,0.4); color: var(--accent2); background: rgba(170,102,255,0.06); }
+  .badge.red     { border-color: rgba(255,61,92,0.4); color: #ff6680; background: rgba(255,61,92,0.06); }
+
+  /* ── Divider ─────────────────────────────────────────────────────────── */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 56px 0;
+  }
+
+  /* ── Sections ────────────────────────────────────────────────────────── */
+  .section-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    opacity: 0.7;
+  }
+
+  h2 {
+    font-size: 1.9rem;
+    font-weight: 700;
+    margin-bottom: 18px;
+    color: var(--fg);
+  }
+
+  h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--accent);
+  }
+
+  p { color: var(--fg-mid); margin-bottom: 16px; }
+
+  /* ── Cards ────────────────────────────────────────────────────────────── */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .card {
+    background: var(--glass);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    transition: border-color 0.2s, background 0.2s, transform 0.2s;
+    backdrop-filter: blur(12px);
+  }
+  .card:hover {
+    border-color: rgba(0,255,217,0.35);
+    background: rgba(0,255,217,0.04);
+    transform: translateY(-2px);
+  }
+
+  .card-icon {
+    font-size: 1.8rem;
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .card h3 { font-size: 1rem; margin-bottom: 6px; }
+  .card p  { font-size: 0.88rem; margin-bottom: 0; }
+
+  /* ── Code blocks ─────────────────────────────────────────────────────── */
+  .code-block {
+    background: rgba(5, 5, 15, 0.85);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 20px 0;
+  }
+
+  .code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(0,0,0,0.3);
+  }
+
+  .code-title {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--fg-dim);
+    letter-spacing: 1px;
+  }
+
+  .code-dots { display: flex; gap: 6px; }
+  .code-dots span { width: 10px; height: 10px; border-radius: 50%; }
+  .code-dots .r { background: #ff5f57; }
+  .code-dots .y { background: #febc2e; }
+  .code-dots .g { background: #28c840; }
+
+  pre {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    line-height: 1.8;
+    padding: 20px 20px;
+    overflow-x: auto;
+    color: var(--fg);
+  }
+
+  .tok-comment { color: #556688; font-style: italic; }
+  .tok-key     { color: var(--accent); }
+  .tok-val     { color: #ffcc66; }
+  .tok-str     { color: #88ffaa; }
+  .tok-bool    { color: var(--accent2); }
+  .tok-num     { color: #ff9966; }
+  .tok-section { color: var(--fg-mid); font-weight: 700; }
+  .tok-hash    { color: #ff6680; }
+
+  /* ── Keybinding table ─────────────────────────────────────────────────── */
+  .kb-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 0.9rem;
+  }
+
+  .kb-table thead tr {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .kb-table th {
+    text-align: left;
+    padding: 10px 14px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--accent);
+    text-transform: uppercase;
+    font-weight: 400;
+  }
+
+  .kb-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    color: var(--fg-mid);
+    vertical-align: middle;
+  }
+
+  .kb-table tr:last-child td { border-bottom: none; }
+
+  .kb-table tr:hover td {
+    background: rgba(0,255,217,0.03);
+    color: var(--fg);
+  }
+
+  kbd {
+    font-family: var(--mono);
+    font-size: 11px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 5px;
+    padding: 2px 7px;
+    color: var(--accent);
+    white-space: nowrap;
+    box-shadow: 0 2px 0 rgba(0,0,0,0.4);
+  }
+
+  /* ── Options table ────────────────────────────────────────────────────── */
+  .opt-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+    margin: 16px 0;
+  }
+  .opt-table th {
+    text-align: left;
+    padding: 8px 12px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    color: var(--accent2);
+    text-transform: uppercase;
+    font-weight: 400;
+    border-bottom: 1px solid var(--border);
+  }
+  .opt-table td {
+    padding: 9px 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    color: var(--fg-mid);
+    vertical-align: top;
+  }
+  .opt-table td:first-child { font-family: var(--mono); color: var(--accent); font-size: 12px; }
+  .opt-table td:nth-child(2){ color: var(--fg-dim); font-size: 0.82rem; }
+  .opt-table td:nth-child(3){ color: #ffcc66; font-family: var(--mono); font-size: 11px; }
+  .opt-table tr:last-child td { border-bottom: none; }
+  .opt-table tr:hover td { background: rgba(170,102,255,0.04); }
+
+  /* ── Nav ──────────────────────────────────────────────────────────────── */
+  nav {
+    position: sticky;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: rgba(8,8,16,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+  }
+
+  .nav-inner {
+    max-width: 960px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+  }
+
+  .nav-logo {
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent);
+    text-decoration: none;
+    letter-spacing: 2px;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 28px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 12px;
+    color: var(--fg-dim);
+    text-decoration: none;
+    letter-spacing: 0.5px;
+    transition: color 0.15s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+
+  /* ── Highlight box ────────────────────────────────────────────────────── */
+  .highlight-box {
+    background: rgba(0,255,217,0.05);
+    border: 1px solid rgba(0,255,217,0.25);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin: 20px 0;
+  }
+  .highlight-box p { margin-bottom: 0; }
+
+  .warn-box {
+    background: rgba(255,61,92,0.05);
+    border: 1px solid rgba(255,61,92,0.3);
+    border-radius: 12px;
+    padding: 18px 24px;
+    margin: 20px 0;
+    color: #ff8899;
+    font-size: 0.9rem;
+  }
+
+  /* ── Footer ───────────────────────────────────────────────────────────── */
+  footer {
+    text-align: center;
+    padding: 48px 24px 32px;
+    border-top: 1px solid var(--border);
+    color: var(--fg-dim);
+    font-size: 0.85rem;
+    position: relative; z-index: 1;
+  }
+  footer span { color: var(--accent); }
+
+  /* ── Scrollbar ────────────────────────────────────────────────────────── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(0,255,217,0.3); }
+
+  /* ── Fade-in animations ───────────────────────────────────────────────── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .hero { animation: fadeUp 0.7s ease both; }
+  .card { animation: fadeUp 0.5s ease both; }
+</style>
+</head>
+<body>
+
+<!-- ── Navigation ──────────────────────────────────────────────────────────── -->
+<nav>
+  <div class="nav-inner">
+    <a class="nav-logo" href="#">⚡ HACKER TERM</a>
+    <ul class="nav-links">
+      <li><a href="#overview">Przegląd</a></li>
+      <li><a href="#config">Konfiguracja</a></li>
+      <li><a href="#keybindings">Skróty</a></li>
+      <li><a href="#effects">Efekty</a></li>
+      <li><a href="#colors">Kolory</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ── Hero ────────────────────────────────────────────────────────────────── -->
+<div class="wrap">
+  <section class="hero">
+    <div class="hero-eyebrow">Dokumentacja · HackerOS Terminal</div>
+    <h1>Hacker Term</h1>
+    <p class="hero-sub">
+      Nowoczesny terminal dla HackerOS — płynne animacje, pełne truecolor,
+      obsługa zakładek i rozbudowana konfiguracja.
+    </p>
+    <div class="badge-row">
+      <span class="badge accent">v0.6.0</span>
+      <span class="badge accent2">Slint UI</span>
+      <span class="badge">Rust</span>
+      <span class="badge">xterm-256color</span>
+      <span class="badge red">Sixel</span>
+      <span class="badge">HackerOS wbudowany</span>
+    </div>
+  </section>
+
+  <!-- ── Overview ──────────────────────────────────────────────────────────── -->
+  <section id="overview">
+    <div class="section-label">// 01 — Przegląd</div>
+    <h2>Co to jest Hacker Term?</h2>
+    <p>
+      Hacker Term jest domyślnym, wbudowanym emulatorem terminala systemu HackerOS.
+      Działa obok Alacritty i jest zoptymalizowany pod kątem estetyki hakerskiej —
+      neonowe poświaty, animowane tło, efekt CRT i płynny kursor interpolowany
+      w czasie rzeczywistym.
+    </p>
+
+    <div class="card-grid">
+      <div class="card">
+        <span class="card-icon">🎨</span>
+        <h3>Glassmorphism UI</h3>
+        <p>Pasek tytułowy i zakładki ze szklanym efektem. Animowane neony w tle reagują na czas.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">⚡</span>
+        <h3>60 fps rendering</h3>
+        <p>Differential rendering rysuje tylko zmienione komórki. Motion blur wygładza szybkie zmiany.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">🖼️</span>
+        <h3>Sixel & Truecolor</h3>
+        <p>Pełna obsługa 24-bit RGB i protokołu Sixel — wyświetlaj obrazy bezpośrednio w terminalu.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">🗂️</span>
+        <h3>Zakładki z przeciąganiem</h3>
+        <p>Nieskończona liczba zakładek, przeciąganie, sesje — stan zapisywany automatycznie.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔧</span>
+        <h3>Rozbudowana konfiguracja</h3>
+        <p>Plik <code>config.hk</code> pozwala dostosować każdy szczegół — kolory, efekty, skróty, czcionki.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">🖱️</span>
+        <h3>Zaznaczanie myszą</h3>
+        <p>Prostokątne zaznaczanie tekstu, automatyczne kopiowanie do schowka po puszczeniu przycisku.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── Config ─────────────────────────────────────────────────────────────── -->
+  <section id="config">
+    <div class="section-label">// 02 — Konfiguracja</div>
+    <h2>Plik konfiguracyjny</h2>
+    <p>
+      Konfiguracja znajduje się w:
+      <code style="color:var(--accent);font-family:var(--mono)">~/.config/hacker-term/config.hk</code>
+      Jeśli plik nie istnieje, zostanie użyta konfiguracja domyślna.
+      Format <code>.hk</code> obsługuje komentarze, interpolacje zmiennych i sekcje.
+    </p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+        <span class="code-title">~/.config/hacker-term/config.hk</span>
+      </div>
+      <pre><span class="tok-comment"># ── Hacker Term — plik konfiguracyjny ────────────────────────────────────</span>
+
+<span class="tok-section">general</span> {
+  <span class="tok-key">font_size</span>            = <span class="tok-num">14.5</span>
+  <span class="tok-key">shell</span>                = <span class="tok-str">"/bin/zsh"</span>
+  <span class="tok-key">padding</span>              = <span class="tok-num">12</span>
+  <span class="tok-key">window_transparency</span>  = <span class="tok-num">255</span>     <span class="tok-comment"># 0-255, 255 = nieprzezroczyste</span>
+  <span class="tok-key">motion_blur_strength</span> = <span class="tok-num">0.18</span>    <span class="tok-comment"># 0.0 = wyłączone, 1.0 = maksymalne</span>
+  <span class="tok-key">throttle_keyboard_ms</span> = <span class="tok-num">8</span>
+  <span class="tok-key">scrollback_lines</span>     = <span class="tok-num">10000</span>
+  <span class="tok-key">tab_bar_style</span>        = <span class="tok-str">"glass"</span>  <span class="tok-comment"># glass | flat</span>
+}
+
+<span class="tok-section">font</span> {
+  <span class="tok-key">path</span>       = <span class="tok-str">""</span>       <span class="tok-comment"># pusta = auto-detect; np. "/usr/share/fonts/TTF/Hack-Regular.ttf"</span>
+  <span class="tok-key">size</span>       = <span class="tok-num">14.5</span>
+  <span class="tok-key">bold_size</span>  = <span class="tok-num">14.5</span>
+  <span class="tok-key">italic</span>     = <span class="tok-bool">true</span>
+}
+
+<span class="tok-section">colors</span> {
+  <span class="tok-key">bg</span>               = <span class="tok-str">"#0F0F1A"</span>
+  <span class="tok-key">fg</span>               = <span class="tok-str">"#E2E8FF"</span>
+  <span class="tok-key">cursor</span>           = <span class="tok-str">"#00FFD9"</span>
+  <span class="tok-key">glow1</span>            = <span class="tok-str">"#00FFD9"</span>   <span class="tok-comment"># kolor neonu nr 1 (tło + ramka)</span>
+  <span class="tok-key">glow2</span>            = <span class="tok-str">"#AA66FF"</span>   <span class="tok-comment"># kolor neonu nr 2</span>
+  <span class="tok-key">selection</span>        = <span class="tok-str">"#3366FF"</span>
+  <span class="tok-key">selection_alpha</span>  = <span class="tok-num">90</span>         <span class="tok-comment"># 0-255</span>
+  <span class="tok-key">tab_active</span>       = <span class="tok-str">"#00FFD9"</span>
+  <span class="tok-key">tab_inactive</span>     = <span class="tok-str">"#3D3D5C"</span>
+
+  <span class="tok-key">ansi</span> = [
+    <span class="tok-comment"># normalne 0-7</span>
+    <span class="tok-str">"#0F0F1A"</span>, <span class="tok-str">"#FF3D5C"</span>, <span class="tok-str">"#00FF88"</span>, <span class="tok-str">"#FFD700"</span>,
+    <span class="tok-str">"#3399FF"</span>, <span class="tok-str">"#D94FFF"</span>, <span class="tok-str">"#00E5FF"</span>, <span class="tok-str">"#CCD6FF"</span>,
+    <span class="tok-comment"># jasne 8-15</span>
+    <span class="tok-str">"#3D3D5C"</span>, <span class="tok-str">"#FF6680"</span>, <span class="tok-str">"#33FFAA"</span>, <span class="tok-str">"#FFE033"</span>,
+    <span class="tok-str">"#66BBFF"</span>, <span class="tok-str">"#E580FF"</span>, <span class="tok-str">"#33EEFF"</span>, <span class="tok-str">"#FFFFFF"</span>,
+  ]
+}
+
+<span class="tok-section">effects</span> {
+  <span class="tok-key">scanlines</span>             = <span class="tok-bool">true</span>
+  <span class="tok-key">scanline_opacity</span>      = <span class="tok-num">28</span>      <span class="tok-comment"># 0-255, intensywność linii CRT</span>
+  <span class="tok-key">border_glow</span>           = <span class="tok-bool">true</span>
+  <span class="tok-key">border_glow_strength</span>  = <span class="tok-num">90</span>      <span class="tok-comment"># 0-255</span>
+  <span class="tok-key">vignette</span>              = <span class="tok-bool">true</span>
+  <span class="tok-key">vignette_strength</span>     = <span class="tok-num">140</span>     <span class="tok-comment"># 0-255, ciemnienie rogów</span>
+  <span class="tok-key">bg_animation_speed</span>    = <span class="tok-num">0.3</span>     <span class="tok-comment"># prędkość animacji tła (0 = zatrzymane)</span>
+  <span class="tok-key">bg_glow_intensity</span>     = <span class="tok-num">60</span>      <span class="tok-comment"># intensywność poświaty tła</span>
+  <span class="tok-key">glow_pulse_freq</span>       = <span class="tok-num">0.6</span>     <span class="tok-comment"># Hz pulsowania ramki</span>
+  <span class="tok-key">cursor_style</span>          = <span class="tok-str">"block"</span> <span class="tok-comment"># block | beam | underline</span>
+  <span class="tok-key">cursor_blink_freq</span>     = <span class="tok-num">0.75</span>    <span class="tok-comment"># Hz mrugania kursora</span>
+  <span class="tok-key">cursor_lerp_speed</span>     = <span class="tok-num">0.35</span>    <span class="tok-comment"># płynność ruchu kursora (0.1 slow – 1.0 instant)</span>
+}
+
+<span class="tok-section">keybindings</span> {
+  <span class="tok-key">scroll_up</span>        = [<span class="tok-str">"Ctrl+Up"</span>, <span class="tok-str">"Shift+Up"</span>]
+  <span class="tok-key">scroll_down</span>      = [<span class="tok-str">"Ctrl+Down"</span>, <span class="tok-str">"Shift+Down"</span>]
+  <span class="tok-key">scroll_page_up</span>   = [<span class="tok-str">"Shift+PageUp"</span>]
+  <span class="tok-key">scroll_page_down</span> = [<span class="tok-str">"Shift+PageDown"</span>]
+  <span class="tok-key">scroll_to_top</span>    = [<span class="tok-str">"Shift+Home"</span>]
+  <span class="tok-key">scroll_to_bottom</span> = [<span class="tok-str">"Shift+End"</span>]
+  <span class="tok-key">new_tab</span>          = [<span class="tok-str">"Ctrl+t"</span>]
+  <span class="tok-key">close_tab</span>        = [<span class="tok-str">"Ctrl+w"</span>]
+  <span class="tok-key">next_tab</span>         = [<span class="tok-str">"Ctrl+Tab"</span>]
+  <span class="tok-key">prev_tab</span>         = [<span class="tok-str">"Ctrl+Shift+Tab"</span>]
+  <span class="tok-key">copy</span>             = [<span class="tok-str">"Ctrl+Shift+c"</span>]
+  <span class="tok-key">paste</span>            = [<span class="tok-str">"Ctrl+Shift+v"</span>]
+  <span class="tok-key">zoom_in</span>          = [<span class="tok-str">"Ctrl++"</span>]
+  <span class="tok-key">zoom_out</span>         = [<span class="tok-str">"Ctrl+-"</span>]
+  <span class="tok-key">zoom_reset</span>       = [<span class="tok-str">"Ctrl+0"</span>]
+}
+
+<span class="tok-section">sixel</span> {
+  <span class="tok-key">enabled</span>    = <span class="tok-bool">true</span>
+  <span class="tok-key">max_width</span>  = <span class="tok-num">1920</span>
+  <span class="tok-key">max_height</span> = <span class="tok-num">1080</span>
+}</pre>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── Config reference ────────────────────────────────────────────────────── -->
+  <section id="config-ref">
+    <div class="section-label">// 03 — Referencja opcji</div>
+    <h2>Sekcja <code style="color:var(--accent)">general</code></h2>
+
+    <table class="opt-table">
+      <thead><tr><th>Klucz</th><th>Opis</th><th>Domyślnie</th></tr></thead>
+      <tbody>
+        <tr><td>font_size</td><td>Rozmiar czcionki w punktach</td><td>14.5</td></tr>
+        <tr><td>shell</td><td>Powłoka do uruchomienia (zsh, bash, fish…)</td><td>$SHELL</td></tr>
+        <tr><td>padding</td><td>Wewnętrzny margines w pikselach</td><td>12</td></tr>
+        <tr><td>window_transparency</td><td>Przezroczystość okna 0-255</td><td>255</td></tr>
+        <tr><td>motion_blur_strength</td><td>Siła motion blur 0.0–1.0</td><td>0.18</td></tr>
+        <tr><td>throttle_keyboard_ms</td><td>Debounce klawiatury w ms</td><td>8</td></tr>
+        <tr><td>scrollback_lines</td><td>Pojemność bufora przewijania</td><td>10000</td></tr>
+        <tr><td>tab_bar_style</td><td><code>glass</code> lub <code>flat</code></td><td>"glass"</td></tr>
+      </tbody>
+    </table>
+
+    <h2 style="margin-top:32px">Sekcja <code style="color:var(--accent)">effects</code></h2>
+
+    <table class="opt-table">
+      <thead><tr><th>Klucz</th><th>Opis</th><th>Domyślnie</th></tr></thead>
+      <tbody>
+        <tr><td>scanlines</td><td>Linie CRT co drugi wiersz pikseli</td><td>true</td></tr>
+        <tr><td>scanline_opacity</td><td>Przyciemnienie linii CRT (0-255)</td><td>28</td></tr>
+        <tr><td>border_glow</td><td>Neonowa poświata wokół okna</td><td>true</td></tr>
+        <tr><td>border_glow_strength</td><td>Intensywność poświaty krawędzi</td><td>90</td></tr>
+        <tr><td>vignette</td><td>Ciemne rogi (efekt winiety)</td><td>true</td></tr>
+        <tr><td>vignette_strength</td><td>Siła winiety (0-255)</td><td>140</td></tr>
+        <tr><td>bg_animation_speed</td><td>Prędkość animacji tła (0 = stop)</td><td>0.3</td></tr>
+        <tr><td>bg_glow_intensity</td><td>Jasność neonowych obszarów tła</td><td>60</td></tr>
+        <tr><td>glow_pulse_freq</td><td>Częstotliwość pulsowania ramki (Hz)</td><td>0.6</td></tr>
+        <tr><td>cursor_style</td><td><code>block</code>, <code>beam</code>, <code>underline</code></td><td>"block"</td></tr>
+        <tr><td>cursor_blink_freq</td><td>Częstotliwość mrugania kursora (Hz)</td><td>0.75</td></tr>
+        <tr><td>cursor_lerp_speed</td><td>Płynność ruchu kursora (0.1–1.0)</td><td>0.35</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── Keybindings ────────────────────────────────────────────────────────── -->
+  <section id="keybindings">
+    <div class="section-label">// 04 — Skróty klawiszowe</div>
+    <h2>Domyślne skróty</h2>
+    <p>Wszystkie skróty można nadpisać w sekcji <code style="color:var(--accent)">keybindings</code> pliku konfiguracyjnego. Każda akcja przyjmuje listę kombinacji.</p>
+
+    <table class="kb-table">
+      <thead>
+        <tr>
+          <th>Akcja</th>
+          <th>Domyślny skrót</th>
+          <th>Opis</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Nowa zakładka</td><td><kbd>Ctrl</kbd>+<kbd>T</kbd></td><td>Otwiera nową zakładkę z powłoką</td></tr>
+        <tr><td>Zamknij zakładkę</td><td><kbd>Ctrl</kbd>+<kbd>W</kbd></td><td>Zamyka bieżącą zakładkę</td></tr>
+        <tr><td>Następna zakładka</td><td><kbd>Ctrl</kbd>+<kbd>Tab</kbd></td><td>Przełącza na kolejną zakładkę</td></tr>
+        <tr><td>Poprzednia zakładka</td><td><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Tab</kbd></td><td>Przełącza na poprzednią zakładkę</td></tr>
+        <tr><td>Kopiuj</td><td><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>C</kbd></td><td>Kopiuje zaznaczenie do schowka</td></tr>
+        <tr><td>Wklej</td><td><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>V</kbd></td><td>Wkleja ze schowka systemowego</td></tr>
+        <tr><td>Przewiń w górę</td><td><kbd>Ctrl</kbd>+<kbd>↑</kbd> lub <kbd>Shift</kbd>+<kbd>↑</kbd></td><td>Przewija bufor o 5 linii</td></tr>
+        <tr><td>Przewiń w dół</td><td><kbd>Ctrl</kbd>+<kbd>↓</kbd> lub <kbd>Shift</kbd>+<kbd>↓</kbd></td><td>Przewija bufor o 5 linii</td></tr>
+        <tr><td>Strona w górę</td><td><kbd>Shift</kbd>+<kbd>Page Up</kbd></td><td>Przewija o jedną stronę</td></tr>
+        <tr><td>Strona w dół</td><td><kbd>Shift</kbd>+<kbd>Page Down</kbd></td><td>Przewija o jedną stronę</td></tr>
+        <tr><td>Skocz na górę</td><td><kbd>Shift</kbd>+<kbd>Home</kbd></td><td>Przeskakuje na początek bufora</td></tr>
+        <tr><td>Skocz na dół</td><td><kbd>Shift</kbd>+<kbd>End</kbd></td><td>Wraca na koniec (bieżące wyjście)</td></tr>
+        <tr><td>Powiększ</td><td><kbd>Ctrl</kbd>+<kbd>+</kbd></td><td>Zwiększa rozmiar czcionki</td></tr>
+        <tr><td>Pomniejsz</td><td><kbd>Ctrl</kbd>+<kbd>-</kbd></td><td>Zmniejsza rozmiar czcionki</td></tr>
+        <tr><td>Resetuj zoom</td><td><kbd>Ctrl</kbd>+<kbd>0</kbd></td><td>Przywraca domyślny rozmiar</td></tr>
+      </tbody>
+    </table>
+
+    <div class="highlight-box">
+      <h3 style="margin-bottom:6px;color:var(--accent)">💡 Mysz</h3>
+      <p>Przytrzymaj lewy przycisk myszy i przeciągnij, aby zaznaczyć tekst prostokątnie. Puszczenie przycisku automatycznie kopiuje tekst do schowka systemowego. Kółko myszy przewija bufor historii.</p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── Effects ────────────────────────────────────────────────────────────── -->
+  <section id="effects">
+    <div class="section-label">// 05 — Efekty wizualne</div>
+    <h2>System efektów</h2>
+
+    <div class="card-grid">
+      <div class="card">
+        <span class="card-icon">🌌</span>
+        <h3>Animowane tło</h3>
+        <p>Dwa punkty neonowej poświaty powoli dryfują po tle, tworząc efekt żywej nebuli. Kontrolowane przez <code>bg_animation_speed</code> i <code>bg_glow_intensity</code>.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">📺</span>
+        <h3>Efekt CRT</h3>
+        <p>Co drugi rząd pikseli jest lekko przyciemniony, symulując linie skanowania starego monitora. Intensywność: <code>scanline_opacity</code>.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">💫</span>
+        <h3>Neonowa ramka</h3>
+        <p>Krawędź okna pulsuje neonowym kolorem (<code>glow1</code>). Częstotliwość i intensywność w pełni konfigurowalna.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎯</span>
+        <h3>Winieta</h3>
+        <p>Rogi ekranu stopniowo ciemnieją, skupiając wzrok na centrum terminala. Siła kontrolowana przez <code>vignette_strength</code>.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">🚀</span>
+        <h3>Płynny kursor</h3>
+        <p>Kursor płynnie interpoluje między pozycjami (lerp). Prędkość interpolacji oraz styl (<code>block</code>, <code>beam</code>, <code>underline</code>) są konfigurowalne.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">💨</span>
+        <h3>Motion blur</h3>
+        <p>Klatki mieszają się ze sobą, łagodząc gwałtowne zmiany zawartości (np. szybki scroll). Przy <code>0.0</code> efekt jest wyłączony.</p>
+      </div>
+    </div>
+
+    <h3 style="margin-top:32px">Gotowe profile efektów</h3>
+    <p>Skopiuj jeden z poniższych bloków do sekcji <code style="color:var(--accent)">effects</code>:</p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+        <span class="code-title">profil: Minimalistyczny (wydajność)</span>
+      </div>
+      <pre><span class="tok-section">effects</span> {
+  <span class="tok-key">scanlines</span>          = <span class="tok-bool">false</span>
+  <span class="tok-key">border_glow</span>        = <span class="tok-bool">false</span>
+  <span class="tok-key">vignette</span>           = <span class="tok-bool">false</span>
+  <span class="tok-key">bg_animation_speed</span> = <span class="tok-num">0.0</span>
+  <span class="tok-key">bg_glow_intensity</span>  = <span class="tok-num">20</span>
+  <span class="tok-key">cursor_style</span>       = <span class="tok-str">"beam"</span>
+  <span class="tok-key">cursor_lerp_speed</span>  = <span class="tok-num">1.0</span>
+}</pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+        <span class="code-title">profil: Cyber-max (pełne efekty)</span>
+      </div>
+      <pre><span class="tok-section">effects</span> {
+  <span class="tok-key">scanlines</span>             = <span class="tok-bool">true</span>
+  <span class="tok-key">scanline_opacity</span>      = <span class="tok-num">45</span>
+  <span class="tok-key">border_glow</span>           = <span class="tok-bool">true</span>
+  <span class="tok-key">border_glow_strength</span>  = <span class="tok-num">140</span>
+  <span class="tok-key">vignette</span>              = <span class="tok-bool">true</span>
+  <span class="tok-key">vignette_strength</span>     = <span class="tok-num">200</span>
+  <span class="tok-key">bg_animation_speed</span>    = <span class="tok-num">0.6</span>
+  <span class="tok-key">bg_glow_intensity</span>     = <span class="tok-num">100</span>
+  <span class="tok-key">glow_pulse_freq</span>       = <span class="tok-num">1.2</span>
+  <span class="tok-key">cursor_style</span>          = <span class="tok-str">"block"</span>
+  <span class="tok-key">cursor_blink_freq</span>     = <span class="tok-num">1.5</span>
+  <span class="tok-key">cursor_lerp_speed</span>     = <span class="tok-num">0.2</span>
+}</pre>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── Colors ────────────────────────────────────────────────────────────── -->
+  <section id="colors">
+    <div class="section-label">// 06 — Motywy kolorów</div>
+    <h2>Predefiniowane motywy</h2>
+    <p>Zamień sekcję <code style="color:var(--accent)">colors</code> na jeden z poniższych motywów.</p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+        <span class="code-title">motyw: Cyber Neon (domyślny)</span>
+      </div>
+      <pre><span class="tok-section">colors</span> {
+  <span class="tok-key">bg</span>     = <span class="tok-str">"#0F0F1A"</span>
+  <span class="tok-key">fg</span>     = <span class="tok-str">"#E2E8FF"</span>
+  <span class="tok-key">cursor</span> = <span class="tok-str">"#00FFD9"</span>
+  <span class="tok-key">glow1</span>  = <span class="tok-str">"#00FFD9"</span>
+  <span class="tok-key">glow2</span>  = <span class="tok-str">"#AA66FF"</span>
+}</pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+        <span class="code-title">motyw: Hackerman (zielony fosfor)</span>
+      </div>
+      <pre><span class="tok-section">colors</span> {
+  <span class="tok-key">bg</span>     = <span class="tok-str">"#020A02"</span>
+  <span class="tok-key">fg</span>     = <span class="tok-str">"#33FF44"</span>
+  <span class="tok-key">cursor</span> = <span class="tok-str">"#55FF66"</span>
+  <span class="tok-key">glow1</span>  = <span class="tok-str">"#00FF44"</span>
+  <span class="tok-key">glow2</span>  = <span class="tok-str">"#004400"</span>
+}</pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+        <span class="code-title">motyw: Midnight Synthwave</span>
+      </div>
+      <pre><span class="tok-section">colors</span> {
+  <span class="tok-key">bg</span>     = <span class="tok-str">"#13001F"</span>
+  <span class="tok-key">fg</span>     = <span class="tok-str">"#F0D0FF"</span>
+  <span class="tok-key">cursor</span> = <span class="tok-str">"#FF00AA"</span>
+  <span class="tok-key">glow1</span>  = <span class="tok-str">"#FF00AA"</span>
+  <span class="tok-key">glow2</span>  = <span class="tok-str">"#00BBFF"</span>
+}</pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+        <span class="code-title">motyw: Solar Storm (pomarańcz)</span>
+      </div>
+      <pre><span class="tok-section">colors</span> {
+  <span class="tok-key">bg</span>     = <span class="tok-str">"#15080A"</span>
+  <span class="tok-key">fg</span>     = <span class="tok-str">"#FFE0CC"</span>
+  <span class="tok-key">cursor</span> = <span class="tok-str">"#FF8833"</span>
+  <span class="tok-key">glow1</span>  = <span class="tok-str">"#FF6600"</span>
+  <span class="tok-key">glow2</span>  = <span class="tok-str">"#FF0055"</span>
+}</pre>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── Sixel ─────────────────────────────────────────────────────────────── -->
+  <section id="sixel">
+    <div class="section-label">// 07 — Sixel & Obrazy</div>
+    <h2>Obsługa protokołu Sixel</h2>
+    <p>Hacker Term obsługuje wyświetlanie obrazów bezpośrednio w terminalu poprzez protokół Sixel (DEC). Działa z aplikacjami takimi jak <code>img2sixel</code>, <code>gnuplot</code>, <code>ranger</code> z odpowiednimi wtyczkami i wieloma innymi.</p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+        <span class="code-title">Przykłady użycia Sixel</span>
+      </div>
+      <pre><span class="tok-comment"># Instalacja img2sixel (libsixel)</span>
+$ sudo apt install libsixel-bin
+
+<span class="tok-comment"># Wyświetl obraz w terminalu</span>
+$ img2sixel zdjecie.png
+
+<span class="tok-comment"># Skaluj do konkretnej szerokości</span>
+$ img2sixel -w 400 zdjecie.jpg
+
+<span class="tok-comment"># Wykresy w gnuplot</span>
+$ gnuplot -e "set terminal sixel; plot sin(x)"</pre>
+    </div>
+
+    <div class="warn-box">
+      ⚠️ Maksymalne wymiary obrazu kontroluje <code>sixel.max_width</code> i <code>sixel.max_height</code>. Obrazy większe niż limit będą ignorowane (nie skalowane). Ustaw wyższe wartości dla monitorów 4K.
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── FAQ ────────────────────────────────────────────────────────────────── -->
+  <section id="faq">
+    <div class="section-label">// 08 — Najczęstsze pytania</div>
+    <h2>FAQ</h2>
+
+    <div class="card" style="margin-bottom:12px">
+      <h3>Jak uruchomić Hacker Term?</h3>
+      <p>Hacker Term jest wbudowany w każdą edycję HackerOS. Uruchom go z doku, menu aplikacji lub poleceniem <code style="color:var(--accent);font-family:var(--mono)">hacker-term</code> z innego terminala (np. Alacritty).</p>
+    </div>
+
+    <div class="card" style="margin-bottom:12px">
+      <h3>Czy mogę używać własnej czcionki?</h3>
+      <p>Tak. W sekcji <code>font</code> ustaw <code>path</code> na pełną ścieżkę do pliku <code>.ttf</code> lub <code>.otf</code>. Działa każda czcionka monospace. Jeśli ścieżka jest pusta, Hacker Term wykrywa czcionkę automatycznie (Hack → FiraCode → JetBrains Mono → DejaVu).</p>
+    </div>
+
+    <div class="card" style="margin-bottom:12px">
+      <h3>Czym Hacker Term różni się od Alacritty?</h3>
+      <p>Alacritty jest terminalem GPU-accelerated, minimalistycznym i konfigurowanym przez YAML. Hacker Term skupia się na estetyce hakerskiej z animowanym tłem, CRT scanlines, glassmorphism UI i zintegrowaną obsługą Sixel. Oba terminale mogą działać jednocześnie.</p>
+    </div>
+
+    <div class="card" style="margin-bottom:12px">
+      <h3>Terminal jest wolny – jak poprawić wydajność?</h3>
+      <p>Wyłącz efekty: ustaw <code>motion_blur_strength = 0.0</code>, <code>bg_animation_speed = 0.0</code>, <code>scanlines = false</code>, <code>vignette = false</code>. Zwiększ <code>throttle_keyboard_ms</code> do <code>16</code>. Differential rendering jest domyślnie aktywny.</p>
+    </div>
+
+    <div class="card" style="margin-bottom:12px">
+      <h3>Gdzie zapisywane są sesje?</h3>
+      <p>Stan zakładek jest zapisywany automatycznie przy zamknięciu do <code style="color:var(--accent);font-family:var(--mono)">~/.config/hacker-term/session.hk</code> i przywracany przy następnym uruchomieniu.</p>
+    </div>
+
+    <div class="card" style="margin-bottom:12px">
+      <h3>Obsługiwane sekwencje escape?</h3>
+      <p>Hacker Term emuluje <code>xterm-256color</code> z obsługą CSI, OSC (tytuł okna), DCS (Sixel), truecolor (38;2;r;g;b), alt-screen, bracketed paste, mouse reporting (podstawowy) i większości standardowych sekwencji VT100/VT220.</p>
+    </div>
+  </section>
+
+</div><!-- /wrap -->
+
+<!-- ── Footer ──────────────────────────────────────────────────────────────── -->
+<footer>
+  <p>Hacker Term &copy; HackerOS · zbudowany w <span>Rust</span> + <span>Slint</span></p>
+  <p style="margin-top:8px;font-size:0.8rem;color:var(--fg-dim)">
+    Dokumentacja v0.6.0 · Wbudowany w każdą edycję HackerOS
+  </p>
+</footer>
+
+</body>
+</html>
