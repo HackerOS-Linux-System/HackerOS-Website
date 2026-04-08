@@ -66,21 +66,21 @@
             var href = a.getAttribute('href');
             if (href && href.startsWith('#')) sectionIds.push(href.slice(1));
         });
-            function setActive() {
-                var scrollY = window.scrollY + 100;
-                var current = '';
-                sectionIds.forEach(function(id) {
-                    var el = document.getElementById(id);
-                    if (el && el.offsetTop <= scrollY) current = id;
-                });
-                    links.forEach(function(a) {
-                        var href = a.getAttribute('href');
-                        if (href === '#' + current) a.classList.add('active');
-                        else a.classList.remove('active');
-                    });
-            }
-            window.addEventListener('scroll', setActive, { passive: true });
-            setActive();
+        function setActive() {
+            var scrollY = window.scrollY + 100;
+            var current = '';
+            sectionIds.forEach(function(id) {
+                var el = document.getElementById(id);
+                if (el && el.offsetTop <= scrollY) current = id;
+            });
+            links.forEach(function(a) {
+                var href = a.getAttribute('href');
+                if (href === '#' + current) a.classList.add('active');
+                else a.classList.remove('active');
+            });
+        }
+        window.addEventListener('scroll', setActive, { passive: true });
+        setActive();
     }
     function init() {
         injectSections();
