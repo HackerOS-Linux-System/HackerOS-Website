@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>hbuild — HackerOS Build System</title>
+<link rel="icon" type="image/png" href="../HackerOS.png">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Syne:wght@400;700;800&display=swap');
+
+  :root {
+    --bg:       #0d0f14;
+    --surface:  #141720;
+    --border:   #1e2535;
+    --accent:   #00e5a0;
+    --accent2:  #6c8bff;
+    --accent3:  #ff6b6b;
+    --text:     #c8d0e7;
+    --muted:    #5a6380;
+    --code-bg:  #0a0c10;
+    --head:     #ffffff;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Syne', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 16px;
+  }
+
+  /* ── Nav ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    display: flex; align-items: center; gap: 2rem;
+    padding: .75rem 2rem;
+    background: rgba(13,15,20,.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .logo { font-size: 1.3rem; font-weight: 800; color: var(--accent); letter-spacing: -.02em; }
+  .logo span { color: var(--head); }
+  nav a { color: var(--muted); text-decoration: none; font-size: .9rem; transition: color .2s; }
+  nav a:hover { color: var(--accent); }
+  .badge {
+    margin-left: auto;
+    background: var(--accent); color: var(--bg);
+    font-size: .7rem; font-weight: 700; padding: .2rem .6rem;
+    border-radius: 99px; font-family: 'Fira Code', monospace;
+  }
+
+  /* ── Layout ── */
+  .page { display: grid; grid-template-columns: 240px 1fr; min-height: 100vh; }
+
+  aside {
+    position: sticky; top: 49px; height: calc(100vh - 49px);
+    overflow-y: auto; padding: 2rem 1.25rem;
+    border-right: 1px solid var(--border);
+    background: var(--surface);
+  }
+  aside h3 { font-size: .7rem; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: .6rem; margin-top: 1.6rem; }
+  aside h3:first-child { margin-top: 0; }
+  aside a { display: block; color: var(--text); text-decoration: none;
+    font-size: .88rem; padding: .3rem .5rem; border-radius: 6px; transition: all .15s; }
+  aside a:hover { background: var(--border); color: var(--accent); }
+
+  main { padding: 3rem 4rem; max-width: 920px; }
+
+  /* ── Typography ── */
+  h1 { font-size: 3rem; font-weight: 800; color: var(--head); line-height: 1.1;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    margin-bottom: 1rem; }
+  h2 { font-size: 1.7rem; font-weight: 700; color: var(--head); margin: 3rem 0 1rem;
+    padding-bottom: .4rem; border-bottom: 1px solid var(--border); }
+  h3 { font-size: 1.1rem; font-weight: 700; color: var(--accent2); margin: 2rem 0 .5rem; }
+  h4 { font-size: .95rem; font-weight: 700; color: var(--accent); margin: 1.2rem 0 .3rem;
+    font-family: 'Fira Code', monospace; }
+  p { margin-bottom: .9rem; }
+  strong { color: var(--head); }
+  a { color: var(--accent); }
+
+  /* ── Hero ── */
+  .hero {
+    margin-bottom: 3rem;
+    padding: 2.5rem;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(0,229,160,.04) 0%, rgba(108,139,255,.04) 100%);
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; top: -60px; right: -60px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(0,229,160,.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-sub { font-size: 1.1rem; color: var(--muted); margin-top: .5rem; margin-bottom: 0; }
+
+  /* ── Code blocks ── */
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    overflow-x: auto;
+    font-family: 'Fira Code', monospace;
+    font-size: .85rem;
+    line-height: 1.6;
+    margin-bottom: 1.2rem;
+    position: relative;
+  }
+  pre .label {
+    position: absolute; top: .5rem; right: .8rem;
+    font-size: .65rem; color: var(--muted); text-transform: uppercase; letter-spacing: .08em;
+  }
+  code { font-family: 'Fira Code', monospace; font-size: .88em;
+    background: var(--code-bg); color: var(--accent); padding: .1em .3em; border-radius: 4px; }
+  pre code { background: none; color: inherit; padding: 0; }
+
+  /* Syntax highlight helpers */
+  .kw  { color: #6c8bff; }
+  .str { color: #98d8a0; }
+  .cmt { color: #444e6a; }
+  .op  { color: #00e5a0; }
+  .num { color: #ffb86c; }
+  .sec { color: #ff6b6b; }
+
+  /* ── Tables ── */
+  table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; font-size: .9rem; }
+  th { background: var(--surface); color: var(--head); padding: .6rem 1rem;
+    text-align: left; border-bottom: 2px solid var(--border); font-size: .8rem;
+    letter-spacing: .06em; text-transform: uppercase; }
+  td { padding: .55rem 1rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:hover td { background: rgba(255,255,255,.02); }
+  td:first-child { font-family: 'Fira Code', monospace; font-size: .82rem; color: var(--accent); }
+
+  /* ── Cards ── */
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem 1.2rem;
+    transition: border-color .2s, transform .15s;
+  }
+  .card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .card-icon { font-size: 1.4rem; margin-bottom: .4rem; }
+  .card-name { font-weight: 700; color: var(--head); font-size: .9rem; }
+  .card-sub  { font-size: .78rem; color: var(--muted); }
+
+  /* ── Callouts ── */
+  .note, .warn, .tip {
+    border-radius: 8px;
+    padding: .9rem 1.2rem;
+    margin-bottom: 1.2rem;
+    border-left: 3px solid;
+    font-size: .92rem;
+  }
+  .note { background: rgba(108,139,255,.08); border-color: var(--accent2); }
+  .warn { background: rgba(255,107,107,.08); border-color: var(--accent3); }
+  .tip  { background: rgba(0,229,160,.08);   border-color: var(--accent); }
+  .note strong, .warn strong, .tip strong { display: block; margin-bottom: .2rem; }
+
+  /* ── Footer ── */
+  footer { grid-column: 1/-1; text-align: center; padding: 2rem;
+    color: var(--muted); font-size: .82rem; border-top: 1px solid var(--border); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">h<span>build</span></div>
+  <a href="#quickstart">Quickstart</a>
+  <a href="#config">Konfiguracja</a>
+  <a href="#languages">Języki</a>
+  <a href="#deps">Zależności</a>
+  <a href="#container">Kontenery</a>
+  <a href="#sandbox">Sandbox</a>
+  <a href="#plugins">Pluginy</a>
+  <a href="#reference">Referencja</a>
+  <span class="badge">v0.4.0</span>
+</nav>
+
+<div class="page">
+<aside>
+  <h3>Pierwsze kroki</h3>
+  <a href="#intro">Wprowadzenie</a>
+  <a href="#quickstart">Quickstart</a>
+  <a href="#subcommands">Podkomendy</a>
+  <a href="#profiles">Profile budowania</a>
+
+  <h3>Konfiguracja</h3>
+  <a href="#config-formats">Formaty plików</a>
+  <a href="#config-hk">Format .hk</a>
+  <a href="#config-sections">Sekcje</a>
+  <a href="#config-deps-detail">Zależności szczegółowo</a>
+
+  <h3>Funkcje</h3>
+  <a href="#languages">Obsługiwane języki</a>
+  <a href="#deps">Zarządzanie zależnościami</a>
+  <a href="#container">Tymczasowe kontenery</a>
+  <a href="#sandbox">Sandbox</a>
+  <a href="#crosscompile">Cross-kompilacja</a>
+  <a href="#plugins">System pluginów</a>
+  <a href="#artifacts">Artefakty i dokumentacja</a>
+
+  <h3>Referencja</h3>
+  <a href="#reference">Wszystkie pola config</a>
+  <a href="#lockfile">Lockfile</a>
+  <a href="#env">Zmienne środowiskowe</a>
+</aside>
+
+<main>
+
+<!-- ──────────────── HERO ──────────────── -->
+<div class="hero">
+  <h1>hbuild</h1>
+  <p class="hero-sub">Nowoczesny system budowania dla HackerOS — wielojęzykowy, sandboxowany, świadomy kontenerów. Wbudowany w każdą edycję systemu.</p>
+</div>
+
+<!-- ──────────────── INTRO ──────────────── -->
+<section id="intro">
+  <h2>Wprowadzenie</h2>
+  <p>
+    <strong>hbuild</strong> to narzędzie budowania zaprojektowane wyłącznie dla HackerOS Linux. Zastępuje <code>make</code>, <code>cmake</code>, <code>meson</code> i <code>ninja</code> jednym spójnym interfejsem obsługującym ponad 20 języków programowania, zaawansowane zarządzanie zależnościami (git, lokalne, binarne, systemowe), budowanie w efemerycznych kontenerach, sandbox oparty o Linux namespaces + seccomp, oraz system pluginów (Lua / WASM / dynlib).
+  </p>
+  <p>
+    hbuild jest <strong>wbudowany w HackerOS</strong> — nie wymaga żadnej dodatkowej instalacji.
+  </p>
+</section>
+
+<!-- ──────────────── QUICKSTART ──────────────── -->
+<section id="quickstart">
+  <h2>Quickstart</h2>
+  <pre><span class="cmt"># Zainicjuj projekt (tworzy hbuild.config w aktualnym katalogu)</span>
+hbuild setup
+
+<span class="cmt"># Zbuduj projekt (domyślny profil: release)</span>
+hbuild make
+
+<span class="cmt"># Zbuduj z profilem debug</span>
+hbuild make --profile debug
+
+<span class="cmt"># Zbuduj w izolowanym kontenerze</span>
+hbuild make --container
+
+<span class="cmt"># Zbuduj w sandboxie (namespaces + seccomp)</span>
+hbuild make --sandbox
+
+<span class="cmt"># Cross-kompilacja na aarch64</span>
+hbuild make --target aarch64-unknown-linux-gnu
+
+<span class="cmt"># Wyczyść artefakty</span>
+hbuild clean
+
+<span class="cmt"># Wyczyść i zbuduj od nowa</span>
+hbuild remake
+
+<span class="cmt"># Zainstaluj do systemu (lub ~/.local gdy nie root)</span>
+hbuild install
+
+<span class="cmt"># Spakuj do .deb lub .tar.gz</span>
+hbuild bundle
+
+<span class="cmt"># Wygeneruj dokumentację</span>
+hbuild doc
+
+<span class="cmt"># Zaktualizuj hbuild z repozytorium</span>
+hbuild self-update</pre>
+</section>
+
+<!-- ──────────────── SUBCOMMANDS ──────────────── -->
+<section id="subcommands">
+  <h2>Podkomendy i opcje</h2>
+  <table>
+    <tr><th>Podkomenda</th><th>Opis</th></tr>
+    <tr><td>setup</td><td>Tworzy szkielet <code>hbuild.config</code> w katalogu projektu.</td></tr>
+    <tr><td>make</td><td>Buduje projekt. Pobiera i rozwiązuje zależności, uruchamia odpowiednie kompilatory.</td></tr>
+    <tr><td>clean</td><td>Usuwa katalog <code>build/</code> oraz pliki stanu.</td></tr>
+    <tr><td>remake</td><td>Odpowiednik <code>clean</code> + <code>make</code>.</td></tr>
+    <tr><td>install</td><td>Kopiuje artefakty do <code>/usr/local</code> (root) lub <code>~/.local</code>. Obsługuje zmienną <code>DESTDIR</code>.</td></tr>
+    <tr><td>bundle</td><td>Tworzy pakiet dystrybucyjny (<code>.deb</code> lub <code>.tar.gz</code>).</td></tr>
+    <tr><td>doc</td><td>Generuje dokumentację (cargo doc, Doxygen, pydoc, jsdoc).</td></tr>
+    <tr><td>self-update</td><td>Aktualizuje hbuild ze źródeł w <code>~/.hbuild-src</code>.</td></tr>
+  </table>
+
+  <h3>Opcje globalne</h3>
+  <table>
+    <tr><th>Opcja</th><th>Wartości</th><th>Opis</th></tr>
+    <tr><td>--profile</td><td>debug / release / testing / production</td><td>Profil budowania (domyślnie: release).</td></tr>
+    <tr><td>--target</td><td>triple (np. <code>aarch64-linux-gnu</code>)</td><td>Cel cross-kompilacji.</td></tr>
+    <tr><td>--sandbox</td><td>—</td><td>Uruchamia kompilatory w izolacji (mount/net namespace + seccomp).</td></tr>
+    <tr><td>--container</td><td>—</td><td>Uruchamia cały krok budowania w efemerycznym kontenerze overlay.</td></tr>
+  </table>
+</section>
+
+<!-- ──────────────── PROFILES ──────────────── -->
+<section id="profiles">
+  <h2>Profile budowania</h2>
+  <table>
+    <tr><th>Profil</th><th>Flagi C/C++</th><th>Strip</th><th>LTO</th><th>Przeznaczenie</th></tr>
+    <tr><td>debug</td><td><code>-O0 -g</code></td><td>nie</td><td>nie</td><td>Debugowanie, szybka iteracja.</td></tr>
+    <tr><td>release</td><td><code>-O3 -s</code></td><td>tak</td><td>tak</td><td>Domyślny — zoptymalizowany.</td></tr>
+    <tr><td>testing</td><td><code>-O1 -g</code></td><td>nie</td><td>nie</td><td>Testy jednostkowe z symbolami.</td></tr>
+    <tr><td>production</td><td><code>-O3 -DNDEBUG -s</code></td><td>tak</td><td>tak</td><td>Wydanie produkcyjne.</td></tr>
+  </table>
+</section>
+
+<!-- ──────────────── CONFIG FORMATS ──────────────── -->
+<section id="config-formats">
+  <h2>Formaty pliku konfiguracyjnego</h2>
+  <p>hbuild przeszukuje katalog projektu w następującej kolejności:</p>
+  <table>
+    <tr><th>Plik</th><th>Format</th><th>Uwagi</th></tr>
+    <tr><td>hbuild.config</td><td>HackerLang (.hk)</td><td><strong>Podstawowy</strong> — autorski format HackerOS.</td></tr>
+    <tr><td>hbuilt.config</td><td>TOML</td><td>Popularny format konfiguracji.</td></tr>
+    <tr><td>hbuily.config</td><td>YAML</td><td>Czytelna alternatywa.</td></tr>
+    <tr><td>hbuilj.config</td><td>JSON</td><td>Łatwy do generowania programatycznie.</td></tr>
+    <tr><td>hbuilh.config</td><td>HCL</td><td>Znany z ekosystemu HashiCorp.</td></tr>
+  </table>
+  <div class="note"><strong>Uwaga:</strong> Jeśli istnieje więcej niż jeden plik, używany jest ten pierwszy z listy. Zalecamy korzystanie z formatu <code>.hk</code>.</div>
+</section>
+
+<!-- ──────────────── CONFIG .HK ──────────────── -->
+<section id="config-hk">
+  <h2>Format .hk — HackerLang</h2>
+  <p>Format <code>.hk</code> używa składni podobnej do TOML, ale z własnym operatorem przypisania <code>-&gt; klucz =&gt; wartość</code>.</p>
+
+  <h4>Kompletny przykład — hbuild.config</h4>
+  <pre><span class="sec">[metadata]</span>
+<span class="op">-&gt;</span> name    <span class="op">=&gt;</span> <span class="str">"my_app"</span>
+<span class="op">-&gt;</span> version <span class="op">=&gt;</span> <span class="str">"1.0.0"</span>
+<span class="op">-&gt;</span> authors <span class="op">=&gt;</span> <span class="str">"HackerOS Team &lt;hackeros068@gmail.com&gt;"</span>
+<span class="op">-&gt;</span> license <span class="op">=&gt;</span> <span class="str">"GPL-3.0"</span>
+
+<span class="sec">[description]</span>
+<span class="op">-&gt;</span> summary <span class="op">=&gt;</span> <span class="str">"Krótki opis projektu"</span>
+<span class="op">-&gt;</span> long    <span class="op">=&gt;</span> <span class="str">"Dłuższy opis projektu widoczny w pakiecie .deb."</span>
+
+<span class="sec">[specs]</span>
+<span class="op">-&gt;</span> c++      <span class="op">=&gt;</span> <span class="str">"g++"</span>
+<span class="op">-&gt;</span> dependencies {
+    <span class="op">-&gt;</span> zlib    <span class="op">=&gt;</span> <span class="str">"&gt;=1.2.11"</span>
+    <span class="op">-&gt;</span> libcurl <span class="op">=&gt;</span> <span class="str">"&gt;=7.80.0"</span>
+    <span class="op">-&gt;</span> my_lib {
+        <span class="op">-&gt;</span> path <span class="op">=&gt;</span> <span class="str">"../my_lib"</span>
+    }
+    <span class="op">-&gt;</span> some_git_dep {
+        <span class="op">-&gt;</span> git     <span class="op">=&gt;</span> <span class="str">"https://github.com/example/dep.git"</span>
+        <span class="op">-&gt;</span> version <span class="op">=&gt;</span> <span class="str">"abc123def456abc123def456abc123def456abc1"</span>
+    }
+}
+
+<span class="sec">[runtime]</span>
+<span class="op">-&gt;</span> priority     <span class="op">=&gt;</span> <span class="str">"normal"</span>
+<span class="op">-&gt;</span> auto-restart  <span class="op">=&gt;</span> <span class="num">false</span>
+
+<span class="sec">[build]</span>
+<span class="op">-&gt;</span> target           <span class="op">=&gt;</span> <span class="str">"my_app"</span>
+<span class="op">-&gt;</span> sources          <span class="op">=&gt;</span> [<span class="str">"src/*.cpp"</span>, <span class="str">"src/**/*.cpp"</span>]
+<span class="op">-&gt;</span> include_dirs     <span class="op">=&gt;</span> [<span class="str">"include"</span>]
+<span class="op">-&gt;</span> compiler         <span class="op">=&gt;</span> <span class="str">"g++"</span>
+<span class="op">-&gt;</span> standard         <span class="op">=&gt;</span> <span class="str">"c++20"</span>
+<span class="op">-&gt;</span> optimize         <span class="op">=&gt;</span> <span class="str">"O2"</span>
+<span class="op">-&gt;</span> cflags           <span class="op">=&gt;</span> <span class="str">"-Wall -Wextra"</span>
+<span class="op">-&gt;</span> ldflags          <span class="op">=&gt;</span> <span class="str">"-lpthread"</span>
+<span class="op">-&gt;</span> lib_dirs         <span class="op">=&gt;</span> [<span class="str">"build/lib"</span>]
+<span class="op">-&gt;</span> libs             <span class="op">=&gt;</span> [<span class="str">"z"</span>, <span class="str">"curl"</span>]
+<span class="op">-&gt;</span> pkg_dependencies <span class="op">=&gt;</span> [<span class="str">"zlib"</span>, <span class="str">"libcurl"</span>]
+<span class="op">-&gt;</span> build_type       <span class="op">=&gt;</span> <span class="str">"executable"</span>
+<span class="op">-&gt;</span> native           <span class="op">=&gt;</span> <span class="num">true</span>
+<span class="op">-&gt;</span> container        <span class="op">=&gt;</span> <span class="num">false</span>
+<span class="label">.hk</span></pre>
+
+  <h4>Składnia .hk w skrócie</h4>
+  <table>
+    <tr><th>Element</th><th>Składnia</th></tr>
+    <tr><td>Sekcja</td><td><code>[nazwa_sekcji]</code></td></tr>
+    <tr><td>Przypisanie stringa</td><td><code>-&gt; klucz =&gt; "wartość"</code></td></tr>
+    <tr><td>Przypisanie bool</td><td><code>-&gt; klucz =&gt; true</code> / <code>false</code></td></tr>
+    <tr><td>Przypisanie liczby</td><td><code>-&gt; klucz =&gt; 42</code></td></tr>
+    <tr><td>Tablica</td><td><code>-&gt; klucz =&gt; ["a", "b", "c"]</code></td></tr>
+    <tr><td>Zagnieżdżona mapa</td><td><code>-&gt; klucz { -&gt; podklucz =&gt; "val" }</code></td></tr>
+    <tr><td>Komentarz</td><td><code># komentarz</code></td></tr>
+    <tr><td>Interpolacja env</td><td><code>"${HOME}/coś"</code></td></tr>
+  </table>
+</section>
+
+<!-- ──────────────── CONFIG SECTIONS ──────────────── -->
+<section id="config-sections">
+  <h2>Sekcje konfiguracji</h2>
+
+  <h3>[metadata]</h3>
+  <table>
+    <tr><th>Pole</th><th>Wymagane</th><th>Opis</th></tr>
+    <tr><td>name</td><td>✓</td><td>Nazwa projektu (używana przy instalacji i pakowaniu).</td></tr>
+    <tr><td>version</td><td>✓</td><td>Wersja semver (np. <code>"1.2.0"</code>).</td></tr>
+    <tr><td>authors</td><td>—</td><td>Autor(zy) — pojawia się w pakiecie .deb.</td></tr>
+    <tr><td>license</td><td>—</td><td>Licencja SPDX (np. <code>"MIT"</code>, <code>"GPL-3.0"</code>).</td></tr>
+  </table>
+
+  <h3>[description]</h3>
+  <table>
+    <tr><th>Pole</th><th>Wymagane</th><th>Opis</th></tr>
+    <tr><td>summary</td><td>✓</td><td>Krótki opis (jedna linia).</td></tr>
+    <tr><td>long</td><td>✓</td><td>Dłuższy opis projektu.</td></tr>
+  </table>
+
+  <h3>[specs]</h3>
+  <p>Deklaracja języków i zależności zewnętrznych.</p>
+  <table>
+    <tr><th>Klucz</th><th>Opis</th></tr>
+    <tr><td>&lt;język&gt;</td><td>Dowolna obsługiwana nazwa języka jako klucz (wartość ignorowana). Np. <code>c++ =&gt; "g++"</code>, <code>rust =&gt; ""</code>.</td></tr>
+    <tr><td>dependencies</td><td>Zagnieżdżona mapa zależności — patrz sekcja <a href="#deps">Zależności</a>.</td></tr>
+  </table>
+
+  <h3>[runtime]</h3>
+  <table>
+    <tr><th>Pole</th><th>Opis</th></tr>
+    <tr><td>priority</td><td>Priorytet procesu: <code>"low"</code> / <code>"normal"</code> / <code>"high"</code>.</td></tr>
+    <tr><td>auto-restart</td><td>Czy demon ma być automatycznie restartowany przez init.</td></tr>
+  </table>
+
+  <h3>[build]</h3>
+  <p>Sekcja wymagana dla języków kompilowanych (C/C++, Fortran, Ada, Pascal, …). Języki z własnym systemem budowania (Rust/Cargo, Go/go build, Java/Maven) mogą ją pominąć lub podać tylko <code>target</code> i <code>build_type</code>.</p>
+  <table>
+    <tr><th>Pole</th><th>Wymagane</th><th>Opis</th></tr>
+    <tr><td>target</td><td>✓</td><td>Nazwa pliku wyjściowego.</td></tr>
+    <tr><td>sources</td><td>✓</td><td>Tablica wzorców glob plików źródłowych.</td></tr>
+    <tr><td>include_dirs</td><td>✓</td><td>Katalogi nagłówkowe (<code>-I</code>).</td></tr>
+    <tr><td>compiler</td><td>✓</td><td>Polecenie kompilatora (np. <code>g++</code>, <code>clang</code>).</td></tr>
+    <tr><td>standard</td><td>✓</td><td>Standard języka (np. <code>c++20</code>, <code>c17</code>).</td></tr>
+    <tr><td>optimize</td><td>✓</td><td>Poziom optymalizacji (np. <code>O2</code>). Nadpisywany przez profil.</td></tr>
+    <tr><td>build_type</td><td>✓</td><td><code>executable</code> / <code>shared</code> / <code>static</code></td></tr>
+    <tr><td>cflags</td><td>—</td><td>Dodatkowe flagi kompilatora.</td></tr>
+    <tr><td>ldflags</td><td>—</td><td>Dodatkowe flagi linkera.</td></tr>
+    <tr><td>lib_dirs</td><td>—</td><td>Katalogi bibliotek (<code>-L</code>).</td></tr>
+    <tr><td>libs</td><td>—</td><td>Biblioteki do zlinkowania (<code>-l</code>).</td></tr>
+    <tr><td>pkg_dependencies</td><td>—</td><td>Nazwy pakietów dla <code>pkg-config</code>.</td></tr>
+    <tr><td>native</td><td>—</td><td>Czy budować dla aktualnej architektury (bool).</td></tr>
+    <tr><td>container</td><td>—</td><td>Buduj w efemerycznym kontenerze overlay (bool).</td></tr>
+  </table>
+</section>
+
+<!-- ──────────────── LANGUAGES ──────────────── -->
+<section id="languages">
+  <h2>Obsługiwane języki</h2>
+  <div class="card-grid">
+    <div class="card"><div class="card-icon">⚙️</div><div class="card-name">C / C++</div><div class="card-sub">gcc, g++, clang — równoległe kompilowanie, compile_commands.json</div></div>
+    <div class="card"><div class="card-icon">🦀</div><div class="card-name">Rust</div><div class="card-sub">cargo build, automatyczna instalacja rustup targets</div></div>
+    <div class="card"><div class="card-icon">⚡</div><div class="card-name">Zig</div><div class="card-sub">zig build, pełne wsparcie cross-compile</div></div>
+    <div class="card"><div class="card-icon">👑</div><div class="card-name">Nim</div><div class="card-sub">nim c, profile debug/release/testing/production</div></div>
+    <div class="card"><div class="card-icon">🐦</div><div class="card-name">Swift</div><div class="card-sub">swiftc, cross-compile przez -target</div></div>
+    <div class="card"><div class="card-icon">💎</div><div class="card-name">D</div><div class="card-sub">dmd / ldc2, tryby release i debug</div></div>
+    <div class="card"><div class="card-icon">λ</div><div class="card-name">Haskell</div><div class="card-sub">ghc z -O2 dla release</div></div>
+    <div class="card"><div class="card-icon">🌐</div><div class="card-name">WebAssembly</div><div class="card-sub">emcc, generuje .wasm + wrapper JS</div></div>
+    <div class="card"><div class="card-icon">🐍</div><div class="card-name">Python</div><div class="card-sub">PyInstaller — pakuje do standalone binary</div></div>
+    <div class="card"><div class="card-icon">🟩</div><div class="card-name">Node.js</div><div class="card-sub">pkg — standalone executable z JS</div></div>
+    <div class="card"><div class="card-icon">💎</div><div class="card-name">Ruby (mruby)</div><div class="card-sub">mrbc — kompiluje do .mrb bytecode</div></div>
+    <div class="card"><div class="card-icon">🐹</div><div class="card-name">Go</div><div class="card-sub">go build, GOOS/GOARCH dla cross-compile</div></div>
+    <div class="card"><div class="card-icon">☕</div><div class="card-name">Java</div><div class="card-sub">Maven / Gradle / javac+jar — autodetekcja</div></div>
+    <div class="card"><div class="card-icon">🎯</div><div class="card-name">Kotlin</div><div class="card-sub">Gradle lub kotlinc standalone</div></div>
+    <div class="card"><div class="card-icon">🏛️</div><div class="card-name">Scala</div><div class="card-sub">sbt compile / assembly</div></div>
+    <div class="card"><div class="card-icon">🐪</div><div class="card-name">OCaml</div><div class="card-sub">dune build lub ocamlfind ocamlopt</div></div>
+    <div class="card"><div class="card-icon">💜</div><div class="card-name">Elixir</div><div class="card-sub">mix compile / mix release</div></div>
+    <div class="card"><div class="card-icon">📡</div><div class="card-name">Erlang</div><div class="card-sub">rebar3 compile / release</div></div>
+    <div class="card"><div class="card-icon">🔢</div><div class="card-name">Fortran</div><div class="card-sub">gfortran z optymalizacją per-profil</div></div>
+    <div class="card"><div class="card-icon">🛡️</div><div class="card-name">Ada</div><div class="card-sub">gprbuild (projekt .gpr) lub gnatmake</div></div>
+    <div class="card"><div class="card-icon">🏷️</div><div class="card-name">Pascal</div><div class="card-sub">Free Pascal Compiler (fpc)</div></div>
+    <div class="card"><div class="card-icon">🔷</div><div class="card-name">V</div><div class="card-sub">vlang — v build z -prod dla release</div></div>
+    <div class="card"><div class="card-icon">🔶</div><div class="card-name">Odin</div><div class="card-sub">odin build z poziomami optymalizacji</div></div>
+    <div class="card"><div class="card-icon">🔮</div><div class="card-name">Crystal</div><div class="card-sub">crystal build, --release i cross-compile</div></div>
+  </div>
+</section>
+
+<!-- ──────────────── DEPS ──────────────── -->
+<section id="deps">
+  <h2>Zarządzanie zależnościami</h2>
+  <p>hbuild obsługuje cztery typy źródeł zależności. Wszystkie rozwiązane zależności są zapisywane do pliku <code>hbuild.lock</code> (patrz <a href="#lockfile">Lockfile</a>).</p>
+
+  <h3>Systemowe (pkg-config)</h3>
+  <pre><span class="op">-&gt;</span> dependencies {
+    <span class="op">-&gt;</span> zlib    <span class="op">=&gt;</span> <span class="str">"&gt;=1.2.11"</span>  <span class="cmt"># weryfikacja przez pkg-config</span>
+    <span class="op">-&gt;</span> libcurl <span class="op">=&gt;</span> <span class="str">"&gt;=7.80.0"</span>
+}</pre>
+
+  <h3>Git</h3>
+  <pre><span class="op">-&gt;</span> my_dep {
+    <span class="op">-&gt;</span> git     <span class="op">=&gt;</span> <span class="str">"https://github.com/user/repo.git"</span>
+    <span class="op">-&gt;</span> version <span class="op">=&gt;</span> <span class="str">"a1b2c3d4e5f6..."</span>  <span class="cmt"># hash commitu lub tag</span>
+}</pre>
+
+  <h3>Lokalne</h3>
+  <pre><span class="op">-&gt;</span> my_lib {
+    <span class="op">-&gt;</span> path <span class="op">=&gt;</span> <span class="str">"../my_lib"</span>  <span class="cmt"># relatywna lub absolutna ścieżka</span>
+}</pre>
+
+  <h3>Binarne (z weryfikacją SHA-256)</h3>
+  <pre><span class="op">-&gt;</span> prebuilt_tool {
+    <span class="op">-&gt;</span> binary <span class="op">=&gt;</span> <span class="str">"https://example.com/tool-v1.0-linux.tar.gz"</span>
+    <span class="op">-&gt;</span> sha256 <span class="op">=&gt;</span> <span class="str">"e3b0c44298fc1c149afbf4c8996fb924..."</span>
+}</pre>
+</section>
+
+<!-- ──────────────── CONTAINER ──────────────── -->
+<section id="container">
+  <h2>Tymczasowe kontenery budowania</h2>
+  <p>
+    hbuild może uruchamiać cały krok budowania wewnątrz <strong>efemerycznego kontenera overlay</strong> opartego o Linux user namespaces i overlay-mount. Kontener jest tworzony tuż przed kompilacją i automatycznie niszczony po jej zakończeniu — żadnych pozostałości na dysku.
+  </p>
+  <div class="tip">
+    <strong>Nie wymaga Docker ani Podman.</strong> Kontenery hbuild działają wyłącznie poprzez mechanizmy jądra Linux (unshare, bind-mount, overlay) — zero zewnętrznych zależności.
+  </div>
+
+  <h3>Jak włączyć</h3>
+  <p>W pliku konfiguracyjnym:</p>
+  <pre><span class="sec">[build]</span>
+<span class="op">-&gt;</span> container <span class="op">=&gt;</span> <span class="num">true</span>
+<span class="cmt"># ... reszta sekcji build</span></pre>
+  <p>Lub przez CLI (nadpisuje ustawienie z pliku):</p>
+  <pre>hbuild make --container</pre>
+
+  <h3>Co dzieje się wewnątrz</h3>
+  <p>Kontener tworzy warstwowany system plików:</p>
+  <ul style="margin-left:1.5rem;margin-bottom:1rem;line-height:2">
+    <li><strong>Warstwa dolna (read-only):</strong> <code>/usr</code>, <code>/bin</code>, <code>/lib</code>, <code>/lib64</code>, <code>/etc</code> z hosta + katalog projektu.</li>
+    <li><strong>Warstwa górna (read-write):</strong> katalog <code>build/</code> — artefakty kompilacji trafiają tutaj i są widoczne na hoście.</li>
+    <li>Brak dostępu do sieci (nowy network namespace).</li>
+    <li>Brak dostępu do innych procesów (nowy mount namespace).</li>
+  </ul>
+
+  <h3>Połączenie z sandboxem</h3>
+  <div class="note"><strong>Uwaga:</strong> Flagi <code>--container</code> i <code>--sandbox</code> są wzajemnie wyłączne — gdy kontener jest aktywny, sandbox jest automatycznie pomijany, ponieważ kontener dostarcza własną izolację.</div>
+</section>
+
+<!-- ──────────────── SANDBOX ──────────────── -->
+<section id="sandbox">
+  <h2>Sandbox (izolacja procesu)</h2>
+  <p>
+    Tryb sandbox (<code>--sandbox</code>) uruchamia kompilatory w nowym namespace sieciowym i montażowym (Linux namespaces). Przy kompilacji z featurem <code>sandbox</code> dodawane są również filtry <strong>seccomp</strong> (blokada syscalli) i <strong>Landlock</strong> (ograniczenie dostępu do systemu plików).
+  </p>
+  <pre><span class="cmt"># Buduj z sandboxem</span>
+hbuild make --sandbox
+
+<span class="cmt"># Zbuduj hbuild z pełnym sandboxem (seccomp + Landlock)</span>
+cargo build --release --features sandbox</pre>
+</section>
+
+<!-- ──────────────── CROSS-COMPILE ──────────────── -->
+<section id="crosscompile">
+  <h2>Cross-kompilacja</h2>
+  <p>Przekaż triple docelowej architektury przez <code>--target</code>:</p>
+  <pre><span class="cmt"># C++ na ARM64</span>
+hbuild make --target aarch64-unknown-linux-gnu
+
+<span class="cmt"># Rust na ARM64 (rustup target instalowany automatycznie)</span>
+hbuild make --target aarch64-unknown-linux-gnu
+
+<span class="cmt"># Go cross-compile (GOOS/GOARCH)</span>
+hbuild make --target linux/arm64
+
+<span class="cmt"># Zig — natywne cross-compile</span>
+hbuild make --target aarch64-linux-musl</pre>
+  <div class="note"><strong>C/C++:</strong> Wymagany cross-compiler (np. <code>aarch64-linux-gnu-g++</code>) w <code>PATH</code>. Flaga <code>--target</code> jest przekazywana jako <code>--target=...</code> do kompilatora.</div>
+</section>
+
+<!-- ──────────────── PLUGINS ──────────────── -->
+<section id="plugins">
+  <h2>System pluginów</h2>
+  <p>Pluginy są ładowane z <code>~/.hbuild/plugins/</code>. Obsługiwane typy:</p>
+  <table>
+    <tr><th>Rozszerzenie</th><th>Feature</th><th>Opis</th></tr>
+    <tr><td>.lua</td><td>plugins-lua</td><td>Skrypty Lua 5.4 (domyślnie włączone).</td></tr>
+    <tr><td>.wasm</td><td>plugins-wasm</td><td>Moduły WebAssembly przez Wasmtime.</td></tr>
+    <tr><td>.so</td><td>plugins-dynlib</td><td>Biblioteki dynamiczne C ABI.</td></tr>
+  </table>
+
+  <h3>Przykład pluginu Lua</h3>
+  <pre><span class="cmt">-- ~/.hbuild/plugins/notify.lua</span>
+hooks = {}
+
+<span class="kw">function</span> hooks.pre_build(config)
+  <span class="kw">print</span>(<span class="str">"Budowanie: "</span> .. config.name)
+<span class="kw">end</span>
+
+<span class="kw">function</span> hooks.post_build(config)
+  <span class="kw">os.execute</span>(<span class="str">"notify-send 'hbuild' 'Budowanie zakończone: "</span> .. config.name .. <span class="str">"'"</span>)
+<span class="kw">end</span></pre>
+
+  <h3>Dostępne hooki</h3>
+  <table>
+    <tr><th>Hook</th><th>Kiedy wywoływany</th></tr>
+    <tr><td>pre_build</td><td>Przed rozpoczęciem kompilacji.</td></tr>
+    <tr><td>post_build</td><td>Po zakończeniu kompilacji (sukces).</td></tr>
+  </table>
+</section>
+
+<!-- ──────────────── ARTIFACTS ──────────────── -->
+<section id="artifacts">
+  <h2>Dokumentacja i artefakty</h2>
+  <table>
+    <tr><th>Język</th><th>Narzędzie</th><th>Wyjście</th></tr>
+    <tr><td>rust</td><td>cargo doc</td><td><code>target/doc/</code></td></tr>
+    <tr><td>c / c++</td><td>Doxygen (auto-generuje Doxyfile)</td><td><code>docs/html/</code></td></tr>
+    <tr><td>python</td><td>pydoc</td><td>Pliki .html w katalogu projektu</td></tr>
+    <tr><td>nodejs</td><td>jsdoc (wymaga jsdoc.json)</td><td>Katalog docs/</td></tr>
+  </table>
+</section>
+
+<!-- ──────────────── REFERENCE ──────────────── -->
+<section id="reference">
+  <h2>Pełna referencja pól konfiguracji</h2>
+
+  <h3>Typy wartości .hk</h3>
+  <table>
+    <tr><th>Typ</th><th>Przykład</th></tr>
+    <tr><td>String</td><td><code>"wartość"</code></td></tr>
+    <tr><td>Number (f64)</td><td><code>42</code>, <code>3.14</code></td></tr>
+    <tr><td>Bool</td><td><code>true</code>, <code>false</code></td></tr>
+    <tr><td>Array</td><td><code>["a", "b", "c"]</code></td></tr>
+    <tr><td>Map</td><td><code>{ -&gt; klucz =&gt; "val" }</code></td></tr>
+    <tr><td>Interpolacja env</td><td><code>"${HOME}/bin"</code></td></tr>
+  </table>
+</section>
+
+<!-- ──────────────── LOCKFILE ──────────────── -->
+<section id="lockfile">
+  <h2>Lockfile (hbuild.lock)</h2>
+  <p>Po rozwiązaniu zależności hbuild zapisuje plik <code>hbuild.lock</code> w katalogu projektu. Commit go do systemu kontroli wersji, aby zapewnić reprodukowalne buildy.</p>
+  <pre><span class="cmt">// hbuild.lock (JSON)</span>
+{
+  <span class="str">"version"</span>: <span class="num">1</span>,
+  <span class="str">"dependencies"</span>: {
+    <span class="str">"my_dep"</span>: {
+      <span class="str">"source"</span>: { <span class="str">"type"</span>: <span class="str">"git"</span>, <span class="str">"url"</span>: <span class="str">"..."</span>, <span class="str">"commit"</span>: <span class="str">"abc123..."</span> },
+      <span class="str">"version"</span>: <span class="str">"abc123..."</span>,
+      <span class="str">"sha256"</span>: <span class="kw">null</span>
+    }
+  }
+}</pre>
+</section>
+
+<!-- ──────────────── ENV ──────────────── -->
+<section id="env">
+  <h2>Zmienne środowiskowe</h2>
+  <table>
+    <tr><th>Zmienna</th><th>Opis</th></tr>
+    <tr><td>DESTDIR</td><td>Nadpisuje katalog instalacji dla <code>hbuild install</code>.</td></tr>
+    <tr><td>HOME</td><td>Używane do lokalizacji cache (<code>~/.hbuild/cache</code>) i pluginów.</td></tr>
+  </table>
+</section>
+
+</main>
+</div>
+
+<footer>
+  hbuild v0.4.0 — wbudowany w HackerOS Linux &nbsp;·&nbsp;
+  Licencja GPL-3.0 &nbsp;·&nbsp;
+  <a href="https://github.com/HackerOS-Linux-System/hbuild/">github.com/HackerOS-Linux-System/hbuild</a>
+</footer>
+
+</body>
+</html>
