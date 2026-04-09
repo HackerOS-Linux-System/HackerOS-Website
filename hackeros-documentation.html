@@ -617,7 +617,7 @@ sudo lpm clean</span> <button class="copy-button" data-command="sudo lpm install
                         <li><strong>Znak towarowy / nazwa:</strong> zastrzeżona przez projekt.</li>
                     </ul>
                 </div>
-                <!-- 9. Narzędzia i aplikacje (zaktualizowane: osobny wiersz dla h# i vira/bytes) -->
+                <!-- 9. Narzędzia i aplikacje (zaktualizowane: vira/bytes używa h#-utils) -->
                 <div id="tools" class="tab-pane">
                     <h2>9. Narzędzia i aplikacje</h2>
                     <p>Oto pełna lista autorskich narzędzi i aplikacji HackerOS wraz z opisami i informacjami o instalacji:</p>
@@ -634,8 +634,8 @@ sudo lpm clean</span> <button class="copy-button" data-command="sudo lpm install
                             <tr><td><code>lpm</code></td><td>Własny następca apt (szybszy i zoptymalizowany pod HackerOS).</td><td><code>hacker unpack lpm</code></td></tr>
                             <!-- Język H# -->
                             <tr><td><code>h#</code></td><td>Własny język programowania H# (Język programowania do ogólnego zastosowania w HackerOS).</td><td><code>hacker unpack h#</code></td></tr>
-                            <!-- Osobny wiersz dla menedżerów pakietów vira/bytes -->
-                            <tr><td><code>vira/bytes</code></td><td>Managery pakietów dla H# (bytes: interpretacja, vira: kompilacja do binarki).</td><td><code>hacker unpack h#</code></td></tr>
+                            <!-- ZMIANA: vira/bytes używa teraz h#-utils -->
+                            <tr><td><code>vira/bytes</code></td><td>Managery pakietów dla H# (bytes: interpretacja, vira: kompilacja do binarki).</td><td><code>hacker unpack h#-utils</code></td></tr>
                             <!-- Hacker Lang -->
                             <tr><td><code>hl</code></td><td>Język programowania Hacker Lang – następca shella (lub alternatywa).</td><td>wbudowany w każdej edycji</td></tr>
                             <tr><td><code>hexai</code></td><td>AI dla HackerOS – lokalny asystent oparty na modelach językowych.</td><td><code>hacker unpack hexai</code></td></tr>
@@ -660,7 +660,7 @@ sudo lpm clean</span> <button class="copy-button" data-command="sudo lpm install
                     </table>
                     <p>dla tych zaawansowanych narzędzi jest specjalna dokumentacja (<a href="https://hackeros-linux-system.github.io/HackerOS-Website/tools-docs/index.html" target="_blank">tutaj</a>)</p>
                 </div>
-                <!-- 10. Języki programowania (zaktualizowany H#: dodano tryb JIT) -->
+                <!-- 10. Języki programowania -->
                 <div id="programming" class="tab-pane">
                     <h2>10. Języki programowania</h2>
 
