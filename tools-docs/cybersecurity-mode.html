@@ -104,11 +104,40 @@
     max-width: 900px;
     padding: 56px 64px 96px;
     overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Back button (top right) */
+  .back-button-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 24px;
+  }
+  .back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    padding: 6px 14px;
+    border-radius: 24px;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent-c);
+    text-decoration: none;
+    transition: 0.15s;
+    font-weight: 500;
+  }
+  .back-button:hover {
+    background: var(--bg2);
+    border-color: var(--accent-c);
+    text-decoration: none;
+    color: white;
   }
 
   /* ── Hero ────────────────────────────────────────────────── */
   .hero {
-    padding: 48px 0 56px;
+    padding: 0 0 56px;
     border-bottom: 1px solid var(--border);
     margin-bottom: 56px;
   }
@@ -304,22 +333,6 @@
   .alert.tip   { background: var(--accent-g)0d; border-color: var(--accent-g); color: #ccc; }
   .alert strong { color: var(--text); }
 
-  /* ── File tree ───────────────────────────────────────────── */
-  .filetree {
-    background: #0c0c0e;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 20px 24px;
-    font-family: var(--mono);
-    font-size: 13px;
-    color: #aaa;
-    line-height: 1.9;
-  }
-  .filetree .dir   { color: var(--accent-c); }
-  .filetree .file  { color: #888; }
-  .filetree .bin   { color: var(--accent-g); font-weight: 700; }
-  .filetree .cmt   { color: #444; }
-
   /* ── Scrollbar ───────────────────────────────────────────── */
   ::-webkit-scrollbar { width: 5px; }
   ::-webkit-scrollbar-track { background: transparent; }
@@ -363,8 +376,7 @@
   <a href="#cli-examples">Examples</a>
 
   <div class="nav-section">Development</div>
-  <a href="#build">Building from Source</a>
-  <a href="#file-structure">File Structure</a>
+  <!-- removed File Structure and Building from Source links -->
   <a href="#ipc-protocol">IPC Protocol</a>
   <a href="#plugins">Plugin System</a>
 
@@ -377,6 +389,12 @@
 
 <!-- ── Main Content ───────────────────────────────────────── -->
 <main>
+  <!-- Back button (top right corner) -->
+  <div class="back-button-container">
+    <a href="https://hackeros-linux-system.github.io/HackerOS-Website/tools-docs/index.html" class="back-button" target="_blank" rel="noopener noreferrer">
+      ← Back to HackerOS Tools
+    </a>
+  </div>
 
   <!-- Hero -->
   <div class="hero">
@@ -458,19 +476,19 @@
         <td>Python 3.13 + PyQt6</td>
         <td><code>cybersec-mode-main</code></td>
         <td>Main graphical interface, all UI panels, compiled with Nuitka to static binary</td>
-      </tr>
+       </tr>
       <tr>
         <td>Backend</td>
         <td>Rust (tokio)</td>
         <td><code>cybersec-mode-backend</code></td>
         <td>Container lifecycle management, network scanning, IPC server over Unix socket</td>
-      </tr>
+       </tr>
       <tr>
         <td>CLI</td>
         <td>Crystal</td>
         <td><code>cybersec</code></td>
         <td>Command-line interface, session launcher, update/plugin management</td>
-      </tr>
+       </tr>
     </table>
 
     <h3>Communication Flow</h3>
@@ -549,62 +567,34 @@
     <h3>System Requirements</h3>
     <table>
       <tr><th>Component</th><th>Minimum</th><th>Recommended</th></tr>
-      <tr><td>OS</td><td colspan="2">HackerOS (Arch-based)</td></tr>
-      <tr><td>RAM</td><td>4 GB</td><td>8+ GB</td></tr>
-      <tr><td>Disk</td><td>20 GB free</td><td>50+ GB</td></tr>
-      <tr><td>Display</td><td>1280×800</td><td>1920×1080 or higher</td></tr>
-      <tr><td>Network</td><td colspan="2">Required for container image pull</td></tr>
+      <tr><td>OS</td><td colspan="2">HackerOS (Arch-based)</td> </tr>
+      <tr><td>RAM</td><td>4 GB</td><td>8+ GB</td> </tr>
+      <tr><td>Disk</td><td>20 GB free</td><td>50+ GB</td> </tr>
+      <tr><td>Display</td><td>1280×800</td><td>1920×1080 or higher</td> </tr>
+      <tr><td>Network</td><td colspan="2">Required for container image pull</td> </tr>
     </table>
 
     <h3>Runtime Dependencies</h3>
     <table>
       <tr><th>Package</th><th>Purpose</th></tr>
-      <tr><td>podman</td><td>Container engine (preferred over docker)</td></tr>
-      <tr><td>cage</td><td>Wayland compositor for TTY session mode</td></tr>
-      <tr><td>python3.13</td><td>Python runtime (bundled in binary via Nuitka)</td></tr>
-      <tr><td>qt6-base</td><td>Qt6 runtime libraries for PyQt6</td></tr>
-      <tr><td>libwayland</td><td>Wayland client libraries</td></tr>
+      <tr><td>podman</td><td>Container engine (preferred over docker)</td> </tr>
+      <tr><td>cage</td><td>Wayland compositor for TTY session mode</td> </tr>
+      <tr><td>python3.13</td><td>Python runtime (bundled in binary via Nuitka)</td> </tr>
+      <tr><td>qt6-base</td><td>Qt6 runtime libraries for PyQt6</td> </tr>
+      <tr><td>libwayland</td><td>Wayland client libraries</td> </tr>
     </table>
 
-    <h3>Build Dependencies</h3>
-    <table>
-      <tr><th>Tool</th><th>Version</th><th>For</th></tr>
-      <tr><td>python3.13 + nuitka</td><td>≥ 3.13 / ≥ 2.0</td><td>GUI binary</td></tr>
-      <tr><td>cargo (Rust)</td><td>≥ 1.75</td><td>Backend binary</td></tr>
-      <tr><td>crystal</td><td>≥ 1.10</td><td>CLI binary</td></tr>
-    </table>
+    <!-- Build Dependencies table removed as requested -->
   </section>
 
   <!-- Install -->
   <section id="install">
     <h2>Installing</h2>
 
-    <h3>From HackerOS Package Manager</h3>
-    <span class="pre-label">bash</span>
-    <pre><code>sudo pacman -S hackeros-cybersec-mode</code></pre>
-
-    <h3>From Source</h3>
-    <span class="pre-label">bash</span>
-    <pre><code># Clone the repository
-git clone https://github.com/HackerOS/cybersecurity-mode
-cd cybersecurity-mode
-
-# Run the installer (builds all three components)
-sudo bash install.sh</code></pre>
-
-    <div class="alert tip">
-      <strong>Tip:</strong> The installer handles building all three components automatically.
-      Individual component builds are also available via <code>build-python-gui.sh</code>,
-      <code>build-rust-backend.sh</code>, and <code>build-crystal-cli.sh</code>.
-    </div>
-
-    <h3>First Launch</h3>
-    <span class="pre-label">bash — from TTY</span>
-    <pre><code># Launch a full Cybersecurity Mode session (from TTY, not inside X/Wayland)
-cybersec
-
-# Or open GUI inside an existing desktop session
-cybersec please</code></pre>
+    <!-- Removed From HackerOS Package Manager block -->
+    <h3>For HackerOS</h3>
+    <pre><code>hacker unpack cybersecurity-mode</code></pre>
+    <p>This command will fetch and install the precompiled Cybersecurity Mode package directly on your HackerOS system.</p>
   </section>
 
   <!-- Container -->
@@ -716,14 +706,14 @@ sqlmap --version</code></pre>
     <h3>Available Settings</h3>
     <table>
       <tr><th>Setting</th><th>Options</th><th>Default</th></tr>
-      <tr><td>Theme</td><td>dark_gray, dark_black, dark_slate, light</td><td>dark_gray</td></tr>
-      <tr><td>UI Font Size</td><td>9–24 px</td><td>13</td></tr>
-      <tr><td>Terminal Font Size</td><td>9–24 px</td><td>13</td></tr>
-      <tr><td>Always Ask Mode</td><td>on / off</td><td>on</td></tr>
-      <tr><td>Container Engine</td><td>podman, docker</td><td>podman</td></tr>
-      <tr><td>Container Image</td><td>any OCI image</td><td>blackarchlinux/blackarch</td></tr>
-      <tr><td>Shell</td><td>bash, zsh, fish, sh</td><td>bash</td></tr>
-      <tr><td>Log Level</td><td>DEBUG, INFO, WARNING, ERROR</td><td>INFO</td></tr>
+      <tr><td>Theme</td><td>dark_gray, dark_black, dark_slate, light</td><td>dark_gray</td> </tr>
+      <tr><td>UI Font Size</td><td>9–24 px</td><td>13</td> </tr>
+      <tr><td>Terminal Font Size</td><td>9–24 px</td><td>13</td> </tr>
+      <tr><td>Always Ask Mode</td><td>on / off</td><td>on</td> </tr>
+      <tr><td>Container Engine</td><td>podman, docker</td><td>podman</td> </tr>
+      <tr><td>Container Image</td><td>any OCI image</td><td>blackarchlinux/blackarch</td> </tr>
+      <tr><td>Shell</td><td>bash, zsh, fish, sh</td><td>bash</td> </tr>
+      <tr><td>Log Level</td><td>DEBUG, INFO, WARNING, ERROR</td><td>INFO</td> </tr>
     </table>
   </section>
 
@@ -735,12 +725,12 @@ sqlmap --version</code></pre>
     </p>
     <table>
       <tr><th>Action</th><th>Description</th><th>Session Only</th></tr>
-      <tr><td>Switch to Plasma</td><td>Exit Cybersecurity Mode session and start KDE Plasma</td><td>Yes</td></tr>
-      <tr><td>Restart App</td><td>Restart Cybersecurity Mode application</td><td>No</td></tr>
-      <tr><td>Shutdown</td><td>Power off the system (systemctl poweroff)</td><td>No</td></tr>
-      <tr><td>Reboot</td><td>Reboot the system (systemctl reboot)</td><td>No</td></tr>
-      <tr><td>Update System</td><td>Run <code>cybersec update</code> in the terminal</td><td>No</td></tr>
-      <tr><td>Change Mode</td><td>Open the mode selection dialog (Red ↔ Blue)</td><td>No</td></tr>
+      <tr><td>Switch to Plasma</td><td>Exit Cybersecurity Mode session and start KDE Plasma</td><td>Yes</td> </tr>
+      <tr><td>Restart App</td><td>Restart Cybersecurity Mode application</td><td>No</td> </tr>
+      <tr><td>Shutdown</td><td>Power off the system (systemctl poweroff)</td><td>No</td> </tr>
+      <tr><td>Reboot</td><td>Reboot the system (systemctl reboot)</td><td>No</td> </tr>
+      <tr><td>Update System</td><td>Run <code>cybersec update</code> in the terminal</td><td>No</td> </tr>
+      <tr><td>Change Mode</td><td>Open the mode selection dialog (Red ↔ Blue)</td><td>No</td> </tr>
     </table>
     <div class="alert info">
       <strong>Session Only:</strong> "Switch to Plasma" only works when Cybersecurity Mode
@@ -755,19 +745,19 @@ sqlmap --version</code></pre>
 
     <table>
       <tr><th>Command</th><th>Description</th></tr>
-      <tr><td>cybersec</td><td>Launch Cybersecurity Mode as a TTY session (requires TTY)</td></tr>
-      <tr><td>cybersec please</td><td>Open the GUI in the current session (no TTY check)</td></tr>
-      <tr><td>cybersec help</td><td>Show command reference</td></tr>
-      <tr><td>cybersec version</td><td>Print version string</td></tr>
-      <tr><td>cybersec status</td><td>Show container, binary, and config status</td></tr>
-      <tr><td>cybersec update</td><td>Update container image and application (live output)</td></tr>
-      <tr><td>cybersec set-mode red</td><td>Switch to Red mode (saved to config)</td></tr>
-      <tr><td>cybersec set-mode blue</td><td>Switch to Blue mode (saved to config)</td></tr>
-      <tr><td>cybersec exec &lt;cmd&gt;</td><td>Execute a command inside the container</td></tr>
-      <tr><td>cybersec plugin list</td><td>List installed plugins</td></tr>
-      <tr><td>cybersec plugin install &lt;n&gt;</td><td>Install a plugin (placeholder)</td></tr>
-      <tr><td>cybersec plugin remove &lt;n&gt;</td><td>Remove an installed plugin</td></tr>
-      <tr><td>cybersec plugin info &lt;n&gt;</td><td>Show plugin metadata</td></tr>
+      <tr><td>cybersec</td><td>Launch Cybersecurity Mode as a TTY session (requires TTY)</td> </tr>
+      <tr><td>cybersec please</td><td>Open the GUI in the current session (no TTY check)</td> </tr>
+      <tr><td>cybersec help</td><td>Show command reference</td> </tr>
+      <tr><td>cybersec version</td><td>Print version string</td> </tr>
+      <tr><td>cybersec status</td><td>Show container, binary, and config status</td> </tr>
+      <tr><td>cybersec update</td><td>Update container image and application (live output)</td> </tr>
+      <tr><td>cybersec set-mode red</td><td>Switch to Red mode (saved to config)</td> </tr>
+      <tr><td>cybersec set-mode blue</td><td>Switch to Blue mode (saved to config)</td> </tr>
+      <tr><td>cybersec exec &lt;cmd&gt;</td><td>Execute a command inside the container</td> </tr>
+      <tr><td>cybersec plugin list</td><td>List installed plugins</td> </tr>
+      <tr><td>cybersec plugin install &lt;n&gt;</td><td>Install a plugin (placeholder)</td> </tr>
+      <tr><td>cybersec plugin remove &lt;n&gt;</td><td>Remove an installed plugin</td> </tr>
+      <tr><td>cybersec plugin info &lt;n&gt;</td><td>Show plugin metadata</td> </tr>
     </table>
   </section>
 
@@ -796,66 +786,7 @@ cybersec set-mode blue
 cybersec plugin list</code></pre>
   </section>
 
-  <!-- Build -->
-  <section id="build">
-    <h2>Building from Source</h2>
-
-    <h3>Python GUI (Nuitka)</h3>
-    <span class="pre-label">bash</span>
-    <pre><code># Requires: Python 3.13, nuitka, PyQt6
-pip install nuitka PyQt6
-bash build-python-gui.sh
-# Output: /usr/lib/HackerOS/Cybersecurity-Mode/cybersec-mode-main</code></pre>
-
-    <h3>Rust Backend</h3>
-    <span class="pre-label">bash</span>
-    <pre><code># Requires: cargo (Rust stable ≥ 1.75)
-bash build-rust-backend.sh
-# Output: /usr/lib/HackerOS/Cybersecurity-Mode/cybersec-mode-backend</code></pre>
-
-    <h3>Crystal CLI</h3>
-    <span class="pre-label">bash</span>
-    <pre><code># Requires: crystal ≥ 1.10, static linking support
-bash build-crystal-cli.sh
-# Output: /usr/bin/cybersec</code></pre>
-  </section>
-
-  <!-- File structure -->
-  <section id="file-structure">
-    <h2>File Structure</h2>
-    <div class="filetree">
-<span class="cmt"># Installed binaries</span>
-<span class="dir">/usr/lib/HackerOS/Cybersecurity-Mode/</span>
-├── <span class="bin">cybersec-mode-main</span>        <span class="cmt"># Python GUI (Nuitka binary)</span>
-└── <span class="bin">cybersec-mode-backend</span>     <span class="cmt"># Rust backend</span>
-
-<span class="dir">/usr/bin/</span>
-└── <span class="bin">cybersec</span>                   <span class="cmt"># Crystal CLI</span>
-
-<span class="cmt"># User data</span>
-<span class="dir">~/.cache/HackerOS/Cybersecurity-Mode/</span>
-├── <span class="file">config.json</span>               <span class="cmt"># User configuration</span>
-└── <span class="dir">plugins/</span>                  <span class="cmt"># Installed plugins</span>
-
-<span class="dir">~/.local/share/HackerOS/Cybersecurity-Mode/logs/</span>
-└── <span class="file">cybersec-mode.log</span>         <span class="cmt"># Rotating log file</span>
-
-<span class="cmt"># System config</span>
-<span class="dir">/etc/HackerOS/Cybersecurity-Mode/</span>
-└── <span class="file">defaults.json</span>             <span class="cmt"># System-wide defaults</span>
-
-<span class="cmt"># Desktop session</span>
-<span class="dir">/usr/share/wayland-sessions/</span>
-└── <span class="file">cybersec-mode.desktop</span>
-
-<span class="cmt"># Icons</span>
-<span class="dir">/usr/share/HackerOS/ICONS/</span>
-└── <span class="file">HackerOS.png</span>              <span class="cmt"># App icon (top-right corner)</span>
-
-<span class="cmt"># IPC socket (runtime)</span>
-<span class="file">/tmp/cybersec-mode-backend.sock</span>
-    </div>
-  </section>
+  <!-- Removed Building from Source (full section) and File Structure section as requested -->
 
   <!-- IPC Protocol -->
   <section id="ipc-protocol">
@@ -877,14 +808,14 @@ bash build-crystal-cli.sh
     <h3>Available RPC Methods</h3>
     <table>
       <tr><th>Method</th><th>Params</th><th>Returns</th></tr>
-      <tr><td>ping</td><td>—</td><td><code>{"pong": true}</code></td></tr>
-      <tr><td>container_status</td><td>name</td><td>running, state, engine</td></tr>
-      <tr><td>container_start</td><td>image, name</td><td>started, reused</td></tr>
-      <tr><td>container_stop</td><td>name</td><td>stopped</td></tr>
-      <tr><td>container_exec</td><td>name, cmd</td><td>stdout, stderr, exit_code</td></tr>
-      <tr><td>list_tools</td><td>—</td><td>tools[]</td></tr>
-      <tr><td>system_info</td><td>—</td><td>hostname, kernel, uptime</td></tr>
-      <tr><td>scan_network</td><td>target</td><td>raw nmap XML output</td></tr>
+      <tr><td>ping</td><td>—</td><td><code>{"pong": true}</code></td> </tr>
+      <tr><td>container_status</td><td>name</td><td>running, state, engine</td> </tr>
+      <tr><td>container_start</td><td>image, name</td><td>started, reused</td> </tr>
+      <tr><td>container_stop</td><td>name</td><td>stopped</td> </tr>
+      <tr><td>container_exec</td><td>name, cmd</td><td>stdout, stderr, exit_code</td> </tr>
+      <tr><td>list_tools</td><td>—</td><td>tools[]</td> </tr>
+      <tr><td>system_info</td><td>—</td><td>hostname, kernel, uptime</td> </tr>
+      <tr><td>scan_network</td><td>target</td><td>raw nmap XML output</td> </tr>
     </table>
   </section>
 
@@ -945,16 +876,28 @@ bash build-crystal-cli.sh
 }</code></pre>
   </section>
 
+  <!-- Paths (reference only, kept because nav points to #paths) -->
+  <section id="paths">
+    <h2>Paths & Directories</h2>
+    <p>Key runtime paths for Cybersecurity Mode:</p>
+    <ul>
+      <li><strong>User config:</strong> <code>~/.cache/HackerOS/Cybersecurity-Mode/config.json</code></li>
+      <li><strong>Logs:</strong> <code>~/.local/share/HackerOS/Cybersecurity-Mode/logs/cybersec-mode.log</code></li>
+      <li><strong>IPC socket:</strong> <code>/tmp/cybersec-mode-backend.sock</code></li>
+      <li><strong>Container home mount:</strong> <code>/home</code> inside container → host home</li>
+    </ul>
+  </section>
+
   <!-- Keybindings -->
   <section id="keybindings">
     <h2>Default Keybindings</h2>
     <table>
       <tr><th>Shortcut</th><th>Action</th></tr>
-      <tr><td>Ctrl+M</td><td>Go to Main panel</td></tr>
-      <tr><td>Ctrl+T</td><td>Go to Terminal panel</td></tr>
-      <tr><td>Ctrl+D</td><td>Go to Docs panel</td></tr>
-      <tr><td>Ctrl+,</td><td>Go to Settings panel</td></tr>
-      <tr><td>Ctrl+H</td><td>Toggle Hacker Menu</td></tr>
+      <tr><td>Ctrl+M</td><td>Go to Main panel</td> </tr>
+      <tr><td>Ctrl+T</td><td>Go to Terminal panel</td> </tr>
+      <tr><td>Ctrl+D</td><td>Go to Docs panel</td> </tr>
+      <tr><td>Ctrl+,</td><td>Go to Settings panel</td> </tr>
+      <tr><td>Ctrl+H</td><td>Toggle Hacker Menu</td> </tr>
     </table>
     <p>All keybindings are customizable in <strong>Settings → Keybindings</strong>.</p>
   </section>
@@ -966,31 +909,31 @@ bash build-crystal-cli.sh
     <h3>Red Mode Tools</h3>
     <table>
       <tr><th>Tool</th><th>Category</th><th>Description</th></tr>
-      <tr><td>nmap</td><td>Scanning</td><td>Network discovery and port scanning</td></tr>
-      <tr><td>metasploit</td><td>Exploitation</td><td>Penetration testing framework</td></tr>
-      <tr><td>burpsuite</td><td>Web</td><td>Web proxy, scanner, and attack tool</td></tr>
-      <tr><td>sqlmap</td><td>Web</td><td>Automated SQL injection</td></tr>
-      <tr><td>hydra</td><td>Brute-force</td><td>Login credential brute-forcing</td></tr>
-      <tr><td>aircrack-ng</td><td>Wireless</td><td>WiFi security auditing suite</td></tr>
-      <tr><td>hashcat</td><td>Password</td><td>GPU-accelerated password cracking</td></tr>
-      <tr><td>john</td><td>Password</td><td>John the Ripper password cracker</td></tr>
-      <tr><td>gobuster</td><td>Web</td><td>Directory and DNS brute-forcing</td></tr>
-      <tr><td>nikto</td><td>Web</td><td>Web server vulnerability scanner</td></tr>
+      <tr><td>nmap</td><td>Scanning</td><td>Network discovery and port scanning</td> </tr>
+      <tr><td>metasploit</td><td>Exploitation</td><td>Penetration testing framework</td> </tr>
+      <tr><td>burpsuite</td><td>Web</td><td>Web proxy, scanner, and attack tool</td> </tr>
+      <tr><td>sqlmap</td><td>Web</td><td>Automated SQL injection</td> </tr>
+      <tr><td>hydra</td><td>Brute-force</td><td>Login credential brute-forcing</td> </tr>
+      <tr><td>aircrack-ng</td><td>Wireless</td><td>WiFi security auditing suite</td> </tr>
+      <tr><td>hashcat</td><td>Password</td><td>GPU-accelerated password cracking</td> </tr>
+      <tr><td>john</td><td>Password</td><td>John the Ripper password cracker</td> </tr>
+      <tr><td>gobuster</td><td>Web</td><td>Directory and DNS brute-forcing</td> </tr>
+      <tr><td>nikto</td><td>Web</td><td>Web server vulnerability scanner</td> </tr>
     </table>
 
     <h3>Blue Mode Tools</h3>
     <table>
       <tr><th>Tool</th><th>Category</th><th>Description</th></tr>
-      <tr><td>wireshark</td><td>Network</td><td>Graphical packet analyzer</td></tr>
-      <tr><td>suricata</td><td>IDS/IPS</td><td>Network threat detection engine</td></tr>
-      <tr><td>lynis</td><td>Audit</td><td>Security auditing and hardening tool</td></tr>
-      <tr><td>openvas</td><td>Scanner</td><td>Full-featured vulnerability scanner</td></tr>
-      <tr><td>fail2ban</td><td>Prevention</td><td>Log-based intrusion prevention</td></tr>
-      <tr><td>auditd</td><td>Logging</td><td>Linux kernel audit daemon</td></tr>
-      <tr><td>clamav</td><td>Malware</td><td>Open-source antivirus engine</td></tr>
-      <tr><td>rkhunter</td><td>Malware</td><td>Rootkit detection and scanning</td></tr>
-      <tr><td>tcpdump</td><td>Network</td><td>Command-line packet capture</td></tr>
-      <tr><td>snort</td><td>IDS/IPS</td><td>Intrusion detection and prevention</td></tr>
+      <tr><td>wireshark</td><td>Network</td><td>Graphical packet analyzer</td> </tr>
+      <tr><td>suricata</td><td>IDS/IPS</td><td>Network threat detection engine</td> </tr>
+      <tr><td>lynis</td><td>Audit</td><td>Security auditing and hardening tool</td> </tr>
+      <tr><td>openvas</td><td>Scanner</td><td>Full-featured vulnerability scanner</td> </tr>
+      <tr><td>fail2ban</td><td>Prevention</td><td>Log-based intrusion prevention</td> </tr>
+      <tr><td>auditd</td><td>Logging</td><td>Linux kernel audit daemon</td> </tr>
+      <tr><td>clamav</td><td>Malware</td><td>Open-source antivirus engine</td> </tr>
+      <tr><td>rkhunter</td><td>Malware</td><td>Rootkit detection and scanning</td> </tr>
+      <tr><td>tcpdump</td><td>Network</td><td>Command-line packet capture</td> </tr>
+      <tr><td>snort</td><td>IDS/IPS</td><td>Intrusion detection and prevention</td> </tr>
     </table>
   </section>
 
