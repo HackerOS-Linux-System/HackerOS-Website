@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="../HackerOS.png">
+<title>hacker — dokumentacja CLI | HackerOS</title>
+<style>
+  :root {
+    --bg:        #0d0d0f;
+    --bg2:       #13131a;
+    --bg3:       #1a1a24;
+    --border:    #2a2a3a;
+    --accent:    #c026d3;
+    --accent2:   #a21caf;
+    --green:     #22c55e;
+    --yellow:    #eab308;
+    --red:       #ef4444;
+    --blue:      #3b82f6;
+    --cyan:      #06b6d4;
+    --text:      #e2e8f0;
+    --text-dim:  #64748b;
+    --text-mid:  #94a3b8;
+    --code-bg:   #0f0f17;
+    --radius:    8px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* ── Sidebar ── */
+  nav {
+    width: 260px;
+    min-width: 260px;
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 0 0 2rem;
+    display: flex;
+    flex-direction: column;
+  }
+  .nav-logo {
+    padding: 1.4rem 1.2rem 1rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: .5rem;
+  }
+  .nav-logo h1 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: -.5px;
+  }
+  .nav-logo span {
+    font-size: .75rem;
+    color: var(--text-dim);
+    display: block;
+    margin-top: 2px;
+  }
+  .nav-section {
+    padding: .4rem 1.2rem .2rem;
+    font-size: .7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-dim);
+    margin-top: .8rem;
+  }
+  nav a {
+    display: block;
+    padding: .38rem 1.2rem .38rem 1.5rem;
+    color: var(--text-mid);
+    text-decoration: none;
+    font-size: .875rem;
+    border-left: 2px solid transparent;
+    transition: all .15s;
+  }
+  nav a:hover, nav a.active {
+    color: var(--accent);
+    border-left-color: var(--accent);
+    background: rgba(192,38,211,.07);
+  }
+  nav a code {
+    font-family: 'Cascadia Code', 'Fira Code', monospace;
+    font-size: .8rem;
+    background: none;
+    padding: 0;
+    color: inherit;
+  }
+
+  /* ── Main content ── */
+  main {
+    flex: 1;
+    max-width: 900px;
+    padding: 2.5rem 3rem 5rem;
+    overflow-x: hidden;
+  }
+
+  /* ── Headings ── */
+  h1 { font-size: 2.2rem; font-weight: 800; color: var(--text); margin-bottom: .5rem; }
+  h2 {
+    font-size: 1.5rem; font-weight: 700; margin: 3rem 0 1rem;
+    padding-bottom: .5rem; border-bottom: 1px solid var(--border);
+    color: var(--text);
+    scroll-margin-top: 1rem;
+  }
+  h3 { font-size: 1.1rem; font-weight: 600; color: var(--accent); margin: 1.8rem 0 .7rem; }
+  h4 { font-size: .95rem; font-weight: 600; color: var(--cyan); margin: 1.2rem 0 .4rem; }
+
+  p { margin-bottom: .9rem; color: var(--text-mid); }
+  strong { color: var(--text); }
+
+  /* ── Hero ── */
+  .hero {
+    background: linear-gradient(135deg, rgba(192,38,211,.12) 0%, rgba(59,130,246,.07) 100%);
+    border: 1px solid rgba(192,38,211,.25);
+    border-radius: var(--radius);
+    padding: 2rem 2rem 1.6rem;
+    margin-bottom: 2.5rem;
+  }
+  .hero p { margin-bottom: 0; font-size: 1.05rem; }
+  .version-badge {
+    display: inline-block;
+    background: rgba(192,38,211,.2);
+    color: var(--accent);
+    border: 1px solid rgba(192,38,211,.4);
+    border-radius: 20px;
+    padding: .2rem .75rem;
+    font-size: .78rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    font-family: monospace;
+  }
+
+  /* ── Code ── */
+  code {
+    font-family: 'Cascadia Code', 'Fira Code', 'Courier New', monospace;
+    font-size: .85em;
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: .15em .4em;
+    color: var(--cyan);
+  }
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.1rem 1.3rem;
+    overflow-x: auto;
+    margin: .8rem 0 1.2rem;
+    line-height: 1.6;
+  }
+  pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: .88rem;
+    color: var(--text);
+  }
+  .cmd   { color: #c084fc; }
+  .arg   { color: #86efac; }
+  .flag  { color: #fbbf24; }
+  .cmt   { color: #475569; font-style: italic; }
+  .str   { color: #fb923c; }
+
+  /* ── Command table ── */
+  .cmd-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0 1.5rem;
+    font-size: .88rem;
+  }
+  .cmd-table th {
+    text-align: left;
+    padding: .55rem .8rem;
+    background: var(--bg3);
+    border-bottom: 2px solid var(--border);
+    color: var(--text-dim);
+    font-size: .75rem;
+    text-transform: uppercase;
+    letter-spacing: .8px;
+  }
+  .cmd-table td {
+    padding: .55rem .8rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-mid);
+    vertical-align: top;
+  }
+  .cmd-table tr:hover td { background: rgba(255,255,255,.025); }
+  .cmd-table td:first-child { color: var(--cyan); font-family: monospace; white-space: nowrap; }
+  .cmd-table td code { color: var(--accent); }
+
+  /* ── Callouts ── */
+  .note, .tip, .warn {
+    border-radius: var(--radius);
+    padding: .9rem 1.1rem;
+    margin: 1.2rem 0;
+    font-size: .9rem;
+    display: flex;
+    gap: .7rem;
+    align-items: flex-start;
+  }
+  .note { background: rgba(59,130,246,.1); border-left: 3px solid var(--blue); }
+  .tip  { background: rgba(34,197,94,.1);  border-left: 3px solid var(--green); }
+  .warn { background: rgba(234,179,8,.1);  border-left: 3px solid var(--yellow); }
+  .note p, .tip p, .warn p { margin: 0; color: var(--text-mid); }
+  .note-icon { font-size: 1.1rem; line-height: 1.6; }
+
+  /* ── Section anchor ── */
+  .anchor-link { color: var(--text-dim); text-decoration: none; margin-left: .4rem; opacity: 0; transition: opacity .15s; }
+  h2:hover .anchor-link { opacity: 1; }
+
+  /* ── Plugin format ── */
+  .plugin-block {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.2rem;
+    margin: 1rem 0;
+  }
+  .plugin-block h4 { margin-top: 0; }
+
+  /* ── Breadcrumb ── */
+  .breadcrumb { font-size: .8rem; color: var(--text-dim); margin-bottom: 1.5rem; }
+  .breadcrumb span { margin: 0 .4rem; }
+
+  /* ── Footer ── */
+  footer {
+    margin-top: 4rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: .82rem;
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ SIDEBAR ═══════════════════ -->
+<nav>
+  <div class="nav-logo">
+    <h1>hacker</h1>
+    <span>HackerOS CLI — dokumentacja v2.3.1</span>
+  </div>
+
+  <div class="nav-section">Wprowadzenie</div>
+  <a href="#overview">Czym jest hacker?</a>
+  <a href="#usage">Użycie ogólne</a>
+  <a href="#language">Język interfejsu</a>
+
+  <div class="nav-section">Zarządzanie pakietami</div>
+  <a href="#install"><code>install / remove</code></a>
+  <a href="#flatpak"><code>flatpak-*</code></a>
+  <a href="#unpack"><code>unpack</code></a>
+  <a href="#pack"><code>pack</code></a>
+
+  <div class="nav-section">Środowiska</div>
+  <a href="#env"><code>env</code></a>
+  <a href="#env-file">Format pliku .hk</a>
+
+  <div class="nav-section">System</div>
+  <a href="#update"><code>update</code></a>
+  <a href="#system"><code>system</code></a>
+  <a href="#run"><code>run</code></a>
+  <a href="#switch"><code>switch</code></a>
+  <a href="#restart"><code>restart</code></a>
+
+  <div class="nav-section">Narzędzia</div>
+  <a href="#game"><code>game</code></a>
+  <a href="#ascii"><code>ascii</code></a>
+  <a href="#shell"><code>shell / interactive</code></a>
+  <a href="#enter"><code>enter / remove-container</code></a>
+  <a href="#doctor"><code>doctor / repair</code></a>
+
+  <div class="nav-section">Rozszerzenia</div>
+  <a href="#plugin">System pluginów</a>
+  <a href="#custom">Własne komendy</a>
+
+  <div class="nav-section">Ustawienia</div>
+  <a href="#settings"><code>settings</code></a>
+  <a href="#enable-disable"><code>enable / disable</code></a>
+
+  <div class="nav-section">Informacje</div>
+  <a href="#index"><code>index</code></a>
+  <a href="#info"><code>info / version</code></a>
+  <a href="#issue"><code>issue</code></a>
+
+  <div class="nav-section">Referencje</div>
+  <a href="#all-commands">Wszystkie komendy</a>
+  <a href="#hk-format">Format pliku .hk</a>
+  <a href="#plugin-format">Format pluginu</a>
+</nav>
+
+<!-- ═══════════════════ MAIN ═══════════════════ -->
+<main>
+
+  <div class="breadcrumb">HackerOS &nbsp;<span>›</span>&nbsp; Dokumentacja &nbsp;<span>›</span>&nbsp; hacker CLI</div>
+
+  <div class="hero">
+    <div class="version-badge">v2.3.1</div>
+    <h1>hacker</h1>
+    <p>Główne narzędzie wiersza poleceń systemu HackerOS. Centralny punkt zarządzania pakietami, środowiskami kontenerowymi, aktualizacjami, pluginami i narzędziami systemowymi.</p>
+  </div>
+
+  <!-- ══════════════ OVERVIEW ══════════════ -->
+  <h2 id="overview">Czym jest <code>hacker</code>? <a href="#overview" class="anchor-link">#</a></h2>
+  <p><code>hacker</code> to napisane w języku <strong>Odin</strong> narzędzie CLI będące sercem HackerOS. Zastępuje i ujednolica dziesiątki osobnych skryptów — od instalacji pakietów APT/Flatpak/Snap, przez zarządzanie kontenerami podman/distrobox, aż po uruchamianie gier i przełączanie środowisk graficznych.</p>
+  <p>Binarka jest dostępna globalnie jako <code>hacker</code>. Konfiguracja użytkownika przechowywana jest w <code>~/.config/hackeros/hacker/</code>.</p>
+
+  <div class="note">
+    <span class="note-icon">ℹ️</span>
+    <p>Narzędzie jest wbudowaną częścią HackerOS i nie wymaga osobnej instalacji. Nie ma możliwości (ani potrzeby) instalowania go na innych dystrybucjach.</p>
+  </div>
+
+  <!-- ══════════════ USAGE ══════════════ -->
+  <h2 id="usage">Użycie ogólne <a href="#usage" class="anchor-link">#</a></h2>
+  <pre><code><span class="cmd">hacker</span> <span class="arg">&lt;komenda&gt;</span> [<span class="arg">podkomenda</span>] [<span class="flag">opcje</span>]</code></pre>
+
+  <p>Wywołanie bez argumentów lub z <code>help</code> wyświetla listę wszystkich dostępnych komend:</p>
+  <pre><code><span class="cmd">hacker</span>
+<span class="cmd">hacker</span> <span class="arg">help</span>
+<span class="cmd">hacker</span> <span class="arg">help-ui</span>      <span class="cmt"># interaktywne TUI z wyszukiwarką</span></code></pre>
+
+  <!-- ══════════════ LANGUAGE ══════════════ -->
+  <h2 id="language">Język interfejsu <a href="#language" class="anchor-link">#</a></h2>
+  <p>Komunikaty narzędzia są tłumaczone. Domyślnym językiem jest <strong>polski</strong>. Obsługiwane języki:</p>
+  <table class="cmd-table">
+    <tr><th>Kod</th><th>Język</th></tr>
+    <tr><td>pl</td><td>Polski (domyślny)</td></tr>
+    <tr><td>en</td><td>English</td></tr>
+    <tr><td>de</td><td>Deutsch</td></tr>
+    <tr><td>fr</td><td>Français</td></tr>
+    <tr><td>es</td><td>Español</td></tr>
+    <tr><td>it</td><td>Italiano</td></tr>
+    <tr><td>ru</td><td>Русский</td></tr>
+    <tr><td>zh</td><td>中文</td></tr>
+    <tr><td>ja</td><td>日本語</td></tr>
+    <tr><td>ko</td><td>한국어</td></tr>
+  </table>
+  <pre><code><span class="cmd">hacker</span> <span class="arg">settings language en</span>    <span class="cmt"># zmień na angielski</span>
+<span class="cmd">hacker</span> <span class="arg">settings language</span>       <span class="cmt"># wyświetl aktualny język</span></code></pre>
+
+  <p>Ustawienie języka zapisywane jest w <code>~/.config/hackeros/hacker/language.json</code>.</p>
+
+  <!-- ══════════════ INSTALL ══════════════ -->
+  <h2 id="install">install / remove <a href="#install" class="anchor-link">#</a></h2>
+  <p>Instalacja i usuwanie pakietów APT przez wbudowany frontend.</p>
+  <pre><code><span class="cmd">hacker</span> <span class="arg">install</span> <span class="str">nmap</span>
+<span class="cmd">hacker</span> <span class="arg">remove</span>  <span class="str">nmap</span></code></pre>
+
+  <!-- ══════════════ FLATPAK ══════════════ -->
+  <h2 id="flatpak">flatpak-install / flatpak-remove <a href="#flatpak" class="anchor-link">#</a></h2>
+  <pre><code><span class="cmd">hacker</span> <span class="arg">flatpak-install</span> <span class="str">com.brave.Browser</span>
+<span class="cmd">hacker</span> <span class="arg">flatpak-remove</span>  <span class="str">com.brave.Browser</span></code></pre>
+
+  <!-- ══════════════ UNPACK ══════════════ -->
+  <h2 id="unpack">unpack — instalacja zestawów <a href="#unpack" class="anchor-link">#</a></h2>
+  <p>Instaluje gotowe zestawy oprogramowania. Każdy zestaw to grupa powiązanych narzędzi instalowanych jednym poleceniem.</p>
+  <pre><code><span class="cmd">hacker</span> <span class="arg">unpack</span> <span class="str">&lt;zestaw&gt;</span></code></pre>
+
+  <table class="cmd-table">
+    <tr><th>Zestaw</th><th>Opis</th></tr>
+    <tr><td>add-ons</td><td>Wine, WineZGUI, BoxBuddy, GearLever</td></tr>
+    <tr><td>gs</td><td>Gaming + Cybersecurity (skrót)</td></tr>
+    <tr><td>gaming</td><td>Steam, Heroic, ProtonPlus, Protontricks, Varia</td></tr>
+    <tr><td>gaming with-roblox</td><td>jak gaming + Sober i Vinegar (Roblox)</td></tr>
+    <tr><td>devtools</td><td>VS Code, Crystal, Node.js, Rust, Go, Lua, Zig</td></tr>
+    <tr><td>emulators</td><td>shadPS4, Ryujinx, DOSBox-X, RPCS3</td></tr>
+    <tr><td>cybersecurity</td><td>Kontener BlackArch (distrobox + podman)</td></tr>
+    <tr><td>select</td><td>Interaktywny wybór aplikacji (TUI)</td></tr>
+    <tr><td>hacker-mode</td><td>Tryb Hacker-Mode (sesja Wayland / gamescope)</td></tr>
+    <tr><td>gamescope-session-steam</td><td>Sesja Steam GameMode (gamescope)</td></tr>
+    <tr><td>automatic-updates</td><td>Włącz usługę automatycznych aktualizacji (hup)</td></tr>
+    <tr><td>alacritty-config</td><td>Konfiguracja Alacritty HackerOS</td></tr>
+    <tr><td>hackeros-tv</td><td>HackerOS TV</td></tr>
+    <tr><td>winboat</td><td>Winboat — kompatybilność Windows</td></tr>
+    <tr><td>nvidia-drivers</td><td>Sterowniki NVIDIA</td></tr>
+    <tr><td>hackeros-containers</td><td>Kontenery HackerOS (blackarch, kali…)</td></tr>
+    <tr><td>h#</td><td>H# (H-Sharp) — język programowania HackerOS</td></tr>
+    <tr><td>h#-utils</td><td>Narzędzia pomocnicze H#</td></tr>
+    <tr><td>flox</td><td>Flox — menedżer środowisk</td></tr>
+    <tr><td>hackeros-builder</td><td>HackerOS Builder</td></tr>
+    <tr><td>isolator</td><td>Isolator — instalacja pakietów w kontenerach</td></tr>
+    <tr><td>hydra</td><td>Motyw Hydra Look-and-Feel</td></tr>
+    <tr><td>hammer</td><td>Hammer — atomowy menedżer pakietów</td></tr>
+    <tr><td>hackeros-games-addons</td><td>Dodatki do gier HackerOS</td></tr>
+    <tr><td>lpm</td><td>LPM — następca apt</td></tr>
+    <tr><td>hexai</td><td>HexAi — AI dla HackerOS</td></tr>
+    <tr><td>hackerscript-utils</td><td>Narzędzia HackerScript</td></tr>
+    <tr><td>hackerdeck</td><td>HackerDeck — nakładka Waydroid</td></tr>
+  </table>
+
+  <div class="tip">
+    <span class="note-icon">💡</span>
+    <p>Użyj <code>hacker unpack select</code> aby wybrać aplikacje interaktywnie z interfejsem TUI zamiast pamiętać nazwy zestawów.</p>
+  </div>
+
+  <!-- ══════════════ PACK ══════════════ -->
+  <h2 id="pack">pack — usuwanie zestawów <a href="#pack" class="anchor-link">#</a></h2>
+  <p>Usuwa zestawy zainstalowane przez <code>unpack</code>. Nazwy podkomend są identyczne jak w <code>unpack</code>.</p>
+  <pre><code><span class="cmd">hacker</span> <span class="arg">pack</span> <span class="str">gaming</span>
+<span class="cmd">hacker</span> <span class="arg">pack</span> <span class="str">h#</span>
+<span class="cmd">hacker</span> <span class="arg">pack</span> <span class="str">automatic-updates</span></code></pre>
+
+  <!-- ══════════════ ENV ══════════════ -->
+  <h2 id="env">env — środowiska kontenerowe <a href="#env" class="anchor-link">#</a></h2>
+  <p>Zarządzanie izolowanymi środowiskami opartymi na podman. Środowiska są etykietowane <code>hacker-env=true</code> i obsługują automatyczną synchronizację konfiguracji i narzędzi.</p>
+
+  <table class="cmd-table">
+    <tr><th>Podkomenda</th><th>Opis</th></tr>
+    <tr><td>create &lt;plik.hk&gt;</td><td>Utwórz nowe środowisko z pliku konfiguracyjnego</td></tr>
+    <tr><td>remove &lt;nazwa&gt;</td><td>Usuń środowisko (podman rm -f)</td></tr>
+    <tr><td>enter [nazwa]</td><td>Wejdź do środowiska; bez nazwy — lista wszystkich</td></tr>
+    <tr><td>docs</td><td>Pełny tutorial z przykładami</td></tr>
+    <tr><td>settings</td><td>Lista wszystkich środowisk z statusem</td></tr>
+  </table>
+
+  <pre><code><span class="cmd">hacker</span> <span class="arg">env create</span> <span class="str">./pentest.hk</span>
+<span class="cmd">hacker</span> <span class="arg">env enter</span>  <span class="str">pentest-env</span>
+<span class="cmd">hacker</span> <span class="arg">env remove</span> <span class="str">pentest-env</span>
+<span class="cmd">hacker</span> <span class="arg">env settings</span></code></pre>
+
+  <h2 id="env-file">Format pliku konfiguracyjnego .hk <a href="#env-file" class="anchor-link">#</a></h2>
+  <p>Pliki <code>.hk</code> definiują środowisko kontenerowe. Obsługiwana jest też składnia YAML.</p>
+
+  <pre><code><span class="cmt"># pentest.hk — przykładowa konfiguracja środowiska pentestowego</span>
+
+[env]
+-> name  => pentest-env
+-> image => fedora:latest
+-> shell => zsh
+
+[packages]
+-> -> nmap
+-> -> metasploit-framework
+-> -> burpsuite
+-> -> wireshark
+
+[sync_configs]
+-> -> ~/.zshrc
+-> -> ~/.config/nvim
+-> -> ~/.tmux.conf
+
+[sync_tools]
+-> snap    => ["code"]
+-> flatpak => ["com.brave.Browser"]
+-> system  => ["~/go/bin/gf", "~/go/bin/subfinder"]</code></pre>
+
+  <h4>Sekcje pliku .hk</h4>
+  <table class="cmd-table">
+    <tr><th>Sekcja</th><th>Klucz</th><th>Opis</th></tr>
+    <tr><td>[env]</td><td>name</td><td>Nazwa kontenera (wymagane)</td></tr>
+    <tr><td>[env]</td><td>image</td><td>Obraz Docker/OCI (wymagane)</td></tr>
+    <tr><td>[env]</td><td>shell</td><td>Powłoka: <code>bash</code> lub <code>zsh</code></td></tr>
+    <tr><td>[packages]</td><td>-</td><td>Lista pakietów do zainstalowania (apt / dnf)</td></tr>
+    <tr><td>[sync_configs]</td><td>-</td><td>Pliki konfiguracyjne do skopiowania do kontenera</td></tr>
+    <tr><td>[sync_tools]</td><td>snap/flatpak/system</td><td>Dodatkowe narzędzia do synchronizacji</td></tr>
+  </table>
+
+  <!-- ══════════════ UPDATE ══════════════ -->
+  <h2 id="update">update — aktualizacja systemu <a href="#update" class="anchor-link">#</a></h2>
+  <p>Uruchamia HackerOS Updater — interaktywny TUI aktualizujący APT, Flatpak, Snap, Brew, firmware, Oh-My-Zsh, Distrobox oraz komponenty HackerOS.</p>
+  <pre><code><span class="cmd">hacker</span> <span class="arg">update</span>             <span class="cmt"># TUI w bieżącym terminalu</span>
+<span class="cmd">hacker</span> <span class="arg">update</span> <span class="flag">--with-gui</span>  <span class="cmt"># otwórz w nowym oknie Alacritty</span></code></pre>
+
+  <!-- ══════════════ SYSTEM ══════════════ -->
+  <h2 id="system">system — komendy systemowe <a href="#system" class="anchor-link">#</a></h2>
+  <pre><code><span class="cmd">hacker</span> <span class="arg">system logs</span>   <span class="cmt"># journalctl -xe</span></code></pre>
+
+  <!-- ══════════════ RUN ══════════════ -->
+  <h2 id="run">run — uruchamianie skryptów i aplikacji <a href="#run" class="anchor-link">#</a></h2>
+  <p>Bezpośrednie uruchamianie wbudowanych skryptów i aplikacji HackerOS.</p>
+  <table class="cmd-table">
+    <tr><th>Podkomenda</th><th>Opis</th></tr>
+    <tr><td>update-system</td><td>Skrypt aktualizacji systemu</td></tr>
+    <tr><td>check-updates</td><td>Sprawdź dostępne aktualizacje</td></tr>
+    <tr><td>steam</td><td>Uruchom Steam przez skrypt HackerOS</td></tr>
+    <tr><td>hacker-launcher</td><td>Hacker Launcher (uruchamianie gier .exe)</td></tr>
+    <tr><td>hackeros-game-mode</td><td>HackerOS Game Mode (AppImage)</td></tr>
+    <tr><td>update-hackeros</td><td>Aktualizuj komponenty HackerOS</td></tr>
+    <tr><td>update-wallpapers</td><td>Aktualizuj tapety</td></tr>
+    <tr><td>remove-debian-kernel</td><td>Usuń domyślne jądro Debian</td></tr>
+    <tr><td>HackerOS-Store</td><td>Sklep HackerOS</td></tr>
+    <tr><td>HackerOS-Steam</td><td>Kontener Steam HackerOS</td></tr>
+    <tr><td>HackerDeck</td><td>Nakładka HackerDeck</td></tr>
+    <tr><td>Hacker-Term</td><td>Terminal HackerOS</td></tr>
+    <tr><td>build-hackeros</td><td>Zbuduj obraz HackerOS (live build)</td></tr>
+  </table>
+
+  <!-- ══════════════ SWITCH ══════════════ -->
+  <h2 id="switch">switch — przełączanie środowisk graficznych <a href="#switch" class="anchor-link">#</a></h2>
+  <p>Wykrywa bieżące środowisko graficzne, wyłącza je i uruchamia wybrany tryb bez konieczności wylogowywania.</p>
+  <pre><code><span class="cmd">hacker</span> <span class="arg">switch hacker-mode</span>         <span class="cmt"># przełącz na Hacker-Mode (Wayland)</span>
+<span class="cmd">hacker</span> <span class="arg">switch steam-gamemode</span>      <span class="cmt"># przełącz na Steam Gaming Mode</span></code></pre>
+
+  <div class="warn">
+    <span class="note-icon">⚠️</span>
+    <p>Polecenie <code>switch</code> zabija bieżący serwer Wayland/X11. Upewnij się, że masz zapisaną pracę przed użyciem.</p>
+  </div>
+
+  <p>Obsługiwane środowiska wykrywane automatycznie: KDE Plasma, GNOME, XFCE4.</p>
+
+  <!-- ══════════════ RESTART ══════════════ -->
+  <h2 id="restart">restart <a href="#restart" class="anchor-link">#</a></h2>
+  <pre><code><span class="cmd">hacker</span> <span class="arg">restart</span> <span class="str">NetworkManager</span>
+<span class="cmd">hacker</span> <span class="arg">restart</span> <span class="str">bluetooth</span></code></pre>
+  <p>Wykonuje <code>sudo systemctl restart &lt;usługa&gt;</code>.</p>
+
+  <!-- ══════════════ GAME ══════════════ -->
+  <h2 id="game">game — gra tekstowa <a href="#game" class="anchor-link">#</a></h2>
+  <p>Wbudowana przygodowa gra tekstowa w klimatach hakerskich. Trzy poziomy trudności: Easy, Normal, Hard.</p>
+  <pre><code><span class="cmd">hacker</span> <span class="arg">game</span></code></pre>
+  <p>Cel: wejść do komnaty rdzenia, zebrać USB drive, hasło i narzędzie deszyfrujące, a następnie użyć komendy <code>hack</code>.</p>
+
+  <!-- ══════════════ ASCII ══════════════ -->
+  <h2 id="ascii">ascii <a href="#ascii" class="anchor-link">#</a></h2>
+  <pre><code><span class="cmd">hacker</span> <span class="arg">ascii</span></code></pre>
+  <p>Wyświetla logo HackerOS w ASCII art z <code>/usr/share/HackerOS/Config-Files/HackerOS-Ascii</code>.</p>
+
+  <!-- ══════════════ SHELL ══════════════ -->
+  <h2 id="shell">shell / interactive <a href="#shell" class="anchor-link">#</a></h2>
+  <pre><code><span class="cmd">hacker</span> <span class="arg">shell</span>          <span class="cmt"># Python TUI shell z autouzupełnianiem</span>
+<span class="cmd">hacker</span> <span class="arg">interactive</span>   <span class="cmt"># Go TUI wrapper (wywołuje komendy przez hsh)</span></code></pre>
+  <p><code>shell</code> to interaktywna powłoka z listą komend i autouzupełnianiem. <code>interactive</code> to pełne TUI oparte na bibliotece Bubble Tea — każda komenda wykonywana jest przez <code>hsh -c "komenda"</code>.</p>
+
+  <!-- ══════════════ ENTER ══════════════ -->
+  <h2 id="enter">enter / remove-container <a href="#enter" class="anchor-link">#</a></h2>
+  <pre><code><span class="cmd">hacker</span> <span class="arg">enter</span>            <span class="str">blackarch</span>
+<span class="cmd">hacker</span> <span class="arg">remove-container</span> <span class="str">blackarch</span></code></pre>
+  <p>Wchodzi do kontenera distrobox lub go usuwa. Kontenery tworzone przez <code>hacker env create</code> można też wejść przez to polecenie.</p>
+
+  <!-- ══════════════ DOCTOR / REPAIR ══════════════ -->
+  <h2 id="doctor">doctor / repair <a href="#doctor" class="anchor-link">#</a></h2>
+  <p><code>hacker doctor</code> jest bramą do narzędzia naprawczego. Aby uruchomić tryb naprawy, najpierw musisz wpisać <code>hacker doctor</code>.</p>
+  <pre><code><span class="cmd">hacker</span> <span class="arg">doctor</span>   <span class="cmt"># diagnoza + dostęp do narzędzia repair</span>
+<span class="cmd">hacker</span> <span class="arg">repair</span>   <span class="cmt"># (tylko po przejściu przez doctor)</span></code></pre>
+  <p>Narzędzie <code>hacker-repair</code> to pełny TUI napisany w Rust (ratatui), oferujący:</p>
+  <ul style="color:var(--text-mid); padding-left:1.5rem; margin-bottom:1rem;">
+    <li>Naprawę pakietów APT (<code>apt-get install -f</code>, <code>dpkg --configure -a</code>)</li>
+    <li>Naprawę bootloadera GRUB</li>
+    <li>Diagnostykę sieci (ping, gateway, DNS, rfkill)</li>
+    <li>Analizę logów systemowych</li>
+    <li>Czyszczenie systemu (apt clean, vacuum journal)</li>
+    <li>Reset stosu sieciowego</li>
+    <li>Zarządzanie snapshotami Timeshift</li>
+  </ul>
+
+  <!-- ══════════════ PLUGIN ══════════════ -->
+  <h2 id="plugin">System pluginów <a href="#plugin" class="anchor-link">#</a></h2>
+  <p>Pluginy rozszerzają <code>hacker</code> o nowe komendy i możliwości. Przechowywane w <code>~/.config/hackeros/hacker/plugins/</code> jako pliki <code>.hacker</code>.</p>
+
+  <pre><code><span class="cmd">hacker</span> <span class="arg">plugin list</span>              <span class="cmt"># lista pluginów i ich status</span>
+<span class="cmd">hacker</span> <span class="arg">plugin enable</span>  <span class="str">mój-plugin</span>
+<span class="cmd">hacker</span> <span class="arg">plugin disable</span> <span class="str">mój-plugin</span></code></pre>
+
+  <h2 id="plugin-format">Format pliku pluginu <a href="#plugin-format" class="anchor-link">#</a></h2>
+
+  <div class="plugin-block">
+    <h4>Struktura pliku: <code>~/.config/hackeros/hacker/plugins/mój-plugin.hacker</code></h4>
+    <pre><code>[
+name > Mój Plugin
+version > 1.0.0
+description > Opis działania pluginu
+author > Jan Kowalski
+enabled > true
+
+commands.scan.exec > /usr/bin/nmap
+commands.scan.description > Szybki skan sieci
+commands.scan.help > Skanuje podaną sieć za pomocą nmap
+
+commands.report.exec > ~/scripts/generate-report.sh
+commands.report.description > Generuj raport bezpieczeństwa
+
+hooks.pre_update > ~/scripts/pre-update-hook.sh
+hooks.post_update > ~/scripts/post-update-hook.sh
+
+depends > nmap, curl
+]</code></pre>
+  </div>
+
+  <h4>Pola pluginu</h4>
+  <table class="cmd-table">
+    <tr><th>Pole</th><th>Opis</th></tr>
+    <tr><td>name</td><td>Wyświetlana nazwa pluginu</td></tr>
+    <tr><td>version</td><td>Wersja pluginu (SemVer)</td></tr>
+    <tr><td>description</td><td>Opis funkcji pluginu</td></tr>
+    <tr><td>author</td><td>Autor pluginu</td></tr>
+    <tr><td>enabled</td><td><code>true</code> / <code>false</code> — czy plugin jest aktywny</td></tr>
+    <tr><td>commands.&lt;nazwa&gt;.exec</td><td>Ścieżka do wykonywalnego pliku/skryptu</td></tr>
+    <tr><td>commands.&lt;nazwa&gt;.description</td><td>Opis komendy (widoczny w <code>hacker help</code>)</td></tr>
+    <tr><td>commands.&lt;nazwa&gt;.help</td><td>Rozszerzona pomoc dla komendy</td></tr>
+    <tr><td>hooks.pre_update</td><td>Skrypt uruchamiany przed aktualizacją systemu</td></tr>
+    <tr><td>hooks.post_update</td><td>Skrypt uruchamiany po aktualizacji systemu</td></tr>
+    <tr><td>depends</td><td>Wymagane narzędzia (sprawdzane przy ładowaniu)</td></tr>
+  </table>
+
+  <p>Po dodaniu pliku pluginu z <code>enabled = true</code> i zdefiniowaniu <code>commands.mojakomenda.exec</code>, możesz wywołać go jako:</p>
+  <pre><code><span class="cmd">hacker</span> <span class="arg">mojakomenda</span> [<span class="arg">argumenty</span>]</code></pre>
+
+  <!-- ══════════════ CUSTOM ══════════════ -->
+  <h2 id="custom">Własne komendy <a href="#custom" class="anchor-link">#</a></h2>
+  <p>Lżejsza alternatywa dla pluginów — pojedynczy plik <code>.hacker</code> definiuje jedną komendę.</p>
+  <pre><code><span class="cmt"># ~/.config/hackeros/hacker/custom-commands/mojaskrypt.hacker</span>
+[
+exec > ~/scripts/mojaskrypt.sh
+description > Mój własny skrypt
+]</code></pre>
+  <p>Wywołanie: <code>hacker mojaskrypt [argumenty]</code></p>
+
+  <div class="tip">
+    <span class="note-icon">💡</span>
+    <p>Więcej: <code>hacker how-to-create-commands</code> lub przykład na GitHub w katalogu <code>hacker/config-files/custom-commands/example.hacker</code>.</p>
+  </div>
+
+  <!-- ══════════════ SETTINGS ══════════════ -->
+  <h2 id="settings">settings <a href="#settings" class="anchor-link">#</a></h2>
+  <table class="cmd-table">
+    <tr><th>Komenda</th><th>Opis</th></tr>
+    <tr><td><code>hacker settings</code></td><td>Lista podkomend ustawień</td></tr>
+    <tr><td><code>hacker settings language</code></td><td>Wyświetl aktualny język</td></tr>
+    <tr><td><code>hacker settings language &lt;kod&gt;</code></td><td>Ustaw język interfejsu</td></tr>
+  </table>
+
+  <!-- ══════════════ ENABLE/DISABLE ══════════════ -->
+  <h2 id="enable-disable">enable / disable <a href="#enable-disable" class="anchor-link">#</a></h2>
+  <table class="cmd-table">
+    <tr><th>Komenda</th><th>Opis</th></tr>
+    <tr><td><code>hacker enable motd</code></td><td>Włącz standardowy Message of the Day</td></tr>
+    <tr><td><code>hacker enable special-motd</code></td><td>Włącz specjalny MOTD</td></tr>
+    <tr><td><code>hacker disable motd</code></td><td>Wyłącz MOTD</td></tr>
+    <tr><td><code>hacker disable special-motd</code></td><td>Wyłącz specjalny MOTD</td></tr>
+  </table>
+
+  <!-- ══════════════ INDEX ══════════════ -->
+  <h2 id="index">index <a href="#index" class="anchor-link">#</a></h2>
+  <pre><code><span class="cmd">hacker</span> <span class="arg">index</span></code></pre>
+  <p>Wyświetla indeks wszystkich narzędzi ekosystemu HackerOS z krótkimi opisami: bit, virus, bytes, hl, hackerc, hacker, Hacker Kernel, HackerOS Steam, HackerOS Welcome, HackerOS App, Hacker Mode, isolator, hpm, HackerOS Game Mode, hup, hammer, HackerOS Games, Hacker Launcher, lpm, hedit, ngt, hbuild, HackerDeck, Hacker Term, HackerOS Store, hsh, getit, HackerOS Builder, HexAi, chker, anvil, Blue Environment.</p>
+
+  <!-- ══════════════ INFO ══════════════ -->
+  <h2 id="info">info / version / edition <a href="#info" class="anchor-link">#</a></h2>
+  <table class="cmd-table">
+    <tr><th>Komenda</th><th>Opis</th></tr>
+    <tr><td><code>hacker info</code></td><td>Wersja narzędzia + wersja HackerOS</td></tr>
+    <tr><td><code>hacker --version</code></td><td>Tylko wersja narzędzia hacker</td></tr>
+    <tr><td><code>hacker --hackeros</code></td><td>Tylko wersja HackerOS</td></tr>
+    <tr><td><code>hacker --edition</code></td><td>Edycja HackerOS (odczytana z <code>/etc/xdg/kcm-about-distrorc</code>)</td></tr>
+  </table>
+
+  <!-- ══════════════ ISSUE ══════════════ -->
+  <h2 id="issue">issue <a href="#issue" class="anchor-link">#</a></h2>
+  <pre><code><span class="cmd">hacker</span> <span class="arg">issue</span></code></pre>
+  <p>Otwiera stronę zgłaszania błędów na GitHub w przeglądarce (preferuje Vivaldi, fallback: <code>xdg-open</code>).</p>
+
+  <!-- ══════════════ ALL COMMANDS ══════════════ -->
+  <h2 id="all-commands">Wszystkie komendy — skrócona referencja <a href="#all-commands" class="anchor-link">#</a></h2>
+  <table class="cmd-table">
+    <tr><th>Komenda</th><th>Opis</th></tr>
+    <tr><td>help</td><td>Pomoc tekstowa</td></tr>
+    <tr><td>help-ui</td><td>Interaktywne TUI z pomocą</td></tr>
+    <tr><td>docs</td><td>Dokumentacja i FAQ (TUI)</td></tr>
+    <tr><td>install &lt;pakiet&gt;</td><td>Instalacja pakietu APT</td></tr>
+    <tr><td>remove &lt;pakiet&gt;</td><td>Usunięcie pakietu APT</td></tr>
+    <tr><td>flatpak-install &lt;id&gt;</td><td>Instalacja Flatpak</td></tr>
+    <tr><td>flatpak-remove &lt;id&gt;</td><td>Usunięcie Flatpak</td></tr>
+    <tr><td>unpack &lt;zestaw&gt;</td><td>Instalacja zestawu oprogramowania</td></tr>
+    <tr><td>pack &lt;zestaw&gt;</td><td>Usunięcie zestawu oprogramowania</td></tr>
+    <tr><td>env &lt;pod&gt;</td><td>Zarządzanie środowiskami kontenerowymi</td></tr>
+    <tr><td>update [--with-gui]</td><td>Aktualizacja systemu (TUI)</td></tr>
+    <tr><td>system logs</td><td>Logi systemowe (journalctl)</td></tr>
+    <tr><td>run &lt;skrypt&gt;</td><td>Uruchom wbudowany skrypt/aplikację</td></tr>
+    <tr><td>switch &lt;tryb&gt;</td><td>Przełącz środowisko graficzne</td></tr>
+    <tr><td>restart &lt;usługa&gt;</td><td>Restart usługi systemd</td></tr>
+    <tr><td>game</td><td>Tekstowa gra przygodowa</td></tr>
+    <tr><td>ascii</td><td>Logo HackerOS w ASCII</td></tr>
+    <tr><td>shell</td><td>Interaktywna powłoka Python</td></tr>
+    <tr><td>interactive</td><td>Interaktywna powłoka Go/Bubble Tea</td></tr>
+    <tr><td>enter &lt;kontener&gt;</td><td>Wejdź do kontenera distrobox</td></tr>
+    <tr><td>remove-container &lt;kontener&gt;</td><td>Usuń kontener distrobox</td></tr>
+    <tr><td>doctor</td><td>Diagnoza systemu + dostęp do repair</td></tr>
+    <tr><td>repair</td><td>TUI narzędzie naprawcze (Rust/ratatui)</td></tr>
+    <tr><td>plugin &lt;pod&gt;</td><td>Zarządzanie pluginami</td></tr>
+    <tr><td>enable &lt;funkcja&gt;</td><td>Włącz funkcję (MOTD…)</td></tr>
+    <tr><td>disable &lt;funkcja&gt;</td><td>Wyłącz funkcję</td></tr>
+    <tr><td>settings &lt;pod&gt;</td><td>Ustawienia narzędzia</td></tr>
+    <tr><td>how-to-create-commands</td><td>Instrukcja tworzenia własnych komend</td></tr>
+    <tr><td>index</td><td>Indeks narzędzi HackerOS</td></tr>
+    <tr><td>info</td><td>Wersje narzędzia i systemu</td></tr>
+    <tr><td>--version</td><td>Wersja hacker</td></tr>
+    <tr><td>--hackeros</td><td>Wersja HackerOS</td></tr>
+    <tr><td>--edition</td><td>Edycja HackerOS</td></tr>
+    <tr><td>issue</td><td>Otwórz zgłoszenie błędu na GitHub</td></tr>
+    <tr><td>hacker-lang</td><td>Info o języku Hacker Lang</td></tr>
+  </table>
+
+  <footer>
+    <p>HackerOS — dokumentacja narzędzia <code>hacker</code> v2.3.1 &nbsp;·&nbsp; Wygenerowano dla HackerOS 4.5</p>
+    <p style="margin-top:.4rem;">Kontakt: <code><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b2dad3d1d9d7c0ddc182848af2d5dfd3dbde9cd1dddf">[email&#160;protected]</a></code> &nbsp;·&nbsp; GitHub: <code>HackerOS-Linux-System</code></p>
+  </footer>
+</main>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  // Highlight active nav link on scroll
+  const sections = document.querySelectorAll('h2[id]');
+  const navLinks = document.querySelectorAll('nav a');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        navLinks.forEach(a => a.classList.remove('active'));
+        const active = document
