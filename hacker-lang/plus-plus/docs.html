@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hacker Lang ++ — Dokumentacja</title>
+<style>
+  :root {
+    --bg: #0d1117; --bg2: #161b22; --bg3: #21262d;
+    --border: #30363d; --text: #e6edf3; --dim: #8b949e;
+    --cyan: #79c0ff; --green: #56d364; --yellow: #e3b341;
+    --red: #f85149; --purple: #d2a8ff; --orange: #ffa657;
+    --pink: #ff7b72; --white: #f0f6fc;
+    --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+    --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font-sans); font-size: 15px; line-height: 1.7; }
+
+  /* Layout */
+  .layout { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; }
+  nav { background: var(--bg2); border-right: 1px solid var(--border); padding: 24px 0; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+  main { padding: 48px 64px; max-width: 960px; }
+
+  /* Nav */
+  .nav-logo { padding: 0 20px 24px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+  .nav-logo h1 { font-size: 17px; font-weight: 700; color: var(--cyan); font-family: var(--font-mono); }
+  .nav-logo .ver { font-size: 11px; color: var(--dim); }
+  .nav-section { padding: 4px 20px; font-size: 11px; font-weight: 600; color: var(--dim); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 16px; }
+  nav a { display: block; padding: 5px 20px; color: var(--dim); text-decoration: none; font-size: 13px; border-left: 2px solid transparent; transition: all 0.15s; }
+  nav a:hover, nav a.active { color: var(--cyan); border-left-color: var(--cyan); background: rgba(121,192,255,0.06); }
+
+  /* Typography */
+  h1 { font-size: 32px; font-weight: 700; color: var(--white); margin-bottom: 8px; }
+  h2 { font-size: 22px; font-weight: 600; color: var(--white); margin: 48px 0 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  h3 { font-size: 17px; font-weight: 600; color: var(--cyan); margin: 28px 0 10px; }
+  h4 { font-size: 14px; font-weight: 600; color: var(--yellow); margin: 20px 0 8px; }
+  p { color: var(--dim); margin-bottom: 14px; }
+  strong { color: var(--text); }
+  .subtitle { font-size: 16px; color: var(--dim); margin-bottom: 32px; }
+
+  /* Code */
+  code { background: var(--bg3); color: var(--pink); padding: 2px 6px; border-radius: 4px; font-family: var(--font-mono); font-size: 13px; }
+  pre { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin: 16px 0 24px; overflow-x: auto; position: relative; }
+  pre code { background: none; color: var(--text); padding: 0; font-size: 13px; line-height: 1.6; }
+  .lang-tag { position: absolute; top: 8px; right: 12px; font-size: 10px; color: var(--dim); font-family: var(--font-mono); text-transform: uppercase; }
+
+  /* Syntax highlighting in pre blocks */
+  .kw  { color: var(--pink); }    /* operators ~> :: > ^> */
+  .op  { color: var(--purple); }  /* |> |>> => etc */
+  .var { color: var(--cyan); }    /* @var */
+  .str { color: var(--green); }   /* strings */
+  .cmt { color: #6e7681; font-style: italic; } /* comments */
+  .fn  { color: var(--yellow); }  /* function names */
+  .cls { color: var(--orange); }  /* class names */
+  .num { color: var(--green); }   /* numbers */
+  .kwd { color: var(--pink); }    /* def done ok err */
+
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; margin: 16px 0 24px; }
+  th { background: var(--bg3); color: var(--text); padding: 10px 16px; text-align: left; font-size: 13px; border: 1px solid var(--border); }
+  td { padding: 9px 16px; border: 1px solid var(--border); color: var(--dim); font-size: 13px; vertical-align: top; }
+  td code { font-size: 12px; }
+  tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+
+  /* Badges / pills */
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; font-family: var(--font-mono); }
+  .badge-new { background: rgba(86,211,100,0.15); color: var(--green); border: 1px solid rgba(86,211,100,0.3); }
+  .badge-hl  { background: rgba(121,192,255,0.12); color: var(--cyan); border: 1px solid rgba(121,192,255,0.25); }
+  .badge-warn{ background: rgba(227,179,65,0.12);  color: var(--yellow); border: 1px solid rgba(227,179,65,0.3); }
+
+  /* Callouts */
+  .callout { border-radius: 8px; padding: 14px 18px; margin: 20px 0; border-left: 3px solid; }
+  .callout-tip  { background: rgba(86,211,100,0.07); border-color: var(--green); }
+  .callout-warn { background: rgba(227,179,65,0.07); border-color: var(--yellow); }
+  .callout-info { background: rgba(121,192,255,0.07); border-color: var(--cyan); }
+  .callout-err  { background: rgba(248,81,73,0.07);  border-color: var(--red); }
+  .callout-title { font-weight: 700; font-size: 13px; margin-bottom: 4px; }
+  .callout-tip  .callout-title  { color: var(--green); }
+  .callout-warn .callout-title  { color: var(--yellow); }
+  .callout-info .callout-title  { color: var(--cyan); }
+  .callout-err  .callout-title  { color: var(--red); }
+  .callout p { margin: 0; font-size: 13px; }
+
+  /* Grid cards */
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin: 24px 0; }
+  .card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 18px; }
+  .card h4 { margin-top: 0; color: var(--cyan); font-size: 13px; }
+  .card p { font-size: 12px; margin: 0; }
+
+  /* Operator ref */
+  .op-ref { display: grid; grid-template-columns: 1fr 2fr 1fr; gap: 0; }
+  .op-row { display: contents; }
+  .op-row > * { padding: 8px 12px; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .op-sym { font-family: var(--font-mono); color: var(--cyan); }
+  .op-desc { color: var(--dim); }
+  .op-cat { color: var(--yellow); font-size: 11px; }
+
+  /* Separator */
+  hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+
+  /* Top hero */
+  .hero { background: linear-gradient(135deg, #0d1117 0%, #161b22 100%); border: 1px solid var(--border); border-radius: 12px; padding: 40px; margin-bottom: 48px; }
+  .hero-ascii { font-family: var(--font-mono); font-size: 13px; color: var(--cyan); line-height: 1.4; margin-bottom: 20px; }
+  .hero-badges { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  /* Pipeline */
+  .pipeline { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 20px 0; }
+  .pipe-step { background: var(--bg3); border: 1px solid var(--border); border-radius: 6px; padding: 8px 14px; font-family: var(--font-mono); font-size: 13px; color: var(--text); }
+  .pipe-arrow { color: var(--cyan); font-size: 18px; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--dim); }
+
+  @media (max-width: 768px) {
+    .layout { grid-template-columns: 1fr; }
+    nav { position: static; height: auto; }
+    main { padding: 24px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+<!-- ── NAVIGATION ─────────────────────────────────────────────────────────── -->
+<nav>
+  <div class="nav-logo">
+    <h1>Hacker Lang ++</h1>
+    <div class="ver">v0.1.0 — HackerOS Ecosystem</div>
+  </div>
+
+  <div class="nav-section">Getting Started</div>
+  <a href="#intro">Wprowadzenie</a>
+  <a href="#install">Instalacja</a>
+  <a href="#quickstart">Szybki start</a>
+  <a href="#pipeline">Pipeline kompilacji</a>
+
+  <div class="nav-section">Składnia — HL</div>
+  <a href="#output">~&gt; Wyjście (print)</a>
+  <a href="#variables">% @ Zmienne</a>
+  <a href="#quick">:: Quick-funkcje</a>
+  <a href="#commands">Komendy systemowe</a>
+  <a href="#functions">: -- Funkcje</a>
+  <a href="#logic">? Logika</a>
+  <a href="#comments">Komentarze</a>
+  <a href="#deps">Zależności</a>
+
+  <div class="nav-section">OOP — HL++</div>
+  <a href="#classes">|&gt; Klasy</a>
+  <a href="#inheritance">|&gt;&gt; Dziedziczenie</a>
+  <a href="#abstract">^|&gt; Abstrakcyjne</a>
+  <a href="#impl">|+ Impl block</a>
+  <a href="#traits">|? |~ Traity</a>
+  <a href="#self">@self</a>
+  <a href="#static">@@ Statyczne</a>
+  <a href="#exceptions">!&gt; &lt;% Wyjątki</a>
+  <a href="#attributes">*{} Atrybuty</a>
+  <a href="#extern">~| Extern System</a>
+
+  <div class="nav-section">Import</div>
+  <a href="#import">Nowa składnia #</a>
+  <a href="#stdlib">Stdlib</a>
+
+  <div class="nav-section">Narzędzia</div>
+  <a href="#hlpp-cli">hl++ Kompilator</a>
+  <a href="#hbc-cli">hbc Runner</a>
+  <a href="#virus">virus Pakiety</a>
+  <a href="#virus-hk">Virus.hk format</a>
+  <a href="#diagnostics">Diagnostics</a>
+  <a href="#jit">JIT</a>
+
+  <div class="nav-section">Referencja</div>
+  <a href="#quick-ref">Quick-funkcje</a>
+  <a href="#sys-vars">Zmienne systemowe</a>
+  <a href="#examples">Przykłady</a>
+</nav>
+
+<!-- ── MAIN CONTENT ───────────────────────────────────────────────────────── -->
+<main>
+
+<!-- HERO -->
+<div class="hero">
+  <pre class="hero-ascii" style="background:none;border:none;padding:0;margin-bottom:16px;">  _   _            _               _
+| | | | __ _  ___| | _____ _ __  | |    __ _ _ __   __ _     _     _
+| |_| |/ _` |/ __| |/ / _ \ '__| | |   / _` | '_ \ / _` |  _| |_ _| |_
+|  _  | (_| | (__|   &lt;  __/ |    | |__| (_| | | | | (_| | |_   _|_   _|
+|_| |_|\__,_|\___|_|\_\___|_|    |_____\__,_|_| |_|\__, |   |_|   |_|
+                                                    |___/</pre>
+  <p style="color:#8b949e;margin-bottom:20px;">Interpretowany język OOP dla HackerOS — napisany w Rust, JIT via dynasm-rs</p>
+  <div class="hero-badges">
+    <span class="badge badge-hl">v0.1.0</span>
+    <span class="badge badge-new">OOP</span>
+    <span class="badge badge-new">JIT x86_64</span>
+    <span class="badge badge-hl">Arc&lt;&gt; memory</span>
+    <span class="badge badge-warn">HackerOS</span>
+  </div>
+</div>
+
+<!-- INTRO -->
+<section id="intro">
+<h2>Wprowadzenie</h2>
+<p>Hacker Lang ++ (<strong>HL++</strong>) to interpretowany język programowania napisany w Rust, będący bezpośrednim następcą <strong>Hacker Lang</strong> (HL). Zachowuje całą unikalną składnię HL i rozszerza ją o pełne <strong>programowanie obiektowe</strong>.</p>
+
+<table>
+<tr><th>Cecha</th><th>Hacker Lang</th><th>Hacker Lang ++</th></tr>
+<tr><td>OOP</td><td>✗</td><td>✓ klasy, dziedziczenie, traity</td></tr>
+<tr><td>Kompilacja</td><td>Interpretacja</td><td>Bytecode + JIT (dynasm-rs)</td></tr>
+<tr><td>Wydajność</td><td>Skrypty</td><td>≈ LuaJIT</td></tr>
+<tr><td>Pamięć</td><td>Arc&lt;&gt;</td><td>Arc&lt;&gt;</td></tr>
+<tr><td>Plik</td><td><code>.hl</code></td><td><code>.hlpp</code> / <code>.hl++</code></td></tr>
+<tr><td>CLI</td><td><code>hl</code></td><td><code>hl++</code> (kompilator) + <code>hbc</code> (runner)</td></tr>
+<tr><td>Pakiety</td><td>—</td><td><code>virus</code></td></tr>
+</table>
+</section>
+
+<!-- INSTALL -->
+<section id="install">
+<h2>Instalacja</h2>
+<pre><code><span class="cmt"># Wymagania: Rust 1.75+, cargo</span>
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+<span class="cmt"># Klonuj i zbuduj</span>
+git clone https://github.com/HackerOS-Linux-System/Hacker-Lang-PP
+cd Hacker-Lang-PP
+cargo build --release
+
+<span class="cmt"># Zainstaluj binärki</span>
+sudo cp target/release/hl++ /usr/bin/
+sudo cp target/release/hbc  /usr/bin/
+
+<span class="cmt"># Zainstaluj stdlib i virus</span>
+sudo bash virus/virus_install.sh</code></pre>
+<div class="lang-tag">bash</div>
+</section>
+
+<!-- QUICKSTART -->
+<section id="quickstart">
+<h2>Szybki start</h2>
+<pre><code><span class="cmt">/// hello.hlpp — Mój pierwszy program w HL++</span>
+
+<span class="kw"># &lt;std/sys:1.0&gt;</span>
+
+<span class="kw">%</span> <span class="var">name</span>    = HackerOS
+<span class="kw">%</span> <span class="var">version</span> = 0.1.0
+
+<span class="kw">::hr</span> 50
+<span class="kw">::bold</span> Witaj w Hacker Lang ++!
+<span class="kw">::hr</span> 50
+
+<span class="kw">~&gt;</span> System: <span class="var">@SYS_OS</span>
+<span class="kw">~&gt;</span> Wersja: <span class="var">@version</span>
+<span class="kw">~&gt;</span> Użytkownik: <span class="var">@name</span>
+<span class="kw">::nl</span>
+
+<span class="kw">:</span> <span class="fn">greet</span> <span class="kwd">def</span>
+    <span class="kw">~&gt;</span> Kernel:
+    <span class="kw">&gt;</span> uname -r
+    <span class="kw">? ok</span>
+        <span class="kw">::green</span> System gotowy ✓
+    <span class="kwd">done</span>
+<span class="kwd">done</span>
+
+<span class="kw">--</span> <span class="fn">greet</span></code></pre>
+<div class="lang-tag">hlpp</div>
+
+<h3>Kompilacja i uruchomienie</h3>
+<pre><code><span class="cmt"># Kompiluj do debug bytecode</span>
+hl++ hello.hlpp           <span class="cmt"># → hello.bc</span>
+
+<span class="cmt"># Uruchom</span>
+hbc hello.bc
+
+<span class="cmt"># Release (JIT)</span>
+hl++ hello.hlpp --release  <span class="cmt"># → hello.hbc</span>
+hbc hello.hbc --release</code></pre>
+<div class="lang-tag">bash</div>
+</section>
+
+<!-- PIPELINE -->
+<section id="pipeline">
+<h2>Pipeline kompilacji</h2>
+<div class="pipeline">
+  <div class="pipe-step">.hlpp / .hl++</div>
+  <div class="pipe-arrow">→</div>
+  <div class="pipe-step">Lexer</div>
+  <div class="pipe-arrow">→</div>
+  <div class="pipe-step">Parser (AST)</div>
+  <div class="pipe-arrow">→</div>
+  <div class="pipe-step">Linter</div>
+  <div class="pipe-arrow">→</div>
+  <div class="pipe-step">Compiler</div>
+</div>
+<div class="pipeline">
+  <div class="pipe-step">.bc (debug)</div>
+  <div class="pipe-arrow">→</div>
+  <div class="pipe-step">Stack VM</div>
+  <div class="pipe-arrow">→</div>
+  <div class="pipe-step">Wynik</div>
+</div>
+<div class="pipeline">
+  <div class="pipe-step">.hbc (release)</div>
+  <div class="pipe-arrow">→</div>
+  <div class="pipe-step">JIT (dynasm-rs)</div>
+  <div class="pipe-arrow">→</div>
+  <div class="pipe-step">Native code</div>
+  <div class="pipe-arrow">→</div>
+  <div class="pipe-step">≈ LuaJIT</div>
+</div>
+
+<table>
+<tr><th>Format</th><th>Flaga</th><th>Opis</th><th>Uruchomienie</th></tr>
+<tr><td><code>.bc</code></td><td>(domyślnie)</td><td>Debug bytecode, pełne symbole</td><td><code>hbc main.bc</code></td></tr>
+<tr><td><code>.hbc</code></td><td><code>--release</code></td><td>Release bytecode, JIT-ready</td><td><code>hbc main.hbc --release</code></td></tr>
+</table>
+
+<div class="callout callout-info">
+  <div class="callout-title">Uwaga</div>
+  <p>Dla <code>.bc</code> flaga <code>--release</code> przy <code>hbc</code> jest niedostępna — release wymaga pliku <code>.hbc</code>.</p>
+</div>
+</section>
+
+<hr>
+
+<!-- OUTPUT -->
+<section id="output">
+<h2>~&gt; Wyjście (print)</h2>
+<p>Operator <code>~&gt;</code> to jedyny sposób wypisywania tekstu na stdout. Użycie <code>echo</code> jest <strong>zabronione</strong> — linter automatycznie to wykrywa.</p>
+
+<pre><code><span class="kw">~&gt;</span> Zwykły tekst
+<span class="kw">~&gt;</span> Wartość zmiennej: <span class="var">@name</span>
+<span class="kw">~&gt;</span> Host: <span class="var">@target</span>, Port: <span class="var">@port</span>
+<span class="kw">~&gt;</span> Wersja HL++: <span class="var">@HL_PP_VERSION</span></code></pre>
+<div class="lang-tag">hlpp</div>
+
+<div class="callout callout-err">
+  <div class="callout-title">Zabronione</div>
+  <p><code>&gt; echo tekst</code> generuje błąd kompilatora i ostrzeżenie lintere. Używaj <code>~&gt; tekst</code>.</p>
+</div>
+</section>
+
+<!-- VARIABLES -->
+<section id="variables">
+<h2>% @ Zmienne</h2>
+<table>
+<tr><th>Operator</th><th>Rola</th><th>Przykład</th></tr>
+<tr><td><code>% name = val</code></td><td>Deklaracja zmiennej</td><td><code>% target = 10.0.0.1</code></td></tr>
+<tr><td><code>@name</code></td><td>Odwołanie / interpolacja</td><td><code>~&gt; Host: @target</code></td></tr>
+</table>
+
+<pre><code><span class="kw">%</span> host   = 192.168.1.1
+<span class="kw">%</span> port   = 8080
+<span class="kw">%</span> debug  = true
+<span class="kw">%</span> msg    = "Witaj @host!"
+<span class="kw">~&gt;</span> Łączę z <span class="var">@host</span>:<span class="var">@port</span></code></pre>
+<div class="lang-tag">hlpp</div>
+</section>
+
+<!-- QUICK-FUNCTIONS -->
+<section id="quick">
+<h2>:: Quick-funkcje</h2>
+<p>Operator <code>::</code> wywołuje wbudowane funkcje bezpośrednio z interpretera.</p>
+
+<pre><code><span class="kw">::upper</span>    hello world       <span class="cmt">;; → HELLO WORLD</span>
+<span class="kw">::lower</span>    <span class="var">@name</span>
+<span class="kw">::len</span>      <span class="var">@text</span>             <span class="cmt">;; → długość stringa</span>
+<span class="kw">::trim</span>     <span class="var">@input</span>
+<span class="kw">::rev</span>      hacker            <span class="cmt">;; → rekcah</span>
+<span class="kw">::replace</span>  <span class="var">@text</span> old new
+<span class="kw">::contains</span> <span class="var">@text</span> wzorzec     <span class="cmt">;; exit 0 = found</span>
+<span class="kw">::split</span>    <span class="var">@text</span> :
+<span class="kw">::max</span>      10 20             <span class="cmt">;; → 20</span>
+<span class="kw">::rand</span>                       <span class="cmt">;; → 0-99</span>
+<span class="kw">::date</span>                       <span class="cmt">;; → 2025-01-01</span>
+<span class="kw">::exists</span>   /etc/passwd
+<span class="kw">::green</span>    Sukces!
+<span class="kw">::red</span>      Błąd!
+<span class="kw">::yellow</span>   Ostrzeżenie!
+<span class="kw">::cyan</span>     Info
+<span class="kw">::bold</span>     Tytuł
+<span class="kw">::hr</span>       40               <span class="cmt">;; ────────────────────────────────────────</span>
+<span class="cmt">;; OOP quick-functions (nowe w HL++)</span>
+<span class="kw">::instanceof</span> <span class="var">@obj</span> <span class="cls">ClassName</span>
+<span class="kw">::classname</span>  <span class="var">@obj</span>
+<span class="kw">::fields</span>     <span class="var">@obj</span></code></pre>
+<div class="lang-tag">hlpp</div>
+</section>
+
+<!-- COMMANDS -->
+<section id="commands">
+<h2>Komendy systemowe</h2>
+<table>
+<tr><th>Operator</th><th>Opis</th><th>Przykład</th></tr>
+<tr><td><code>&gt;</code></td><td>Zwykłe wykonanie</td><td><code>&gt; ls -la /tmp</code></td></tr>
+<tr><td><code>^&gt;</code></td><td>Sudo</td><td><code>^&gt; apt-get update</code></td></tr>
+<tr><td><code>-&gt;</code></td><td>Izolowany namespace (unshare)</td><td><code>-&gt; curl -s http://test</code></td></tr>
+<tr><td><code>^-&gt;</code></td><td>Sudo + izolacja</td><td><code>^-&gt; nmap -sS 10.0.0.0/24</code></td></tr>
+<tr><td><code>&gt;&gt;</code></td><td>Z interpolacją zmiennych</td><td><code>&gt;&gt; nmap -p @port @target</code></td></tr>
+<tr><td><code>^&gt;&gt;</code></td><td>Sudo + interpolacja</td><td><code>^&gt;&gt; ssh @user@@target</code></td></tr>
+<tr><td><code>-&gt;&gt;</code></td><td>Izolacja + interpolacja</td><td><code>-&gt;&gt; curl -s http://@target</code></td></tr>
+</table>
+
+<div class="callout callout-warn">
+  <div class="callout-title">Linter: ostrzeżenie</div>
+  <p>Użycie <code>&gt; sudo cmd</code> generuje ostrzeżenie: <em>"use <code>^&gt; cmd</code> instead of <code>&gt; sudo cmd</code>"</em></p>
+</div>
+</section>
+
+<!-- FUNCTIONS -->
+<section id="functions">
+<h2>: -- Funkcje</h2>
+<pre><code><span class="cmt">;; Definicja (opcjonalne parametry w nawiasach)</span>
+<span class="kw">:</span> <span class="fn">audit</span>(target, ports) <span class="kwd">def</span>
+    <span class="kw">~&gt;</span> Skanuję <span class="var">@target</span> porty <span class="var">@ports</span>
+    <span class="kw">&gt;&gt;</span> nmap -sV -T4 -p <span class="var">@ports</span> <span class="var">@target</span>
+    <span class="kw">? ok</span>
+        <span class="kw">::green</span> Skan zakończony ✓
+    <span class="kwd">done</span>
+    <span class="kw">? err</span>
+        <span class="kw">::red</span> Błąd skanu ✗
+    <span class="kwd">done</span>
+<span class="kwd">done</span>
+
+<span class="cmt">;; Wywołanie</span>
+<span class="kw">--</span> <span class="fn">audit</span>(192.168.1.1, 22-443)</code></pre>
+<div class="lang-tag">hlpp</div>
+</section>
+
+<!-- LOGIC -->
+<section id="logic">
+<h2>? Logika</h2>
+<p>Bloki warunkowe sprawdzają <code>last_exit</code> — kod wyjścia ostatnio wykonanej komendy lub quick-funkcji.</p>
+<pre><code><span class="kw">&gt;</span> ping -c 1 192.168.1.1
+
+<span class="kw">? ok</span>
+    <span class="kw">::green</span> Host online ✓
+<span class="kwd">done</span>
+
+<span class="kw">? err</span>
+    <span class="kw">::red</span> Host niedostępny ✗
+<span class="kwd">done</span>
+
+<span class="kw">? else</span>
+    <span class="kw">~&gt;</span> Ten blok zawsze się wykona
+<span class="kwd">done</span></code></pre>
+<div class="lang-tag">hlpp</div>
+</section>
+
+<!-- COMMENTS -->
+<section id="comments">
+<h2>Komentarze</h2>
+<pre><code><span class="cmt">;; Komentarz liniowy — ignorowany w runtime</span>
+
+<span class="cmt">/// Komentarz dokumentacyjny — zachowany w AST</span>
+
+<span class="cmt">// Komentarz blokowy
+   może rozciągać się na wiele linii
+\\</span></code></pre>
+<div class="lang-tag">hlpp</div>
+</section>
+
+<!-- DEPS -->
+<section id="deps">
+<h2>Zależności</h2>
+<pre><code><span class="cmt">;; Deklaracja zależności systemowej (sprawdzana w PATH)</span>
+<span class="kw">//</span> nmap
+<span class="kw">//</span> curl
+<span class="kw">//</span> whois
+
+<span class="cmt">;; Kolejność instalacji: apt-get → sudo apt-get</span></code></pre>
+<div class="lang-tag">hlpp</div>
+</section>
+
+<hr>
+
+<!-- IMPORT -->
+<section id="import">
+<h2>Import — nowa składnia <span class="badge badge-new">HL++ only</span></h2>
+<p>HL++ wprowadza bardziej ekspresywną składnię importu z wersjonowaniem i modułami:</p>
+
+<pre><code><span class="cmt">;; Nowa składnia (HL++ exclusive)</span>
+<span class="kw">#</span> &lt;std/sys:1.0&gt;              <span class="cmt">;; pełna biblioteka z wersją</span>
+<span class="kw">#</span> &lt;std/net:1.0&gt; | ports      <span class="cmt">;; tylko moduł ports</span>
+<span class="kw">#</span> &lt;std/net:1.0&gt; | dns        <span class="cmt">;; tylko moduł dns</span>
+<span class="kw">#</span> &lt;virus/libname&gt;            <span class="cmt">;; zainstalowany pakiet via virus</span>
+<span class="kw">#</span> &lt;virus/obsidian&gt;           <span class="cmt">;; przykładowy pakiet</span>
+
+<span class="cmt">;; Kompatybilna stara składnia (też działa)</span>
+<span class="kw">#</span> std/sys
+<span class="kw">#</span> std/net &lt;- ports</code></pre>
+<div class="lang-tag">hlpp</div>
+
+<table>
+<tr><th>Biblioteka</th><th>Import</th><th>Zawartość</th></tr>
+<tr><td>std/sys</td><td><code># &lt;std/sys:1.0&gt;</code></td><td>SYS_OS, SYS_KERNEL, SYS_ARCH, SYS_CPU, SYS_MEMTOTAL...</td></tr>
+<tr><td>std/net</td><td><code># &lt;std/net:1.0&gt;</code></td><td>PORT_*, NET_*, net_ping(), net_scan()...</td></tr>
+<tr><td>std/fs</td><td><code># &lt;std/fs:1.0&gt;</code></td><td>FS_HOME, FS_TMP, FileInfo class, fs_*()...</td></tr>
+<tr><td>std/str</td><td><code># &lt;std/str:1.0&gt;</code></td><td>STR_NEWLINE, StringBuilder class...</td></tr>
+<tr><td>std/crypto</td><td><code># &lt;std/crypto:1.0&gt;</code></td><td>crypto_sha256(), crypto_gpg_*()...</td></tr>
+<tr><td>std/proc</td><td><code># &lt;std/proc:1.0&gt;</code></td><td>PROC_SELF_PID, Process class, proc_*()...</td></tr>
+<tr><td>std/collections</td><td><code># &lt;std/collections:1.0&gt;</code></td><td>Stack, Queue, Map, Set classes</td></tr>
+<tr><td>std/io</td><td><code># &lt;std/io:1.0&gt;</code></td><td>BufferedWriter, Logger, io_*()...</td></tr>
+<tr><td>std/math</td><td><code># &lt;std/math:1.0&gt;</code></td><td>MATH_PI/E/PHI, Vector2, Matrix2x2, math_*()...</td></tr>
+<tr><td>std/json</td><td><code># &lt;std/json:1.0&gt;</code></td><td>json_parse/get/set/validate/pretty()...</td></tr>
+<tr><td>std/http</td><td><code># &lt;std/http:1.0&gt;</code></td><td>HttpClient class, http_get/post/download()...</td></tr>
+<tr><td>std/test</td><td><code># &lt;std/test:1.0&gt;</code></td><td>assert_eq/ok/err/exists, TestCase class...</td></tr>
+</table>
+
+<div class="callout callout-info">
+  <div class="callout-title">Lokalizacja stdlib</div>
+  <p>Pliki stdlib przechowywane są w <code>/usr/lib/HackerOS/HLPP/stdlib/</code> i napisane w <code>.hlpp</code>.</p>
+</div>
+</section>
+
+<hr>
+
+<!-- OOP CLASSES -->
+<section id="classes">
+<h2>|&gt; Klasy <span class="badge badge-new">new in HL++</span></h2>
+<pre><code><span class="op">|&gt;</span> <span class="cls">Animal</span>
+    <span class="kw">~name</span>  = Unknown     <span class="cmt">;; deklaracja pola z domyślną wartością</span>
+    <span class="kw">~sound</span> = ...
+    <span class="kw">~alive</span> = true
+
+    <span class="op">=&gt;</span> <span class="fn">new</span>(n, s) <span class="kwd">def</span>      <span class="cmt">;; konstruktor</span>
+        <span class="var">@self</span>.name  = <span class="var">@n</span>
+        <span class="var">@self</span>.sound = <span class="var">@s</span>
+    <span class="kwd">done</span>
+
+    <span class="op">=&gt;</span> <span class="fn">speak</span> <span class="kwd">def</span>
+        <span class="kw">~&gt;</span> <span class="var">@self</span>.name says: <span class="var">@self</span>.sound
+    <span class="kwd">done</span>
+<span class="kwd">done</span>
+
+<span class="cmt">;; Tworzenie instancji</span>
+<span class="kw">%</span> <span class="var">dog</span> = <span class="cls">Animal</span>::new(Rex, Woof!)
+<span class="kw">--</span> <span class="var">@dog</span>.speak</code></pre>
+<div class="lang-tag">hlpp</div>
+</section>
+
+<!-- INHERITANCE -->
+<section id="inheritance">
+<h2>|&gt;&gt; Dziedziczenie <span class="badge badge-new">new in HL++</span></h2>
+<pre><code><span class="op">|&gt;&gt;</span> <span class="cls">Dog</span> : <span class="cls">Animal</span>
+    <span class="kw">~breed</span>  = Unknown
+    <span class="kw">~tricks</span> = 0
+
+    <span class="op">=&gt;</span> <span class="fn">new</span>(n, b) <span class="kwd">def</span>
+        <span class="var">@self</span>.name  = <span class="var">@n</span>
+        <span class="var">@self</span>.sound = Woof!
+        <span class="var">@self</span>.breed = <span class="var">@b</span>
+    <span class="kwd">done</span>
+
+    <span class="op">=&gt;</span> <span class="fn">learn_trick</span> <span class="kwd">def</span>
+        <span class="var">@self</span>.tricks = <span class="var">@self</span>.tricks + 1
+        <span class="kw">::green</span> <span class="var">@self</span>.name learned trick #<span class="var">@self</span>.tricks!
+    <span class="kwd">done</span>
+<span class="kwd">done</span></code></pre>
+<div class="lang-tag">hlpp</div>
+</section>
+
+<!-- ABSTRACT -->
+<section id="abstract">
+<h2>^|&gt; Klasy abstrakcyjne <span class="badge badge-new">new in HL++</span></h2>
+<pre><code><span class="op">^|&gt;</span> <span class="cls">Shape</span>          <span class="cmt">;; nie można tworzyć instancji</span>
+    <span class="kw">~color</span> = white
+
+    <span class="op">=&gt;</span> <span class="fn">area</span> <span class="kwd">def</span>     <span class="cmt">;; pusta — subklasy muszą nadpisać</span>
+    <span class="kwd">done</span>
+
+    <span class="op">=&gt;</span> <span class="fn">draw</span> <span class="kwd">def</span>
+        <span class="kw">~&gt;</span> Drawing <span class="var">@self</span>.color shape
+    <span class="kwd">done</span>
+<span class="kwd">done</span>
+
+<span class="op">|&gt;&gt;</span> <span class="cls">Circle</span> : <span class="cls">Shape</span>
+    <span class="kw">~radius</span> = 1
+
+    <span class="op">=&gt;</span> <span class="fn">area</span> <span class="kwd">def</span>
+        <span class="kw">~&gt;</span> Area = <span class="var">@self</span>.radius * <span class="var">@self</span>.radius * 3
+    <span class="kwd">done</span>
+<span class="kwd">done</span></code></pre>
+<div class="lang-tag">hlpp</div>
+</section>
+
+<!-- IMPL -->
+<section id="impl">
+<h2>|+ Impl block <span class="badge badge-new">new in HL++</span></h2>
+<p>Dodawanie metod do istniejącej klasy po jej definicji:</p>
+<pre><code><span class="op">|+</span> <span class="cls">Circle</span>
+    <span class="op">=&gt;</span> <span class="fn">perimeter</span> <span class="kwd">def</span>
+        <span class="kw">~&gt;</span> Perimeter ≈ <span class="var">@self</span>.radius * 6
+    <span class="kwd">done</span>
+
+    <span class="op">=&gt;</span> <span class="fn">scale</span>(factor) <span class="kwd">def</span>
+        <span class="var">@self</span>.radius = <span class="var">@self</span>.radius * <span class="var">@factor</span>
+    <span class="kwd">done</span>
+<span class="kwd">done</span></code></pre>
+<div class="lang-tag">hlpp</div>
+</section>
+
+<!-- TRAITS -->
+<section id="traits">
+<h2>|? |~ Traity / Interfejsy <span class="badge badge-new">new in HL++</span></h2>
+<pre><code><span class="cmt">;; Definicja traitu</span>
+<span class="op">|?</span> <span class="cls">Serializable</span>
+    <span class="op">=&gt;</span> <span class="fn">to_string</span>
+    <span class="op">=&gt;</span> <span class="fn">from_string</span>(s)
+<span class="kwd">done</span>
+
+<span class="cmt">;; Implementacja traitu dla klasy</span>
+<span class="op">|~</span> <span class="cls">Circle</span> : <span class="cls">Serializable</span>
+    <span class="op">=&gt;</span> <span class="fn">to_string</span> <span class="kwd">def</span>
+        <span class="kw">::green</span> Circle(r=<span class="var">@self</span>.radius)
+    <span class="kwd">done</span>
+
+    <span class="op">=&gt;</span> <span class="fn">from_string</span>(s) <span class="kwd">def</span>
+        <span class="kw">~&gt;</span> Parsing: <span class="var">@s</span>
+    <span class="kwd">done</span>
+<span class="kwd">done</span></code></pre>
+<div class="lang-tag">hlpp</div>
+</section>
+
+<!-- SELF -->
+<section id="self">
+<h2>@self — referencja do instancji</h2>
+<pre><code><span class="op">=&gt;</span> <span class="fn">method</span> <span class="kwd">def</span>
+    <span class="kw">~&gt;</span> Moje pole: <span class="var">@self</span>.field_name
+    <span class="var">@self</span>.field_name = new_value
+    <span class="kw">--</span> <span class="var">@self</span>.other_method
+<span class="kwd">done</span></code></pre>
+<div class="lang-tag">hlpp</div>
+</section>
+
+<!-- STATIC -->
+<section id="static">
+<h2>@@ Metody statyczne</h2>
+<pre><code><span class="op">|&gt;</span> <span class="cls">MathHelper</span>
+    <span class="op">=&gt;</span> <span class="fn">square</span>(n) <span class="kwd">def</span>
+        <span class="kw">~&gt;</span> <span class="var">@n</span> ^ 2
+    <span class="kwd">done</span>
+<span class="kwd">done</span>
+
+<span class="cmt">;; Wywołanie statyczne: @@ClassName::method(args)</span>
+<span class="var">@@</span><span class="cls">MathHelper</span><span class="kw">::square</span>(5)</code></pre>
+<div class="lang-tag">hlpp</div>
+</section>
+
+<!-- EXCEPTIONS -->
+<section id="exceptions">
+<h2>!&gt; &lt;% Wyjątki <span class="badge badge-new">new in HL++</span></h2>
+<pre><code><span class="cmt">;; Throw — rzucenie wyjątku</span>
+<span class="kw">!&gt;</span> "Błąd: nieprawidłowy argument"
+<span class="kw">!&gt;</span> <span class="var">@error_message</span>
+
+<span class="cmt">;; Try / Catch</span>
+<span class="kw">&lt;%</span>
+    <span class="kw">&gt;</span> ryzykowna_komenda
+    <span class="kw">--</span> <span class="fn">ryzykowna_funkcja</span>
+<span class="kw">%&gt; ok</span>
+    <span class="kw">::green</span> Sukces ✓
+<span class="kwd">done</span>
+<span class="kw">%&gt; err</span>
+    <span class="kw">::red</span> Złapano błąd: <span class="var">@__err__</span>
+<span class="kwd">done</span></code></pre>
+<div class="lang-tag">hlpp</div>
+<p>Zmienna <code>@__err__</code> zawiera wiadomość złapanego wyjątku.</p>
+</section>
+
+<!-- ATTRIBUTES -->
+<section id="attributes">
+<h2>*{} Atrybuty <span class="badge badge-new">HL++ only</span></h2>
+<p>HL++ posiada własny system atrybutów inspirowany Rust <code>#[]</code>, ale zgodny ze składnią operatorową:</p>
+<pre><code><span class="cmt">;; HL++ attribute syntax: *{name(args)}</span>
+<span class="kw">*{</span>derive(Debug, Clone)<span class="kw">}</span>
+<span class="op">|&gt;</span> <span class="cls">MyClass</span>
+    <span class="kw">~field</span> = 0
+<span class="kwd">done</span>
+
+<span class="kw">*{</span>deprecated(since=0.2.0, use=new_fn)<span class="kw">}</span>
+<span class="kw">:</span> <span class="fn">old_function</span> <span class="kwd">def</span>
+    <span class="kw">~&gt;</span> Ten kod jest przestarzały
+<span class="kwd">done</span>
+
+<span class="kw">*{</span>inline<span class="kw">}</span>
+<span class="kw">:</span> <span class="fn">hot_path</span>(n) <span class="kwd">def</span>
+    <span class="kw">~&gt;</span> Wynik: <span class="var">@n</span>
+<span class="kwd">done</span></code></pre>
+<div class="lang-tag">hlpp</div>
+
+<div class="callout callout-info">
+  <div class="callout-title">Porównanie z Rust</div>
+  <p>Rust używa <code>#[derive(Debug)]</code> — HL++ używa <code>*{derive(Debug)}</code> (gwiazdka zamiast kratki, klamra zamiast nawiasu kwadratowego).</p>
+</div>
+</section>
+
+<hr>
+
+
+<!-- EXTERN SYSTEM -->
+<section id="extern">
+<h2>~| Extern System <span class="badge badge-new">new in HL++</span></h2>
+<p>HL++ posiada wbudowany system integracji z bibliotekami Java, Perl, Go i JavaScript. Symbol <code>~|</code> (tilde-pipe) — wybrany jako jedyny wolny spójny z unikalną składnią HL++.</p>
+
+<pre><code><span class="cmt">;; Java — via jshell lub groovy</span>
+<span class="kw">~|java</span> <span class="str">import</span> <span class="str">"java.util.ArrayList"</span>
+<span class="kw">~|java</span> <span class="str">"Math"</span>          <span class="kw">::sqrt</span>(16.0)
+<span class="kw">~|java</span> <span class="str">"StringBuilder"</span>  <span class="kw">::new</span>()
+<span class="kw">~|java</span> <span class="str">"System.out"</span>     <span class="kw">::println</span>(<span class="str">"Hello!"</span>)
+
+<span class="cmt">;; Perl — via perl interpreter</span>
+<span class="kw">~|perl</span> <span class="str">import</span> <span class="str">"List::Util"</span>
+<span class="kw">~|perl</span> <span class="str">"POSIX"</span>       <span class="kw">::floor</span>(3.7)
+<span class="kw">~|perl</span> <span class="str">"List::Util"</span>  <span class="kw">::max</span>(1, 5, 3, 9)
+<span class="kw">~|perl</span> <span class="str">"List::Util"</span>  <span class="kw">::sum</span>(1, 2, 3, 4)
+
+<span class="cmt">;; Go — via go run (tymczasowy plik)</span>
+<span class="kw">~|go</span> <span class="str">import</span> <span class="str">"strings"</span>
+<span class="kw">~|go</span> <span class="str">"math"</span>     <span class="kw">::Sqrt</span>(25.0)
+<span class="kw">~|go</span> <span class="str">"strings"</span>  <span class="kw">::ToUpper</span>(<span class="str">"hello"</span>)
+<span class="kw">~|go</span> <span class="str">"fmt"</span>      <span class="kw">::Sprintf</span>(<span class="str">"%s world"</span>, <span class="str">"hello"</span>)
+
+<span class="cmt">;; JavaScript — via Node.js (najbardziej natywny)</span>
+<span class="kw">~|js</span> <span class="str">import</span> <span class="str">"lodash"</span> as _
+<span class="kw">~|js</span> <span class="str">"path"</span>    <span class="kw">::join</span>(<span class="str">"/tmp"</span>, <span class="str">"output"</span>)
+<span class="kw">~|js</span> <span class="str">"os"</span>      <span class="kw">::hostname</span>()
+<span class="kw">~|js</span> <span class="str">"lodash"</span>  <span class="kw">::chunk</span>([1,2,3,4,5,6], 2)
+<span class="kw">~|js</span> <span class="str">"lodash"</span>  <span class="kw">::uniq</span>([1,2,2,3,3,3])</code></pre>
+<div class="lang-tag">hlpp</div>
+
+<h3>Import extern</h3>
+<pre><code><span class="cmt">;; Import z aliasem</span>
+<span class="kw">~|js</span>   import <span class="str">"lodash"</span> as _
+<span class="kw">~|java</span> import <span class="str">"com.example.*"</span>
+<span class="kw">~|go</span>   import <span class="str">"encoding/json"</span>
+<span class="kw">~|perl</span> import <span class="str">"Scalar::Util"</span></code></pre>
+<div class="lang-tag">hlpp</div>
+
+<table>
+<tr><th>Lang</th><th>Symbol</th><th>Backend</th><th>Wymagania</th></tr>
+<tr><td>Java</td><td><code>~|java</code></td><td>jshell / groovy</td><td>JDK 9+ lub groovy</td></tr>
+<tr><td>Perl</td><td><code>~|perl</code></td><td>perl interpreter</td><td>perl + cpan modules</td></tr>
+<tr><td>Go</td><td><code>~|go</code></td><td>go run temp file</td><td>go 1.18+</td></tr>
+<tr><td>JavaScript</td><td><code>~|js</code></td><td>Node.js</td><td>node 16+ (najbardziej natywny)</td></tr>
+</table>
+
+<div class="callout callout-info">
+  <div class="callout-title">Dlaczego ~| ?</div>
+  <p>Symbol <code>~|</code> (tilde-pipe) był jedynym wolnym dwuznakiem w składni HL++. Tilde (<code>~</code>) już był używany do pól klas (<code>~field</code>) i printa (<code>~&gt;</code>), więc <code>~|</code> jako "tilde-pipe = extern bridge" jest intuicyjny i spójny.</p>
+</div>
+</section>
+
+<!-- HL++ CLI -->
+<section id="hlpp-cli">
+<h2>hl++ — Kompilator</h2>
+<pre><code>hl++ main.hlpp              <span class="cmt"># kompiluj → main.bc (debug)</span>
+hl++ main.hlpp --release    <span class="cmt"># kompiluj → main.hbc (release + JIT)</span>
+hl++ main.hlpp -v           <span class="cmt"># verbose stats</span>
+hl++ repl                   <span class="cmt"># interaktywna powłoka REPL</span>
+hl++ check main.hlpp        <span class="cmt"># lint + sprawdzenie składni</span>
+hl++ ast main.hlpp          <span class="cmt"># wydrukuj AST</span>
+hl++ -c "~> Hello!"         <span class="cmt"># jednolinijkowy kod (tree-walk)</span>
+hl++ version                <span class="cmt"># informacje o wersji</span>
+hl++ --help</code></pre>
+<div class="lang-tag">bash</div>
+</section>
+
+<!-- HBC CLI -->
+<section id="hbc-cli">
+<h2>hbc — Bytecode Runner</h2>
+<pre><code>hbc main.bc               <span class="cmt"># uruchom debug bytecode (VM only)</span>
+hbc main.hbc              <span class="cmt"># uruchom release bytecode (JIT + VM)</span>
+hbc main.hbc --release    <span class="cmt"># wymuszony pełny JIT</span>
+hbc main.hbc -v           <span class="cmt"># verbose: stats JIT</span>
+hbc main.bc  arg1 arg2    <span class="cmt"># argumenty @arg0, @arg1, ...</span>
+hbc --help</code></pre>
+<div class="lang-tag">bash</div>
+
+<div class="callout callout-warn">
+  <div class="callout-title">Ważne</div>
+  <p>Dla plików <code>.bc</code> flaga <code>--release</code> jest niedostępna — JIT wymaga <code>.hbc</code>.</p>
+</div>
+</section>
+
+<!-- VIRUS -->
+<section id="virus">
+<h2>virus — Package Manager <span class="badge badge-new">new in HL++</span></h2>
+<p>Menedżer pakietów napisany całkowicie w Hacker Lang ++. Zarządza bibliotekami, środowiskami izolowanymi i aktualizacjami silnika.</p>
+
+<pre><code><span class="cmt"># Instalacja pakietu</span>
+virus install obsidian
+virus install yuy
+
+<span class="cmt"># Usuwanie</span>
+virus remove obsidian
+
+<span class="cmt"># Wyszukiwanie</span>
+virus search network
+virus search ui
+
+<span class="cmt"># Aktualizacja</span>
+virus update              <span class="cmt"># wszystkie pakiety</span>
+virus update obsidian     <span class="cmt"># konkretny pakiet</span>
+
+<span class="cmt"># Środowiska izolowane</span>
+virus env myproject       <span class="cmt"># utwórz (jak python3 -m venv)</span>
+virus enter myproject     <span class="cmt"># aktywuj (jak source activate)</span>
+virus exit myproject      <span class="cmt"># dezaktywuj (jak deactivate)</span>
+
+<span class="cmt"># Build system</span>
+virus run                 <span class="cmt"># uruchom projekt</span>
+virus build               <span class="cmt"># kompiluj → .bc do /build/</span>
+virus build --production  <span class="cmt"># kompiluj → .hbc do /build/</span>
+
+<span class="cmt"># Aktualizacja narzędzi</span>
+virus upgrade             <span class="cmt"># aktualizuj virus</span>
+virus upgrade engine      <span class="cmt"># aktualizuj hl++ i hbc</span></code></pre>
+<div class="lang-tag">bash</div>
+
+<h3>Import pakietu</h3>
+<pre><code><span class="cmt">;; Po: virus install obsidian</span>
+<span class="kw">#</span> &lt;virus/obsidian&gt;
+
+<span class="cmt">;; Ładuje z /usr/lib/HackerOS/HLPP/libs/obsidian/lib.hlpp</span></code></pre>
+<div class="lang-tag">hlpp</div>
+
+<h3>Repozytorium pakietów</h3>
+<p>virus pobiera index z: <code>https://github.com/virus-ecosystem/repository/blob/main/repo/index.json</code></p>
+
+<pre><code>{
+  "obsidian": {
+    "version": "0.2",
+    "description": "UI library for HL++",
+    "hlpp-download": "https://github.com/.../obsidian.hlpp"
+  },
+  "yuy": {
+    "version": "0.1",
+    "description": "CLI interface builder",
+    "hlpp-download": "https://github.com/.../yuy.hlpp"
+  }
+}</code></pre>
+<div class="lang-tag">json</div>
+</section>
+
+<!-- VIRUS.HK -->
+<section id="virus-hk">
+<h2>Virus.hk — Format pliku projektu <span class="badge badge-new">new in HL++</span></h2>
+<p>Każdy projekt HL++ posiada plik <code>Virus.hk</code> (format <code>.hk</code>) opisujący projekt i zależności.</p>
+
+<pre><code><span class="cmt">! Projekt Virus.hk — format HK</span>
+
+[project]
+<span class="kw">-&gt;</span> name        =&gt; moj-projekt
+<span class="kw">-&gt;</span> version     =&gt; 0.1.0
+<span class="kw">-&gt;</span> description =&gt; Opis projektu
+<span class="kw">-&gt;</span> author      =&gt; HackerOS-Linux-System
+<span class="kw">-&gt;</span> license     =&gt; GPL-3.0
+
+[build]
+<span class="kw">-&gt;</span> entry   =&gt; cmd/main.hlpp
+<span class="kw">-&gt;</span> output  =&gt; moj-program
+<span class="kw">-&gt;</span> release =&gt; false
+
+[dependencies]
+<span class="kw">-&gt;</span> obsidian
+<span class="kw">-&gt;</span> yuy</code></pre>
+<div class="lang-tag">hk</div>
+
+<h3>Struktura projektu</h3>
+<pre><code>moj-projekt/
+├── cmd/
+│   └── main.hlpp       <span class="cmt"># kod źródłowy</span>
+├── Virus.hk            <span class="cmt"># konfiguracja projektu</span>
+└── build/              <span class="cmt"># generowany przez virus build</span>
+    ├── moj-program.bc
+    ├── moj-program.hbc
+    └── env/            <span class="cmt"># zależności izolowane</span>
+        └── obsidian/</code></pre>
+<div class="lang-tag">bash</div>
+
+<h3>Format HK — składnia</h3>
+<p>Format <code>.hk</code> używa sekcji <code>[name]</code>, par klucz-wartość <code>-&gt; key =&gt; value</code> i zagnieżdżania przez kolejne myślniki <code>--&gt;</code>:</p>
+<pre><code>[libraries]
+<span class="kw">-&gt;</span> obsidian
+<span class="kw">--&gt;</span> version     =&gt; 0.2
+<span class="kw">--&gt;</span> description =&gt; Biblioteka UI
+<span class="kw">--&gt;</span> authors     =&gt; ["HackerOS Team"]
+<span class="kw">--&gt;</span> url         =&gt; https://github.com/.../obsidian.hlpp</code></pre>
+<div class="lang-tag">hk</div>
+</section>
+
+<!-- DIAGNOSTICS -->
+<section id="diagnostics">
+<h2>Diagnostics — Rust-style errors</h2>
+<p>HL++ i hbc wyświetlają błędy w stylu Rust z numerami linii i podkreśleniami:</p>
+<pre><code style="color:#f85149">error: `echo` is forbidden in HL++
+  --> audit.hl:5:1
+   |
+ 5 | > echo hello
+   | ^^^^^^^^^^^
+   | help: use `~> hello` instead
+
+warning: use `^>` instead of `> sudo apt-get update`
+  --> update.hl:8:1
+   |
+ 8 | > sudo apt-get update
+   | ^^^^^^^^^^^^^^^^^^^^^
+   | help: replace with `^> apt-get update`</code></pre>
+</section>
+
+<!-- JIT -->
+<section id="jit">
+<h2>JIT — dynasm-rs</h2>
+<table>
+<tr><th>Architektura</th><th>Status</th><th>Opis</th></tr>
+<tr><td>x86_64</td><td><span class="badge badge-new">✓ Pełna</span></td><td>System V AMD64 ABI, arytmetyka natywna, skoki, porównania</td></tr>
+<tr><td>x86</td><td><span class="badge badge-hl">Stub</span></td><td>Prolog/epilog, VM fallback</td></tr>
+<tr><td>aarch64</td><td><span class="badge badge-hl">Stub</span></td><td>Szkielet, VM fallback</td></tr>
+<tr><td>arm</td><td><span class="badge badge-warn">Fallback</span></td><td>Tylko VM</td></tr>
+<tr><td>riscv64</td><td><span class="badge badge-warn">Fallback</span></td><td>Tylko VM</td></tr>
+</table>
+
+<p>Model pamięci JIT: wartości na stosie to wskaźniki do <code>Box&lt;Value&gt;</code> alokowane przez C-ABI intrinsics (<code>hlpp_rt_alloc_int</code>, itp.). <code>Arc&lt;&gt;</code> używane dla wszystkich współdzielonych danych — spójne z HL i HL++.</p>
+</section>
+
+<hr>
+
+<!-- QUICK-REF TABLE -->
+<section id="quick-ref">
+<h2>Quick-funkcje — pełna lista</h2>
+<table>
+<tr><th>Funkcja</th><th>Opis</th><th>Wynik</th></tr>
+<tr><td><code>::upper text</code></td><td>Wielkie litery</td><td>String</td></tr>
+<tr><td><code>::lower text</code></td><td>Małe litery</td><td>String</td></tr>
+<tr><td><code>::len text</code></td><td>Długość stringa</td><td>Int</td></tr>
+<tr><td><code>::trim text</code></td><td>Usuń białe znaki</td><td>String</td></tr>
+<tr><td><code>::rev text</code></td><td>Odwróć string</td><td>String</td></tr>
+<tr><td><code>::replace text old new</code></td><td>Zamień podstring</td><td>String</td></tr>
+<tr><td><code>::contains text pat</code></td><td>Sprawdź zawieranie</td><td>Bool / exit</td></tr>
+<tr><td><code>::startswith text p</code></td><td>Sprawdź prefix</td><td>Bool / exit</td></tr>
+<tr><td><code>::endswith text p</code></td><td>Sprawdź suffix</td><td>Bool / exit</td></tr>
+<tr><td><code>::split text sep</code></td><td>Podziel po separatorze</td><td>stdout</td></tr>
+<tr><td><code>::lines text</code></td><td>Podziel po liniach</td><td>stdout</td></tr>
+<tr><td><code>::words text</code></td><td>Podziel po słowach</td><td>stdout</td></tr>
+<tr><td><code>::abs n</code></td><td>Wartość bezwzględna</td><td>Num</td></tr>
+<tr><td><code>::ceil n</code></td><td>Zaokrąglij w górę</td><td>Int</td></tr>
+<tr><td><code>::floor n</code></td><td>Zaokrąglij w dół</td><td>Int</td></tr>
+<tr><td><code>::round n</code></td><td>Zaokrąglij</td><td>Int</td></tr>
+<tr><td><code>::max a b</code></td><td>Większa z dwóch</td><td>Int</td></tr>
+<tr><td><code>::min a b</code></td><td>Mniejsza z dwóch</td><td>Int</td></tr>
+<tr><td><code>::rand</code></td><td>Losowa liczba 0-99</td><td>Int</td></tr>
+<tr><td><code>::env KEY</code></td><td>Zmienna środowiskowa</td><td>String</td></tr>
+<tr><td><code>::date</code></td><td>Bieżąca data</td><td>String</td></tr>
+<tr><td><code>::time</code></td><td>Bieżący czas</td><td>String</td></tr>
+<tr><td><code>::pid</code></td><td>PID procesu</td><td>Int</td></tr>
+<tr><td><code>::which tool</code></td><td>Ścieżka do narzędzia</td><td>String</td></tr>
+<tr><td><code>::exists path</code></td><td>Czy ścieżka istnieje</td><td>Bool / exit</td></tr>
+<tr><td><code>::isdir path</code></td><td>Czy katalog</td><td>Bool / exit</td></tr>
+<tr><td><code>::isfile path</code></td><td>Czy plik</td><td>Bool / exit</td></tr>
+<tr><td><code>::basename path</code></td><td>Nazwa pliku</td><td>String</td></tr>
+<tr><td><code>::dirname path</code></td><td>Katalog nadrzędny</td><td>String</td></tr>
+<tr><td><code>::read path</code></td><td>Odczytaj plik</td><td>String</td></tr>
+<tr><td><code>::write path content</code></td><td>Zapisz plik</td><td>Bool</td></tr>
+<tr><td><code>::append path content</code></td><td>Dopisz do pliku</td><td>Bool</td></tr>
+<tr><td><code>::type val</code></td><td>Typ wartości</td><td>String</td></tr>
+<tr><td><code>::nl</code></td><td>Pusta linia</td><td>—</td></tr>
+<tr><td><code>::hr n</code></td><td>Pozioma linia</td><td>—</td></tr>
+<tr><td><code>::bold text</code></td><td>Pogrubiony tekst</td><td>—</td></tr>
+<tr><td><code>::red text</code></td><td>Czerwony tekst</td><td>—</td></tr>
+<tr><td><code>::green text</code></td><td>Zielony tekst</td><td>—</td></tr>
+<tr><td><code>::yellow text</code></td><td>Żółty tekst</td><td>—</td></tr>
+<tr><td><code>::cyan text</code></td><td>Cyjanowy tekst</td><td>—</td></tr>
+<tr><td><code>::magenta text</code></td><td>Magenta tekst</td><td>—</td></tr>
+<tr><td><code>::instanceof obj Cls</code></td><td>Sprawdź typ obiektu</td><td>Bool / exit</td></tr>
+<tr><td><code>::classname obj</code></td><td>Nazwa klasy obiektu</td><td>String</td></tr>
+<tr><td><code>::fields obj</code></td><td>Wypisz pola obiektu</td><td>stdout</td></tr>
+<tr><td><code>::push list val</code></td><td>Dodaj do listy</td><td>—</td></tr>
+<tr><td><code>::pop list</code></td><td>Pobierz z listy</td><td>Value</td></tr>
+<tr><td><code>::count list</code></td><td>Długość listy</td><td>Int</td></tr>
+</table>
+</section>
+
+<!-- SYS VARS -->
+<section id="sys-vars">
+<h2>Zmienne systemowe</h2>
+<table>
+<tr><th>Zmienna</th><th>Wartość</th><th>Źródło</th></tr>
+<tr><td><code>@HL_PP_VERSION</code></td><td>Wersja HL++ (np. 0.1.0)</td><td>wbudowane</td></tr>
+<tr><td><code>@HL_OS</code></td><td>HackerOS/Debian</td><td>wbudowane</td></tr>
+<tr><td><code>@HL_SCRIPT</code></td><td>Ścieżka do skryptu</td><td>wbudowane</td></tr>
+<tr><td><code>@argc</code></td><td>Liczba argumentów</td><td>wbudowane</td></tr>
+<tr><td><code>@arg0, @arg1...</code></td><td>Argumenty CLI</td><td>wbudowane</td></tr>
+<tr><td><code>@SYS_OS</code></td><td>OS name</td><td><code># &lt;std/sys:1.0&gt;</code></td></tr>
+<tr><td><code>@SYS_KERNEL</code></td><td>Wersja kernela</td><td><code># &lt;std/sys:1.0&gt;</code></td></tr>
+<tr><td><code>@SYS_ARCH</code></td><td>Architektura CPU</td><td><code># &lt;std/sys:1.0&gt;</code></td></tr>
+<tr><td><code>@SYS_CPU</code></td><td>Liczba rdzeni</td><td><code># &lt;std/sys:1.0&gt;</code></td></tr>
+<tr><td><code>@SYS_HOSTNAME</code></td><td>Hostname</td><td><code># &lt;std/sys:1.0&gt;</code></td></tr>
+<tr><td><code>@NET_LOCALHOST</code></td><td>127.0.0.1</td><td><code># &lt;std/net:1.0&gt;</code></td></tr>
+<tr><td><code>@NET_MYIP</code></td><td>Lokalny IP</td><td><code># &lt;std/net:1.0&gt;</code></td></tr>
+<tr><td><code>@PORT_SSH</code></td><td>22</td><td><code># &lt;std/net:1.0&gt;</code></td></tr>
+<tr><td><code>@FS_HOME</code></td><td>/root lub $HOME</td><td><code># &lt;std/fs:1.0&gt;</code></td></tr>
+<tr><td><code>@FS_TMP</code></td><td>/tmp</td><td><code># &lt;std/fs:1.0&gt;</code></td></tr>
+<tr><td><code>@__err__</code></td><td>Wiadomość wyjątku</td><td>blok <code>%&gt; err</code></td></tr>
+</table>
+</section>
+
+<!-- EXAMPLES -->
+<section id="examples">
+<h2>Przykłady</h2>
+
+<h3>OOP — kompletny przykład</h3>
+<pre><code><span class="cmt">/// Przykład OOP w Hacker Lang ++</span>
+
+<span class="op">|?</span> <span class="cls">Printable</span>
+    <span class="op">=&gt;</span> <span class="fn">print_info</span>
+<span class="kwd">done</span>
+
+<span class="op">^|&gt;</span> <span class="cls">Vehicle</span>
+    <span class="kw">~brand</span> = Generic
+    <span class="kw">~speed</span> = 0
+
+    <span class="op">=&gt;</span> <span class="fn">move</span> <span class="kwd">def</span>
+    <span class="kwd">done</span>
+
+    <span class="op">=&gt;</span> <span class="fn">status</span> <span class="kwd">def</span>
+        <span class="kw">~&gt;</span> <span class="var">@self</span>.brand @ <span class="var">@self</span>.speed km/h
+    <span class="kwd">done</span>
+<span class="kwd">done</span>
+
+<span class="op">|&gt;&gt;</span> <span class="cls">Car</span> : <span class="cls">Vehicle</span>
+    <span class="kw">~fuel</span> = 100
+
+    <span class="op">=&gt;</span> <span class="fn">new</span>(brand) <span class="kwd">def</span>
+        <span class="var">@self</span>.brand = <span class="var">@brand</span>
+    <span class="kwd">done</span>
+
+    <span class="op">=&gt;</span> <span class="fn">move</span> <span class="kwd">def</span>
+        <span class="var">@self</span>.speed = <span class="var">@self</span>.speed + 10
+        <span class="var">@self</span>.fuel  = <span class="var">@self</span>.fuel  - 5
+        <span class="kw">::green</span> <span class="var">@self</span>.brand moving at <span class="var">@self</span>.speed km/h
+    <span class="kwd">done</span>
+<span class="kwd">done</span>
+
+<span class="op">|~</span> <span class="cls">Car</span> : <span class="cls">Printable</span>
+    <span class="op">=&gt;</span> <span class="fn">print_info</span> <span class="kwd">def</span>
+        <span class="kw">::cyan</span> Car: <span class="var">@self</span>.brand | Speed: <span class="var">@self</span>.speed | Fuel: <span class="var">@self</span>.fuel
+    <span class="kwd">done</span>
+<span class="kwd">done</span>
+
+<span class="kw">%</span> <span class="var">car</span> = <span class="cls">Car</span>::new(HackerMobile)
+<span class="kw">--</span> <span class="var">@car</span>.move
+<span class="kw">--</span> <span class="var">@car</span>.move
+<span class="kw">--</span> <span class="var">@car</span>.print_info</code></pre>
+<div class="lang-tag">hlpp</div>
+
+<h3>Network audit z OOP</h3>
+<pre><code><span class="kw">#</span> &lt;std/net:1.0&gt;
+<span class="kw">#</span> &lt;std/sys:1.0&gt;
+
+<span class="kw">//</span> nmap
+
+<span class="op">|&gt;</span> <span class="cls">Target</span>
+    <span class="kw">~host</span>   = 127.0.0.1
+    <span class="kw">~online</span> = false
+
+    <span class="op">=&gt;</span> <span class="fn">new</span>(h) <span class="kwd">def</span>
+        <span class="var">@self</span>.host = <span class="var">@h</span>
+    <span class="kwd">done</span>
+
+    <span class="op">=&gt;</span> <span class="fn">ping</span> <span class="kwd">def</span>
+        <span class="kw">&gt;&gt;</span> ping -c 1 -W 2 <span class="var">@self</span>.host
+        <span class="kw">? ok</span>
+            <span class="var">@self</span>.online = true
+            <span class="kw">::green</span> <span class="var">@self</span>.host ONLINE ✓
+        <span class="kwd">done</span>
+        <span class="kw">? err</span>
+            <span class="kw">::red</span> <span class="var">@self</span>.host OFFLINE ✗
+        <span class="kwd">done</span>
+    <span class="kwd">done</span>
+
+    <span class="op">=&gt;</span> <span class="fn">scan</span> <span class="kwd">def</span>
+        <span class="kw">&gt;&gt;</span> nmap -sV -T4 <span class="var">@self</span>.host
+    <span class="kwd">done</span>
+<span class="kwd">done</span>
+
+<span class="kw">%</span> <span class="var">t1</span> = <span class="cls">Target</span>::new(192.168.1.1)
+<span class="kw">--</span> <span class="var">@t1</span>.ping
+<span class="kw">--</span> <span class="var">@t1</span>.scan</code></pre>
+<div class="lang-tag">hlpp</div>
+</section>
+
+<hr>
+<p style="text-align:center;color:#6e7681;font-size:12px;padding:24px 0;">
+  Hacker Lang ++ v0.1.0 · HackerOS-Linux-System · GPL-3.0<br>
+  Napisany w Rust · JIT: dynasm-rs · Memory: Arc&lt;&gt;
+</p>
+
+</main>
+</div>
+
+<script>
+// Highlight active nav link on scroll
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('nav a');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      navLinks.forEach(a => a.classList.remove('active'));
+      const link = document.querySelector(`nav a[href="#${e.target.id}"]`);
+      if (link) link.classList.add('active');
+    }
+  });
+}, { rootMargin: '-30% 0px -60% 0px' });
+sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
