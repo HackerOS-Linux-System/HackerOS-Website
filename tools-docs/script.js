@@ -1,4 +1,4 @@
-// Dane slajdów (wszystkie narzędzia + 3 nowe tryby)
+// Dane slajdów (wszystkie narzędzia + 3 nowe tryby + 4 nowe z zadania)
 const slidesData = [
     { title: "HPM", desc: "HackerOS Package Manager – repozytorium społecznościowe dla HackerOS. Każdy użytkownik może tworzyć, udostępniać i instalować pakiety, budując otwarty, dynamiczny ekosystem." },
 { title: "HackerOS Containers", desc: "Autorski system kontenerów zaprojektowany z myślą o lekkiej izolacji, wysokiej wydajności i łatwym zarządzaniu środowiskami aplikacji. W pełni zintegrowany z jądrem HackerOS." },
@@ -14,10 +14,15 @@ const slidesData = [
 { title: "HackerDeck", desc: "HackerDeck – nakładka środowiskowa dla Waydroid, pozwalająca uruchamiać aplikacje Android w HackerOS z pełną integracją, optymalizacją wydajności i dedykowanymi ustawieniami dla graczy oraz programistów." },
 { title: "hedit", desc: "hedit – edytor tekstu inspirowany klasycznym nano, w pełni zintegrowany z HackerOS. Łączy prostotę obsługi z zaawansowanymi funkcjami, takimi jak podświetlanie składni, obsługa makr oraz bezpośrednia edycja plików systemowych w trybie tekstowym." },
 { title: "ngt", desc: "ngt – narzędzie do zarządzania plikami inspirowane Midnight Commanderem (MC). Oferuje dwupanelowy interfejs, szybką nawigację, zaawansowane operacje na plikach (kopiowanie, przenoszenie, uprawnienia) oraz wbudowany podgląd plików i archiwów – niezbędne w codziennej pracy administratora." },
-// === NOWE 3 SŁAJDY (Penetration Mode, Cybersecurity Mode, Hacker Term) ===
+// === TRZY WCZEŚNIEJSZE TRYBY ===
 { title: "Penetration Mode", desc: "Sesja z własnymi narzędziami do testów penetracyjnych. Jest to aplikacja wbudowana w HackerOS Cybersecurity Edition, która uruchamia dedykowane środowisko z frameworkami (Metasploit, Nmap, Burp Suite, własne skrypty) – idealna dla etycznych hackerów i zespołów Red Team." },
 { title: "Cybersecurity Mode", desc: "Narzędzie zarówno do defensywy, jak i ofensywy. Działa w lekkim kontenerze, używane i wbudowane w HackerOS Cybersecurity Edition jako aplikacja oraz jako sesja. Łączy monitoring zagrożeń, IDS/IPS, skanowanie podatności oraz taktyki adversary emulation – wszystko w izolowanym środowisku." },
-{ title: "Hacker Term", desc: "Terminal dla dystrybucji Linuxa HackerOS. Nowoczesna powłoka z zaawansowaną autokompletacją, wieloma oknami, natywnym wsparciem dla kontenerów HackerOS, skryptami .hk i integracją z narzędziami pentesterskimi. Zapewnia pełną kontrolę nad systemem i środowiskiem deweloperskim." }
+{ title: "Hacker Term", desc: "Terminal dla dystrybucji Linuxa HackerOS. Nowoczesna powłoka z zaawansowaną autokompletacją, wieloma oknami, natywnym wsparciem dla kontenerów HackerOS, skryptami .hk i integracją z narzędziami pentesterskimi. Zapewnia pełną kontrolę nad systemem i środowiskiem deweloperskim." },
+// === NOWE 4 SŁAJDY (zgodnie z zadaniem) ===
+{ title: "HackerOS Nix Manager", desc: "Nakładka dla Nix – zarządzanie pakietami i środowiskami w HackerOS z wykorzystaniem Nix. Umożliwia deklaratywną konfigurację systemu, odtwarzalne środowiska deweloperskie oraz integrację z ekosystemem Nixpkgs." },
+{ title: "Hacker Mode", desc: "Sesja do gier inspirowana GameHub / Steam GamePadUI. Uruchamia specjalne środowisko zoptymalizowane dla kontrolerów, dużego ekranu i łatwego dostępu do bibliotek gier. Idealne do Steam, emulatorów i natywnych tytułów." },
+{ title: "Isolator", desc: "Nakładka dla podmana z własną listą pakietów. Określa, w którym kontenerze każdy pakiet ma być instalowany. Dzięki temu łatwo zarządzasz aplikacjami w izolowanych środowiskach, zapewniając separację i bezpieczeństwo." },
+{ title: "HackerOS Steam", desc: "Uruchom Steam w kontenerze Arch Linux. Dzięki izolacji i pełnej kompatybilności z bibliotekami Steam, możesz grać w swoje ulubione tytuły na HackerOS, zachowując czystość systemu głównego." }
 ];
 
 const slidesTrack = document.getElementById('slidesTrack');
