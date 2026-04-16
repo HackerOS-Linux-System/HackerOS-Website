@@ -349,7 +349,7 @@
                     document.getElementById(link.dataset.tab).classList.add('active');
                 });
             });
-            // English fallback (po usunięciu zakładki Komendy)
+            // English fallback
             const userLang = navigator.language || navigator.userLanguage;
             if (!userLang.startsWith('pl')) {
                 document.documentElement.lang = 'en';
@@ -484,7 +484,7 @@
                         <li><strong>x86_64 (amd64)</strong> — pełne wsparcie</li>
                     </ul>
                 </div>
-                <!-- 3. Instalacja -->
+                <!-- 3. Instalacja (zaktualizowany opis hasła live) -->
                 <div id="installation" class="tab-pane">
                     <h2>3. Instalacja</h2>
                     <h3>Pobieranie</h3>
@@ -497,10 +497,14 @@
                         <li>Przykład <code>dd</code> (UWAGA: dobierz poprawne <code>/dev/sdX</code>):</li>
                     </ul>
                     <pre><span>sudo dd if=HackerOS.iso of=/dev/sdX bs=4M status=progress oflag=sync</span> <button class="copy-button" data-command="sudo dd if=HackerOS.iso of=/dev/sdX bs=4M status=progress oflag=sync">Kopiuj</button></pre>
+                    <h3>Uruchamianie w trybie Live</h3>
+                    <p>Po uruchomieniu komputera z pendrive'a / płyty z obrazem HackerOS, zostaniesz powitany przez ekran wyboru trybu. Wybierz opcję "Uruchom HackerOS Live".</p>
+                    <p><strong>Domyślne hasło dla użytkownika live to: <code>live</code></strong> – zostaniesz automatycznie zalogowany w środowisku graficznym, ale w razie potrzeby (np. blokada ekranu lub logowanie przez konsolę) użyj tego hasła.</p>
                     <h3>Instalacja z nośnika</h3>
                     <ol>
                         <li>Uruchom komputer z pendrive/USB.</li>
-                        <li>Instalator poprowadzi przez: partycjonowanie, tworzenie użytkownika.</li>
+                        <li>Uruchom instalator (skrót na pulpicie lub w menu).</li>
+                        <li>Instalator Calamares poprowadzi przez: wybór języka, partycjonowanie, tworzenie użytkownika.</li>
                         <li>Po zakończeniu uruchom system z dysku.</li>
                     </ol>
                     <h3>Dual-boot</h3>
@@ -518,32 +522,49 @@
                         <li>Jeżeli wybrałeś automatyczne logowanie — zostaniesz zalogowany od razu (w instalatorze Calamares).</li>
                         <li>W przeciwnym razie: zaloguj się przy użyciu utworzonego użytkownika.</li>
                     </ul>
-                    <h3>Menedżer pakietów</h3>
-                    <p>HackerOS używa <strong>APT</strong> oraz własnego narzędzia <code>hacker</code> (HackerOS posiada również własnego następcę apt o nazwie <strong>lpm</strong>):</p>
-                    <ul>
-                        <li><strong>APT</strong> (przykłady):</li>
-                    </ul>
+                    <h3>Menedżerzy pakietów</h3>
+                    <p>HackerOS kładzie nacisk na szeroką dostępność oprogramowania, dlatego oferuje wiele menedżerów pakietów do wyboru:</p>
+                    <h4>APT (Debian)</h4>
+                    <p>Repozytorium Debiana (testing lub stable). Możesz również używać <strong>lpm</strong> – następcy APT w fazie BETA (instalacja: <code>hacker unpack lpm</code>). Przykładowe komendy APT:</p>
                     <pre><span>sudo apt update
 sudo apt upgrade
 sudo apt install &lt;pakiet&gt;
 sudo apt remove &lt;pakiet&gt;
 sudo apt autoremove
 sudo apt autoclean</span> <button class="copy-button" data-command="sudo apt update&#10;sudo apt upgrade&#10;sudo apt install &lt;pakiet&gt;&#10;sudo apt remove &lt;pakiet&gt;&#10;sudo apt autoremove&#10;sudo apt autoclean">Kopiuj</button></pre>
-                    <ul>
-                        <li><strong>hacker</strong> (własny manager):</li>
-                    </ul>
-                    <pre><span>sudo hacker install &lt;pakiet&gt;
-sudo hacker remove &lt;pakiet&gt;
-hacker update</span> <button class="copy-button" data-command="sudo hacker install &lt;pakiet&gt;&#10;sudo hacker remove &lt;pakiet&gt;&#10;hacker update">Kopiuj</button></pre>
-                    <ul>
-                        <li><strong>lpm</strong> (własny następca apt):</li>
-                    </ul>
-                    <pre><span>sudo lpm install &lt;pakiet&gt;
-sudo lpm remove &lt;pakiet&gt;
-sudo lpm update
-sudo lpm upgrade
-sudo lpm clean</span> <button class="copy-button" data-command="sudo lpm install &lt;pakiet&gt;&#10;sudo lpm remove &lt;pakiet&gt;&#10;sudo lpm update&#10;sudo lpm upgrade&#10;sudo lpm clean">Kopiuj</button></pre>
-                    <p><code>hacker</code> jest wrapperem i integruje dodatkowe repozytoria/paczki customowe — sprawdź <code>hacker --help</code>.</p>
+                    
+                    <h4>Flatpak</h4>
+                    <p>HackerOS posiada w pełni skonfigurowane wsparcie dla Flatpak. Podstawowe komendy:</p>
+                    <pre><span>flatpak install &lt;pakiet&gt;
+flatpak update
+flatpak remove &lt;pakiet&gt;
+flatpak search &lt;nazwa&gt;</span> <button class="copy-button" data-command="flatpak install &lt;pakiet&gt;&#10;flatpak update&#10;flatpak remove &lt;pakiet&gt;&#10;flatpak search &lt;nazwa&gt;">Kopiuj</button></pre>
+                    
+                    <h4>Snap</h4>
+                    <p>HackerOS obsługuje również Snap. Przykładowe komendy:</p>
+                    <pre><span>snap install &lt;pakiet&gt;
+snap refresh
+snap remove &lt;pakiet&gt;
+snap find &lt;nazwa&gt;</span> <button class="copy-button" data-command="snap install &lt;pakiet&gt;&#10;snap refresh&#10;snap remove &lt;pakiet&gt;&#10;snap find &lt;nazwa&gt;">Kopiuj</button></pre>
+                    
+                    <h4>Brew (Homebrew)</h4>
+                    <p>Wbudowane narzędzie CLI Homebrew. Aby upewnić się, że jest dostępne, wykonaj <code>hacker update</code>. Podstawowe komendy:</p>
+                    <pre><span>brew install &lt;pakiet&gt;
+brew upgrade
+brew uninstall &lt;pakiet&gt;
+brew update</span> <button class="copy-button" data-command="brew install &lt;pakiet&gt;&#10;brew upgrade&#10;brew uninstall &lt;pakiet&gt;&#10;brew update">Kopiuj</button></pre>
+                    
+                    <h4>HackerOS Package Manager (hpm)</h4>
+                    <p>Repozytorium społecznościowe HackerOS. Pełna dokumentacja: <a href="https://hackeros-linux-system.github.io/HackerOS-Website/tools-docs/hpm.html" target="_blank">https://hackeros-linux-system.github.io/HackerOS-Website/tools-docs/hpm.html</a></p>
+                    
+                    <h4>HackerOS Nix Manager (hnm)</h4>
+                    <p>Nakładka dla Nix, umożliwiająca korzystanie z repozytorium Nixpkgs. Pełna dokumentacja: <a href="https://hackeros-linux-system.github.io/HackerOS-Website/tools-docs/hnm.html" target="_blank">https://hackeros-linux-system.github.io/HackerOS-Website/tools-docs/hnm.html</a></p>
+                    
+                    <h3>Konfiguracja sieci – szybkie łączenie</h3>
+                    <p>Jeśli masz problem z połączeniem internetowym lub po prostu chcesz łatwo skonfigurować Wi-Fi / sieć przewodową, użyj wygodnego narzędzia:</p>
+                    <pre><span>hacker network</span> <button class="copy-button" data-command="hacker network">Kopiuj</button></pre>
+                    <p><strong>hacker network</strong> to przyjazny frontend GUI dla nmcli – pozwala w kilku kliknięciach połączyć się z dostępnymi sieciami, zarządzać VPN, edytować połączenia. Działa zarówno w środowisku graficznym, jak i w konsoli (wtedy uruchamia się w trybie tekstowym z interaktywnym menu).</p>
+                    
                     <h3>Instalacja specjalnych jąder (XanMod/Liquorix)</h3>
                     <p>Domyślnie w systemie można zainstalować jądro XanMod czy Liquorix za pomocą narzędzia <code>chker</code>.</p>
                     <p>Aby zainstalować jądro XanMod lub Liquorix:</p>
@@ -552,11 +573,6 @@ sudo lpm clean</span> <button class="copy-button" data-command="sudo lpm install
                         <li>Uruchom ponownie komputer.</li>
                     </ol>
                     <p>Czy specjalne jądra dają dużą różnicę wydajności w grach? Zazwyczaj są to niewielkie różnice.</p>
-                    <h3>Konfiguracja sieci i podstawowe ustawienia</h3>
-                    <ul>
-                        <li><strong>GUI:</strong> Ustawienia → Sieć</li>
-                        <li><strong>CLI:</strong> <code>nmtui</code>, <code>nmcli</code>, <code>ip</code>, <code>ifconfig</code></li>
-                    </ul>
                 </div>
                 <!-- 5. Środowisko graficzne -->
                 <div id="environment" class="tab-pane">
@@ -592,13 +608,14 @@ sudo lpm clean</span> <button class="copy-button" data-command="sudo lpm install
                 <div id="troubleshooting" class="tab-pane">
                     <h2>7. Rozwiązywanie błędów (troubleshooting)</h2>
                     <ul>
-                        <li><strong>Najpierw sprawdź logi:</strong></li>
-                        <li>Systemd: <code>journalctl -b</code> (możesz też sprawdzić logi za pomocą <code>hacker-syslog</code>)</li>
-                        <li>Dmesg: <code>dmesg | less</code></li>
-                        <li>X/Wayland logs: <code>~/.local/share/sddm/</code> lub <code>~/.xsession-errors</code></li>
-                        <li><strong>Sieć:</strong> <code>nmcli device status</code>, <code>ping 8.8.8.8</code></li>
-                        <li><strong>Problem z paczkami:</strong> <code>sudo apt --fix-broken install</code>, <code>sudo dpkg --configure -a</code></li>
-                        <li><strong>Spróbuj użyć</strong> <code>hacker repair</code> (BETA)</li>
+                        <li><strong>Problem z siecią?</strong> Użyj narzędzia <code>hacker network</code> – interaktywne GUI do zarządzania połączeniami sieciowymi (Wi-Fi, Ethernet, VPN).</li>
+                        <li><strong>Hasło w trybie Live:</strong> Jeśli system poprosi o hasło (np. po blokadzie ekranu) – domyślnym hasłem dla użytkownika <code>live</code> jest <code>live</code>.</li>
+                        <li><strong>Sprawdź logi:</strong> <code>journalctl -b</code> (możesz też sprawdzić logi za pomocą <code>hacker-syslog</code>).</li>
+                        <li><strong>Dmesg:</strong> <code>dmesg | less</code>.</li>
+                        <li><strong>Logi X/Wayland:</strong> <code>~/.local/share/sddm/</code> lub <code>~/.xsession-errors</code>.</li>
+                        <li><strong>Sieć z poziomu CLI:</strong> <code>nmcli device status</code>, <code>ping 8.8.8.8</code>.</li>
+                        <li><strong>Problemy z pakietami:</strong> <code>sudo apt --fix-broken install</code>, <code>sudo dpkg --configure -a</code>.</li>
+                        <li><strong>Spróbuj użyć</strong> <code>hacker repair</code> (BETA).</li>
                         <li><strong>Jeśli nic nie pomaga:</strong> napisz mail lub zgłoś issue:</li>
                         <li>Email: <a href="mailto:hackeros068@gmail.com">hackeros068@gmail.com</a></li>
                         <li>Zgłoś issue: <a href="https://github.com/HackerOS-Linux-System/HackerOS-Website/issues">https://github.com/HackerOS-Linux-System/HackerOS-Website/issues</a></li>
@@ -617,7 +634,7 @@ sudo lpm clean</span> <button class="copy-button" data-command="sudo lpm install
                         <li><strong>Znak towarowy / nazwa:</strong> zastrzeżona przez projekt.</li>
                     </ul>
                 </div>
-                <!-- 9. Narzędzia i aplikacje (zaktualizowane: vira/bytes używa h#-utils, dodano Cybersecurity Mode i Penetration Mode) -->
+                <!-- 9. Narzędzia i aplikacje -->
                 <div id="tools" class="tab-pane">
                     <h2>9. Narzędzia i aplikacje</h2>
                     <p>Oto pełna lista autorskich narzędzi i aplikacji HackerOS wraz z opisami i informacjami o instalacji:</p>
@@ -642,9 +659,10 @@ sudo lpm clean</span> <button class="copy-button" data-command="sudo lpm install
                             <tr><td><code>Hacker-Mode</code></td><td>Sesja inspirowana gamescope / Steam (tryb gry na pełnym ekranie).</td><td><code>hacker unpack hacker-mode</code></td></tr>
                             <tr><td><code>bph</code></td><td>Narzędzie CLI edukacyjne do testów penetracyjnych.</td><td>Wbudowane tylko w edycji Cybersecurity</td></tr>
                             <tr><td><code>Hacker-Term</code></td><td>Własny terminal HackerOS (z dodatkowymi funkcjami).</td><td>Wbudowany w każdej edycji</td></tr>
-                            <tr><td><code>HackerOS-App</code></td><td>Aplikacja mobilna dla telefonów Android.</td><td><a href="https://github.com/HackerOS-Linux-System/HackerOS-App/releases/download/v0.4/HackerOS-App-0.4.apk" target="_blank" style="color:#FFFFFF;">Pobierz APK v0.3</a></td></tr>
+                            <tr><td><code>HackerOS-App</code></td><td>Aplikacja mobilna dla telefonów Android.</td><td><a href="https://github.com/HackerOS-Linux-System/HackerOS-App/releases/download/v0.4/HackerOS-App-0.4.apk" target="_blank" style="color:#FFFFFF;">Pobierz APK v0.4</a></td></tr>
                             <tr><td><code>hsh</code></td><td>Własna powłoka HackerOS (zastępuje bash/zsh).</td><td>Wbudowana w każdej edycji</td></tr>
                             <tr><td><code>hpm</code> (HackerOS Package Manager)</td><td>Manager pakietów z repozytorium community.</td><td>Wbudowany w każdej edycji</td></tr>
+                            <tr><td><code>hnm</code> (HackerOS Nix Manager)</td><td>Nakładka dla Nix – integracja z repozytorium Nixpkgs.</td><td>Wbudowany we wszystkich edycjach</td></tr>
                             <tr><td><code>Hacker Launcher</code></td><td>Aplikacja do uruchamiania gier Windowsowych (Proton).</td><td>wbudowane we wszystkich edycjach</td></tr>
                             <tr><td><code>HackerOS-Games</code></td><td>Aplikacja do uruchamiania gier od HackerOS:<br>• StarBlaster<br>• Bit Jump<br>• The Racer<br>• Bark Squadron</td><td>wbudowane we wszystkich edycjach</td></tr>
                             <tr><td><code>getit</code></td><td>Połączenie git + wget + własnego systemu pobierania całych katalogów z GitHub/GitLab.</td><td>wbudowane we wszystkich edycjach</td></tr>
