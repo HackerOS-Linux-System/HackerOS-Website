@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>hnm — HackerOS Nix Manager</title>
+  <link rel="icon" type="image/png" href="../HackerOS.png">
+  <style>
+    :root {
+      --bg:          #0d0d0f;
+      --bg2:         #111215;
+      --bg3:         #16181d;
+      --border:      #1e2128;
+      --primary:     #00c8ff;
+      --primary-dim: #008fb5;
+      --accent:      #0077aa;
+      --text:        #c9d1d9;
+      --text-dim:    #6e7681;
+      --text-bright: #e6edf3;
+      --red:         #ff4d4d;
+      --yellow:      #f0c040;
+      --green:       #3fb950;
+      --code-bg:     #0f1117;
+      --sidebar-w:   260px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      font-size: 15px;
+      line-height: 1.7;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* ── TOP NAV ────────────────────────────────────────────────────────────── */
+    header.topbar {
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 28px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    header.topbar a.logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    header.topbar img.logo-img {
+      height: 32px;
+    }
+    header.topbar .tool-name {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--primary);
+      letter-spacing: .04em;
+    }
+    header.topbar .sep { color: var(--border); margin: 0 6px; }
+
+    header.topbar nav { margin-left: auto; display: flex; gap: 20px; }
+    header.topbar nav a {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: .9rem;
+      transition: color .15s;
+    }
+    header.topbar nav a:hover { color: var(--primary); }
+
+    /* ── LAYOUT ─────────────────────────────────────────────────────────────── */
+    .page {
+      display: flex;
+      flex: 1;
+      max-width: 1280px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+
+    /* ── SIDEBAR ─────────────────────────────────────────────────────────────── */
+    aside.sidebar {
+      width: var(--sidebar-w);
+      min-width: var(--sidebar-w);
+      padding: 32px 0 32px 0;
+      position: sticky;
+      top: 57px;
+      height: calc(100vh - 57px);
+      overflow-y: auto;
+      border-right: 1px solid var(--border);
+    }
+
+    aside.sidebar .section-label {
+      font-size: .72rem;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--text-dim);
+      padding: 18px 20px 6px;
+    }
+    aside.sidebar a {
+      display: block;
+      padding: 5px 20px;
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: .88rem;
+      border-left: 2px solid transparent;
+      transition: all .12s;
+    }
+    aside.sidebar a:hover,
+    aside.sidebar a.active {
+      color: var(--primary);
+      border-left-color: var(--primary);
+      background: rgba(0,200,255,.04);
+    }
+
+    /* ── MAIN ────────────────────────────────────────────────────────────────── */
+    main {
+      flex: 1;
+      padding: 40px 48px 80px 48px;
+      min-width: 0;
+    }
+
+    /* ── HERO ────────────────────────────────────────────────────────────────── */
+    .hero {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--bg3);
+      padding: 36px 40px;
+      margin-bottom: 48px;
+    }
+    .hero .badge {
+      display: inline-block;
+      background: rgba(0,200,255,.08);
+      border: 1px solid var(--primary-dim);
+      color: var(--primary);
+      font-size: .75rem;
+      padding: 2px 10px;
+      border-radius: 20px;
+      margin-bottom: 14px;
+      letter-spacing: .08em;
+    }
+    .hero h1 {
+      font-size: 2.2rem;
+      color: var(--text-bright);
+      font-weight: 800;
+      letter-spacing: -.01em;
+    }
+    .hero h1 span { color: var(--primary); }
+    .hero p {
+      margin-top: 10px;
+      color: var(--text-dim);
+      font-size: 1.05rem;
+      max-width: 680px;
+    }
+    .hero .cmd-example {
+      margin-top: 22px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .hero .cmd-example code {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      color: var(--primary);
+      padding: 8px 18px;
+      border-radius: 6px;
+      font-family: 'Cascadia Code', 'Fira Code', monospace;
+      font-size: .95rem;
+    }
+
+    /* ── HEADINGS ────────────────────────────────────────────────────────────── */
+    h2 {
+      font-size: 1.45rem;
+      color: var(--text-bright);
+      font-weight: 700;
+      margin: 52px 0 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+      scroll-margin-top: 80px;
+    }
+    h2 .anchor { color: var(--primary-dim); text-decoration: none; margin-left: 6px; opacity: 0; }
+    h2:hover .anchor { opacity: 1; }
+
+    h3 {
+      font-size: 1.08rem;
+      color: var(--primary);
+      font-weight: 600;
+      margin: 28px 0 10px;
+      scroll-margin-top: 80px;
+    }
+
+    p { margin-bottom: 14px; color: var(--text); }
+
+    /* ── CODE ────────────────────────────────────────────────────────────────── */
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 18px 22px;
+      overflow-x: auto;
+      margin: 16px 0 24px;
+      font-family: 'Cascadia Code', 'Fira Code', 'Courier New', monospace;
+      font-size: .88rem;
+      line-height: 1.6;
+      color: var(--text);
+      position: relative;
+    }
+    pre .c  { color: var(--primary); }        /* commands */
+    pre .s  { color: var(--green); }          /* strings / output */
+    pre .d  { color: var(--text-dim); }       /* comments */
+    pre .w  { color: var(--yellow); }         /* warnings */
+    pre .e  { color: var(--red); }            /* errors */
+    pre .h  { color: var(--text-bright); font-weight: 600; } /* headers */
+
+    code {
+      background: rgba(0,200,255,.07);
+      color: var(--primary);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-family: 'Cascadia Code', 'Fira Code', monospace;
+      font-size: .88em;
+    }
+    pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
+
+    /* ── TABLE ───────────────────────────────────────────────────────────────── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0 28px;
+      font-size: .9rem;
+    }
+    thead th {
+      background: var(--bg3);
+      color: var(--primary);
+      font-weight: 600;
+      text-align: left;
+      padding: 10px 16px;
+      border-bottom: 2px solid var(--border);
+      letter-spacing: .04em;
+      font-size: .82rem;
+      text-transform: uppercase;
+    }
+    tbody tr { border-bottom: 1px solid var(--border); }
+    tbody tr:hover { background: rgba(0,200,255,.03); }
+    tbody td {
+      padding: 10px 16px;
+      vertical-align: top;
+    }
+    tbody td:first-child { color: var(--primary); font-family: monospace; white-space: nowrap; }
+    tbody td:last-child  { color: var(--text-dim); }
+
+    /* ── CALLOUT BOXES ───────────────────────────────────────────────────────── */
+    .callout {
+      border-radius: 8px;
+      padding: 14px 20px;
+      margin: 18px 0;
+      font-size: .92rem;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      border-left: 3px solid;
+    }
+    .callout.info    { background: rgba(0,200,255,.06);  border-color: var(--primary);  color: var(--primary); }
+    .callout.warn    { background: rgba(240,192,64,.06); border-color: var(--yellow);   color: var(--yellow); }
+    .callout.danger  { background: rgba(255,77,77,.06);  border-color: var(--red);      color: var(--red); }
+    .callout.success { background: rgba(63,185,80,.06);  border-color: var(--green);    color: var(--green); }
+    .callout .icon   { font-size: 1.1rem; line-height: 1.5; }
+    .callout .body   { color: var(--text); }
+    .callout .body strong { color: inherit; }
+
+    /* ── FEATURES GRID ───────────────────────────────────────────────────────── */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+      margin: 20px 0 32px;
+    }
+    .feature-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 18px 20px;
+    }
+    .feature-card .icon { font-size: 1.4rem; margin-bottom: 8px; }
+    .feature-card h4 { color: var(--text-bright); font-size: .95rem; margin-bottom: 4px; }
+    .feature-card p  { font-size: .84rem; color: var(--text-dim); margin: 0; }
+
+    /* ── COMMAND CARDS ───────────────────────────────────────────────────────── */
+    .cmd-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin-bottom: 12px;
+    }
+    .cmd-card .cmd-sig {
+      font-family: monospace;
+      font-size: 1rem;
+      color: var(--primary);
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .cmd-card .cmd-sig .arg { color: var(--text); font-weight: 400; }
+    .cmd-card .cmd-sig .flag { color: var(--text-dim); font-weight: 400; }
+    .cmd-card p { font-size: .9rem; color: var(--text-dim); margin: 0 0 6px; }
+    .cmd-card pre { margin: 8px 0 0; font-size: .82rem; }
+
+    /* ── PROGRESS DIAGRAM ─────────────────────────────────────────────────────── */
+    .term-demo {
+      background: #0a0c10;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 20px 0 28px;
+      font-family: 'Cascadia Code', 'Fira Code', monospace;
+      font-size: .83rem;
+    }
+    .term-demo .term-bar {
+      background: var(--bg3);
+      padding: 8px 14px;
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+    }
+    .term-demo .dot { width: 11px; height: 11px; border-radius: 50%; }
+    .term-demo .dot-r { background: #ff5f57; }
+    .term-demo .dot-y { background: #febc2e; }
+    .term-demo .dot-g { background: #28c840; }
+    .term-demo .term-body { padding: 16px 20px; line-height: 1.8; }
+    .term-demo .dim  { color: #3d4451; }
+    .term-demo .cy   { color: #00c8ff; }
+    .term-demo .bcy  { color: #7ee8ff; font-weight: 600; }
+    .term-demo .wt   { color: #c9d1d9; }
+    .term-demo .grn  { color: #3fb950; }
+    .term-demo .yel  { color: #f0c040; }
+    .term-demo .red  { color: #ff4d4d; }
+
+    /* ── FOOTER ──────────────────────────────────────────────────────────────── */
+    footer {
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      padding: 22px 32px;
+      text-align: center;
+      font-size: .82rem;
+      color: var(--text-dim);
+    }
+    footer a { color: var(--primary-dim); text-decoration: none; }
+    footer a:hover { color: var(--primary); }
+
+    /* ── SCROLLBAR ───────────────────────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+    @media (max-width: 860px) {
+      aside.sidebar { display: none; }
+      main { padding: 28px 20px 60px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── TOP NAV ───────────────────────────────────────────────────────────── -->
+<header class="topbar">
+  <a class="logo" href="https://hackeros-linux-system.github.io/HackerOS-Website/Home-page.html">
+    <img class="logo-img" src="https://hackeros-linux-system.github.io/HackerOS-Website/HackerOS.png" alt="HackerOS" />
+  </a>
+  <span class="sep">/</span>
+  <span class="tool-name">hnm</span>
+
+  <nav>
+    <a href="https://hackeros-linux-system.github.io/HackerOS-Website/tools-docs/index.html">Ecosystem</a>
+    <a href="https://github.com/HackerOS-Linux-System" target="_blank">GitHub</a>
+    <a href="https://discord.com/invite/8yHNcBaEKy" target="_blank">Discord</a>
+  </nav>
+</header>
+
+<div class="page">
+
+  <!-- ── SIDEBAR ─────────────────────────────────────────────────────────── -->
+  <aside class="sidebar">
+    <div class="section-label">Getting Started</div>
+    <a href="#overview">Overview</a>
+    <a href="#quickstart">Quickstart</a>
+
+    <div class="section-label">Usage</div>
+    <a href="#commands">Command Reference</a>
+    <a href="#search-install">Search &amp; Install</a>
+    <a href="#update">Updating Packages</a>
+    <a href="#pins">Pinning</a>
+    <a href="#generations">Generations &amp; Rollback</a>
+
+    <div class="section-label">Output</div>
+    <a href="#progress">Progress &amp; Logs</a>
+    <a href="#colors">Color Scheme</a>
+
+    <div class="section-label">Maintenance</div>
+    <a href="#doctor">Doctor</a>
+    <a href="#env">Environment</a>
+    <a href="#gc">Garbage Collection</a>
+    <a href="#clean">Clean Cache</a>
+
+    <div class="section-label">Reference</div>
+    <a href="#config">Configuration</a>
+    <a href="#state">State File</a>
+    <a href="#auto-nix">Auto Nix Bootstrap</a>
+    <a href="#compare">HNM vs Flox</a>
+  </aside>
+
+  <!-- ── MAIN CONTENT ─────────────────────────────────────────────────────── -->
+  <main>
+
+    <!-- ── HERO ─────────────────────────────────────────────────────────── -->
+    <div class="hero">
+      <div class="badge">v0.1.0 · HackerOS Linux · Built-in</div>
+      <h1><span>hnm</span> — HackerOS Nix Manager</h1>
+      <p>
+        Install Nix packages without the heavy NixOS setup.
+        Zero environments, zero flakes — just fast, clean package management
+        powered by <code>nix-env</code> with an HNM profile.
+      </p>
+      <div class="cmd-example">
+        <code>$ hnm install ripgrep bat htop</code>
+      </div>
+    </div>
+
+    <div class="callout info">
+      <span class="icon">ℹ</span>
+      <div class="body">
+        <strong>Built into HackerOS</strong> — HNM is pre-installed on every edition of HackerOS.
+        It is designed exclusively for HackerOS and requires no manual installation.
+      </div>
+    </div>
+
+    <!-- ── OVERVIEW ─────────────────────────────────────────────────────── -->
+    <h2 id="overview">Overview <a class="anchor" href="#overview">#</a></h2>
+
+    <p>
+      HNM gives you access to the entire <strong>nixpkgs</strong> repository
+      (~100 000 packages) without having to manage Nix flakes, NixOS modules,
+      or <code>configuration.nix</code>. It works identically to how
+      <a href="https://flox.dev" style="color:var(--primary-dim)">Flox</a>
+      uses Nix under the hood — a dedicated <code>nix-env</code> profile
+      at <code>~/.hnm/profile</code>.
+    </p>
+
+    <div class="features">
+      <div class="feature-card">
+        <div class="icon">📦</div>
+        <h4>nixpkgs access</h4>
+        <p>All ~100 000 packages from nixpkgs-unstable, searchable instantly.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">⚡</div>
+        <h4>No flakes / NixOS</h4>
+        <p>Uses plain <code>nix-env</code> — no heavy system setup required.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🔄</div>
+        <h4>Generations</h4>
+        <p>Every change creates a new generation. Roll back with one command.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">📌</div>
+        <h4>Version pinning</h4>
+        <p>Pin packages to specific versions, preventing unwanted upgrades.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🩺</div>
+        <h4>Doctor</h4>
+        <p>Built-in diagnostics to verify your Nix install and HNM health.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🚀</div>
+        <h4>Auto-bootstrap</h4>
+        <p>HNM installs Nix automatically if it's missing — just run any command.</p>
+      </div>
+    </div>
+
+    <!-- ── QUICKSTART ────────────────────────────────────────────────────── -->
+    <h2 id="quickstart">Quickstart <a class="anchor" href="#quickstart">#</a></h2>
+
+    <pre><span class="d"># Search for a package</span>
+<span class="c">$ hnm search</span> ripgrep
+
+<span class="d"># Install packages</span>
+<span class="c">$ hnm install</span> ripgrep bat htop
+
+<span class="d"># Show information about a package</span>
+<span class="c">$ hnm info</span> ripgrep
+
+<span class="d"># List installed packages</span>
+<span class="c">$ hnm list</span>
+
+<span class="d"># Update everything</span>
+<span class="c">$ hnm update</span>
+
+<span class="d"># Remove a package</span>
+<span class="c">$ hnm remove</span> htop
+
+<span class="d"># Check Nix installation</span>
+<span class="c">$ hnm check</span>
+
+<span class="d"># Run full diagnostics</span>
+<span class="c">$ hnm doctor</span></pre>
+
+    <!-- ── COMMANDS ─────────────────────────────────────────────────────── -->
+    <h2 id="commands">Command Reference <a class="anchor" href="#commands">#</a></h2>
+
+    <h3>Package commands</h3>
+    <table>
+      <thead><tr><th>Command</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td>hnm search &lt;query&gt; [--json]</td><td>Search nixpkgs for packages matching the query</td></tr>
+        <tr><td>hnm install &lt;pkg...&gt; [--no-env]</td><td>Install one or more packages into the HNM profile</td></tr>
+        <tr><td>hnm remove &lt;pkg...&gt; [-f]</td><td>Remove one or more installed packages</td></tr>
+        <tr><td>hnm update [pkg...]</td><td>Refresh the nixpkgs channel and upgrade packages</td></tr>
+        <tr><td>hnm upgrade</td><td>Upgrade HNM itself <em>(placeholder — updated via system)</em></td></tr>
+        <tr><td>hnm info &lt;pkg&gt;</td><td>Show detailed information about a package</td></tr>
+        <tr><td>hnm list [-i] [--json]</td><td>List all installed packages</td></tr>
+        <tr><td>hnm which &lt;pkg&gt;</td><td>Show the binary path of an installed package</td></tr>
+        <tr><td>hnm pin &lt;pkg&gt; [version]</td><td>Pin a package to prevent it from being upgraded</td></tr>
+        <tr><td>hnm unpin &lt;pkg&gt;</td><td>Remove pin from a package</td></tr>
+        <tr><td>hnm rollback [gen]</td><td>Roll back to a previous generation</td></tr>
+        <tr><td>hnm gc</td><td>Run Nix garbage collection to free store space</td></tr>
+      </tbody>
+    </table>
+
+    <h3>System commands</h3>
+    <table>
+      <thead><tr><th>Command</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td>hnm unpack</td><td>Bootstrap Nix: install, source profile, add nixpkgs-unstable channel</td></tr>
+        <tr><td>hnm check</td><td>Verify Nix installation — prints versions of nix and nix-env</td></tr>
+        <tr><td>hnm doctor</td><td>Full system diagnostics — Nix binaries, channels, profile, PATH</td></tr>
+        <tr><td>hnm env activate</td><td>Print shell snippet to add HNM profile to PATH</td></tr>
+        <tr><td>hnm env deactivate</td><td>Print instructions to remove HNM profile from PATH</td></tr>
+        <tr><td>hnm env status</td><td>Show current environment status</td></tr>
+        <tr><td>hnm clean</td><td>Remove HNM download cache and temporary files</td></tr>
+        <tr><td>hnm version</td><td>Show HNM and Nix version information</td></tr>
+        <tr><td>hnm help</td><td>Show command reference</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Command aliases</h3>
+    <table>
+      <thead><tr><th>Alias</th><th>Full command</th></tr></thead>
+      <tbody>
+        <tr><td>hnm i</td><td>hnm install</td></tr>
+        <tr><td>hnm rm</td><td>hnm remove</td></tr>
+        <tr><td>hnm uninstall</td><td>hnm remove</td></tr>
+        <tr><td>hnm up</td><td>hnm update</td></tr>
+        <tr><td>hnm ls</td><td>hnm list</td></tr>
+      </tbody>
+    </table>
+
+    <!-- ── SEARCH & INSTALL ──────────────────────────────────────────────── -->
+    <h2 id="search-install">Search &amp; Install <a class="anchor" href="#search-install">#</a></h2>
+
+    <h3>Searching</h3>
+    <p>
+      <code>hnm search</code> runs <code>nix search nixpkgs &lt;query&gt;</code> and displays
+      results in a formatted table. Installed packages are marked with a <code>✓</code>.
+    </p>
+    <div class="term-demo">
+      <div class="term-bar">
+        <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+      </div>
+      <div class="term-body">
+<span class="dim">  │</span> running: nix search nixpkgs ripgrep<br>
+<span class="dim">  │</span> parsing results...<br>
+<span class="cy">  /  [████████████████████████████████████████]  100%  done</span><br>
+<br>
+<span class="bcy">  ▸ Search 'ripgrep'   (3 results)</span><br>
+<span class="dim">  ────────────────────────────────────────────────────────────────────────────────</span><br>
+<span class="dim">  PACKAGE                           VERSION          DESCRIPTION</span><br>
+<span class="dim">  ────────────────────────────────────────────────────────────────────────────────</span><br>
+<span class="bcy">  ripgrep                      </span>  <span class="cy">14.1.1          </span>  <span class="dim">Fast grep alternative in Rust</span><br>
+<span class="bcy">  ripgrep-all                  </span>  <span class="cy">0.9.6           </span>  <span class="dim">Ripgrep, but also search PDFs etc</span><br>
+<span class="bcy">  ugrep                        </span>  <span class="cy">6.1.0           </span>  <span class="dim">Ultra fast grep with regex</span><br>
+<br>
+<span class="dim">  hnm install &lt;package&gt;   to install</span><br>
+<span class="dim">  hnm info    &lt;package&gt;   for details</span>
+      </div>
+    </div>
+
+    <pre><span class="d"># Basic search</span>
+<span class="c">$ hnm search</span> ripgrep
+
+<span class="d"># JSON output (useful for scripting)</span>
+<span class="c">$ hnm search</span> ripgrep <span class="d">--json</span></pre>
+
+    <h3>Installing</h3>
+    <p>
+      <code>hnm install</code> resolves the package in nixpkgs, installs it into
+      <code>~/.hnm/profile</code> via <code>nix-env</code>, and records it in the HNM
+      state file. Multiple packages can be installed in one command.
+    </p>
+
+    <div class="term-demo">
+      <div class="term-bar">
+        <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+      </div>
+      <div class="term-body">
+<span class="bcy">  ▸ Installing 2 package(s)</span><br>
+<span class="dim">  ──────────────────────────────────</span><br>
+<br>
+<span class="cy">  [1/2]</span> <span class="bcy">installing  ripgrep</span><br>
+<span class="dim">  │</span> nix-env --profile ~/.hnm/profile --install --attr nixpkgs#ripgrep<br>
+<span class="dim">  │</span> resolving nixpkgs#ripgrep...<br>
+<span class="dim">  │</span> fetching /nix/store/...-ripgrep-14.1.1<br>
+<span class="cy">  \  [████████████████████░░░░░░░░░░░░░░░░░░░░]   52%  fetching ripgrep</span><br>
+<span class="dim">  │</span> unpacking...<br>
+<span class="cy">  |  [████████████████████████████████████████]  100%  ✓ ripgrep 14.1.1</span><br>
+<br>
+<span class="cy">  [2/2]</span> <span class="bcy">installing  bat</span><br>
+<span class="dim">  │</span> nix-env --profile ~/.hnm/profile --install --attr nixpkgs#bat<br>
+<span class="cy">  -  [████████████████████████████████████████]  100%  ✓ bat 0.24.0</span><br>
+<br>
+<span class="grn">  ✓ all packages installed successfully</span>
+      </div>
+    </div>
+
+    <pre><span class="d"># Install a single package</span>
+<span class="c">$ hnm install</span> ripgrep
+
+<span class="d"># Install multiple packages at once</span>
+<span class="c">$ hnm install</span> ripgrep bat htop neovim fd
+
+<span class="d"># Install without activating profile (advanced)</span>
+<span class="c">$ hnm install</span> ripgrep <span class="d">--no-env</span></pre>
+
+    <!-- ── UPDATE ────────────────────────────────────────────────────────── -->
+    <h2 id="update">Updating Packages <a class="anchor" href="#update">#</a></h2>
+
+    <p>
+      <code>hnm update</code> runs two steps: first it refreshes the nixpkgs channel
+      (<code>nix-channel --update</code>), then upgrades all installed packages
+      (<code>nix-env --upgrade</code>).
+    </p>
+
+    <pre><span class="d"># Update everything</span>
+<span class="c">$ hnm update</span>
+
+<span class="d"># Update specific packages only</span>
+<span class="c">$ hnm update</span> ripgrep bat</pre>
+
+    <div class="callout warn">
+      <span class="icon">⚠</span>
+      <div class="body">
+        <strong>Pinned packages</strong> are shown in the list with a <code>[pinned: x.x.x]</code>
+        marker. However, because HNM delegates the actual upgrade to
+        <code>nix-env --upgrade</code>, pinning currently prevents tracking but does not
+        block the underlying nix-env upgrade. Full pin enforcement is planned for a future release.
+      </div>
+    </div>
+
+    <!-- ── PINS ──────────────────────────────────────────────────────────── -->
+    <h2 id="pins">Pinning <a class="anchor" href="#pins">#</a></h2>
+
+    <p>
+      Pinning records a specific version in the HNM state file and marks the package
+      so you know it should not be changed automatically.
+    </p>
+
+    <pre><span class="d"># Pin at the currently installed version</span>
+<span class="c">$ hnm pin</span> ripgrep
+
+<span class="d"># Pin at a specific version</span>
+<span class="c">$ hnm pin</span> ripgrep 14.0.0
+
+<span class="d"># Remove the pin</span>
+<span class="c">$ hnm unpin</span> ripgrep</pre>
+
+    <p>Pinned packages appear in <code>hnm list</code> with a <code>[pinned: x.x.x]</code> annotation.</p>
+
+    <!-- ── GENERATIONS ───────────────────────────────────────────────────── -->
+    <h2 id="generations">Generations &amp; Rollback <a class="anchor" href="#generations">#</a></h2>
+
+    <p>
+      Every install, remove, or upgrade in <code>nix-env</code> creates a new generation —
+      a snapshot of the profile state. HNM exposes this through <code>hnm rollback</code>.
+    </p>
+
+    <pre><span class="d"># Roll back to the previous generation</span>
+<span class="c">$ hnm rollback</span>
+
+<span class="d"># Roll back to a specific generation number</span>
+<span class="c">$ hnm rollback</span> 3
+
+<span class="d"># The rollback command shows available generations first:</span>
+<span class="s">  gen    1   2024-12-01
+  gen    2   2025-01-15
+  gen    3   2025-03-22  ← current</span></pre>
+
+    <!-- ── PROGRESS ──────────────────────────────────────────────────────── -->
+    <h2 id="progress">Progress &amp; Logs <a class="anchor" href="#progress">#</a></h2>
+
+    <p>
+      HNM uses a combined progress display: scrolling log lines above a live
+      progress bar with a spinner, percentage, and current action label.
+      Stderr from Nix commands is shown inline as error lines.
+    </p>
+
+    <div class="term-demo">
+      <div class="term-bar">
+        <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+        <span style="color:#6e7681;font-size:.8rem;margin-left:8px">hnm install neovim</span>
+      </div>
+      <div class="term-body">
+<span class="dim">  │</span> nix-env --profile ~/.hnm/profile --install --attr nixpkgs#neovim --file &lt;nixpkgs&gt;<br>
+<span class="dim">  │</span> these 3 paths will be fetched (12.4 MiB download, 48.2 MiB unpacked):<br>
+<span class="dim">  │</span>   /nix/store/abc123-neovim-0.10.2<br>
+<span class="dim">  │</span>   /nix/store/def456-libuv-1.48.0<br>
+<span class="dim">  │</span>   /nix/store/ghi789-luajit-2.1.0<br>
+<span class="dim">  │</span> copying path '/nix/store/def456-libuv-1.48.0' from 'https://cache.nixos.org'...<br>
+<span class="red">  │ ERR  warning: ignoring unknown setting 'experimental-features'</span><br>
+<span class="dim">  │</span> copying path '/nix/store/ghi789-luajit-2.1.0' from 'https://cache.nixos.org'...<br>
+<span class="dim">  │</span> copying path '/nix/store/abc123-neovim-0.10.2' from 'https://cache.nixos.org'...<br>
+<span class="cy">  /  [██████████████████████████░░░░░░░░░░░░░░]   65%  installing neovim</span>
+      </div>
+    </div>
+
+    <p>
+      The spinner cycles through <code>/</code> → <code>-</code> → <code>\</code> → <code>|</code>.
+      Log lines scroll above the bar and are preserved in the terminal history once the
+      operation completes.
+    </p>
+
+    <!-- ── COLORS ────────────────────────────────────────────────────────── -->
+    <h2 id="colors">Color Scheme <a class="anchor" href="#colors">#</a></h2>
+
+    <table>
+      <thead><tr><th>Output type</th><th>Color</th><th>Style</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Errors</td>
+          <td>Red</td>
+          <td>Bold + Underline</td>
+          <td><span style="color:#ff4d4d;font-weight:700;text-decoration:underline"> ERROR  cannot install 'xyz'</span></td>
+        </tr>
+        <tr>
+          <td>Warnings</td>
+          <td>Yellow</td>
+          <td>Underline</td>
+          <td><span style="color:#f0c040;text-decoration:underline"> WARN  package already installed</span></td>
+        </tr>
+        <tr>
+          <td>Primary (dominant)</td>
+          <td>Bright Cyan</td>
+          <td>Bold</td>
+          <td><span style="color:#7ee8ff;font-weight:700">✓ ripgrep 14.1.1 installed</span></td>
+        </tr>
+        <tr>
+          <td>Secondary (less dominant)</td>
+          <td>Cyan</td>
+          <td>Normal / Dimmed</td>
+          <td><span style="color:#00c8ff">· resolving package...</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ── DOCTOR ────────────────────────────────────────────────────────── -->
+    <h2 id="doctor">Doctor <a class="anchor" href="#doctor">#</a></h2>
+
+    <p>
+      <code>hnm doctor</code> runs a full health check of your HNM and Nix setup.
+      It checks for required binaries, Nix channels, the HNM profile directory,
+      the Nix store, state and config files, and PATH configuration.
+    </p>
+
+    <pre><span class="c">$ hnm doctor</span>
+
+<span class="s">  ▸ HNM Doctor — system diagnostics
+  ──────────────────────────────────────────────────
+  ✓ nix             nix (Nix) 2.18.4
+  ✓ nix-env         nix-env (Nix) 2.18.4
+  ✓ nix-channel     nix-channel (Nix) 2.18.4
+  ✓ nix-store       nix-store (Nix) 2.18.4
+
+  ✓ channels        nixpkgs https://nixos.org/channels/nixpkgs-unstable
+  ✓ profile         /home/user/.hnm/profile
+  ✓ /nix/store      exists  (4.2G)
+
+  ✓ state           12 package(s) tracked
+  ✓ config          channel = https://nixos.org/channels/nixpkgs-unstable
+
+  ✓ PATH            contains .nix-profile
+
+  ✓ all checks passed — HNM is healthy</span></pre>
+
+    <!-- ── ENV ───────────────────────────────────────────────────────────── -->
+    <h2 id="env">Environment <a class="anchor" href="#env">#</a></h2>
+
+    <p>
+      HNM packages are installed into <code>~/.hnm/profile/bin</code>. To use them
+      in your shell, add the profile to your PATH.
+    </p>
+
+    <pre><span class="d"># Print the snippet to add to your shell rc</span>
+<span class="c">$ hnm env activate</span>
+
+<span class="d"># Check current status</span>
+<span class="c">$ hnm env status</span>
+
+<span class="d"># Print removal instructions</span>
+<span class="c">$ hnm env deactivate</span></pre>
+
+    <p>Add to your <code>~/.bashrc</code> or <code>~/.zshrc</code>:</p>
+
+    <pre><span class="d"># HNM profile</span>
+export PATH="$HOME/.hnm/profile/bin:$PATH"
+[ -f ~/.nix-profile/etc/profile.d/nix.sh ] && \
+    . ~/.nix-profile/etc/profile.d/nix.sh</pre>
+
+    <!-- ── GC ────────────────────────────────────────────────────────────── -->
+    <h2 id="gc">Garbage Collection <a class="anchor" href="#gc">#</a></h2>
+
+    <p>
+      Nix keeps every version of every package in <code>/nix/store</code>. Over time this
+      can grow large. Run <code>hnm gc</code> to collect unreachable store paths.
+    </p>
+
+    <pre><span class="c">$ hnm gc</span>
+
+<span class="s">  ▸ Nix garbage collection
+  ────────────────────────────────
+       store size before   4.2G
+
+  │ nix-store --gc
+  │ finding garbage collector roots...
+  │ deleting garbage...
+  │ deleting '/nix/store/old-path-xyz'
+  │ ...
+  /  [████████████████████████████████████████]  100%  ✓ garbage collection complete
+
+       store size after    2.1G
+  ✓ done</span></pre>
+
+    <!-- ── CLEAN ─────────────────────────────────────────────────────────── -->
+    <h2 id="clean">Clean Cache <a class="anchor" href="#clean">#</a></h2>
+
+    <p>
+      <code>hnm clean</code> removes HNM's own download cache and the Nix evaluation cache.
+      It does <em>not</em> touch the Nix store — use <code>hnm gc</code> for that.
+    </p>
+
+    <pre><span class="c">$ hnm clean</span>
+
+<span class="s">  ✓ removed ~/.cache/hnm   (128 MB)
+  ✓ removed nix eval cache  (44 MB)
+
+  ✓ freed 172 MB</span>
+<span class="d">  To free Nix store space, run:  hnm gc</span></pre>
+
+    <!-- ── AUTO NIX ──────────────────────────────────────────────────────── -->
+    <h2 id="auto-nix">Auto Nix Bootstrap <a class="anchor" href="#auto-nix">#</a></h2>
+
+    <p>
+      Every command that requires Nix (install, remove, search, update, gc, etc.)
+      checks whether Nix is present before running. If Nix is missing, HNM
+      <strong>automatically runs</strong> <code>hnm unpack</code> to bootstrap it —
+      no manual action required.
+    </p>
+
+    <div class="callout success">
+      <span class="icon">✓</span>
+      <div class="body">
+        You can also trigger the bootstrap manually at any time with <code>hnm unpack</code>.
+        This is equivalent to running the official Nix single-user installer, sourcing
+        the profile, and registering nixpkgs-unstable as the default channel.
+      </div>
+    </div>
+
+    <pre><span class="d"># Manually bootstrap Nix</span>
+<span class="c">$ hnm unpack</span>
+
+<span class="d"># This runs:</span>
+<span class="d">#   sh &lt;(curl -L https://nixos.org/nix/install) --no-daemon</span>
+<span class="d">#   . ~/.nix-profile/etc/profile.d/nix.sh</span>
+<span class="d">#   nix-channel --add https://nixos.org/channels/nixpkgs-unstable nixpkgs</span>
+<span class="d">#   nix-channel --update</span></pre>
+
+    <!-- ── CONFIG ───────────────────────────────────────────────────────── -->
+    <h2 id="config">Configuration <a class="anchor" href="#config">#</a></h2>
+
+    <p>HNM stores its configuration in <code>~/.config/hnm/config.toml</code>. The file is
+    created automatically on first run with sensible defaults.</p>
+
+    <pre><span class="d"># ~/.config/hnm/config.toml</span>
+
+<span class="c">nix_channel</span>      = <span class="s">"https://nixos.org/channels/nixpkgs-unstable"</span>
+<span class="c">profile_dir</span>      = <span class="s">"/home/user/.hnm/profile"</span>
+<span class="c">auto_gc</span>          = <span class="s">false</span>
+<span class="c">max_generations</span>  = <span class="s">10</span></pre>
+
+    <table>
+      <thead><tr><th>Key</th><th>Default</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td>nix_channel</td><td>nixpkgs-unstable URL</td><td>Nix channel to use for package resolution</td></tr>
+        <tr><td>profile_dir</td><td>~/.hnm/profile</td><td>Path to the HNM nix-env profile</td></tr>
+        <tr><td>auto_gc</td><td>false</td><td>Run GC automatically after remove operations</td></tr>
+        <tr><td>max_generations</td><td>10</td><td>Number of generations to keep before pruning</td></tr>
+      </tbody>
+    </table>
+
+    <!-- ── STATE FILE ────────────────────────────────────────────────────── -->
+    <h2 id="state">State File <a class="anchor" href="#state">#</a></h2>
+
+    <p>
+      HNM tracks installed packages in <code>~/.local/share/hnm/state.json</code>.
+      This is separate from the Nix profile itself and records HNM-specific metadata
+      such as install timestamps, descriptions, and pins.
+    </p>
+
+    <pre>{
+  <span class="c">"installed"</span>: {
+    <span class="c">"ripgrep"</span>: {
+      <span class="c">"name"</span>:         <span class="s">"ripgrep"</span>,
+      <span class="c">"version"</span>:      <span class="s">"14.1.1"</span>,
+      <span class="c">"attr_path"</span>:    <span class="s">"nixpkgs#ripgrep"</span>,
+      <span class="c">"installed_at"</span>: <span class="s">"2025-04-17T10:32:00Z"</span>,
+      <span class="c">"pinned"</span>:       <span class="s">null</span>,
+      <span class="c">"description"</span>: <span class="s">"Fast grep alternative written in Rust"</span>
+    }
+  },
+  <span class="c">"generation"</span>:   <span class="s">4</span>,
+  <span class="c">"last_update"</span>:  <span class="s">"2025-04-17T10:35:00Z"</span>
+}</pre>
+
+    <!-- ── COMPARE ──────────────────────────────────────────────────────── -->
+    <h2 id="compare">HNM vs Flox <a class="anchor" href="#compare">#</a></h2>
+
+    <table>
+      <thead><tr><th>Feature</th><th>HNM</th><th>Flox</th></tr></thead>
+      <tbody>
+        <tr><td>Package source</td><td>nixpkgs-unstable</td><td>nixpkgs + Flox catalog</td></tr>
+        <tr><td>Nix required</td><td>Auto-installs if missing</td><td>Auto-installs if missing</td></tr>
+        <tr><td>Environments / manifests</td><td>None — direct install</td><td>Per-environment manifest</td></tr>
+        <tr><td>Profile location</td><td>~/.hnm/profile</td><td>~/.local/share/flox/environments</td></tr>
+        <tr><td>Flakes</td><td>No</td><td>Yes (internally)</td></tr>
+        <tr><td>Version pinning</td><td>Yes (tracked in state.json)</td><td>Yes (in manifest)</td></tr>
+        <tr><td>Rollback</td><td>nix-env generations</td><td>Flox generations</td></tr>
+        <tr><td>HackerOS integration</td><td>Built-in ✓</td><td>No</td></tr>
+        <tr><td>Written in</td><td>Rust</td><td>Rust</td></tr>
+      </tbody>
+    </table>
+
+  </main>
+</div>
+
+<!-- ── FOOTER ────────────────────────────────────────────────────────────── -->
+<footer>
+  <p>
+    hnm v0.0.1 · HackerOS Nix Manager ·
+    <a href="https://github.com/HackerOS-Linux-System">GitHub</a> ·
+    <a href="https://discord.com/invite/8yHNcBaEKy">Discord</a> ·
+    MIT License
+  </p>
+  <p style="margin-top:6px">
+    HackerOS · © 2026 HackerOS. Wszelkie prawa zastrzeżone. |
+    <a href="https://hackeros-linux-system.github.io/HackerOS-Website/tools-docs/index.html">Ecosystem docs</a>
+  </p>
+</footer>
+
+</body>
+</html>
