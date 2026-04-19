@@ -1,4 +1,4 @@
-// Dane slajdów (wszystkie narzędzia + 3 nowe tryby + 4 nowe z zadania)
+// Dane slajdów (wszystkie narzędzia + 3 nowe tryby + 4 nowe z zadania + hdev)
 const slidesData = [
     { title: "HPM", desc: "HackerOS Package Manager – repozytorium społecznościowe dla HackerOS. Każdy użytkownik może tworzyć, udostępniać i instalować pakiety, budując otwarty, dynamiczny ekosystem." },
 { title: "HackerOS Containers", desc: "Autorski system kontenerów zaprojektowany z myślą o lekkiej izolacji, wysokiej wydajności i łatwym zarządzaniu środowiskami aplikacji. W pełni zintegrowany z jądrem HackerOS." },
@@ -13,6 +13,7 @@ const slidesData = [
 { title: "GhostFS", desc: "GhostFS – Zaawansowany system plików dla HackerOS, dostępny w dwóch edycjach: Cybersecurity (szyfrowanie, ukrywanie śladów, steganografia) oraz Normal (szybkość, niezawodność i pełna zgodność z aplikacjami). Idealny do zarządzania danymi." },
 { title: "HackerDeck", desc: "HackerDeck – nakładka środowiskowa dla Waydroid, pozwalająca uruchamiać aplikacje Android w HackerOS z pełną integracją, optymalizacją wydajności i dedykowanymi ustawieniami dla graczy oraz programistów." },
 { title: "hedit", desc: "hedit – edytor tekstu inspirowany klasycznym nano, w pełni zintegrowany z HackerOS. Łączy prostotę obsługi z zaawansowanymi funkcjami, takimi jak podświetlanie składni, obsługa makr oraz bezpośrednia edycja plików systemowych w trybie tekstowym." },
+{ title: "hdev", desc: "hdev – edytor TUI i GUI dla HackerOS. Zaawansowane środowisko programistyczne z interfejsem tekstowym (TUI) oraz graficznym (GUI). Obsługuje projekty w wielu językach, debugowanie, terminal integracji i wbudowany system kontroli wersji." },  // NOWY SLAJD
 { title: "ngt", desc: "ngt – narzędzie do zarządzania plikami inspirowane Midnight Commanderem (MC). Oferuje dwupanelowy interfejs, szybką nawigację, zaawansowane operacje na plikach (kopiowanie, przenoszenie, uprawnienia) oraz wbudowany podgląd plików i archiwów – niezbędne w codziennej pracy administratora." },
 // === TRZY WCZEŚNIEJSZE TRYBY ===
 { title: "Penetration Mode", desc: "Sesja z własnymi narzędziami do testów penetracyjnych. Jest to aplikacja wbudowana w HackerOS Cybersecurity Edition, która uruchamia dedykowane środowisko z frameworkami (Metasploit, Nmap, Burp Suite, własne skrypty) – idealna dla etycznych hackerów i zespołów Red Team." },
