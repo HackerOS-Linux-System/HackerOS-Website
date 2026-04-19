@@ -1,1 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HackerOS Games — Documentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/HackerOS-Linux-System/HackerOS-Games/main/app/src-tauri/icons/icon-nobg.png">
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="scanlines"></div>
 
+  <!-- Sidebar -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <span class="logo-dot"></span>
+      <span class="logo-text">HACKEROS<span class="logo-sub">GAMES</span></span>
+    </div>
+    <div class="sidebar-version">DOCS // v0.7.0</div>
+
+    <ul class="nav-list" id="nav-list">
+      <li class="nav-section">Overview</li>
+      <li><a href="#overview" class="nav-link active" data-section="overview">Introduction</a></li>
+      <li><a href="#launcher" class="nav-link" data-section="launcher">Launcher Interface</a></li>
+      <li><a href="#playtime" class="nav-link" data-section="playtime">Playtime Tracking</a></li>
+      <li><a href="#settings" class="nav-link" data-section="settings">Settings</a></li>
+      <li><a href="#addons" class="nav-link" data-section="addons">Addons</a></li>
+
+      <li class="nav-section">Games</li>
+      <li><a href="#the-racer" class="nav-link" data-section="the-racer">The Racer</a></li>
+      <li><a href="#cosmonaut" class="nav-link" data-section="cosmonaut">Cosmonaut</a></li>
+      <li><a href="#starblaster" class="nav-link" data-section="starblaster">Starblaster</a></li>
+      <li><a href="#bark-squadron" class="nav-link" data-section="bark-squadron">Bark Squadron</a></li>
+      <li><a href="#bit-jump" class="nav-link" data-section="bit-jump">Bit Jump</a></li>
+
+      <li class="nav-section">Technical</li>
+      <li><a href="#architecture" class="nav-link" data-section="architecture">Architecture</a></li>
+      <li><a href="#paths" class="nav-link" data-section="paths">File Paths</a></li>
+      <li><a href="#troubleshooting" class="nav-link" data-section="troubleshooting">Troubleshooting</a></li>
+    </ul>
+  </nav>
+
+  <!-- Main content -->
+  <main class="content">
+    <header class="page-header">
+      <div class="header-inner">
+        <button class="menu-btn" id="menu-btn" aria-label="Toggle menu">☰</button>
+        <div class="breadcrumb" id="breadcrumb">Introduction</div>
+        <div class="header-right">
+          <span class="badge">HACKEROS OS</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="doc-body">
+
+      <!-- ── OVERVIEW ── -->
+      <section id="overview" class="doc-section active">
+        <div class="section-label">OVERVIEW</div>
+        <h1>HackerOS Games</h1>
+        <p class="lead">The native game launcher bundled with every edition of HackerOS. One interface for launching, configuring and tracking all HackerOS-native games.</p>
+
+        <div class="card-grid">
+          <div class="info-card accent-blue">
+            <div class="card-icon">🎮</div>
+            <div class="card-title">5 Games</div>
+            <div class="card-desc">Curated library of HackerOS-native titles across multiple genres.</div>
+          </div>
+          <div class="info-card accent-green">
+            <div class="card-icon">⏱</div>
+            <div class="card-title">Playtime Tracking</div>
+            <div class="card-desc">Steam-style session tracking persisted to disk via Rust backend.</div>
+          </div>
+          <div class="info-card accent-orange">
+            <div class="card-icon">⚙</div>
+            <div class="card-title">Per-Game Settings</div>
+            <div class="card-desc">Fullscreen, resolution and volume flags passed on launch.</div>
+          </div>
+          <div class="info-card accent-purple">
+            <div class="card-icon">🧩</div>
+            <div class="card-title">Addons</div>
+            <div class="card-desc">Expansion content store — coming in a future update.</div>
+          </div>
+        </div>
+
+        <h2>Built With</h2>
+        <div class="tech-row">
+          <div class="tech-badge blue">Tauri 2</div>
+          <div class="tech-badge pink">React 18</div>
+          <div class="tech-badge orange">Rust</div>
+          <div class="tech-badge green">TypeScript</div>
+        </div>
+
+        <div class="callout callout-info">
+          <strong>Note:</strong> HackerOS Games is pre-installed on all HackerOS editions. No separate installation is required.
+        </div>
+      </section>
+
+      <!-- ── LAUNCHER ── -->
+      <section id="launcher" class="doc-section">
+        <div class="section-label">OVERVIEW</div>
+        <h1>Launcher Interface</h1>
+        <p>The launcher is divided into four sections accessible from the top navigation bar.</p>
+
+        <h2>Navigation</h2>
+        <table class="doc-table">
+          <thead><tr><th>Tab</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><span class="code">Library</span></td><td>Browse and launch your game library. Shows playtime stats per game.</td></tr>
+            <tr><td><span class="code">Addons</span></td><td>Expansion content for installed games (coming soon).</td></tr>
+            <tr><td><span class="code">Settings</span></td><td>Per-game launch configuration: fullscreen, resolution, volume.</td></tr>
+            <tr><td><span class="code">About</span></td><td>Launcher version info and technology stack.</td></tr>
+          </tbody>
+        </table>
+
+        <h2>Window Controls</h2>
+        <p>The custom title bar provides three window controls:</p>
+        <ul class="doc-list">
+          <li><span class="badge yellow">—</span> Minimize to taskbar</li>
+          <li><span class="badge blue">□</span> Toggle maximize / restore</li>
+          <li><span class="badge red">✕</span> Close the launcher</li>
+        </ul>
+        <p>The title bar area can be dragged to move the window. Navigation tabs and window controls are excluded from the drag region.</p>
+
+        <h2>Library View</h2>
+        <p>The Library tab shows a sidebar list of all games on the left, and a detail panel on the right. Click any game in the sidebar to view its details, playtime stats and launch button.</p>
+        <div class="callout callout-warn">
+          Games marked <span class="badge">NOT INSTALLED</span> could not be found at their expected path in <span class="code">/usr/share/HackerOS/Scripts/HackerOS-Games/</span>. Reinstall the relevant HackerOS game package to resolve this.
+        </div>
+      </section>
+
+      <!-- ── PLAYTIME ── -->
+      <section id="playtime" class="doc-section">
+        <div class="section-label">OVERVIEW</div>
+        <h1>Playtime Tracking</h1>
+        <p>HackerOS Games records how long you have played each game, similar to Steam's playtime feature.</p>
+
+        <h2>How It Works</h2>
+        <ol class="doc-list numbered">
+          <li>When you click <strong>Launch Game</strong>, a session timer starts in the launcher frontend.</li>
+          <li>Every <strong>15 seconds</strong>, elapsed time is flushed to the Rust backend via a Tauri IPC call (<span class="code">record_playtime</span>).</li>
+          <li>The backend appends the delta to a persistent JSON file at <span class="code">~/.hackeros-games/playtime.json</span>.</li>
+          <li>An additional flush occurs when the launcher window loses focus or is closed.</li>
+        </ol>
+
+        <h2>Data Stored</h2>
+        <table class="doc-table">
+          <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><span class="code">game_id</span></td><td>string</td><td>Internal game identifier</td></tr>
+            <tr><td><span class="code">total_seconds</span></td><td>u64</td><td>Cumulative play time in seconds</td></tr>
+            <tr><td><span class="code">last_played</span></td><td>u64</td><td>Unix timestamp of last session</td></tr>
+            <tr><td><span class="code">sessions</span></td><td>u32</td><td>Number of times launched</td></tr>
+          </tbody>
+        </table>
+
+        <h2>Resetting Playtime</h2>
+        <p>To reset playtime data for all games, delete the file:</p>
+        <div class="code-block">rm ~/.hackeros-games/playtime.json</div>
+      </section>
+
+      <!-- ── SETTINGS ── -->
+      <section id="settings" class="doc-section">
+        <div class="section-label">OVERVIEW</div>
+        <h1>Settings</h1>
+        <p>The Settings tab allows per-game launch configuration. Select a game from the left sidebar, adjust options and click <strong>Save</strong>.</p>
+
+        <h2>Available Options</h2>
+        <table class="doc-table">
+          <thead><tr><th>Option</th><th>Values</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><span class="code">Fullscreen</span></td>
+              <td>Off / On</td>
+              <td>Passes <span class="code">--fullscreen</span> flag when launching the game.</td>
+            </tr>
+            <tr>
+              <td><span class="code">Resolution</span></td>
+              <td>1280×720 to 3840×2160</td>
+              <td>Target resolution. Support depends on each game's own implementation.</td>
+            </tr>
+            <tr>
+              <td><span class="code">Volume</span></td>
+              <td>0% – 100%</td>
+              <td>Master volume level. Passed as metadata; game must support it.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout callout-info">
+          Settings are saved to <span class="code">~/.hackeros-games/settings.json</span> and applied on the next game launch. Not all games honour every flag.
+        </div>
+
+        <h2>Reset to Defaults</h2>
+        <p>Click the <strong>Reset</strong> button on any game's settings panel, or delete the settings file:</p>
+        <div class="code-block">rm ~/.hackeros-games/settings.json</div>
+      </section>
+
+      <!-- ── ADDONS ── -->
+      <section id="addons" class="doc-section">
+        <div class="section-label">OVERVIEW</div>
+        <h1>Addons</h1>
+        <p>The Addons section is reserved for expansion content that extends HackerOS games with new levels, features or assets.</p>
+
+        <div class="callout callout-warn">
+          <strong>Coming Soon.</strong> The Addons store and download infrastructure are under development and will be available in a future HackerOS Games update.
+        </div>
+
+        <h2>Planned Addons</h2>
+        <table class="doc-table">
+          <thead><tr><th>Addon</th><th>Target Game</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>Extended Waves</td><td>Starblaster</td><td><span class="badge yellow">In Dev</span></td></tr>
+            <tr><td>Campaign Mode</td><td>Bark Squadron</td><td><span class="badge yellow">In Dev</span></td></tr>
+            <tr><td>World 2</td><td>Bit Jump</td><td><span class="badge yellow">In Dev</span></td></tr>
+            <tr><td>2027 Season Pack</td><td>The Racer</td><td><span class="badge yellow">In Dev</span></td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- ── THE RACER ── -->
+      <section id="the-racer" class="doc-section">
+        <div class="section-label">GAME</div>
+        <h1>The Racer</h1>
+        <div class="game-header">
+          <div class="game-meta">
+            <div class="meta-item"><span class="meta-label">Genre</span> Management / Simulation</div>
+            <div class="meta-item"><span class="meta-label">Engine</span> Rust + macroquad</div>
+            <div class="meta-item"><span class="meta-label">Version</span> 1.0.0</div>
+          </div>
+        </div>
+
+        <p>A motorsport management simulator where you build a racing team from the ground up and compete across five major racing series.</p>
+
+        <h2>Racing Series</h2>
+        <table class="doc-table">
+          <thead><tr><th>Series</th><th>Rounds</th><th>Highlights</th></tr></thead>
+          <tbody>
+            <tr><td><span class="accent-red">Formula 1 2026</span></td><td>24</td><td>Full 2026 calendar, hybrid power units, pit stops</td></tr>
+            <tr><td><span class="accent-blue">IndyCar</span></td><td>17</td><td>Oval + road courses, high speed, Indy 500</td></tr>
+            <tr><td><span class="accent-green">Formula E</span></td><td>16</td><td>Electric, no pit stops, attack mode strategy</td></tr>
+            <tr><td><span class="accent-orange">WEC</span></td><td>8</td><td>Endurance racing, Le Mans, multi-hour stints</td></tr>
+            <tr><td><span class="accent-purple">GT3</span></td><td>12</td><td>Production-based cars, pro-am grid</td></tr>
+          </tbody>
+        </table>
+
+        <h2>Game Mechanics</h2>
+        <div class="mechanic-grid">
+          <div class="mechanic">
+            <div class="mechanic-title">Drivers</div>
+            <p>Hire and manage two drivers with individual stats: Pace, Consistency, Wet Skill, Tire Management, Experience and Morale.</p>
+          </div>
+          <div class="mechanic">
+            <div class="mechanic-title">Car Development</div>
+            <p>Invest in R&amp;D projects across five areas: Chassis, Engine, Reliability, Tire Degradation and Pit Speed. Each takes several races to complete.</p>
+          </div>
+          <div class="mechanic">
+            <div class="mechanic-title">Pit Strategy</div>
+            <p>Choose tire compound (Soft/Medium/Hard/Inter/Wet) and pit lap for each driver. Wet conditions make compound choice critical.</p>
+          </div>
+          <div class="mechanic">
+            <div class="mechanic-title">Track Map</div>
+            <p>Visual map of every circuit with accurate outlines. Shows S/F line, pit entry, and post-race results per round.</p>
+          </div>
+        </div>
+
+        <h2>Navigation</h2>
+        <table class="doc-table">
+          <thead><tr><th>Tab</th><th>Function</th></tr></thead>
+          <tbody>
+            <tr><td>Dashboard</td><td>Season overview, next race info, recent results</td></tr>
+            <tr><td>Roster</td><td>Driver stats, contracts, morale</td></tr>
+            <tr><td>Car Dev</td><td>R&amp;D project management, car stats</td></tr>
+            <tr><td>Standings</td><td>Full constructor standings with points bar</td></tr>
+            <tr><td>Track Map</td><td>Circuit selector with SVG track outlines</td></tr>
+            <tr><td>Next Race</td><td>Opens race weekend: practice, qualifying, strategy, race</td></tr>
+          </tbody>
+        </table>
+
+        <h2>Save / Load</h2>
+        <p>Progress is auto-saved after each race to <span class="code">the-racer-save.json</span> in the working directory. Use <strong>Continue</strong> from the main menu to resume.</p>
+      </section>
+
+      <!-- ── COSMONAUT ── -->
+      <section id="cosmonaut" class="doc-section">
+        <div class="section-label">GAME</div>
+        <h1>Cosmonaut</h1>
+        <div class="game-header">
+          <div class="game-meta">
+            <div class="meta-item"><span class="meta-label">Genre</span> Strategy / Exploration</div>
+            <div class="meta-item"><span class="meta-label">Engine</span> Odin + Raylib</div>
+            <div class="meta-item"><span class="meta-label">Version</span> 0.1.0 Alpha</div>
+            <div class="meta-item"><span class="badge yellow">Coming Soon</span></div>
+          </div>
+        </div>
+
+        <p>Manage a space agency from the dawn of the Space Race to interplanetary exploration. Inspired by the golden age of NASA.</p>
+
+        <h2>Starting Eras</h2>
+        <table class="doc-table">
+          <thead><tr><th>Era</th><th>Year</th><th>Budget</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td>Space Race</td><td>1957</td><td>$300M</td><td>Humble beginnings with Vanguard and Atlas rockets</td></tr>
+            <tr><td>Apollo Era</td><td>1960</td><td>$500M</td><td>Lunar ambition, improved technology</td></tr>
+            <tr><td>Shuttle Era</td><td>1975</td><td>$800M</td><td>Reusability focus, larger budgets</td></tr>
+            <tr><td>Modern Era</td><td>1995</td><td>$1200M</td><td>Advanced technology, commercial partnerships</td></tr>
+          </tbody>
+        </table>
+
+        <h2>Mission Types</h2>
+        <div class="mission-grid">
+          <div class="mission-badge earth">Orbital Test</div>
+          <div class="mission-badge earth">Satellite Network</div>
+          <div class="mission-badge earth">Crewed Orbit</div>
+          <div class="mission-badge moon">Lunar Flyby</div>
+          <div class="mission-badge moon">Lunar Orbit</div>
+          <div class="mission-badge moon">Lunar Landing</div>
+          <div class="mission-badge mars">Mars Probe</div>
+          <div class="mission-badge mars">Mars Orbiter</div>
+          <div class="mission-badge mars">Mars Surface</div>
+          <div class="mission-badge deep">Asteroid Probe</div>
+          <div class="mission-badge deep">Space Station</div>
+          <div class="mission-badge deep">Deep Space</div>
+        </div>
+
+        <h2>Screens</h2>
+        <table class="doc-table">
+          <thead><tr><th>Screen</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td>Control</td><td>Mission Control dashboard with active missions and event log</td></tr>
+            <tr><td>Rockets</td><td>Fleet overview and design lab for new vehicles</td></tr>
+            <tr><td>Crew</td><td>Astronaut corps — stats, status, recruitment</td></tr>
+            <tr><td>Missions</td><td>Mission manifest with filters and flight log per mission</td></tr>
+            <tr><td>Research</td><td>R&amp;D projects across 7 technology areas</td></tr>
+            <tr><td>Star Map</td><td>Interactive Solar System map with exploration status</td></tr>
+            <tr><td>Base</td><td>Facility upgrades: Launch Pads, VAB, Tracking, Lab, Habitat</td></tr>
+          </tbody>
+        </table>
+
+        <h2>Controls</h2>
+        <table class="doc-table">
+          <thead><tr><th>Key</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td><span class="key">Space</span></td><td>Advance one month (when on Dashboard)</td></tr>
+            <tr><td><span class="key">Esc</span></td><td>Return to previous screen / Dashboard</td></tr>
+            <tr><td><span class="key">Mouse</span></td><td>All navigation and interaction</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- ── STARBLASTER ── -->
+      <section id="starblaster" class="doc-section">
+        <div class="section-label">GAME</div>
+        <h1>Starblaster</h1>
+        <div class="game-header">
+          <div class="game-meta">
+            <div class="meta-item"><span class="meta-label">Genre</span> Bullet Hell / Shooter</div>
+            <div class="meta-item"><span class="meta-label">Engine</span> Rust + macroquad</div>
+            <div class="meta-item"><span class="meta-label">Version</span> 0.6.0</div>
+          </div>
+        </div>
+
+        <p>A top-down bullet hell shooter with dynamic difficulty, graze mechanics, combo multipliers and a full save/load system.</p>
+
+        <h2>Mechanics</h2>
+        <ul class="doc-list">
+          <li><strong>Graze System</strong> — flying close to enemy bullets without being hit awards score and charges your Ultimate.</li>
+          <li><strong>Combo Multiplier</strong> — consecutive kills increase your score multiplier. Missing or taking a hit resets it.</li>
+          <li><strong>Heat System</strong> — sustained fire overheats your weapons, requiring a cooldown period.</li>
+          <li><strong>Ultimate Ability</strong> — screen-clearing attack charged by combat actions.</li>
+          <li><strong>Dynamic Difficulty</strong> — the Director AI adjusts enemy spawn rates based on your accuracy and health.</li>
+        </ul>
+
+        <h2>Enemy Types</h2>
+        <table class="doc-table">
+          <thead><tr><th>Type</th><th>Behaviour</th></tr></thead>
+          <tbody>
+            <tr><td>Basic</td><td>Slow linear movement, easy to dodge</td></tr>
+            <tr><td>Fast</td><td>High speed, erratic movement</td></tr>
+            <tr><td>Tank</td><td>High HP, absorbs many hits</td></tr>
+            <tr><td>Shooter</td><td>Hovers and fires aimed bursts at the player</td></tr>
+            <tr><td>Kamikaze</td><td>Charges directly at the player on proximity</td></tr>
+            <tr><td>Asteroid</td><td>Fast-falling debris, nearly indestructible</td></tr>
+          </tbody>
+        </table>
+
+        <h2>Controls</h2>
+        <table class="doc-table">
+          <thead><tr><th>Key</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td><span class="key">↑↓←→</span></td><td>Move ship</td></tr>
+            <tr><td><span class="key">Space</span></td><td>Fire weapons</td></tr>
+            <tr><td><span class="key">L-Shift</span></td><td>Activate Ultimate (when charged)</td></tr>
+            <tr><td><span class="key">P</span></td><td>Pause game</td></tr>
+            <tr><td><span class="key">S</span> (paused)</td><td>Save and exit to menu</td></tr>
+            <tr><td><span class="key">L</span> (menu)</td><td>Load saved game</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- ── BARK SQUADRON ── -->
+      <section id="bark-squadron" class="doc-section">
+        <div class="section-label">GAME</div>
+        <h1>Bark Squadron</h1>
+        <div class="game-header">
+          <div class="game-meta">
+            <div class="meta-item"><span class="meta-label">Genre</span> Action / Flight</div>
+            <div class="meta-item"><span class="meta-label">Engine</span> TypeScript + React + Tauri</div>
+            <div class="meta-item"><span class="meta-label">Version</span> 0.6.0</div>
+          </div>
+        </div>
+
+        <p>Physics-based 2D dogfighting game with realistic aerodynamics — gravity, drag, stall speed, afterburners and water interactions.</p>
+
+        <h2>Physics Model</h2>
+        <ul class="doc-list">
+          <li><strong>Gravity &amp; Drag</strong> — the aircraft is subject to gravity and air resistance at all times.</li>
+          <li><strong>Stall Speed</strong> — flying too slowly causes the nose to drop and the aircraft to lose control.</li>
+          <li><strong>Afterburner</strong> — thrust boost with visible flame and particle exhaust.</li>
+          <li><strong>Water Skimming</strong> — low-altitude passes create wake mist and spray effects.</li>
+          <li><strong>Camera Look-ahead</strong> — the camera smoothly leads the aircraft based on velocity direction.</li>
+        </ul>
+
+        <h2>Enemy Types</h2>
+        <table class="doc-table">
+          <thead><tr><th>Type</th><th>Colour</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td>Grunt</td><td><span class="badge">Grey</span></td><td>Standard enemy, moderate speed, tracks player directly</td></tr>
+            <tr><td>Ace</td><td><span class="badge">Black</span></td><td>High speed, predictive AI — leads the player position</td></tr>
+            <tr><td>Bomber</td><td><span class="badge">Green</span></td><td>Very high HP, slow but heavily armed</td></tr>
+          </tbody>
+        </table>
+
+        <h2>Controls</h2>
+        <table class="doc-table">
+          <thead><tr><th>Key</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td><span class="key">↑ / W</span></td><td>Afterburner thrust</td></tr>
+            <tr><td><span class="key">← / A</span></td><td>Rotate left</td></tr>
+            <tr><td><span class="key">→ / D</span></td><td>Rotate right</td></tr>
+            <tr><td><span class="key">Space</span></td><td>Fire cannons</td></tr>
+            <tr><td><span class="key">Esc</span></td><td>Pause / unpause</td></tr>
+          </tbody>
+        </table>
+
+        <h2>Settings</h2>
+        <ul class="doc-list">
+          <li><strong>Difficulty</strong> — Easy, Normal, Hard (adjusts enemy count and damage)</li>
+          <li><strong>Sensitivity</strong> — Rotation speed multiplier (0.5 to 2.0)</li>
+          <li><strong>Particles</strong> — Toggle visual effects for performance</li>
+          <li><strong>High Quality</strong> — Water reflections and heat distortion effects</li>
+        </ul>
+      </section>
+
+      <!-- ── BIT JUMP ── -->
+      <section id="bit-jump" class="doc-section">
+        <div class="section-label">GAME</div>
+        <h1>Bit Jump</h1>
+        <div class="game-header">
+          <div class="game-meta">
+            <div class="meta-item"><span class="meta-label">Genre</span> Platformer</div>
+            <div class="meta-item"><span class="meta-label">Engine</span> Lua + LÖVE2D</div>
+            <div class="meta-item"><span class="meta-label">Version</span> 0.6.0</div>
+          </div>
+        </div>
+
+        <p>A Geometry Dash-inspired precision platformer across 8 hand-crafted levels featuring moving platforms, hazards, power-ups and a final boss.</p>
+
+        <div class="callout callout-info">
+          Bit Jump requires <strong>LÖVE2D</strong> to be installed. On HackerOS it is launched automatically via <span class="code">love /path/to/bit-jump.love</span>.
+        </div>
+
+        <h2>Game Modes</h2>
+        <table class="doc-table">
+          <thead><tr><th>Mode</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td>Normal</td><td>Complete 8 levels in sequence. 3 lives.</td></tr>
+            <tr><td>Time Attack</td><td>Race through levels within a time limit that grows per level.</td></tr>
+            <tr><td>Endless</td><td>Loop through all levels with increasing auto-speed. Score attack.</td></tr>
+            <tr><td>Practice</td><td>Unlimited lives. Learn level layouts without pressure.</td></tr>
+          </tbody>
+        </table>
+
+        <h2>Power-Ups</h2>
+        <table class="doc-table">
+          <thead><tr><th>Power-Up</th><th>Effect</th></tr></thead>
+          <tbody>
+            <tr><td><span class="accent-blue">Invincibility</span></td><td>5 seconds of immunity to all hazards and enemies</td></tr>
+            <tr><td><span class="accent-green">Double Jump</span></td><td>Grants one additional mid-air jump</td></tr>
+            <tr><td><span class="accent-blue">Shield</span></td><td>Absorbs one hit from any hazard</td></tr>
+            <tr><td><span class="accent-purple">Speed Boost</span></td><td>5 seconds of increased auto-run speed</td></tr>
+          </tbody>
+        </table>
+
+        <h2>Hacking Ability</h2>
+        <p>Press <span class="key">H</span> to activate a hack that disables all nearby enemies for 10 seconds. 10-second cooldown. Unlocks the <em>Hacker</em> achievement on first use.</p>
+
+        <h2>Achievements</h2>
+        <table class="doc-table">
+          <thead><tr><th>Achievement</th><th>Condition</th></tr></thead>
+          <tbody>
+            <tr><td>Hacker</td><td>Use the hack ability for the first time</td></tr>
+            <tr><td>Data Collector</td><td>Collect all data orbs in a single level</td></tr>
+            <tr><td>Endless Runner</td><td>Complete a loop in Endless mode</td></tr>
+            <tr><td>Game Winner</td><td>Complete all 8 levels</td></tr>
+            <tr><td>Perfect Run</td><td>Reach the maximum score multiplier (x5)</td></tr>
+            <tr><td>Speed Demon</td><td>Collect a Speed Boost power-up</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- ── ARCHITECTURE ── -->
+      <section id="architecture" class="doc-section">
+        <div class="section-label">TECHNICAL</div>
+        <h1>Architecture</h1>
+
+        <h2>Launcher Stack</h2>
+        <div class="code-block">
+HackerOS Games Launcher
+├── Frontend  (React 18 + TypeScript)
+│   ├── App.tsx              — root, window controls, nav, playtime tracker
+│   ├── components/
+│   │   ├── GamesSection.tsx — library sidebar + detail panel
+│   │   ├── SettingsSection.tsx
+│   │   ├── AddonsSection.tsx
+│   │   └── ParticlesBackground.tsx
+│   ├── constants.ts         — game configs
+│   └── types.ts             — shared TypeScript types
+│
+└── Backend   (Rust + Tauri 2)
+    └── src/main.rs
+        ├── check_game_exists  — verify binary at expected path
+        ├── launch_game        — spawn process + record session
+        ├── record_playtime    — append elapsed seconds
+        ├── get_all_playtime   — read current stats
+        ├── save_game_settings — persist per-game config
+        └── get_all_game_settings
+        </div>
+
+        <h2>IPC Commands</h2>
+        <table class="doc-table">
+          <thead><tr><th>Command</th><th>Arguments</th><th>Returns</th></tr></thead>
+          <tbody>
+            <tr><td><span class="code">check_game_exists</span></td><td><span class="code">game_id: String</span></td><td><span class="code">bool</span></td></tr>
+            <tr><td><span class="code">launch_game</span></td><td><span class="code">game_id: String</span></td><td><span class="code">Result&lt;bool&gt;</span></td></tr>
+            <tr><td><span class="code">record_playtime</span></td><td><span class="code">game_id, seconds</span></td><td><span class="code">Result&lt;()&gt;</span></td></tr>
+            <tr><td><span class="code">get_all_playtime</span></td><td>—</td><td><span class="code">HashMap&lt;String, GamePlaytime&gt;</span></td></tr>
+            <tr><td><span class="code">save_game_settings</span></td><td><span class="code">game_id, settings</span></td><td><span class="code">Result&lt;()&gt;</span></td></tr>
+            <tr><td><span class="code">get_all_game_settings</span></td><td>—</td><td><span class="code">HashMap&lt;String, GameSettings&gt;</span></td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- ── PATHS ── -->
+      <section id="paths" class="doc-section">
+        <div class="section-label">TECHNICAL</div>
+        <h1>File Paths</h1>
+
+        <h2>Game Binaries</h2>
+        <table class="doc-table">
+          <thead><tr><th>Game</th><th>Path</th></tr></thead>
+          <tbody>
+            <tr><td>Starblaster</td><td><span class="code">/usr/share/HackerOS/Scripts/HackerOS-Games/starblaster</span></td></tr>
+            <tr><td>Bit Jump</td><td><span class="code">/usr/share/HackerOS/Scripts/HackerOS-Games/bit-jump.love</span></td></tr>
+            <tr><td>The Racer</td><td><span class="code">/usr/share/HackerOS/Scripts/HackerOS-Games/the-racer</span></td></tr>
+            <tr><td>Bark Squadron</td><td><span class="code">/usr/share/HackerOS/Scripts/HackerOS-Games/bark-squadron.AppImage</span></td></tr>
+            <tr><td>Cosmonaut</td><td><span class="code">/usr/share/HackerOS/Scripts/HackerOS-Games/cosmonaut</span></td></tr>
+          </tbody>
+        </table>
+
+        <h2>Data Files</h2>
+        <table class="doc-table">
+          <thead><tr><th>File</th><th>Contents</th></tr></thead>
+          <tbody>
+            <tr><td><span class="code">~/.hackeros-games/playtime.json</span></td><td>Playtime data for all games</td></tr>
+            <tr><td><span class="code">~/.hackeros-games/settings.json</span></td><td>Per-game launch settings</td></tr>
+            <tr><td><span class="code">./the-racer-save.json</span></td><td>The Racer season save (working dir)</td></tr>
+            <tr><td><span class="code">./cosmonaut_save.json</span></td><td>Cosmonaut agency save (working dir)</td></tr>
+          </tbody>
+        </table>
+
+        <h2>Launcher Assets</h2>
+        <div class="code-block">
+~/HackerOS-Games/app/
+├── images/
+│   ├── starblaster.png
+│   ├── bit-jump.png
+│   ├── the-racer.png
+│   ├── bark-squadron.png
+│   └── cosmonaut.png
+└── src-tauri/
+    └── capabilities/
+        └── default.json    — Tauri 2 permission grants
+        </div>
+      </section>
+
+      <!-- ── TROUBLESHOOTING ── -->
+      <section id="troubleshooting" class="doc-section">
+        <div class="section-label">TECHNICAL</div>
+        <h1>Troubleshooting</h1>
+
+        <div class="trouble-item">
+          <div class="trouble-title">Game shows "NOT INSTALLED"</div>
+          <p>The launcher cannot find the game binary at its expected path. Verify the file exists:</p>
+          <div class="code-block">ls /usr/share/HackerOS/Scripts/HackerOS-Games/</div>
+          <p>If missing, reinstall the relevant HackerOS game package.</p>
+        </div>
+
+        <div class="trouble-item">
+          <div class="trouble-title">Window controls don't work (minimize / maximize / close)</div>
+          <p>Ensure the Tauri capabilities file grants window permissions:</p>
+          <div class="code-block">cat ~/HackerOS-Games/app/src-tauri/capabilities/default.json</div>
+          <p>It must include <span class="code">core:window:allow-minimize</span>, <span class="code">core:window:allow-toggle-maximize</span> and <span class="code">core:window:allow-close</span>.</p>
+        </div>
+
+        <div class="trouble-item">
+          <div class="trouble-title">Playtime not updating</div>
+          <p>Playtime syncs to disk every 15 seconds and on window blur/close. If you force-kill the launcher, the last 15s may not be saved. Check:</p>
+          <div class="code-block">cat ~/.hackeros-games/playtime.json</div>
+        </div>
+
+        <div class="trouble-item">
+          <div class="trouble-title">Bit Jump won't launch</div>
+          <p>Bit Jump requires LÖVE2D. Install it:</p>
+          <div class="code-block">sudo apt install love</div>
+        </div>
+
+        <div class="trouble-item">
+          <div class="trouble-title">Bark Squadron AppImage won't launch</div>
+          <p>The launcher auto-sets executable permissions on AppImages. If it still fails:</p>
+          <div class="code-block">chmod +x /usr/share/HackerOS/Scripts/HackerOS-Games/bark-squadron.AppImage</div>
+        </div>
+
+        <div class="trouble-item">
+          <div class="trouble-title">Build errors on npm run tauri build</div>
+          <p>Ensure all Tauri 2 dependencies are installed:</p>
+          <div class="code-block">npm install @tauri-apps/api@^2 @tauri-apps/plugin-shell@^2
+npm install -D @tauri-apps/cli@^2</div>
+        </div>
+      </section>
+
+    </div><!-- /doc-body -->
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
