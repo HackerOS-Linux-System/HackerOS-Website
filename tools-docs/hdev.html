@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>hdev — Dokumentacja</title>
+<style>
+  :root {
+    --bg:      #0d0f14;
+    --bg2:     #141820;
+    --bg3:     #1c222e;
+    --border:  #28323a;
+    --accent:  #00dc96;
+    --accent2: #50a0ff;
+    --warn:    #ffb432;
+    --err:     #ff5050;
+    --fg:      #d2d7e1;
+    --fg2:     #6478a0;
+    --kw:      #c878ff;
+    --str:     #64dc64;
+    --num:     #ffb450;
+    --type:    #64dcdc;
+    --fn-col:  #50b4ff;
+    --comment: #64708a;
+    --hl:      #00ff96;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    grid-template-rows: 50px 1fr;
+    min-height: 100vh;
+  }
+
+  header {
+    grid-column: 1 / -1;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    gap: 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo { font-size: 20px; font-weight: 700; color: var(--accent); letter-spacing: -0.5px; }
+  .logo span { color: var(--fg2); font-weight: 400; }
+  header nav { display: flex; gap: 16px; margin-left: auto; }
+  header nav a { color: var(--fg2); font-size: 13px; }
+  header nav a:hover { color: var(--accent); text-decoration: none; }
+
+  .sidebar {
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    padding: 20px 0;
+    position: sticky;
+    top: 50px;
+    height: calc(100vh - 50px);
+    overflow-y: auto;
+  }
+  .sidebar::-webkit-scrollbar { width: 4px; }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .sidebar-section { padding: 4px 0; margin-bottom: 4px; }
+  .sidebar-title { font-size: 11px; font-weight: 700; color: var(--fg2); text-transform: uppercase; letter-spacing: 1px; padding: 8px 20px 4px; }
+  .sidebar-section a { display: block; padding: 5px 20px 5px 28px; color: var(--fg2); font-size: 13px; border-left: 2px solid transparent; transition: all 0.15s; }
+  .sidebar-section a:hover { color: var(--accent); background: rgba(0,220,150,0.06); border-left-color: var(--accent); text-decoration: none; }
+
+  main { padding: 40px 48px 100px; max-width: 880px; }
+
+  h1 { font-size: 32px; color: var(--accent); margin-bottom: 8px; font-weight: 700; }
+  h2 { font-size: 22px; color: var(--fg); margin-top: 56px; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border); font-weight: 700; line-height: 1.3; }
+  h2::before { content: "## "; color: var(--fg2); font-weight: 400; }
+  h3 { font-size: 16px; color: var(--accent2); margin-top: 28px; margin-bottom: 12px; font-weight: 700; }
+  h3::before { content: "### "; color: var(--fg2); font-weight: 400; }
+  h4 { font-size: 14px; color: var(--type); margin-top: 20px; margin-bottom: 8px; font-weight: 700; }
+
+  p { margin-bottom: 14px; }
+
+  pre {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 16px 18px;
+    overflow-x: auto;
+    margin: 12px 0 20px;
+    font-size: 13px;
+    line-height: 1.5;
+    position: relative;
+  }
+  .lang-badge-inline {
+    position: absolute;
+    top: 8px; right: 12px;
+    font-size: 10px; color: var(--fg2);
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  code {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 3px; padding: 1px 6px;
+    font-size: 12.5px; color: var(--hl);
+  }
+  pre code { background: none; border: none; padding: 0; color: var(--fg); font-size: inherit; }
+
+  .kw  { color: var(--kw); }
+  .str { color: var(--str); }
+  .num { color: var(--num); }
+  .cmt { color: var(--comment); font-style: italic; }
+  .fn  { color: var(--fn-col); }
+  .tp  { color: var(--type); }
+  .op  { color: var(--warn); font-weight: bold; }
+  .hl  { color: var(--hl); font-weight: bold; }
+  .vr  { color: #d8d8d8; }
+
+  table { width: 100%; border-collapse: collapse; margin: 16px 0 24px; font-size: 13px; }
+  th { background: var(--bg3); color: var(--fg2); text-align: left; padding: 8px 14px; border: 1px solid var(--border); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+  td { padding: 8px 14px; border: 1px solid var(--border); }
+  td code { font-size: 12px; }
+  tr:hover td { background: rgba(255,255,255,0.015); }
+
+  .kt td:first-child code { color: var(--accent); background: rgba(0,220,150,0.08); border-color: rgba(0,220,150,0.2); }
+
+  .callout { border-left: 3px solid; border-radius: 0 6px 6px 0; padding: 12px 16px; margin: 16px 0; font-size: 13px; }
+  .callout.info  { border-color: var(--accent2); background: rgba(80,160,255,0.06); }
+  .callout.warn  { border-color: var(--warn);    background: rgba(255,180,50,0.06); }
+  .callout.tip   { border-color: var(--accent);  background: rgba(0,220,150,0.06); }
+  .callout.err   { border-color: var(--err);     background: rgba(255,80,80,0.06); }
+  .callout strong { display: block; margin-bottom: 4px; }
+
+  .lang-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(168px,1fr)); gap: 8px; margin: 16px 0 24px; }
+  .lang-card { background: var(--bg3); border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; display: flex; align-items: center; gap: 10px; font-size: 13px; }
+  .lang-icon { width: 28px; height: 28px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+  .lang-name { color: var(--fg); }
+  .lang-ext  { color: var(--fg2); font-size: 11px; }
+
+  kbd { background: var(--bg3); border: 1px solid var(--border); border-bottom: 2px solid var(--border); border-radius: 4px; padding: 2px 7px; font-family: inherit; font-size: 12px; color: var(--accent); }
+
+  .anchor { scroll-margin-top: 70px; }
+
+  /* ASCII Preview */
+  .ascii { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 20px; font-size: 12px; line-height: 1.45; overflow-x: auto; margin: 16px 0 24px; white-space: pre; }
+  .ap-tb { color: #0d0f14; background: var(--accent); display: block; }
+  .ap-tab { color: #0d0f14; background: var(--accent2); }
+  .ap-td  { color: var(--fg2); }
+  .ap-br  { color: var(--border); }
+  .ap-kw  { color: var(--kw); }
+  .ap-st  { color: var(--str); }
+  .ap-nm  { color: var(--num); }
+  .ap-cm  { color: var(--comment); }
+  .ap-ln  { color: var(--fg2); }
+  .ap-cu  { color: #0d0f14; background: var(--accent); }
+  .ap-sl  { color: #0d0f14; background: var(--accent2); }
+  .ap-tr  { color: var(--accent2); }
+  .ap-op  { color: var(--hl); font-weight: bold; }
+  .ap-vr  { color: #d8d8d8; }
+  .ap-st2 { color: var(--bg2); background: var(--bg3); }
+
+  /* Hero */
+  .hero { background: linear-gradient(135deg, rgba(0,220,150,0.05), rgba(80,160,255,0.05)); border: 1px solid rgba(0,220,150,0.15); border-radius: 10px; padding: 28px 32px; margin-bottom: 36px; }
+  .hero-title { font-size: 36px; font-weight: 700; color: var(--accent); margin-bottom: 6px; }
+  .hero-sub   { color: var(--fg2); font-size: 15px; margin-bottom: 20px; }
+  .hero-badges { display: flex; gap: 8px; flex-wrap: wrap; }
+  .badge { background: var(--bg3); border: 1px solid var(--border); border-radius: 20px; padding: 3px 12px; font-size: 12px; color: var(--fg2); }
+  .badge.g { border-color: rgba(0,220,150,0.3); color: var(--accent);  background: rgba(0,220,150,0.07); }
+  .badge.b { border-color: rgba(80,160,255,0.3); color: var(--accent2); background: rgba(80,160,255,0.07); }
+  .badge.o { border-color: rgba(255,180,50,0.3); color: var(--warn);   background: rgba(255,180,50,0.07); }
+
+  /* File structure tree */
+  .dir-tree { background: var(--bg3); border: 1px solid var(--border); border-radius: 6px; padding: 16px 20px; font-size: 13px; line-height: 1.7; margin: 12px 0 20px; }
+  .dt-dir  { color: var(--accent2); font-weight: 600; }
+  .dt-file { color: var(--fg); }
+  .dt-cmt  { color: var(--fg2); font-style: italic; }
+
+  /* Architecture diagram */
+  .arch { display: grid; gap: 2px; margin: 16px 0 24px; }
+  .arch-row { display: flex; gap: 2px; align-items: stretch; }
+  .arch-box { background: var(--bg3); border: 1px solid var(--border); border-radius: 4px; padding: 8px 14px; font-size: 12px; flex: 1; text-align: center; }
+  .arch-box.accent { border-color: rgba(0,220,150,0.35); color: var(--accent); }
+  .arch-box.blue   { border-color: rgba(80,160,255,0.35); color: var(--accent2); }
+  .arch-box.warn   { border-color: rgba(255,180,50,0.35); color: var(--warn); }
+  .arch-box.hl     { border-color: rgba(200,120,255,0.35); color: var(--kw); }
+  .arch-arrow { text-align: center; color: var(--fg2); padding: 2px 0; font-size: 16px; }
+
+  @media (max-width: 760px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    main { padding: 24px 18px 60px; }
+  }
+
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- ── HEADER ── -->
+<header>
+  <div class="logo">hdev <span>docs</span></div>
+  <nav>
+    <a href="#install">Install</a>
+    <a href="#keybinds">Keybinds</a>
+    <a href="#languages">Languages</a>
+    <a href="#marketplace">Marketplace</a>
+    <a href="#config">Config</a>
+    <a href="https://github.com/HackerOS-Linux-System" target="_blank">GitHub ↗</a>
+  </nav>
+</header>
+
+<!-- ── SIDEBAR ── -->
+<aside class="sidebar">
+  <div class="sidebar-section">
+    <div class="sidebar-title">Start</div>
+    <a href="#intro">Czym jest hdev?</a>
+    <a href="#install">Instalacja</a>
+    <a href="#quickstart">Szybki start</a>
+    <a href="#screen-layout">Layout ekranu</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-title">Edytor</div>
+    <a href="#keybinds">Skróty klawiszowe</a>
+    <a href="#tabs">Zakładki (tabs)</a>
+    <a href="#search">Wyszukiwanie</a>
+    <a href="#filetree">Drzewo plików</a>
+    <a href="#autopair">Auto-pair</a>
+    <a href="#undo-redo">Undo / Redo</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-title">Terminal</div>
+    <a href="#terminal">Panel terminala</a>
+    <a href="#terminal-hsh">Integracja z hsh</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-title">Języki</div>
+    <a href="#languages">Obsługiwane języki</a>
+    <a href="#hacker-lang">Hacker Lang (.hl)</a>
+    <a href="#hacker-lang-pp">Hacker Lang++ (.hlpp)</a>
+    <a href="#hsharp">H# (.hs)</a>
+    <a href="#config-formats">Formaty konfiguracyjne</a>
+    <a href="#hk-format">Format .hk</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-title">Marketplace</div>
+    <a href="#marketplace">Marketplace</a>
+    <a href="#plugins">System pluginów (.hk)</a>
+    <a href="#plugin-install">Instalacja pluginów</a>
+    <a href="#plugin-create">Tworzenie pluginu</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-title">Konfiguracja</div>
+    <a href="#config">config.json</a>
+    <a href="#session">Sesja</a>
+    <a href="#config-paths">Ścieżki</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-title">Deweloperzy</div>
+    <a href="#build">Budowanie ze źródeł</a>
+    <a href="#architecture">Architektura</a>
+    <a href="#contributing">Contributing</a>
+  </div>
+</aside>
+
+<!-- ── MAIN ── -->
+<main>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-title">hdev</div>
+  <div class="hero-sub">TUI Code Editor dla HackerOS &nbsp;·&nbsp; inspirowany Visual Studio Code &nbsp;·&nbsp; Rust + Ratatui</div>
+  <div class="hero-badges">
+    <span class="badge g">v0.1.0</span>
+    <span class="badge b">Rust + Ratatui</span>
+    <span class="badge b">HackerOS-first</span>
+    <span class="badge g">28+ języków</span>
+    <span class="badge o">Marketplace (placeholder)</span>
+    <span class="badge o">.hk plugins</span>
+  </div>
+</div>
+
+<!-- ── INTRO ── -->
+<h2 id="intro" class="anchor">Czym jest hdev?</h2>
+<p>
+  <strong>hdev</strong> to edytor kodu działający w terminalu (TUI — Terminal User Interface),
+  zaprojektowany jako natywny edytor systemu <strong>HackerOS</strong>.
+  Wzorowany na Visual Studio Code, oferuje zakładki plików, panel drzewa plików,
+  pełne podświetlanie składni, zintegrowany terminal i rynek rozszerzeń — wszystko
+  wewnątrz terminala, bez GUI.
+</p>
+<p>
+  Napisany w <strong>Rust</strong> z biblioteką <strong>Ratatui</strong>, co zapewnia
+  maksymalną wydajność, małe zużycie pamięci i pełną kontrolę nad każdym pikselem renderowania.
+</p>
+
+<div class="callout tip">
+  <strong>💡 Zalecany terminal</strong>
+  hdev używa kolorów 24-bit (true color). Zalecamy: <code>kitty</code>, <code>alacritty</code>,
+  <code>wezterm</code>, <code>foot</code> lub <code>gnome-terminal ≥ 3.36</code>.
+</div>
+
+<!-- ASCII PREVIEW -->
+<div class="ascii"><span class="ap-tb"> hdev │ main.hl ● │ Hacker Lang                                           Ctrl+Q quit </span>
+<span class="ap-tab"> HL main.hl ● </span><span class="ap-td"> RS lib.rs   JS index.js   JSON config.json </span>
+<span class="ap-br">┌────────────────────────┐</span>
+<span class="ap-br">│</span><span class="ap-tr"> ▾ my-project          </span><span class="ap-br">│</span>  <span class="ap-ln">  1 </span><span class="ap-cm">;;; Główny skrypt HackerOS</span>
+<span class="ap-br">│</span><span class="ap-tr">   ▾ scripts           </span><span class="ap-br">│</span>  <span class="ap-ln">  2 </span>
+<span class="ap-br">│</span><span class="ap-tr">     ◈ main.hl  ●     </span><span class="ap-br">│</span>  <span class="ap-ln">  3 </span><span class="ap-kw">// </span><span class="ap-st">curl</span>
+<span class="ap-br">│</span><span class="ap-tr">     ◈ audit.hl      </span><span class="ap-br">│</span>  <span class="ap-ln">  4 </span>
+<span class="ap-br">│</span><span class="ap-tr">   ▸ src              </span><span class="ap-br">│</span>  <span class="ap-ln">  5 </span><span class="ap-op">%</span> name    <span class="ap-op">=</span> <span class="ap-st">HackerOS</span>
+<span class="ap-br">│</span><span class="ap-td">   README.md          </span><span class="ap-br">│</span>  <span class="ap-ln">  6 </span><span class="ap-op">%</span> version <span class="ap-op">=</span> <span class="ap-nm">0.3</span>
+<span class="ap-br">│</span><span class="ap-td">   Cargo.toml         </span><span class="ap-br">│</span>  <span class="ap-ln">  7 </span>
+<span class="ap-br">└────────────────────────┘</span>  <span class="ap-ln">  8 </span><span class="ap-op">~&gt;</span> Witaj w <span class="ap-vr">@name</span> v<span class="ap-vr">@version</span><span class="ap-cu">!</span>
+                            <span class="ap-ln">  9 </span>
+                            <span class="ap-ln"> 10 </span><span class="ap-op">:</span> greet <span class="ap-kw">def</span>
+                            <span class="ap-ln"> 11 </span>    <span class="ap-op">~&gt;</span> Kernel:
+                            <span class="ap-ln"> 12 </span>    <span class="ap-op">&gt;</span> uname -r
+                            <span class="ap-ln"> 13 </span><span class="ap-kw">done</span>
+──────────────────────────── terminal ──────────────────────────────── Ctrl+B
+~ ❯ hl main.hl
+Witaj w HackerOS v0.3!
+Kernel: 6.1.0-hackeros
+<span class="ap-sl"> NORMAL </span> main.hl ●   Hacker Lang          <span class="ap-td">Ln 8, Col 24 · 13 lines</span></div>
+
+<!-- ── INSTALL ── -->
+<h2 id="install" class="anchor">Instalacja</h2>
+
+<h3>Wymagania systemowe</h3>
+<table>
+  <tr><th>Zależność</th><th>Min. wersja</th><th>Uwagi</th></tr>
+  <tr><td>Rust</td><td>1.75</td><td>Wymagany do budowania ze źródeł (<a href="https://rustup.rs" target="_blank">rustup.rs</a>)</td></tr>
+  <tr><td>Cargo</td><td>1.75</td><td>Dołączony do Rust toolchain</td></tr>
+  <tr><td>Terminal</td><td>—</td><td>Zalecany true-color (24-bit RGB)</td></tr>
+  <tr><td>hsh (opcja)</td><td>—</td><td>Shell HackerOS — terminal panel używa go automatycznie</td></tr>
+</table>
+
+<h3>Budowanie i instalacja</h3>
+<pre><span class="cmt"># 1. Zainstaluj Rust (jeśli brak)</span>
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+<span class="cmt"># 2. Pobierz hdev</span>
+<span class="fn">git</span> clone https://github.com/HackerOS-Linux-System/hdev
+<span class="fn">cd</span> hdev
+
+<span class="cmt"># 3. Zbuduj wersję release</span>
+<span class="fn">cargo</span> build --release
+
+<span class="cmt"># 4. Zainstaluj globalnie</span>
+<span class="fn">sudo</span> cp target/release/hdev /usr/local/bin/
+
+<span class="cmt"># 5. Sprawdź instalację</span>
+<span class="fn">hdev</span> --version
+<span class="lang-badge-inline">bash</span></pre>
+
+<h3>HackerOS (paczka systemowa)</h3>
+<pre><span class="cmt"># W HackerOS hdev jest częścią systemu</span>
+hpkg install hdev         <span class="cmt"># przez menadżer pakietów HackerOS</span>
+<span class="lang-badge-inline">hsh</span></pre>
+
+<!-- ── QUICKSTART ── -->
+<h2 id="quickstart" class="anchor">Szybki start</h2>
+
+<pre><span class="cmt"># Otwórz hdev w bieżącym katalogu</span>
+<span class="fn">hdev</span>
+
+<span class="cmt"># Otwórz konkretny plik</span>
+<span class="fn">hdev</span> src/main.rs
+
+<span class="cmt"># Otwórz folder (ładuje drzewo plików)</span>
+<span class="fn">hdev</span> ~/projects/my-hackeros-app
+
+<span class="cmt"># Wyjdź z hdev</span>
+Ctrl+Q
+<span class="lang-badge-inline">bash</span></pre>
+
+<p>
+  Po uruchomieniu bez argumentu pojawia się <strong>Welcome Screen</strong>.
+  Nawigujesz strzałkami <kbd>↑</kbd> <kbd>↓</kbd>, wybierasz <kbd>Enter</kbd>:
+</p>
+<table>
+  <tr><th>Opcja</th><th>Akcja</th></tr>
+  <tr><td>New File</td><td>Utwórz nowy plik w bieżącym katalogu</td></tr>
+  <tr><td>Open Folder</td><td>Wpisz ścieżkę do folderu</td></tr>
+  <tr><td>Terminal</td><td>Przejdź bezpośrednio do terminala hsh</td></tr>
+  <tr><td>Marketplace</td><td>Przeglądaj rozszerzenia</td></tr>
+  <tr><td>Settings</td><td>Ustawienia edytora</td></tr>
+  <tr><td>Recent Files</td><td>Ostatnio otwierane pliki (z sesji)</td></tr>
+</table>
+
+<!-- ── SCREEN LAYOUT ── -->
+<h2 id="screen-layout" class="anchor">Layout ekranu</h2>
+
+<div class="ascii"><span class="ap-tb"> hdev  v0.1.0 │ filename.rs ● │ Rust                           ← Title bar</span>
+<span class="ap-tab"> RS filename.rs ● </span><span class="ap-td"> PY script.py   SH run.sh </span>       ← Tab bar
+┌───────────────────────┬──────────────────────────────────────────────┐
+│ File Tree             │ Line numbers │ Editor area                   │
+│                       │              │                                │
+│  ▾ project            │   1          │ fn main() {                   │
+│    ▾ src              │   2          │     println!("HackerOS");     │
+│      🦀 main.rs  ●   │   3 ◀cursor  │     <span class="ap-cu">}</span>                          │
+│      🦀 lib.rs        │              │                                │
+│    📝 README.md       │              │                                │
+└───────────────────────┴──────────────────────────────────────────────┤
+                         ❯ terminal panel  (Ctrl+B)                     │
+                         ~ ❯ cargo run                                  │
+                         Compiling hdev v0.1.0                          │
+                         Finished release [optimized]                   │
+├────────────────────────────────────────────────────────────────────────┤
+<span class="ap-sl"> NORMAL </span> main.rs   Rust              Ctrl+S Save  Ln 3, Col 2 · 10 lines</div>
+
+<table>
+  <tr><th>Strefa</th><th>Opis</th></tr>
+  <tr><td>Title bar</td><td>Nazwa pliku, język, modyfikacja (●), globalne info</td></tr>
+  <tr><td>Tab bar</td><td>Otwarte pliki jako zakładki z ikoną języka</td></tr>
+  <tr><td>File Tree</td><td>Drzewo plików bieżącego folderu (Ctrl+R odśwież)</td></tr>
+  <tr><td>Editor</td><td>Numeracja linii + główny obszar edycji z podświetlaniem</td></tr>
+  <tr><td>Terminal Panel</td><td>Zintegrowany terminal hsh (Ctrl+B toggle)</td></tr>
+  <tr><td>Status bar</td><td>Tryb edycji, nazwa pliku, język, pozycja kursora</td></tr>
+</table>
+
+<!-- ── KEYBINDS ── -->
+<h2 id="keybinds" class="anchor">Skróty klawiszowe</h2>
+
+<h3>Globalne</h3>
+<table class="kt">
+  <tr><th>Skrót</th><th>Akcja</th></tr>
+  <tr><td><code>Ctrl+Q</code></td><td>Wyjdź z hdev (sesja jest zapisywana)</td></tr>
+  <tr><td><code>F1</code></td><td>Pomoc — lista skrótów (toggle overlay)</td></tr>
+  <tr><td><code>Esc</code></td><td>Zamknij overlay / wróć do edytora</td></tr>
+</table>
+
+<h3>Pliki i zakładki</h3>
+<table class="kt">
+  <tr><th>Skrót</th><th>Akcja</th></tr>
+  <tr><td><code>Ctrl+T</code></td><td>Nowy plik (pyta o nazwę, tworzy w bieżącym katalogu)</td></tr>
+  <tr><td><code>Ctrl+W</code></td><td>Zamknij zakładkę / usuń zaznaczony plik z drzewa</td></tr>
+  <tr><td><code>Ctrl+S</code></td><td>Zapisz plik</td></tr>
+  <tr><td><code>Ctrl+Shift+S</code></td><td>Zapisz jako… (podaj nową ścieżkę)</td></tr>
+  <tr><td><code>Ctrl+O</code></td><td>Otwórz plik lub folder (dialog)</td></tr>
+  <tr><td><code>Ctrl+N</code></td><td>Następna zakładka</td></tr>
+  <tr><td><code>Ctrl+P</code></td><td>Poprzednia zakładka</td></tr>
+  <tr><td><code>Alt+1</code> – <code>Alt+9</code></td><td>Skocz do zakładki nr 1–9</td></tr>
+</table>
+
+<h3>Widok i panele</h3>
+<table class="kt">
+  <tr><th>Skrót</th><th>Akcja</th></tr>
+  <tr><td><code>Ctrl+B</code></td><td>Otwórz / zamknij terminal panel (jak VSCode)</td></tr>
+  <tr><td><code>Ctrl+R</code></td><td>Odśwież drzewo plików</td></tr>
+  <tr><td><code>Ctrl+M</code></td><td>Otwórz Marketplace</td></tr>
+  <tr><td><code>Ctrl+,</code></td><td>Otwórz Ustawienia</td></tr>
+</table>
+
+<h3>Nawigacja w edytorze</h3>
+<table class="kt">
+  <tr><th>Skrót</th><th>Akcja</th></tr>
+  <tr><td><code>↑ ↓ ← →</code></td><td>Porusz kursorem</td></tr>
+  <tr><td><code>Ctrl+←</code> / <code>Ctrl+→</code></td><td>Skocz o jedno słowo</td></tr>
+  <tr><td><code>Home</code></td><td>Początek linii</td></tr>
+  <tr><td><code>End</code></td><td>Koniec linii</td></tr>
+  <tr><td><code>PgUp</code> / <code>PgDn</code></td><td>Przewiń o ekran</td></tr>
+</table>
+
+<h3>Edycja tekstu</h3>
+<table class="kt">
+  <tr><th>Skrót</th><th>Akcja</th></tr>
+  <tr><td><code>Enter</code></td><td>Nowa linia z automatycznym wcięciem</td></tr>
+  <tr><td><code>Tab</code></td><td>Wstaw wcięcie (spacje, rozmiar z config)</td></tr>
+  <tr><td><code>Backspace</code></td><td>Usuń znak przed kursorem</td></tr>
+  <tr><td><code>Delete</code></td><td>Usuń znak za kursorem</td></tr>
+  <tr><td><code>Ctrl+Z</code></td><td>Cofnij (Undo) — do 200 kroków</td></tr>
+  <tr><td><code>Ctrl+Y</code> lub <code>Ctrl+Shift+Z</code></td><td>Ponów (Redo)</td></tr>
+  <tr><td><code>Ctrl+D</code></td><td>Zduplikuj bieżącą linię poniżej</td></tr>
+</table>
+
+<h3 id="search">Wyszukiwanie</h3>
+<table class="kt">
+  <tr><th>Skrót</th><th>Akcja</th></tr>
+  <tr><td><code>Ctrl+F</code></td><td>Otwórz pasek wyszukiwania</td></tr>
+  <tr><td><code>Enter</code> (w search)</td><td>Następne wystąpienie</td></tr>
+  <tr><td><code>F3</code></td><td>Następne wystąpienie</td></tr>
+  <tr><td><code>Esc</code></td><td>Zamknij wyszukiwanie, wyczyść zaznaczenia</td></tr>
+</table>
+
+<p>Wyszukiwanie podświetla wszystkie wystąpienia frazy w pliku na żółto.
+Licznik pokazuje <code>n/total</code> w rogu paska.</p>
+
+<h3 id="filetree">Drzewo plików</h3>
+<table class="kt">
+  <tr><th>Akcja</th><th>Efekt</th></tr>
+  <tr><td>Klik Enter na pliku</td><td>Otwórz plik w nowej zakładce</td></tr>
+  <tr><td>Klik Enter na folderze</td><td>Rozwiń / zwiń folder</td></tr>
+  <tr><td><code>Ctrl+T</code></td><td>Nowy plik w wybranym folderze</td></tr>
+  <tr><td><code>Ctrl+W</code></td><td>Usuń zaznaczony plik (z potwierdzeniem)</td></tr>
+  <tr><td><code>Ctrl+R</code></td><td>Odśwież całe drzewo</td></tr>
+</table>
+
+<div class="callout warn">
+  <strong>⚠ Usuwanie pliku</strong>
+  <code>Ctrl+W</code> gdy zaznaczony jest plik w drzewie — pojawia się dialog potwierdzenia.
+  Usunięcie jest <strong>nieodwracalne</strong> (plik trafia do kosza systemowego jeśli dostępny).
+</div>
+
+<h3 id="autopair">Auto-pair</h3>
+<p>hdev automatycznie zamyka nawiasy i cudzysłowy:</p>
+<table>
+  <tr><th>Wpisany znak</th><th>Automatycznie dodawane</th></tr>
+  <tr><td><code>(</code></td><td><code>)</code></td></tr>
+  <tr><td><code>[</code></td><td><code>]</code></td></tr>
+  <tr><td><code>{</code></td><td><code>}</code></td></tr>
+  <tr><td><code>"</code></td><td><code>"</code></td></tr>
+  <tr><td><code>'</code></td><td><code>'</code></td></tr>
+  <tr><td><code>`</code></td><td><code>`</code></td></tr>
+</table>
+
+<h3 id="undo-redo">Undo / Redo</h3>
+<p>Historia cofania jest przechowywana na stosie do <strong>200 wpisów</strong> per bufor.
+Każda zmiana tekstu (znak, newline, tab, delete) tworzy wpis. Undo i Redo <em>nie są</em>
+kasowane przez nawigację kursora — tylko przez nowe zmiany po Undo.</p>
+
+<!-- ── TERMINAL ── -->
+<h2 id="terminal" class="anchor">Panel terminala</h2>
+<p>
+  Naciśnięcie <kbd>Ctrl+B</kbd> otwiera panel terminala na dole ekranu — identycznie jak
+  w Visual Studio Code. Ponowne <kbd>Ctrl+B</kbd> zamyka panel.
+</p>
+
+<div class="ascii"><span class="ap-br">────────────────────────────────────────────────────────────────────────────</span>
+╭─ ❯ terminal  hsh  Ctrl+B to close ─────────────────────────────────────────╮
+│  ⚙ hdev terminal — cwd: ~/projects/my-app                                   │
+│  ⚙ Type commands. They run via: hsh -c "&lt;cmd&gt;"                              │
+│  ─────────────────────────────────────────────────────────────────────────  │
+│  ❯ hl audit.hl                                                               │
+│  Skanowanie 192.168.1.1:22...                                                │
+│  ✗ Brak odpowiedzi                                                           │
+│  ❯ ls -la                                                                    │
+│  total 48                                                                    │
+│  drwxr-xr-x  4 user user 4096 Jan  1 12:00 .                                │
+│  ~/projects/my-app ❯ █                                                       │
+╰─────────────────────────────────────────────────────────────────────────────╯</div>
+
+<h3 id="terminal-hsh">Integracja z hsh</h3>
+<p>
+  Każda komenda wpisana w terminalu hdev jest wykonywana przez <strong>hsh</strong> (shell HackerOS).
+  Jeśli <code>hsh</code> nie jest zainstalowany, hdev używa <code>/bin/sh</code> jako fallback.
+</p>
+<pre><span class="cmt"># Sposób wywołania komendy:</span>
+hsh -c <span class="str">"twoja komenda tutaj"</span>
+
+<span class="cmt"># Przykłady działające w terminalu hdev:</span>
+hl skrypt.hl           <span class="cmt"># uruchom Hacker Lang</span>
+cargo build --release  <span class="cmt"># buduj Rust</span>
+python3 main.py        <span class="cmt"># uruchom Python</span>
+git status             <span class="cmt"># git</span>
+cd ../inny-projekt     <span class="cmt"># zmień katalog (wbudowane)</span>
+clear                  <span class="cmt"># wyczyść output</span>
+<span class="lang-badge-inline">hsh</span></pre>
+
+<table class="kt">
+  <tr><th>Skrót (terminal aktywny)</th><th>Akcja</th></tr>
+  <tr><td><code>Enter</code></td><td>Wykonaj wpisaną komendę</td></tr>
+  <tr><td><code>↑</code> / <code>↓</code></td><td>Historia komend (do 500 wpisów)</td></tr>
+  <tr><td><code>PgUp</code> / <code>PgDn</code></td><td>Przewiń output (po 5 linii)</td></tr>
+  <tr><td><code>Backspace</code></td><td>Usuń znak z inputu</td></tr>
+  <tr><td><code>Ctrl+B</code></td><td>Zamknij terminal panel</td></tr>
+  <tr><td><code>Esc</code></td><td>Wróć fokus do edytora (terminal zostaje otwarty)</td></tr>
+</table>
+
+<div class="callout info">
+  <strong>ℹ cd i clear</strong>
+  Komendy <code>cd</code> i <code>clear</code> są obsługiwane wewnętrznie przez hdev —
+  <code>cd</code> zmienia katalog roboczy dla kolejnych komend, <code>clear</code> czyści historię outputu.
+</div>
+
+<!-- ── LANGUAGES ── -->
+<h2 id="languages" class="anchor">Obsługiwane języki</h2>
+<p>
+  hdev rozpoznaje języki automatycznie na podstawie rozszerzenia pliku i podświetla składnię
+  z użyciem wbudowanego silnika leksykalnego.
+</p>
+
+<div class="lang-grid">
+  <div class="lang-card"><div class="lang-icon" style="background:rgba(0,255,100,0.15);color:#00ff64">HL</div><div><div class="lang-name">Hacker Lang</div><div class="lang-ext">.hl</div></div></div>
+  <div class="lang-card"><div class="lang-icon" style="background:rgba(0,200,80,0.15);color:#00c850">HL+</div><div><div class="lang-name">Hacker Lang++</div><div class="lang-ext">.hlpp &nbsp;BETA</div></div></div>
+  <div class="lang-card"><div class="lang-icon" style="background:rgba(80,200,255,0.15);color:#50c8ff">H#</div><div><div class="lang-name">H Sharp</div><div class="lang-ext">.hs</div></div></div>
+  <div class="lang-card"><div class="lang-icon" style="background:rgba(255,100,50,0.15);color:#ff6432">RS</div><div><div class="lang-name">Rust</div><div class="lang-ext">.rs</div></div></div>
+  <div class="lang-card"><div class="lang-icon" style="background:rgba(0,172,215,0.15);color:#00acd7">GO</div><div><div class="lang-name">Go</div><div class="lang-ext">.go</div></div></div>
+  <div class="lang-card"><div class="lang-icon" style="background:rgba(100,150,255,0.15);color:#6496ff">C </div><div><div class="lang-name">C</div><div class="lang-ext">.c &nbsp;.h</div></div></div>
+  <div class="lang-card"><div class="lang-icon" style="background:rgba(100,130,255,0.15);color:#6482ff">C+</div><div><div class="lang-name">C++</div><div class="lang-ext">.cpp .cc .cxx</div></div></div>
+  <div class="lang-card"><div class="lang-icon" style="background:rgba(255,213,50,0.15);color:#ffd532">PY</div><div><div class="lang-name">Python</div><div class="lang-ext">.py</div></div></div>
+  <div class="lang-card"><div class="lang-icon" style="background:rgba(180,90,255,0.15);color:#b45aff">OD</div><div><div class="lang-name">Odin</div><div class="lang-ext">.odin</div></div></div>
+  <div class="lang-card"><div class="lang-icon" style="background:rgba(0,220,200,0.15);color:#00dcc8">CR</div><div><div class="lang-name">Crystal</div><div class="lang-ext">.cr</div></div></div>
+  <div class="lang-card"><div class="lang-icon" style="background:rgba(100,255,100,0.15);color:#64ff64">SH</div><div><div class="lang-name">Shell</div><div class="lang-ext">.sh .bash .zsh</div></div></div>
+  <div class="lang-card"><div class="lang-icon" style="background:rgba(180,100,200,0.15);color:#b464c8">VL</div><div><div class="lang-name">Vala</div><div class="lang-ext">.vala</div></div></div>
+  <div class="lang-card"><div class="lang-icon" style="background:rgba(255,216,0,0.15);color:#ffd800">NM</div><div><div class="lang-name">Nim</div><div class="lang-ext">.nim</div></div></div>
+  <div class="lang-card"><div class="lang-icon" style="background:rgba(255,100,50,0.15);color:#ff6432">HT</div><div><div class="lang-name">HTML</div><div class="lang-ext">.html .htm</div></div></div>
+  <div class="lang-card"><div class="lang-icon" style="background:rgba(50,150,255,0.15);color:#3296ff">CS</div><div><div class="lang-name">CSS</div><div class="lang-ext">.css</div></div></div>
+  <div class="lang-card"><div class="lang-icon" style="background:rgba(255,220,0,0.15);color:#ffdc00">JS</div><div><div class="lang-name">JavaScript</div><div class="lang-ext">.js</div></div></div>
+  <div class="lang-card"><div class="lang-icon" style="background:rgba(0,120,215,0.15);color:#0078d7">TS</div><div><div class="lang-name">TypeScript</div><div class="lang-ext">.ts</div></div></div>
+  <div class="lang-card"><div class="lang-icon" style="background:rgba(0,180,216,0.15);color:#00b4d8">DT</div><div><div class="lang-name">Dart</div><div class="lang-ext">.dart</div></div></div>
+  <div class="lang-card"><div class="lang-icon" style="background:rgba(180,80,255,0.15);color:#b450ff">KT</div><div><div class="lang-name">Kotlin</div><div class="lang-ext">.kt .kts</div></div></div>
+  <div class="lang-card"><div class="lang-icon" style="background:rgba(50,100,200,0.15);color:#3264c8">LU</div><div><div class="lang-name">Lua</div><div class="lang-ext">.lua</div></div></div>
+  <div class="lang-card"><div class="lang-icon" style="background:rgba(255,160,50,0.15);color:#ffa032">JV</div><div><div class="lang-name">Java</div><div class="lang-ext">.java</div></div></div>
+</div>
+
+<h3>Formaty konfiguracyjne</h3>
+<div class="lang-grid">
+  <div class="lang-card"><div class="lang-icon" style="background:rgba(200,100,50,0.15);color:#c86432">YM</div><div><div class="lang-name">YAML</div><div class="lang-ext">.yaml .yml</div></div></div>
+  <div class="lang-card"><div class="lang-icon" style="background:rgba(200,200,50,0.15);color:#c8c832">JN</div><div><div class="lang-name">JSON</div><div class="lang-ext">.json</div></div></div>
+  <div class="lang-card"><div class="lang-icon" style="background:rgba(150,200,50,0.15);color:#96c832">TM</div><div><div class="lang-name">TOML</div><div class="lang-ext">.toml</div></div></div>
+  <div class="lang-card"><div class="lang-icon" style="background:rgba(100,100,220,0.15);color:#6464dc">HC</div><div><div class="lang-name">HCL / Terraform</div><div class="lang-ext">.hcl .tf</div></div></div>
+  <div class="lang-card"><div class="lang-icon" style="background:rgba(180,180,100,0.15);color:#b4b464">XM</div><div><div class="lang-name">XML</div><div class="lang-ext">.xml</div></div></div>
+  <div class="lang-card"><div class="lang-icon" style="background:rgba(0,255,200,0.15);color:#00ffc8">HK</div><div><div class="lang-name">HK Plugin</div><div class="lang-ext">.hk</div></div></div>
+</div>
+
+<!-- ── HACKER LANG ── -->
+<h2 id="hacker-lang" class="anchor">Hacker Lang (.hl)</h2>
+<p>
+  hdev ma wbudowaną pełną obsługę <strong>Hacker Lang v0.3</strong> — natywnego języka skryptowego HackerOS.
+  Silnik podświetlania rozpoznaje wszystkie operatory, zmienne, komentarze i słowa kluczowe.
+</p>
+
+<table>
+  <tr><th>Element</th><th>Kolor</th><th>Przykład</th></tr>
+  <tr><td>Operatory specjalne</td><td style="color:#00ff96">■ zielony</td><td><code>~&gt; :: -&gt; ^&gt; -&gt;&gt; ^&gt;&gt;</code></td></tr>
+  <tr><td>Zmienne <code>@</code></td><td style="color:#d8d8d8">■ jasny</td><td><code>@name @target @HL_VERSION</code></td></tr>
+  <tr><td>Deklaracje <code>%</code></td><td style="color:#ffb432">■ pomarańczowy</td><td><code>% host = 10.0.0.1</code></td></tr>
+  <tr><td>Słowa kluczowe</td><td style="color:#c878ff">■ fioletowy</td><td><code>def done ok err true false</code></td></tr>
+  <tr><td>Komentarze <code>;;</code></td><td style="color:#64708a">■ szary kursywa</td><td><code>;; to jest komentarz</code></td></tr>
+  <tr><td>Komentarz dokumentacji</td><td style="color:#64708a">■ szary kursywa</td><td><code>;;; wieloliniowy opis</code></td></tr>
+  <tr><td>Ciągi znaków</td><td style="color:#64dc64">■ zielony</td><td><code>"hello world"</code></td></tr>
+  <tr><td>Liczby</td><td style="color:#ffb450">■ złoty</td><td><code>42 &nbsp; 3.14 &nbsp; 0</code></td></tr>
+</table>
+
+<pre><span class="cmt">;;; Przykład pełnego skryptu Hacker Lang</span>
+
+<span class="kw">//</span> <span class="str">curl</span>
+
+<span class="op">%</span> target  = <span class="str">192.168.1.1</span>
+<span class="op">%</span> port    = <span class="num">22</span>
+<span class="op">%</span> debug   = <span class="kw">true</span>
+
+<span class="op">:</span> scan <span class="kw">def</span>
+    <span class="op">~&gt;</span> Skanowanie <span class="vr">@target</span>:<span class="vr">@port</span>...
+    <span class="op">::</span>hr <span class="num">40</span>
+    <span class="op">&gt;&gt;</span> nmap -p <span class="vr">@port</span> <span class="vr">@target</span>
+
+    <span class="kw">? ok</span>
+        <span class="op">::</span>green Port otwarty!
+    <span class="kw">done</span>
+
+    <span class="kw">? err</span>
+        <span class="op">::</span>red Błąd skanowania.
+    <span class="kw">done</span>
+<span class="kw">done</span>
+
+<span class="op">--</span> scan
+<span class="lang-badge-inline">.hl</span></pre>
+
+<h2 id="hacker-lang-pp" class="anchor">Hacker Lang++ (.hlpp) — BETA</h2>
+<p>
+  Hacker Lang++ to rozszerzona wersja Hacker Lang, aktualnie w intensywnym rozwoju.
+  hdev obsługuje pliki <code>.hlpp</code> i stosuje do nich te same reguły podświetlania co dla <code>.hl</code>,
+  z dodatkowym oznaczeniem <strong>BETA</strong> na pasku statusu.
+</p>
+<div class="callout warn">
+  <strong>⚠ BETA</strong>
+  Hacker Lang++ zmienia się dynamicznie. Składnia może być niekompatybilna z wersją <code>.hl</code>.
+  Śledź <a href="https://hackeros-linux-system.github.io/HackerOS-Website/hacker-lang/plus-plus/docs.html" target="_blank">oficjalną dokumentację HL++</a>.
+</div>
+
+<!-- ── H# ── -->
+<h2 id="hsharp" class="anchor">H# (.hs)</h2>
+<p>
+  H# to kompilowany język programowania napisany w Rust, przeznaczony dla HackerOS.
+  hdev rozpoznaje składnię H# v0.2 i podświetla:
+</p>
+<table>
+  <tr><th>Element</th><th>Kolor</th><th>Przykład</th></tr>
+  <tr><td>Słowa kluczowe</td><td style="color:#c878ff">■ fioletowy</td><td><code>fn let mut if else match struct impl trait</code></td></tr>
+  <tr><td>Typy wbudowane</td><td style="color:#64dcdc">■ cyjan</td><td><code>i32 u64 f64 bool str String</code></td></tr>
+  <tr><td>Nazwy typów (Uppercase)</td><td style="color:#64dcdc">■ cyjan</td><td><code>MyStruct ScanResult</code></td></tr>
+  <tr><td>Wywołania funkcji</td><td style="color:#50b4ff">■ niebieski</td><td><code>scan() parse_input()</code></td></tr>
+  <tr><td>Komentarze</td><td style="color:#64708a">■ szary</td><td><code>// komentarz</code></td></tr>
+  <tr><td>Specjalne słowa</td><td style="color:#c878ff">■ fioletowy</td><td><code>unsafe arena optional spawn</code></td></tr>
+</table>
+
+<pre><span class="cmt">// H# — przykład prostego programu</span>
+
+<span class="kw">use</span> std::net;
+
+<span class="kw">struct</span> <span class="tp">Scanner</span> {
+    target: <span class="tp">String</span>,
+    port: <span class="tp">u16</span>,
+}
+
+<span class="kw">impl</span> <span class="tp">Scanner</span> {
+    <span class="kw">fn</span> <span class="fn">run</span>(&amp;<span class="kw">self</span>) -&gt; <span class="tp">bool</span> {
+        <span class="kw">let</span> result = net::<span class="fn">connect</span>(&amp;<span class="kw">self</span>.target, <span class="kw">self</span>.port);
+        <span class="kw">match</span> result {
+            <span class="tp">Ok</span>(_) =&gt; <span class="kw">true</span>,
+            <span class="tp">Err</span>(_) =&gt; <span class="kw">false</span>,
+        }
+    }
+}
+
+<span class="kw">fn</span> <span class="fn">main</span>() {
+    <span class="kw">let</span> s = <span class="tp">Scanner</span> { target: <span class="str">"192.168.1.1"</span>.into(), port: <span class="num">22</span> };
+    <span class="fn">println</span>(<span class="str">"Otwarty: {}"</span>, s.<span class="fn">run</span>());
+}
+<span class="lang-badge-inline">.hs</span></pre>
+
+<!-- ── CONFIG FORMATS ── -->
+<h2 id="config-formats" class="anchor">Formaty konfiguracyjne</h2>
+
+<h3>JSON</h3>
+<p>Klucze podświetlone na niebiesko, wartości na zielono, typy (<code>true/false/null</code>) na fioletowo.</p>
+<pre>{
+  <span class="tp">"name"</span>: <span class="str">"HackerOS"</span>,
+  <span class="tp">"version"</span>: <span class="num">0.3</span>,
+  <span class="tp">"debug"</span>: <span class="kw">true</span>,
+  <span class="tp">"plugins"</span>: [<span class="str">"hl-support"</span>, <span class="str">"git-panel"</span>]
+}
+<span class="lang-badge-inline">.json</span></pre>
+
+<h3>YAML</h3>
+<p>Klucze na niebiesko, wartości na zielono, komentarze <code>#</code> na szaro, sekcje pogrubione.</p>
+<pre><span class="cmt"># Konfiguracja serwera</span>
+<span class="tp">server</span>:
+  <span class="tp">host</span>: <span class="str">0.0.0.0</span>
+  <span class="tp">port</span>: <span class="num">8080</span>
+  <span class="tp">tls</span>: <span class="kw">true</span>
+<span class="tp">database</span>:
+  <span class="tp">url</span>: <span class="str">postgres://localhost/hackeros</span>
+<span class="lang-badge-inline">.yaml</span></pre>
+
+<h3>TOML</h3>
+<pre><span class="cmt"># hdev config</span>
+[<span class="tp">package</span>]
+<span class="tp">name</span> = <span class="str">"hdev"</span>
+<span class="tp">version</span> = <span class="str">"0.1.0"</span>
+
+[<span class="tp">dependencies</span>]
+<span class="tp">ratatui</span> = <span class="str">"0.29"</span>
+<span class="tp">crossterm</span> = <span class="str">"0.28"</span>
+<span class="lang-badge-inline">.toml</span></pre>
+
+<h3 id="hk-format">Format .hk (Plugin)</h3>
+<p>
+  Pliki <code>.hk</code> to format pluginów hdev, parsowany przez
+  <a href="https://crates.io/crates/hk-parser" target="_blank">hk-parser</a>.
+  hdev stosuje specjalne podświetlanie dedykowane dla tego formatu:
+</p>
+<table>
+  <tr><th>Element</th><th>Kolor</th><th>Przykład</th></tr>
+  <tr><td>Sekcje <code>[...]</code></td><td style="color:#00ffc8">■ turkusowy</td><td><code>[metadata]</code> <code>[hooks]</code></td></tr>
+  <tr><td>Klucze</td><td style="color:#50a0ff">■ niebieski</td><td><code>name =</code> <code>version =</code></td></tr>
+  <tr><td>Wartości</td><td style="color:#64dc64">■ zielony</td><td><code>"mój plugin"</code></td></tr>
+  <tr><td>Komentarze <code>#</code></td><td style="color:#64708a">■ szary</td><td><code># opis</code></td></tr>
+</table>
+
+<pre><span class="cmt"># Plugin hdev — przykład</span>
+[<span class="hl">metadata</span>]
+<span class="tp">name</span> = <span class="str">"hl-enhanced"</span>
+<span class="tp">version</span> = <span class="str">"1.0.0"</span>
+<span class="tp">author</span> = <span class="str">"HackerOS Team"</span>
+<span class="tp">description</span> = <span class="str">"Enhanced Hacker Lang support"</span>
+
+[<span class="hl">hooks</span>]
+<span class="tp">on_file_open</span> = <span class="str">"hl_check $FILE"</span>
+<span class="tp">on_save</span>      = <span class="str">"hl_lint $FILE"</span>
+
+[<span class="hl">syntax</span>]
+<span class="tp">extensions</span> = <span class="str">".hl .hlpp"</span>
+<span class="tp">comment</span>    = <span class="str">";;"</span>
+<span class="lang-badge-inline">.hk</span></pre>
+
+<!-- ── MARKETPLACE ── -->
+<h2 id="marketplace" class="anchor">Marketplace</h2>
+<p>
+  Marketplace (<kbd>Ctrl+M</kbd>) to panel do przeglądania i instalowania rozszerzeń hdev.
+  W wersji <strong>v0.1.0</strong> pełna funkcjonalność jest <em>placeholderem</em> — interfejs
+  jest gotowy, a backend do pobierania i instalowania pluginów jest planowany w przyszłych wersjach.
+</p>
+
+<div class="ascii"><span class="ap-tb"> ◎ hdev Marketplace — plugins &amp; extensions for HackerOS</span>
+<span class="ap-tab"> All </span><span class="ap-td"> Installed  HackerOS  Languages  Themes </span>
+<span class="ap-br">┌──────────────────────────┬───────────────────────────────────────────────┐</span>
+│ HackerOS  Hacker Lang+   │                                               │
+│  h4ck3r · ★★★★★         │  Hacker Lang Enhanced  v1.0.0                 │
+│ HackerOS  HSH Runner     │  HackerOS  ·  HackerOS Team                  │
+│  HackerOS · ★★★★½       │                                               │
+│ Theme     Matrix Theme   │  ★★★★★   ⬇ 1200                             │
+│  neon_dev · ★★★★½       │                                               │
+│ Git       Git Panel      │  Advanced Hacker Lang support: snippets,      │
+│  devtools · ★★★★★       │  REPL integration, linter overlay.            │
+│ Language  Rust Analyzer  │                                               │
+│  rust_tools · ★★★★★     │  Tags  hacker-lang  hl                        │
+│                           │                                               │
+│                           │  [ Enter → Install ]   (placeholder)         │
+│                           │                                               │
+│                           │  ⚠ Plugin support jest placeholderem.        │
+│                           │    Pełna integracja .hk w przyszłości.       │
+<span class="ap-br">└──────────────────────────┴───────────────────────────────────────────────┘</span>
+  Tab/Shift+Tab kategoria   ↑↓ nawiguj   Enter instaluj/odinstaluj   Esc wróć</div>
+
+<table class="kt">
+  <tr><th>Klawisz (w Marketplace)</th><th>Akcja</th></tr>
+  <tr><td><code>↑</code> / <code>↓</code></td><td>Nawiguj po liście pluginów</td></tr>
+  <tr><td><code>Tab</code></td><td>Następna kategoria</td></tr>
+  <tr><td><code>Shift+Tab</code></td><td>Poprzednia kategoria</td></tr>
+  <tr><td><code>Enter</code></td><td>Zainstaluj / odinstaluj plugin (placeholder)</td></tr>
+  <tr><td><code>Esc</code></td><td>Wróć do edytora</td></tr>
+</table>
+
+<h3>Kategorie pluginów</h3>
+<table>
+  <tr><th>Kategoria</th><th>Opis</th></tr>
+  <tr><td style="color:#00dc96">HackerOS</td><td>Pluginy natywne dla HackerOS (HL, H#, hsh)</td></tr>
+  <tr><td style="color:#50a0ff">Language</td><td>Obsługa języków, LSP, snippety</td></tr>
+  <tr><td style="color:#c878ff">Theme</td><td>Motywy kolorystyczne</td></tr>
+  <tr><td style="color:#64dc64">Formatter</td><td>Automatyczne formatowanie kodu</td></tr>
+  <tr><td style="color:#ffdc00">Linter</td><td>Analiza błędów i ostrzeżeń</td></tr>
+  <tr><td style="color:#ff6432">Git</td><td>Integracja z systemem kontroli wersji</td></tr>
+  <tr><td style="color:#64dcdc">Productivity</td><td>Auto-pairs, snippety, motywacja</td></tr>
+</table>
+
+<!-- ── PLUGINS ── -->
+<h2 id="plugins" class="anchor">System pluginów (.hk)</h2>
+<p>
+  Pluginy hdev są plikami w formacie <code>.hk</code> — parsowanymi przez bibliotekę
+  <a href="https://crates.io/crates/hk-parser" target="_blank">hk-parser</a>.
+  Plik pluginu opisuje metadane, hooki i konfigurację rozszerzenia.
+</p>
+
+<h3 id="plugin-install">Instalacja pluginów</h3>
+<p>Pluginy instaluje się ręcznie (do momentu uruchomienia pełnego Marketplace):</p>
+<pre><span class="cmt"># Folder pluginów hdev</span>
+~/.cache/HackerOS/hdev/plugins/
+
+<span class="cmt"># Skopiuj plik .hk do folderu</span>
+<span class="fn">cp</span> mój-plugin.hk ~/.cache/HackerOS/hdev/plugins/
+
+<span class="cmt"># Odśwież hdev (Ctrl+R lub restart)</span>
+<span class="lang-badge-inline">bash</span></pre>
+
+<div class="callout info">
+  <strong>ℹ Restart po instalacji</strong>
+  Pluginy są skanowane przy starcie hdev. Po skopiowaniu pliku <code>.hk</code>
+  uruchom hdev ponownie lub naciśnij <kbd>Ctrl+R</kbd> by odświeżyć środowisko.
+</div>
+
+<h3 id="plugin-create">Tworzenie pluginu</h3>
+<pre><span class="cmt"># Minimalna struktura pliku .hk</span>
+
+[<span class="hl">metadata</span>]
+<span class="tp">name</span>        = <span class="str">"mój-plugin"</span>
+<span class="tp">version</span>     = <span class="str">"0.1.0"</span>
+<span class="tp">author</span>      = <span class="str">"Twoje Imię"</span>
+<span class="tp">description</span> = <span class="str">"Krótki opis pluginu"</span>
+<span class="tp">hdev_min</span>    = <span class="str">"0.1.0"</span>
+
+[<span class="hl">syntax</span>]
+<span class="tp">extensions</span>  = <span class="str">".myext"</span>
+<span class="tp">comment</span>     = <span class="str">"#"</span>
+<span class="tp">keywords</span>    = <span class="str">"begin end if else"</span>
+
+[<span class="hl">hooks</span>]
+<span class="tp">on_save</span>     = <span class="str">"mylinter $FILE"</span>
+<span class="tp">on_open</span>     = <span class="str">"echo 'otwarto plik'"</span>
+<span class="lang-badge-inline">.hk</span></pre>
+
+<!-- ── CONFIG ── -->
+<h2 id="config" class="anchor">Konfiguracja (config.json)</h2>
+<p>
+  Wszystkie ustawienia hdev są przechowywane w pliku JSON.
+  Możesz je edytować przez panel Ustawień (<kbd>Ctrl+,</kbd>) lub bezpośrednio w pliku.
+</p>
+
+<h3 id="config-paths">Ścieżki plików</h3>
+<table>
+  <tr><th>Plik</th><th>Ścieżka</th><th>Zawartość</th></tr>
+  <tr><td>Konfiguracja</td><td><code>~/.cache/HackerOS/hdev/config.json</code></td><td>Wszystkie ustawienia edytora</td></tr>
+  <tr><td>Sesja</td><td><code>~/.cache/HackerOS/hdev/session.json</code></td><td>Ostatnio otwarte pliki, zakładki</td></tr>
+  <tr><td>Pluginy</td><td><code>~/.cache/HackerOS/hdev/plugins/</code></td><td>Pliki <code>.hk</code></td></tr>
+</table>
+
+<h3>Pełny plik config.json</h3>
+<pre>{
+  <span class="tp">"theme"</span>:             <span class="str">"hacker-dark"</span>,
+  <span class="tp">"font_size"</span>:         <span class="num">14</span>,
+  <span class="tp">"tab_size"</span>:          <span class="num">4</span>,
+  <span class="tp">"auto_save"</span>:         <span class="kw">true</span>,
+  <span class="tp">"show_line_numbers"</span>: <span class="kw">true</span>,
+  <span class="tp">"show_file_tree"</span>:    <span class="kw">true</span>,
+  <span class="tp">"word_wrap"</span>:         <span class="kw">false</span>,
+  <span class="tp">"last_opened_path"</span>:  <span class="kw">null</span>,
+  <span class="tp">"recent_files"</span>:      [<span class="str">"~/projects/main.hl"</span>],
+  <span class="tp">"installed_plugins"</span>: [<span class="str">"hl-support"</span>],
+  <span class="tp">"marketplace_url"</span>:   <span class="str">"https://marketplace.hackeros.dev"</span>,
+  <span class="tp">"terminal_shell"</span>:    <span class="str">"hsh"</span>
+}
+<span class="lang-badge-inline">json</span></pre>
+
+<table>
+  <tr><th>Klucz</th><th>Typ</th><th>Domyślnie</th><th>Opis</th></tr>
+  <tr><td><code>theme</code></td><td>string</td><td><code>"hacker-dark"</code></td><td>Nazwa motywu</td></tr>
+  <tr><td><code>tab_size</code></td><td>number</td><td><code>4</code></td><td>Liczba spacji na Tab</td></tr>
+  <tr><td><code>auto_save</code></td><td>bool</td><td><code>true</code></td><td>Automatyczne zapisywanie</td></tr>
+  <tr><td><code>show_line_numbers</code></td><td>bool</td><td><code>true</code></td><td>Numeracja linii</td></tr>
+  <tr><td><code>show_file_tree</code></td><td>bool</td><td><code>true</code></td><td>Widoczność drzewa plików</td></tr>
+  <tr><td><code>word_wrap</code></td><td>bool</td><td><code>false</code></td><td>Zawijanie długich linii</td></tr>
+  <tr><td><code>terminal_shell</code></td><td>string</td><td><code>"hsh"</code></td><td>Shell dla terminala</td></tr>
+  <tr><td><code>recent_files</code></td><td>array</td><td><code>[]</code></td><td>Ostatnio otwarte pliki (max 20)</td></tr>
+</table>
+
+<h3 id="session">Sesja</h3>
+<p>
+  Przy zamknięciu hdev zapisuje do <code>session.json</code> listę otwartych plików.
+  Przy następnym uruchomieniu bez argumentów hdev <strong>nie przywraca</strong> automatycznie
+  sesji — pliki są dostępne w sekcji <em>Recent</em> na Welcome Screen.
+</p>
+
+<!-- ── BUILD ── -->
+<h2 id="build" class="anchor">Budowanie ze źródeł</h2>
+
+<div class="dir-tree">
+<span class="dt-dir">hdev/</span>
+├── <span class="dt-file">Cargo.toml</span>          <span class="dt-cmt">— zależności Rust</span>
+├── <span class="dt-dir">src/</span>
+│   ├── <span class="dt-file">main.rs</span>         <span class="dt-cmt">— punkt wejścia</span>
+│   ├── <span class="dt-file">app.rs</span>          <span class="dt-cmt">— główna logika, pętla zdarzeń</span>
+│   ├── <span class="dt-file">ui.rs</span>           <span class="dt-cmt">— renderowanie TUI (Ratatui)</span>
+│   ├── <span class="dt-file">editor.rs</span>       <span class="dt-cmt">— bufor edytora, kursor, undo</span>
+│   ├── <span class="dt-file">highlight.rs</span>    <span class="dt-cmt">— silnik podświetlania składni</span>
+│   ├── <span class="dt-file">languages.rs</span>    <span class="dt-cmt">— definicje języków, słowa kluczowe</span>
+│   ├── <span class="dt-file">filetree.rs</span>     <span class="dt-cmt">— drzewo plików</span>
+│   ├── <span class="dt-file">terminal_panel.rs</span> <span class="dt-cmt">— panel terminala + hsh</span>
+│   ├── <span class="dt-file">marketplace.rs</span>  <span class="dt-cmt">— Marketplace (UI + placeholder)</span>
+│   ├── <span class="dt-file">plugins.rs</span>      <span class="dt-cmt">— system pluginów .hk</span>
+│   ├── <span class="dt-file">welcome.rs</span>      <span class="dt-cmt">— ekran powitalny</span>
+│   ├── <span class="dt-file">keybinds.rs</span>     <span class="dt-cmt">— mapowanie klawiszy → akcje</span>
+│   ├── <span class="dt-file">config.rs</span>       <span class="dt-cmt">— konfiguracja JSON</span>
+│   └── <span class="dt-file">utils.rs</span>        <span class="dt-cmt">— narzędzia pomocnicze</span>
+└── <span class="dt-dir">docs/</span>
+    └── <span class="dt-file">index.html</span>      <span class="dt-cmt">— ta dokumentacja</span></div>
+
+<pre><span class="cmt"># Debug (szybki build, bez optymalizacji)</span>
+<span class="fn">cargo</span> build
+
+<span class="cmt"># Release (pełna optymalizacja)</span>
+<span class="fn">cargo</span> build --release
+
+<span class="cmt"># Uruchom bez instalacji</span>
+<span class="fn">cargo</span> run -- /ścieżka/do/pliku
+
+<span class="cmt"># Sprawdź błędy (bez budowania)</span>
+<span class="fn">cargo</span> check
+
+<span class="cmt"># Linter</span>
+<span class="fn">cargo</span> clippy
+<span class="lang-badge-inline">bash</span></pre>
+
+<!-- ── ARCHITECTURE ── -->
+<h2 id="architecture" class="anchor">Architektura</h2>
+
+<p>hdev używa modelu <strong>event loop</strong> opartego na crossterm — bez async/tokio, co zapewnia deterministyczne zachowanie i minimalny overhead.</p>
+
+<div class="arch">
+  <div class="arch-row">
+    <div class="arch-box blue">crossterm Events<br><small>KeyEvent, Mouse, Resize</small></div>
+  </div>
+  <div class="arch-arrow">↓</div>
+  <div class="arch-row">
+    <div class="arch-box accent">App::handle_key()<br><small>app.rs — dispatch</small></div>
+  </div>
+  <div class="arch-arrow">↓</div>
+  <div class="arch-row">
+    <div class="arch-box">EditorBuffer<br><small>editor.rs</small></div>
+    <div class="arch-box">FileTree<br><small>filetree.rs</small></div>
+    <div class="arch-box">TerminalPanel<br><small>terminal_panel.rs</small></div>
+    <div class="arch-box">Marketplace<br><small>marketplace.rs</small></div>
+  </div>
+  <div class="arch-arrow">↓</div>
+  <div class="arch-row">
+    <div class="arch-box hl">Highlighter<br><small>highlight.rs</small></div>
+    <div class="arch-box hl">Language<br><small>languages.rs</small></div>
+    <div class="arch-box warn">Config / Session<br><small>config.rs</small></div>
+    <div class="arch-box warn">PluginManager<br><small>plugins.rs</small></div>
+  </div>
+  <div class="arch-arrow">↓</div>
+  <div class="arch-row">
+    <div class="arch-box blue">ui::draw() — Ratatui<br><small>ui.rs — Frame rendering</small></div>
+  </div>
+</div>
+
+<table>
+  <tr><th>Moduł</th><th>Odpowiedzialność</th></tr>
+  <tr><td><code>app.rs</code></td><td>Centralny stan aplikacji, event loop, dispatcher akcji</td></tr>
+  <tr><td><code>ui.rs</code></td><td>Całe renderowanie TUI — wszystkie ekrany, overlaye, statusbar</td></tr>
+  <tr><td><code>editor.rs</code></td><td>Bufor tekstu, kursor, scroll, undo/redo, wyszukiwanie</td></tr>
+  <tr><td><code>highlight.rs</code></td><td>Silnik podświetlania — tokenizacja na styl span-ów Ratatui</td></tr>
+  <tr><td><code>languages.rs</code></td><td>Definicje języków: rozszerzenia, słowa kluczowe, kolory, ikony</td></tr>
+  <tr><td><code>filetree.rs</code></td><td>Drzewo katalogów, expand/collapse, tworzenie/usuwanie plików</td></tr>
+  <tr><td><code>terminal_panel.rs</code></td><td>Emulacja terminala, wywołania hsh, historia komend</td></tr>
+  <tr><td><code>marketplace.rs</code></td><td>UI marketplace, lista pluginów, kategorie, placeholder install</td></tr>
+  <tr><td><code>plugins.rs</code></td><td>Skanowanie <code>.hk</code> plików, ładowanie metadanych</td></tr>
+  <tr><td><code>config.rs</code></td><td>Serializacja/deserializacja config.json i session.json</td></tr>
+  <tr><td><code>keybinds.rs</code></td><td>Mapowanie KeyEvent → Action enum</td></tr>
+  <tr><td><code>welcome.rs</code></td><td>Logika Welcome Screen, menu startowe</td></tr>
+</table>
+
+<!-- ── CONTRIBUTING ── -->
+<h2 id="contributing" class="anchor">Contributing</h2>
+<p>
+  hdev jest częścią ekosystemu HackerOS. Wkład jest mile widziany przez pull requesty na GitHubie.
+</p>
+
+<h3>Jak dodać nowy język?</h3>
+<ol style="padding-left:20px;line-height:2">
+  <li>Dodaj wariant do <code>enum Language</code> w <code>languages.rs</code></li>
+  <li>Dodaj rozszerzenie w <code>Language::from_extension()</code></li>
+  <li>Uzupełnij <code>display_name()</code>, <code>icon()</code>, <code>icon_color()</code>, <code>keywords()</code>, <code>comment_single()</code></li>
+  <li>Jeśli potrzebujesz specjalnego tokenizatora — dodaj funkcję w <code>highlight.rs</code> i wywołaj ją w <code>Highlighter::highlight_line()</code></li>
+  <li>Przetestuj otwierając plik z nowym rozszerzeniem</li>
+</ol>
+
+<div class="callout tip">
+  <strong>💡 Zgłoś bug / feature</strong>
+  Otwórz issue na <a href="https://github.com/HackerOS-Linux-System" target="_blank">GitHub → HackerOS-Linux-System</a>.
+  Dla błędów podaj: wersję hdev, terminal, OS, kroki do reprodukcji.
+</div>
+
+<br><br>
+<hr style="border:none;border-top:1px solid var(--border);margin:32px 0 24px">
+<p style="color:var(--fg2);font-size:12px">
+  hdev v0.1.0 &nbsp;·&nbsp; HackerOS Project &nbsp;·&nbsp;
+  Dokumentacja wygenerowana dla Hacker Lang, H#, i ekosystemu HackerOS &nbsp;·&nbsp;
+  <a href="https://hackeros-linux-system.github.io/HackerOS-Website/" target="_blank">hackeros website ↗</a>
+</p>
+
+</main>
+</div>
+
+<script>
+  // Highlight active sidebar link on scroll
+  const anchors = document.querySelectorAll('.anchor');
+  const links = document.querySelectorAll('.sidebar-section a');
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const active = document.querySelector(`.sidebar-section a[href="#${entry.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+
+  anchors.forEach(a => observer.observe(a));
+</script>
+</body>
+</html>
