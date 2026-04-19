@@ -1,0 +1,1468 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HackerOS — Dokumentacja Formatów</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="icon" type="image/png" href="../HackerOS.png">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,600;0,800;1,300&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c0f;
+    --bg2: #0f1218;
+    --bg3: #141820;
+    --panel: #181e28;
+    --panel2: #1e2530;
+    --border: #252d3a;
+    --border2: #2e3a4e;
+    --text: #c8d6e8;
+    --text2: #7a90a8;
+    --text3: #4a5a6e;
+    --green: #3dffa8;
+    --green2: #1fff8a;
+    --green-dim: rgba(61, 255, 168, 0.08);
+    --green-glow: rgba(61, 255, 168, 0.15);
+    --blue: #4ca8ff;
+    --blue-dim: rgba(76, 168, 255, 0.08);
+    --amber: #ffb830;
+    --amber-dim: rgba(255, 184, 48, 0.08);
+    --red: #ff5555;
+    --purple: #b97cff;
+    --cyan: #4df0ff;
+    --font-mono: 'JetBrains Mono', monospace;
+    --font-sans: 'Syne', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.7;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* === BACKGROUND GRID === */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(61,255,168,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(61,255,168,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* === SCANLINES === */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.08) 2px,
+      rgba(0,0,0,0.08) 4px
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrapper {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  /* === NAV === */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10, 12, 15, 0.9);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(12px);
+  }
+
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    height: 56px;
+    justify-content: space-between;
+  }
+
+  .nav-logo {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--green);
+    letter-spacing: 0.05em;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .nav-logo::before {
+    content: '>';
+    color: var(--text3);
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 0;
+    list-style: none;
+  }
+
+  .nav-links a {
+    display: block;
+    padding: 0 18px;
+    height: 56px;
+    line-height: 56px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--text2);
+    border-left: 1px solid var(--border);
+    transition: color 0.2s, background 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--green); background: var(--green-dim); }
+  .nav-links a.active { color: var(--green); }
+
+  /* === HERO === */
+  .hero {
+    padding: 100px 0 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--green-dim);
+    border: 1px solid rgba(61,255,168,0.2);
+    border-radius: 2px;
+    padding: 4px 12px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--green);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .hero-badge::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--green);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--green);
+    animation: pulse 2s ease infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(0.8); }
+  }
+
+  .hero h1 {
+    font-size: clamp(42px, 7vw, 80px);
+    font-weight: 800;
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    margin-bottom: 20px;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+
+  .hero h1 .accent { color: var(--green); }
+  .hero h1 .dim { color: var(--text3); }
+
+  .hero-sub {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--text2);
+    max-width: 520px;
+    line-height: 1.8;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+
+  .hero-sub strong { color: var(--text); font-weight: 600; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-glow {
+    position: absolute;
+    top: -60px; right: -100px;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(61,255,168,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  /* === SECTION HEADERS === */
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text3);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .section-label .tag {
+    color: var(--green);
+  }
+
+  h2.section-title {
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+    line-height: 1.1;
+  }
+
+  h2.section-title .dim { color: var(--text3); }
+
+  .section-desc {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text2);
+    max-width: 600px;
+    margin-bottom: 48px;
+    line-height: 1.8;
+  }
+
+  /* === DIVIDER === */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border2), transparent);
+    margin: 80px 0;
+  }
+
+  section { padding: 20px 0 60px; }
+
+  /* === CODE BLOCKS === */
+  .code-block {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 24px 0;
+    position: relative;
+  }
+
+  .code-block-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 18px;
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text3);
+    letter-spacing: 0.08em;
+  }
+
+  .code-block-header .lang {
+    color: var(--green);
+    font-weight: 600;
+  }
+
+  .code-block pre {
+    padding: 24px;
+    overflow-x: auto;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--text);
+    tab-size: 2;
+  }
+
+  .code-block pre .comment { color: var(--text3); font-style: italic; }
+  .code-block pre .section { color: var(--blue); font-weight: 600; }
+  .code-block pre .key { color: var(--text); }
+  .code-block pre .arrow { color: var(--text3); }
+  .code-block pre .str { color: var(--amber); }
+  .code-block pre .num { color: var(--purple); }
+  .code-block pre .bool { color: var(--cyan); }
+  .code-block pre .interpol { color: var(--green); }
+  .code-block pre .url { color: var(--blue); text-decoration: underline; text-decoration-color: rgba(76,168,255,0.3); }
+  .code-block pre .dash { color: var(--green); font-weight: 600; }
+  .code-block pre .err { color: var(--red); }
+
+  /* === FEATURE GRID === */
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin: 32px 0;
+  }
+
+  .feature-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 24px;
+    transition: border-color 0.2s, background 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--green), transparent);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .feature-card:hover { border-color: var(--border2); background: var(--panel2); }
+  .feature-card:hover::before { opacity: 1; }
+
+  .feature-icon {
+    font-family: var(--font-mono);
+    font-size: 20px;
+    margin-bottom: 14px;
+    color: var(--green);
+  }
+
+  .feature-card h3 {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    margin-bottom: 8px;
+    color: var(--text);
+  }
+
+  .feature-card p {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text2);
+    line-height: 1.7;
+  }
+
+  /* === SYNTAX TABLE === */
+  .syntax-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    margin: 24px 0;
+  }
+
+  .syntax-table th {
+    text-align: left;
+    padding: 10px 16px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--text2);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  .syntax-table td {
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    vertical-align: top;
+    background: var(--bg2);
+    transition: background 0.15s;
+  }
+
+  .syntax-table tr:hover td { background: var(--panel); }
+
+  .syntax-table td:first-child { color: var(--green); font-weight: 600; }
+  .syntax-table td:nth-child(2) { color: var(--amber); }
+  .syntax-table td:nth-child(3) { color: var(--text2); font-size: 12px; }
+
+  /* === ERROR CARDS === */
+  .error-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 24px 0;
+  }
+
+  @media (max-width: 700px) { .error-grid { grid-template-columns: 1fr; } }
+
+  .error-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 18px 20px;
+    border-left: 3px solid;
+  }
+
+  .error-card.parse { border-left-color: var(--red); }
+  .error-card.type { border-left-color: var(--amber); }
+  .error-card.ref { border-left-color: var(--blue); }
+  .error-card.cyclic { border-left-color: var(--purple); }
+  .error-card.conflict { border-left-color: var(--cyan); }
+  .error-card.missing { border-left-color: var(--text3); }
+
+  .error-card .err-name {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    letter-spacing: 0.05em;
+  }
+
+  .error-card.parse .err-name { color: var(--red); }
+  .error-card.type .err-name { color: var(--amber); }
+  .error-card.ref .err-name { color: var(--blue); }
+  .error-card.cyclic .err-name { color: var(--purple); }
+  .error-card.conflict .err-name { color: var(--cyan); }
+  .error-card.missing .err-name { color: var(--text3); }
+
+  .error-card p {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text2);
+    line-height: 1.6;
+  }
+
+  /* === INLINE CODE === */
+  code {
+    font-family: var(--font-mono);
+    font-size: 0.88em;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 1px 7px;
+    border-radius: 3px;
+    color: var(--green);
+  }
+
+  /* === CALLOUTS === */
+  .callout {
+    display: flex;
+    gap: 16px;
+    padding: 18px 20px;
+    border-radius: 4px;
+    margin: 20px 0;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 1.7;
+  }
+
+  .callout.info {
+    background: var(--blue-dim);
+    border: 1px solid rgba(76,168,255,0.2);
+    color: var(--text);
+  }
+
+  .callout.warn {
+    background: var(--amber-dim);
+    border: 1px solid rgba(255,184,48,0.2);
+    color: var(--text);
+  }
+
+  .callout.tip {
+    background: var(--green-dim);
+    border: 1px solid rgba(61,255,168,0.2);
+    color: var(--text);
+  }
+
+  .callout-icon { font-size: 18px; flex-shrink: 0; line-height: 1.7; }
+  .callout.info .callout-icon { color: var(--blue); }
+  .callout.warn .callout-icon { color: var(--amber); }
+  .callout.tip .callout-icon { color: var(--green); }
+
+  /* === COMPARISON === */
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 24px 0;
+  }
+
+  @media (max-width: 700px) { .compare { grid-template-columns: 1fr; } }
+
+  .compare-panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .compare-panel-header {
+    padding: 10px 18px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .compare-panel.hk .compare-panel-header { color: var(--green); background: var(--green-dim); }
+  .compare-panel.yaml .compare-panel-header { color: var(--text2); background: var(--bg2); }
+
+  .compare-panel pre {
+    padding: 20px;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    line-height: 1.8;
+    overflow-x: auto;
+  }
+
+  /* === HACKER FORMAT === */
+  .hacker-section {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 24px 0;
+  }
+
+  .hacker-header {
+    padding: 14px 20px;
+    background: var(--amber-dim);
+    border-bottom: 1px solid rgba(255,184,48,0.2);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--amber);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .hacker-header::before {
+    content: '◈';
+  }
+
+  .hacker-body {
+    padding: 24px;
+  }
+
+  .version-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 0;
+  }
+
+  .vtab {
+    padding: 10px 20px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    color: var(--text2);
+    transition: color 0.2s;
+    letter-spacing: 0.06em;
+  }
+
+  .vtab.active { color: var(--amber); border-bottom-color: var(--amber); }
+  .vtab:hover:not(.active) { color: var(--text); }
+
+  .vtab-content { display: none; padding: 24px; }
+  .vtab-content.active { display: block; }
+
+  /* === TYPE BADGES === */
+  .type-badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 2px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+  }
+
+  .type-badge.str { background: rgba(255,184,48,0.12); color: var(--amber); border: 1px solid rgba(255,184,48,0.25); }
+  .type-badge.num { background: rgba(185,124,255,0.12); color: var(--purple); border: 1px solid rgba(185,124,255,0.25); }
+  .type-badge.bool { background: rgba(77,240,255,0.12); color: var(--cyan); border: 1px solid rgba(77,240,255,0.25); }
+  .type-badge.arr { background: rgba(76,168,255,0.12); color: var(--blue); border: 1px solid rgba(76,168,255,0.25); }
+  .type-badge.map { background: rgba(61,255,168,0.12); color: var(--green); border: 1px solid rgba(61,255,168,0.25); }
+
+  /* === API SECTION === */
+  .api-grid {
+    display: grid;
+    gap: 12px;
+    margin: 24px 0;
+  }
+
+  .api-item {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 18px 20px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .api-sig {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--green);
+    font-weight: 600;
+    min-width: 180px;
+    flex-shrink: 0;
+  }
+
+  .api-desc {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text2);
+    line-height: 1.7;
+  }
+
+  .api-ret {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--purple);
+    margin-top: 4px;
+  }
+
+  /* === FOOTER === */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 0;
+    margin-top: 80px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text3);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  footer .footer-brand { color: var(--green); font-weight: 600; }
+
+  /* === SCROLLBAR === */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text3); }
+
+  /* === TOC === */
+  .toc {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 24px;
+    margin-bottom: 48px;
+    display: inline-block;
+    min-width: 280px;
+  }
+
+  .toc-title {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text3);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .toc ol {
+    list-style: none;
+    counter-reset: toc;
+    padding-left: 0;
+  }
+
+  .toc li {
+    counter-increment: toc;
+    margin-bottom: 8px;
+  }
+
+  .toc li::before {
+    content: counter(toc, decimal-leading-zero) '. ';
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text3);
+  }
+
+  .toc a {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text2);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+
+  .toc a:hover { color: var(--green); }
+
+  .toc .sub { margin-left: 20px; margin-top: 4px; counter-reset: toc-sub; }
+  .toc .sub li { counter-increment: toc-sub; }
+  .toc .sub li::before { content: counter(toc-sub, lower-alpha) '. '; }
+  .toc .sub a { font-size: 12px; }
+
+  p { color: var(--text2); font-size: 14px; line-height: 1.8; margin-bottom: 12px; }
+  p strong { color: var(--text); }
+
+  h3 {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin: 32px 0 12px;
+    color: var(--text);
+  }
+
+  h3 .dim { color: var(--text3); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrapper nav-inner">
+    <a href="#" class="nav-logo">HackerOS Docs</a>
+    <ul class="nav-links">
+      <li><a href="#hk" class="active">.hk</a></li>
+      <li><a href="#hacker">.hacker</a></li>
+      <li><a href="#api">API</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="wrapper">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-glow"></div>
+    <div class="hero-badge">HackerOS · Dokumentacja Formatów</div>
+    <h1>
+      <span class="accent">.hk</span> &amp;<br>
+      <span class="dim">.hacker</span>
+    </h1>
+    <p class="hero-sub">
+      Formaty plików konfiguracyjnych i metadanych ekosystemu <strong>HackerOS</strong>.<br>
+      <code>.hk</code> jest głównym formatem konfiguracji — potężnym zamiennikiem YAML.<br>
+      <code>.hacker</code> służy do opisu modułów i narzędzi w ekosystemie.
+    </p>
+  </div>
+
+  <!-- TOC -->
+  <div class="toc">
+    <div class="toc-title">// spis treści</div>
+    <ol>
+      <li><a href="#hk">Format .hk</a>
+        <ol class="sub">
+          <li><a href="#hk-intro">Wprowadzenie</a></li>
+          <li><a href="#hk-syntax">Składnia</a></li>
+          <li><a href="#hk-types">Typy wartości</a></li>
+          <li><a href="#hk-nesting">Zagnieżdżanie</a></li>
+          <li><a href="#hk-interpol">Interpolacja</a></li>
+          <li><a href="#hk-errors">Błędy</a></li>
+          <li><a href="#hk-vs-yaml">Porównanie z YAML</a></li>
+        </ol>
+      </li>
+      <li><a href="#hacker">Format .hacker</a></li>
+      <li><a href="#api">Rust API</a></li>
+    </ol>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- .HK FORMAT -->
+  <!-- ============================================================ -->
+
+  <section id="hk">
+    <div class="section-label"><span class="tag">01</span> format główny</div>
+    <h2 class="section-title">Format <span class="dim">.hk</span></h2>
+    <p class="section-desc">
+      Czytelny, hierarchiczny format konfiguracji dla ekosystemu HackerOS.
+      Zastępuje YAML wszędzie tam gdzie potrzebna jest jasna struktura, silne typowanie i wsparcie dla interpolacji.
+    </p>
+
+    <!-- INTRO -->
+    <div id="hk-intro">
+      <h3>Wprowadzenie</h3>
+      <p>
+        Pliki <code>.hk</code> składają się z <strong>sekcji</strong> (odpowiedniki tabel w TOML) zawierających
+        klucze i wartości. Każda sekcja tworzy zagnieżdżoną mapę. Format jest czytelny dla ludzi,
+        obsługuje komentarze, wielopoziomowe zagnieżdżanie i interpolację zmiennych.
+      </p>
+
+      <div class="callout tip">
+        <span class="callout-icon">◆</span>
+        <div>Format <code>.hk</code> jest używany jako główny plik konfiguracyjny
+        narzędzi, menedżera pakietów <strong>hpm</strong> oraz repozytoriów bibliotek HackerOS.</div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang">.hk</span>
+          <span>przykład podstawowy</span>
+        </div>
+        <pre><span class="comment">! To jest komentarz — zaczyna się od '!'</span>
+
+<span class="section">[metadata]</span>
+<span class="dash">-></span> <span class="key">name</span>    <span class="arrow">=></span> <span class="str">Hacker Lang</span>
+<span class="dash">-></span> <span class="key">version</span> <span class="arrow">=></span> <span class="num">1.5</span>
+<span class="dash">-></span> <span class="key">stable</span>  <span class="arrow">=></span> <span class="bool">true</span>
+<span class="dash">-></span> <span class="key">tags</span>    <span class="arrow">=></span> [<span class="str">"lang"</span>, <span class="str">"compiler"</span>, <span class="str">"hacker"</span>]
+
+<span class="section">[build]</span>
+<span class="dash">-></span> <span class="key">output</span>  <span class="arrow">=></span> <span class="str">"./dist"</span>
+<span class="dash">-></span> <span class="key">target</span>  <span class="arrow">=></span> <span class="str">linux-x86_64</span>
+<span class="dash">-></span> <span class="key">debug</span>   <span class="arrow">=></span> <span class="bool">false</span></pre>
+      </div>
+    </div>
+
+    <!-- SYNTAX -->
+    <div id="hk-syntax">
+      <h3>Składnia</h3>
+
+      <table class="syntax-table">
+        <thead>
+          <tr>
+            <th>Element</th>
+            <th>Składnia</th>
+            <th>Opis</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Komentarz</td>
+            <td>! treść</td>
+            <td>Linia zaczynająca się od <code>!</code> jest ignorowana</td>
+          </tr>
+          <tr>
+            <td>Sekcja</td>
+            <td>[nazwa]</td>
+            <td>Najwyższy poziom hierarchii, tworzy mapę klucz-wartość</td>
+          </tr>
+          <tr>
+            <td>Klucz L1</td>
+            <td>-> klucz => wartość</td>
+            <td>Klucz na pierwszym poziomie zagnieżdżenia</td>
+          </tr>
+          <tr>
+            <td>Klucz L2</td>
+            <td>--> klucz => wartość</td>
+            <td>Klucz na drugim poziomie zagnieżdżenia</td>
+          </tr>
+          <tr>
+            <td>Klucz L3</td>
+            <td>---> klucz => wartość</td>
+            <td>Klucz na trzecim poziomie (i głębiej)</td>
+          </tr>
+          <tr>
+            <td>Mapa inline</td>
+            <td>-> nazwa_mapy</td>
+            <td>Linia bez <code>=></code> — tworzy podmapy</td>
+          </tr>
+          <tr>
+            <td>Klucz kropkowy</td>
+            <td>-> a.b.c => val</td>
+            <td>Skrót tworzący zagnieżdżone mapy: <code>a → b → c</code></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout info">
+        <span class="callout-icon">ℹ</span>
+        <div>Klucze mogą zawierać litery, cyfry, <code>_</code>, <code>-</code> i <code>.</code> (kropki
+        tworzą automatyczne zagnieżdżenie). Klucz w cudzysłowach (<code>"klucz"</code>) jest traktowany
+        jako literał — kropki wewnątrz nie powodują zagnieżdżenia.</div>
+      </div>
+    </div>
+
+    <!-- TYPES -->
+    <div id="hk-types">
+      <h3>Typy wartości</h3>
+      <p>
+        Parser automatycznie wykrywa typ wartości. Dostępne typy:
+      </p>
+
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-icon"><span class="type-badge str">string</span></div>
+          <h3>Ciąg znaków</h3>
+          <p>
+            Z cudzysłowami lub bez. Wersja cytowana obsługuje sekwencje ucieczki:
+            <code>\n</code> <code>\t</code> <code>\r</code> <code>\"</code> <code>\\</code>
+          </p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><span class="type-badge num">number</span></div>
+          <h3>Liczba</h3>
+          <p>Liczby całkowite i zmiennoprzecinkowe. Parsowane jako <code>f64</code>. Przykłady: <code>42</code>, <code>3.14</code>, <code>-1.5</code></p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><span class="type-badge bool">bool</span></div>
+          <h3>Boolean</h3>
+          <p>Wartości <code>true</code> / <code>false</code> (bez rozróżniania wielkości liter). Np. <code>True</code>, <code>FALSE</code> są poprawne.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><span class="type-badge arr">array</span></div>
+          <h3>Tablica</h3>
+          <p>Lista wartości oddzielonych przecinkami w nawiasach kwadratowych. Elementy mogą być różnych typów. Np. <code>[1, "dwa", true]</code></p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><span class="type-badge map">map</span></div>
+          <h3>Mapa</h3>
+          <p>Zagnieżdżona struktura klucz-wartość. Tworzona przez podwójne strzałki lub klucze z kropkami.</p>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang">.hk</span>
+          <span>wszystkie typy</span>
+        </div>
+        <pre><span class="section">[types]</span>
+<span class="dash">-></span> <span class="key">tekst_plain</span>   <span class="arrow">=></span> <span class="str">hello world</span>
+<span class="dash">-></span> <span class="key">tekst_quoted</span>  <span class="arrow">=></span> <span class="str">"hello, world\nwith newline"</span>
+<span class="dash">-></span> <span class="key">liczba_int</span>    <span class="arrow">=></span> <span class="num">42</span>
+<span class="dash">-></span> <span class="key">liczba_float</span>  <span class="arrow">=></span> <span class="num">3.14</span>
+<span class="dash">-></span> <span class="key">flaga</span>         <span class="arrow">=></span> <span class="bool">true</span>
+<span class="dash">-></span> <span class="key">tablica</span>       <span class="arrow">=></span> [<span class="num">1</span>, <span class="num">2.5</span>, <span class="bool">true</span>, <span class="str">"cztery"</span>]</pre>
+      </div>
+    </div>
+
+    <!-- NESTING -->
+    <div id="hk-nesting">
+      <h3>Zagnieżdżanie</h3>
+      <p>
+        Głębokość zagnieżdżenia określa liczba myślników przed <code>></code>.
+        Każdy dodatkowy myślnik to jeden poziom głębiej. Alternatywnie można użyć
+        <strong>kropek w kluczu</strong> jako skrótu.
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang">.hk</span>
+          <span>zagnieżdżanie — styl myślnikowy</span>
+        </div>
+        <pre><span class="section">[libraries]</span>
+<span class="comment">! Mapa L1: "obsidian"</span>
+<span class="dash">-></span> <span class="key">obsidian</span>
+<span class="comment">!   Klucze L2 wewnątrz "obsidian"</span>
+<span class="dash">--></span> <span class="key">version</span>     <span class="arrow">=></span> <span class="num">0.2</span>
+<span class="dash">--></span> <span class="key">description</span> <span class="arrow">=></span> <span class="str">Biblioteka inspirowana zenity.</span>
+<span class="dash">--></span> <span class="key">authors</span>     <span class="arrow">=></span> [<span class="str">"HackerOS Team &lt;hackeros068@gmail.com&gt;"</span>]
+<span class="dash">--></span> <span class="key">so-download</span> <span class="arrow">=></span> <span class="url">https://github.com/Bytes-Repository/obsidian-lib/releases/download/v0.2/libobsidian_lib.so</span>
+
+<span class="dash">-></span> <span class="key">yuy</span>
+<span class="dash">--></span> <span class="key">version</span>     <span class="arrow">=></span> <span class="num">0.2</span>
+<span class="dash">--></span> <span class="key">description</span> <span class="arrow">=></span> <span class="str">Twórz ładne interfejsy CLI</span></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang">.hk</span>
+          <span>zagnieżdżanie — klucze z kropką</span>
+        </div>
+        <pre><span class="section">[config]</span>
+<span class="comment">! Tworzy config → database → host</span>
+<span class="dash">-></span> <span class="key">database.host</span>     <span class="arrow">=></span> <span class="str">localhost</span>
+<span class="dash">-></span> <span class="key">database.port</span>     <span class="arrow">=></span> <span class="num">5432</span>
+<span class="dash">-></span> <span class="key">database.ssl</span>      <span class="arrow">=></span> <span class="bool">true</span>
+
+<span class="comment">! Trzy poziomy głębokości</span>
+<span class="dash">-></span> <span class="key">server.tls.cert</span>   <span class="arrow">=></span> <span class="str">/etc/ssl/cert.pem</span>
+<span class="dash">-></span> <span class="key">server.tls.key</span>    <span class="arrow">=></span> <span class="str">/etc/ssl/key.pem</span></pre>
+      </div>
+
+      <div class="callout warn">
+        <span class="callout-icon">⚠</span>
+        <div>
+          Nie można mieszać klucza prostego i klucza z kropką wskazujących na to samo miejsce w drzewie.
+          <code>-> a => 1</code> a potem <code>-> a.b => 2</code> spowoduje błąd <strong>KeyConflict</strong>.
+        </div>
+      </div>
+    </div>
+
+    <!-- INTERPOLATION -->
+    <div id="hk-interpol">
+      <h3>Interpolacja</h3>
+      <p>
+        Wartości tekstowe mogą zawierać <strong>referencje</strong> do innych kluczy lub zmiennych środowiskowych,
+        używając składni <code>${...}</code>. Parser automatycznie rozwiązuje referencje, wykrywa cykle i błędne odwołania.
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang">.hk</span>
+          <span>interpolacja — referencje i env</span>
+        </div>
+        <pre><span class="section">[project]</span>
+<span class="dash">-></span> <span class="key">name</span>     <span class="arrow">=></span> <span class="str">MyApp</span>
+<span class="dash">-></span> <span class="key">version</span>  <span class="arrow">=></span> <span class="num">1.0</span>
+
+<span class="section">[paths]</span>
+<span class="comment">! Referencja do klucza z innej sekcji</span>
+<span class="dash">-></span> <span class="key">base</span>     <span class="arrow">=></span> <span class="str">/opt/</span><span class="interpol">${project.name}</span>
+<span class="dash">-></span> <span class="key">config</span>   <span class="arrow">=></span> <span class="interpol">${paths.base}</span><span class="str">/config</span>
+<span class="dash">-></span> <span class="key">logs</span>     <span class="arrow">=></span> <span class="interpol">${paths.base}</span><span class="str">/logs</span>
+
+<span class="comment">! Zmienna środowiskowa (prefix "env:")</span>
+<span class="dash">-></span> <span class="key">home</span>     <span class="arrow">=></span> <span class="interpol">${env:HOME}</span>
+<span class="dash">-></span> <span class="key">user</span>     <span class="arrow">=></span> <span class="interpol">${env:USER}</span>
+
+<span class="section">[data]</span>
+<span class="dash">-></span> <span class="key">numbers</span>  <span class="arrow">=></span> [<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>]
+<span class="comment">! Indeksowanie tablicy</span>
+<span class="dash">-></span> <span class="key">first</span>    <span class="arrow">=></span> <span class="interpol">${data.numbers[0]}</span></pre>
+      </div>
+
+      <table class="syntax-table">
+        <thead>
+          <tr><th>Składnia</th><th>Przykład</th><th>Opis</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>${sekcja.klucz}</td>
+            <td>${project.name}</td>
+            <td>Referencja do klucza w innej sekcji</td>
+          </tr>
+          <tr>
+            <td>${sekcja.mapa.klucz}</td>
+            <td>${build.opts.level}</td>
+            <td>Referencja głęboko zagnieżdżona</td>
+          </tr>
+          <tr>
+            <td>${sekcja.tablica[n]}</td>
+            <td>${data.list[0]}</td>
+            <td>Indeksowanie elementu tablicy (od 0)</td>
+          </tr>
+          <tr>
+            <td>${env:NAZWA}</td>
+            <td>${env:HOME}</td>
+            <td>Zmienna środowiskowa; pusta jeśli nieustawiona</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ERRORS -->
+    <div id="hk-errors">
+      <h3>Błędy parsowania</h3>
+      <p>Parser zwraca precyzyjne błędy z numerem linii i kolumny. Każdy błąd ma wbudowany hint wyświetlany w terminalu.</p>
+
+      <div class="error-grid">
+        <div class="error-card parse">
+          <div class="err-name">Parse { line, column, message }</div>
+          <p>Błąd składni. Zawiera numer linii i kolumny oraz opis problemu. Terminal pokazuje wskaźnik <code>^</code> w odpowiednim miejscu.</p>
+        </div>
+        <div class="error-card type">
+          <div class="err-name">TypeMismatch { expected, found }</div>
+          <p>Próba odczytu wartości jako nieodpowiedni typ. Np. odczyt liczby z klucza który jest mapą.</p>
+        </div>
+        <div class="error-card ref">
+          <div class="err-name">InvalidReference(path)</div>
+          <p>Interpolacja wskazuje na nieistniejący klucz. Sprawdź, czy ścieżka <code>sekcja.klucz</code> istnieje.</p>
+        </div>
+        <div class="error-card cyclic">
+          <div class="err-name">CyclicReference(path)</div>
+          <p>Dwie wartości interpolują się nawzajem. Np. <code>a => ${b}</code> i <code>b => ${a}</code>.</p>
+        </div>
+        <div class="error-card conflict">
+          <div class="err-name">KeyConflict(key)</div>
+          <p>Duplikat klucza lub konflikt między kluczem prostym a kluczem z kropką wskazującym to samo miejsce.</p>
+        </div>
+        <div class="error-card missing">
+          <div class="err-name">MissingField(name)</div>
+          <p>Wymagane pole nie zostało znalezione podczas deserializacji struktury.</p>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang">terminal</span>
+          <span>przykładowy output błędu</span>
+        </div>
+        <pre><span class="err">error: parse error</span>
+  → at 4:3
+
+  -< klucz => wartość
+    <span class="err">^</span>
+  <span class="err">Expected '>' after dashes</span>
+
+<span class="bool">Hint:</span> Try: key => value</pre>
+      </div>
+    </div>
+
+    <!-- VS YAML -->
+    <div id="hk-vs-yaml">
+      <h3>Porównanie z YAML</h3>
+
+      <div class="compare">
+        <div class="compare-panel hk">
+          <div class="compare-panel-header">.hk</div>
+          <pre style="color: var(--text); font-size:12.5px; line-height:1.8;"><span class="section">[server]</span>
+<span class="dash">-></span> <span class="key">host</span>    <span class="arrow">=></span> <span class="str">localhost</span>
+<span class="dash">-></span> <span class="key">port</span>    <span class="arrow">=></span> <span class="num">8080</span>
+<span class="dash">-></span> <span class="key">ssl</span>     <span class="arrow">=></span> <span class="bool">true</span>
+<span class="dash">-></span> <span class="key">tls</span>
+<span class="dash">--></span> <span class="key">cert</span>  <span class="arrow">=></span> <span class="str">/etc/cert.pem</span>
+<span class="dash">--></span> <span class="key">key</span>   <span class="arrow">=></span> <span class="str">/etc/key.pem</span>
+<span class="dash">-></span> <span class="key">allowed</span> <span class="arrow">=></span> [<span class="str">"GET"</span>, <span class="str">"POST"</span>]</pre>
+        </div>
+        <div class="compare-panel yaml">
+          <div class="compare-panel-header">YAML (równoważny)</div>
+          <pre style="color: var(--text2); font-size:12.5px; line-height:1.8;">server:
+  host: localhost
+  port: 8080
+  ssl: true
+  tls:
+    cert: /etc/cert.pem
+    key: /etc/key.pem
+  allowed:
+    - GET
+    - POST</pre>
+        </div>
+      </div>
+
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-icon">✓</div>
+          <h3>Brak znaczących wcięć</h3>
+          <p>Zagnieżdżenie przez myślniki — nie przez spacje. Brak błędów wynikających z tabów vs spacji.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">✓</div>
+          <h3>Wbudowana interpolacja</h3>
+          <p>Natywne <code>${ref}</code> i <code>${env:VAR}</code> bez zewnętrznych narzędzi. YAML nie ma tego wbudowanego.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">✓</div>
+          <h3>Precyzyjne błędy</h3>
+          <p>Błąd wskazuje linię, kolumnę i daje hint naprawczy. YAML-owe błędy bywają kryptyczne.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">✓</div>
+          <h3>Zachowana kolejność</h3>
+          <p>Parser używa <code>IndexMap</code> — kolejność kluczy w pliku jest zachowana przy serializacji.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ============================================================ -->
+  <!-- .HACKER FORMAT -->
+  <!-- ============================================================ -->
+
+  <section id="hacker">
+    <div class="section-label"><span class="tag">02</span> format pomocniczy</div>
+    <h2 class="section-title">Format <span class="dim">.hacker</span></h2>
+    <p class="section-desc">
+      Lekki format metadanych dla modułów, aplikacji i narzędzi w ekosystemie HackerOS.
+      Obsługuje trzy wersje o różnym poziomie szczegółowości.
+    </p>
+
+    <p>
+      Każdy plik <code>.hacker</code> to zawartość ujęta w nawiasy kwadratowe <code>[ ... ]</code>.
+      Parser automatycznie wykrywa wersję na podstawie struktury zawartości.
+    </p>
+
+    <div class="hacker-section">
+      <div class="hacker-header">Wersje formatu .hacker</div>
+      <div class="version-tabs">
+        <div class="vtab active" onclick="showTab('v1')">v1 — prosty</div>
+        <div class="vtab" onclick="showTab('v2')">v2 — sekcje</div>
+        <div class="vtab" onclick="showTab('v3')">v3 — metadane</div>
+      </div>
+
+      <div class="vtab-content active" id="tab-v1">
+        <p style="margin-bottom:16px;">Wersja 1 to fallback — dowolny tekst między nawiasami. Używana np. do oznaczenia numeru wersji lub krótkiego opisu.</p>
+        <div class="code-block" style="margin:0">
+          <div class="code-block-header"><span class="lang">.hacker v1</span><span>składnia</span></div>
+          <pre><span class="section">[ 0.2 ]</span>
+
+<span class="comment">! lub wieloliniowo:</span>
+<span class="section">[
+  dowolny tekst
+  w kilku liniach
+]</span></pre>
+        </div>
+      </div>
+
+      <div class="vtab-content" id="tab-v2">
+        <p style="margin-bottom:16px;">Wersja 2 zawiera nagłówek i sekcje z listami wartości. Używana np. w plikach repozytorium opisujących dostępne kernele, narzędzia, wersje.</p>
+        <div class="code-block" style="margin:0">
+          <div class="code-block-header"><span class="lang">.hacker v2</span><span>składnia</span></div>
+          <pre><span class="section">[</span>
+ <span class="key">Nazwa projektu</span>         <span class="comment">! nagłówek — linie przed pierwszą sekcją</span>
+
+ <span class="bool">jadro:</span>                  <span class="comment">! nazwa sekcji + dwukropek</span>
+ <span class="str">= xanmod</span>               <span class="comment">! wartość sekcji — prefix "= "</span>
+ <span class="str">= liquorix</span>
+
+ <span class="bool">narzedzia:</span>
+ <span class="str">= hpm</span>
+ <span class="str">= hl</span>
+
+ <span class="bool">wersje:</span>
+ <span class="str">= 0.1</span>
+ <span class="str">= 0.2</span>
+ <span class="str">= 1.1</span>
+<span class="section">]</span></pre>
+        </div>
+      </div>
+
+      <div class="vtab-content" id="tab-v3">
+        <p style="margin-bottom:16px;">Wersja 3 opisuje konkretny moduł lub aplikację przez cztery wymagane pola. Używana jako główny plik opisu aplikacji HackerOS.</p>
+        <div class="code-block" style="margin:0">
+          <div class="code-block-header"><span class="lang">.hacker v3</span><span>składnia</span></div>
+          <pre><span class="section">[</span>
+ <span class="str">= application</span>           <span class="comment">! nagłówek (= )</span>
+ <span class="blue">=> gui</span>                   <span class="comment">! typ aplikacji (=> )</span>
+ <span class="dash">-> aplication for cybersecurity</span>  <span class="comment">! opis (-> )</span>
+ <span class="dash">--> main.hacker</span>          <span class="comment">! ścieżka pliku (--> )</span>
+<span class="section">]</span></pre>
+        </div>
+        <table class="syntax-table" style="margin-top:20px">
+          <thead><tr><th>Prefix</th><th>Pole</th><th>Opis</th></tr></thead>
+          <tbody>
+            <tr><td>= </td><td>header</td><td>Nazwa / nagłówek modułu</td></tr>
+            <tr><td>=> </td><td>type</td><td>Typ: <code>gui</code>, <code>cli</code>, <code>lib</code>, itd.</td></tr>
+            <tr><td>-> </td><td>description</td><td>Krótki opis modułu</td></tr>
+            <tr><td>--> </td><td>file</td><td>Ścieżka do głównego pliku</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <h3>Wykrywanie wersji</h3>
+    <p>
+      Parser próbuje wersje w kolejności: <strong>v2 → v3 → v1</strong>.
+      V1 jest zawsze akceptowany jako fallback — jeśli plik nie pasuje do v2 ani v3,
+      cała zawartość trafia do pola <code>content</code>.
+    </p>
+
+    <div class="callout info">
+      <span class="callout-icon">ℹ</span>
+      <div>
+        Każdy plik <code>.hacker</code> musi zaczynać się od <code>[</code> i kończyć na <code>]</code> (z opcjonalnymi białymi znakami).
+        Pusty plik (<code>[]</code>) zwraca błąd <code>EmptyContent</code>.
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ============================================================ -->
+  <!-- RUST API -->
+  <!-- ============================================================ -->
+
+  <section id="api">
+    <div class="section-label"><span class="tag">03</span> programowe użycie</div>
+    <h2 class="section-title">Rust <span class="dim">API</span></h2>
+    <p class="section-desc">
+      Publiczne funkcje eksportowane przez crate <code>hk-parser</code> i <code>hacker-parser</code>.
+    </p>
+
+    <h3>hk-parser</h3>
+
+    <div class="api-grid">
+      <div class="api-item">
+        <div class="api-sig">parse_hk(input)</div>
+        <div>
+          <div class="api-desc">Parsuje string jako plik <code>.hk</code>. Zwraca <code>HkConfig</code> (IndexMap sekcji).</div>
+          <div class="api-ret">→ Result&lt;HkConfig, HkError&gt;</div>
+        </div>
+      </div>
+      <div class="api-item">
+        <div class="api-sig">load_hk_file(path)</div>
+        <div>
+          <div class="api-desc">Wczytuje plik z dysku i parsuje. Obsługuje <code>BufReader</code> wewnętrznie.</div>
+          <div class="api-ret">→ Result&lt;HkConfig, HkError&gt;</div>
+        </div>
+      </div>
+      <div class="api-item">
+        <div class="api-sig">resolve_interpolations(config)</div>
+        <div>
+          <div class="api-desc">Rozwiązuje wszystkie <code>${...}</code> w miejscu. Modyfikuje config. Wykrywa cykle.</div>
+          <div class="api-ret">→ Result&lt;(), HkError&gt;</div>
+        </div>
+      </div>
+      <div class="api-item">
+        <div class="api-sig">serialize_hk(config)</div>
+        <div>
+          <div class="api-desc">Serializuje <code>HkConfig</code> z powrotem do stringa w formacie <code>.hk</code>. Zachowuje kolejność.</div>
+          <div class="api-ret">→ String</div>
+        </div>
+      </div>
+      <div class="api-item">
+        <div class="api-sig">write_hk_file(path, config)</div>
+        <div>
+          <div class="api-desc">Zapisuje zserializowany config do pliku na dysku.</div>
+          <div class="api-ret">→ io::Result&lt;()&gt;</div>
+        </div>
+      </div>
+    </div>
+
+    <h3>Enum <code>HkValue</code> — metody</h3>
+
+    <div class="api-grid">
+      <div class="api-item">
+        <div class="api-sig">.as_string()</div>
+        <div>
+          <div class="api-desc">Konwertuje String, Number lub Bool na <code>String</code>. Błąd dla Array/Map.</div>
+          <div class="api-ret">→ Result&lt;String, HkError&gt;</div>
+        </div>
+      </div>
+      <div class="api-item">
+        <div class="api-sig">.as_number()</div>
+        <div>
+          <div class="api-desc">Zwraca wartość jako <code>f64</code>. Błąd jeśli wartość nie jest typu Number.</div>
+          <div class="api-ret">→ Result&lt;f64, HkError&gt;</div>
+        </div>
+      </div>
+      <div class="api-item">
+        <div class="api-sig">.as_bool()</div>
+        <div>
+          <div class="api-desc">Zwraca wartość jako <code>bool</code>. Błąd jeśli wartość nie jest typu Bool.</div>
+          <div class="api-ret">→ Result&lt;bool, HkError&gt;</div>
+        </div>
+      </div>
+      <div class="api-item">
+        <div class="api-sig">.as_array()</div>
+        <div>
+          <div class="api-desc">Zwraca referencję do <code>Vec&lt;HkValue&gt;</code>. Błąd jeśli to nie tablica.</div>
+          <div class="api-ret">→ Result&lt;&amp;Vec&lt;HkValue&gt;, HkError&gt;</div>
+        </div>
+      </div>
+      <div class="api-item">
+        <div class="api-sig">.as_map()</div>
+        <div>
+          <div class="api-desc">Zwraca referencję do <code>IndexMap&lt;String, HkValue&gt;</code>. Błąd jeśli to nie mapa.</div>
+          <div class="api-ret">→ Result&lt;&amp;IndexMap&lt;String, HkValue&gt;, HkError&gt;</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-block-header"><span class="lang">Rust</span><span>przykład użycia API</span></div>
+      <pre><span class="bool">use</span> hk_parser::{load_hk_file, resolve_interpolations};
+
+<span class="bool">fn</span> <span class="key">main</span>() -> Result&lt;(), Box&lt;dyn std::error::Error&gt;&gt; {
+    <span class="bool">let mut</span> config = load_hk_file(<span class="str">"config.hk"</span>)?;
+    
+    <span class="comment">// Rozwiąż interpolacje (env vars, referencje)</span>
+    resolve_interpolations(&amp;mut config)?;
+    
+    <span class="comment">// Odczyt zagnieżdżonej wartości</span>
+    <span class="bool">let</span> server = config[<span class="str">"server"</span>].as_map()?;
+    <span class="bool">let</span> host   = server[<span class="str">"host"</span>].as_string()?;
+    <span class="bool">let</span> port   = server[<span class="str">"port"</span>].as_number()? as u16;
+    
+    println!(<span class="str">"Connecting to {}:{}"</span>, host, port);
+    Ok(())
+}</pre>
+    </div>
+
+    <h3>hacker-parser</h3>
+
+    <div class="api-grid">
+      <div class="api-item">
+        <div class="api-sig">parse(input)</div>
+        <div>
+          <div class="api-desc">Parsuje string jako plik <code>.hacker</code>. Zwraca enum z wariantem V1, V2 lub V3.</div>
+          <div class="api-ret">→ Result&lt;HackerFile, ParseError&gt;</div>
+        </div>
+      </div>
+      <div class="api-item">
+        <div class="api-sig">parse_file(path)</div>
+        <div>
+          <div class="api-desc">Wczytuje plik z dysku i parsuje jako <code>.hacker</code>.</div>
+          <div class="api-ret">→ Result&lt;HackerFile, ParseError&gt;</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-block-header"><span class="lang">Rust</span><span>dopasowanie wariantu</span></div>
+      <pre><span class="bool">use</span> hacker_parser::{parse_file, HackerFile};
+
+<span class="bool">let</span> file = parse_file(<span class="str">"app.hacker"</span>)?;
+
+<span class="bool">match</span> file {
+    HackerFile::V1(v) => println!(<span class="str">"v1 content: {}"</span>, v.content),
+    HackerFile::V2(v) => {
+        println!(<span class="str">"header: {}"</span>, v.header);
+        <span class="bool">for</span> (section, values) in &amp;v.sections {
+            println!(<span class="str">"  {}: {:?}"</span>, section, values);
+        }
+    }
+    HackerFile::V3(v) => {
+        println!(<span class="str">"app: {} ({})"</span>, v.header, v.ty);
+        println!(<span class="str">"desc: {}"</span>, v.description);
+        println!(<span class="str">"entry: {}"</span>, v.file);
+    }
+}</pre>
+    </div>
+  </section>
+
+</div><!-- /wrapper -->
+
+<div class="wrapper">
+  <footer>
+    <span><span class="footer-brand">HackerOS</span> · dokumentacja formatów .hk i .hacker</span>
+    <span style="font-family: var(--font-mono); font-size: 10px; color: var(--text3);">hk-parser · hacker-parser</span>
+  </footer>
+</div>
+
+<script>
+  function showTab(v) {
+    document.querySelectorAll('.vtab').forEach((t, i) => {
+      t.classList.toggle('active', ['v1','v2','v3'][i] === v);
+    });
+    document.querySelectorAll('.vtab-content').forEach(c => {
+      c.classList.toggle('active', c.id === 'tab-' + v);
+    });
+  }
+
+  // Nav active link on scroll
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        navLinks.forEach(l => {
+          l.classList.toggle('active', l.getAttribute('href') === '#' + e.target.id);
+        });
+      }
+    });
+  }, { threshold: 0.3 });
+  sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>
