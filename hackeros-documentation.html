@@ -262,6 +262,15 @@
         .release-cycle p {
             margin-bottom: 0;
         }
+        .doc-link {
+            color: #4a9eff;
+            text-decoration: underline;
+            transition: opacity 0.2s;
+        }
+        .doc-link:hover {
+            opacity: 0.8;
+            text-decoration: none;
+        }
         @media (max-width: 768px) {
             .tabs-container {
                 flex-direction: column;
@@ -484,7 +493,7 @@
                         <li><strong>x86_64 (amd64)</strong> — pełne wsparcie</li>
                     </ul>
                 </div>
-                <!-- 3. Instalacja (zaktualizowany opis hasła live) -->
+                <!-- 3. Instalacja -->
                 <div id="installation" class="tab-pane">
                     <h2>3. Instalacja</h2>
                     <h3>Pobieranie</h3>
@@ -634,7 +643,7 @@ brew update</span> <button class="copy-button" data-command="brew install &lt;pa
                         <li><strong>Znak towarowy / nazwa:</strong> zastrzeżona przez projekt.</li>
                     </ul>
                 </div>
-                <!-- 9. Narzędzia i aplikacje -->
+                <!-- 9. Narzędzia i aplikacje (ROZBUDOWANA TABELA) -->
                 <div id="tools" class="tab-pane">
                     <h2>9. Narzędzia i aplikacje</h2>
                     <p>Oto pełna lista autorskich narzędzi i aplikacji HackerOS wraz z opisami i informacjami o instalacji:</p>
@@ -673,9 +682,16 @@ brew update</span> <button class="copy-button" data-command="brew install &lt;pa
                             <tr><td><code>HackerOS-Store</code></td><td>Sklep HackerOS z programami i dodatkami.</td><td>wbudowany we wszystkich edycjach</td></tr>
                             <tr><td><code>HackerOS-Containers</code></td><td>Własny system kontenerów – lekka, zintegrowana platforma do uruchamiania izolowanych środowisk.</td><td><code>hacker unpack hackeros-containers</code></td></tr>
                             <tr><td><code>HackerOS-Game-Mode</code></td><td>Nakładka optymalizująca system pod kątem grania, wyświetla FPS.</td><td><code>hacker unpack hackeros-game-mode</code></td></tr>
+                            <!-- NOWE DODANE WIERSZE zgodnie z wymaganiami -->
+                            <tr><td><code>.hk</code></td><td>Format konfiguracyjny jako alternatywa dla innych formatów stosowany głównie w HackerOS - dostępny w H#/Hacker Lang i Hacker Lang ++ oraz posiada biblioteki dla Rust.</td><td>Dostępny w H#/Hacker Lang/Hacker Lang++ i biblioteki dla Rust</td></tr>
+                            <tr><td>Blue Environment</td><td>Używane w edycji HackerOS Blue Edition z autorskim środowiskiem graficznym o nazwie Blue Environment.</td><td>Wbudowane natywnie w Blue Edition</td></tr>
+                            <tr><td><code>a</code></td><td>Proste narzędzie CLI do prostych aktualizacji systemu napisane w Hacker Lang.</td><td>Wbudowane we wszystkich edycjach</td></tr>
+                            <tr><td><code>GhostFS</code></td><td>Autorski system plików (Beta).</td><td>Nie dostępne (trwają prace nad GhostFS)</td></tr>
+                            <tr><td><code>HackerOS Cockpit</code></td><td>Panel sterowania systemu w przeglądarce.</td><td>Wbudowane we wszystkich edycjach</td></tr>
+                            <tr><td><code>hlpp/virus</code></td><td>Rozbudowana wersja Hacker Lang kompilowana do bytecodu, dostępne programowanie obiektowe.</td><td><code>hacker unpack hacker-lang++</code></td></tr>
                         </tbody>
                     </table>
-                    <p>dla tych zaawansowanych narzędzi jest specjalna dokumentacja (<a href="https://hackeros-linux-system.github.io/HackerOS-Website/tools-docs/index.html" target="_blank">tutaj</a>)</p>
+                    <p>Dla tych zaawansowanych narzędzi jest specjalna dokumentacja (<a href="https://hackeros-linux-system.github.io/HackerOS-Website/tools-docs/index.html" target="_blank">tutaj</a>).</p>
                 </div>
                 <!-- 10. Języki programowania -->
                 <div id="programming" class="tab-pane">
@@ -741,11 +757,12 @@ brew update</span> <button class="copy-button" data-command="brew install &lt;pa
                         Edycja <strong>Atomic</strong> nie posiada jeszcze stabilnego harmonogramu wydawniczego – jest w fazie intensywnego rozwoju.</p>
                     </div>
                 </div>
-                <!-- 12. Gaming -->
+                <!-- 12. Gaming (ROZBUDOWANY O LINK DO DOKUMENTACJI) -->
                 <div id="gaming" class="tab-pane">
                     <h2>12. Gaming</h2>
                     <p>HackerOS jest świetny do gier dzięki bazie Debian Testing oraz specjalnym narzędziom, takim jak <strong>Hacker Launcher</strong> (narzędzie do uruchamiania gier .exe za pomocą konkretnych wersji Proton). HackerOS posiada również specjalne edycje, takie jak <strong>Gaming Edition</strong> i <strong>NVIDIA Edition</strong>.</p>
-                    <p>Ponadto HackerOS ma własne gry, takie jak <strong>Bark Squadron</strong>, <strong>The Racer</strong>, <strong>Bit Jump</strong>, <strong>StarBlaster</strong> – możesz je uruchomić za pomocą <strong>HackerOS Games</strong>.</p>
+                    <p>Ponadto HackerOS ma własne gry, takie jak <strong>Bark Squadron</strong>, <strong>The Racer</strong>, <strong>Bit Jump</strong>, <strong>StarBlaster</strong> – możesz je uruchomić za pomocą <strong>HackerOS Games</strong>.<br>
+                    Dokumentacje dla HackerOS Games znajdziesz <a href="https://hackeros-linux-system.github.io/HackerOS-Website/hackeros-games/docs.html" target="_blank" class="doc-link" style="color: #4a9eff; text-decoration: underline;">tutaj</a>.</p>
                 </div>
                 <!-- 13. Galeria -->
                 <div id="gallery" class="tab-pane">
