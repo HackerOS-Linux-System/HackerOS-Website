@@ -4,782 +4,265 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>hpm — HackerOS Package Manager</title>
-<link rel="icon" type="image/png" href="../HackerOS.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="../HackerOS.png">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Bebas+Neue&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg:      #0a0c0f;
-  --bg2:     #0f1215;
-  --bg3:     #141820;
-  --border:  #1e2530;
-  --border2: #2a3344;
-  --green:   #39ff14;
-  --green2:  #1aff6e;
-  --cyan:    #00e5ff;
-  --yellow:  #ffd600;
-  --red:     #ff3d5a;
-  --dim:     #4a5568;
-  --text:    #c8d6e5;
-  --text2:   #7f8fa6;
-  --mono:    'JetBrains Mono', monospace;
-  --head:    'Space Mono', monospace;
-}
-
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-html { scroll-behavior: smooth; }
-
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--mono);
-  font-size: 14px;
-  line-height: 1.7;
-  overflow-x: hidden;
-}
-
-/* Scanline overlay */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(0,229,255,0.012) 2px,
-    rgba(0,229,255,0.012) 4px
-  );
-  pointer-events: none;
-  z-index: 9999;
-}
-
-/* ── Layout ───────────────────────────────────────────── */
-.layout { display: flex; min-height: 100vh; }
-
-/* ── Sidebar ──────────────────────────────────────────── */
-nav {
-  width: 260px;
-  min-width: 260px;
-  background: var(--bg2);
-  border-right: 1px solid var(--border);
-  padding: 32px 0;
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-}
-
-.nav-logo {
-  padding: 0 24px 28px;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 20px;
-}
-.nav-logo .logo-text {
-  font-family: var(--head);
-  font-size: 22px;
-  color: var(--green);
-  text-shadow: 0 0 20px rgba(57,255,20,0.5);
-  letter-spacing: -1px;
-}
-.nav-logo .logo-sub {
-  color: var(--text2);
-  font-size: 11px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  margin-top: 2px;
-}
-
-.nav-section {
-  padding: 6px 24px 4px;
-  font-size: 10px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--dim);
-  margin-top: 10px;
-}
-
-nav a {
-  display: block;
-  padding: 6px 24px 6px 32px;
-  color: var(--text2);
-  text-decoration: none;
-  font-size: 13px;
-  transition: color 0.15s, background 0.15s;
-  position: relative;
-}
-nav a::before {
-  content: '';
-  position: absolute;
-  left: 20px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: var(--dim);
-  transition: background 0.15s;
-}
-nav a:hover,
-nav a.active {
-  color: var(--cyan);
-  background: rgba(0,229,255,0.05);
-}
-nav a:hover::before,
-nav a.active::before { background: var(--cyan); }
-
-/* ── Main content ─────────────────────────────────────── */
-main {
-  flex: 1;
-  max-width: 900px;
-  padding: 60px 64px;
-}
-
-/* ── Hero ─────────────────────────────────────────────── */
-.hero {
-  margin-bottom: 72px;
-  padding-bottom: 48px;
-  border-bottom: 1px solid var(--border);
-}
-.hero-badge {
-  display: inline-block;
-  background: rgba(57,255,20,0.08);
-  border: 1px solid rgba(57,255,20,0.25);
-  color: var(--green);
-  font-size: 11px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  padding: 4px 12px;
-  border-radius: 2px;
-  margin-bottom: 20px;
-}
-.hero h1 {
-  font-family: var(--head);
-  font-size: 52px;
-  line-height: 1.05;
-  letter-spacing: -2px;
-  color: #fff;
-  margin-bottom: 8px;
-}
-.hero h1 span { color: var(--green); text-shadow: 0 0 30px rgba(57,255,20,0.4); }
-.hero-sub {
-  color: var(--text2);
-  font-size: 16px;
-  margin-bottom: 32px;
-  max-width: 560px;
-}
-.hero-cmd {
-  background: var(--bg3);
-  border: 1px solid var(--border2);
-  border-left: 3px solid var(--green);
-  padding: 16px 20px;
-  border-radius: 4px;
-  display: inline-block;
-  font-size: 15px;
-  color: var(--green);
-}
-.hero-cmd .prompt { color: var(--dim); }
-
-/* ── Sections ─────────────────────────────────────────── */
-section { margin-bottom: 64px; }
-
-h2 {
-  font-family: var(--head);
-  font-size: 24px;
-  color: #fff;
-  letter-spacing: -0.5px;
-  margin-bottom: 20px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-h2 .anchor { color: var(--dim); font-size: 16px; text-decoration: none; }
-h2 .anchor:hover { color: var(--cyan); }
-
-h3 {
-  font-family: var(--head);
-  font-size: 15px;
-  color: var(--cyan);
-  margin: 28px 0 10px;
-  letter-spacing: 0.5px;
-}
-
-p { color: var(--text); margin-bottom: 14px; max-width: 680px; }
-
-/* ── Code blocks ──────────────────────────────────────── */
-pre {
-  background: var(--bg3);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  padding: 20px 24px;
-  overflow-x: auto;
-  margin: 16px 0 24px;
-  position: relative;
-}
-pre::before {
-  content: attr(data-lang);
-  position: absolute;
-  top: 8px;
-  right: 12px;
-  font-size: 10px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: var(--dim);
-}
-code {
-  font-family: var(--mono);
-  font-size: 13px;
-  color: var(--text);
-}
-pre code { color: var(--text); }
-
-.hl-g  { color: var(--green); }
-.hl-c  { color: var(--cyan); }
-.hl-y  { color: var(--yellow); }
-.hl-r  { color: var(--red); }
-.hl-d  { color: var(--dim); }
-.hl-w  { color: #fff; }
-
-/* ── Command reference table ──────────────────────────── */
-.cmd-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-.cmd-table th {
-  text-align: left;
-  font-family: var(--head);
-  font-size: 11px;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: var(--dim);
-  padding: 8px 16px;
-  border-bottom: 1px solid var(--border2);
-}
-.cmd-table td {
-  padding: 10px 16px;
-  border-bottom: 1px solid var(--border);
-  vertical-align: top;
-}
-.cmd-table tr:last-child td { border-bottom: none; }
-.cmd-table tr:hover td { background: rgba(255,255,255,0.02); }
-.cmd-table .cmd { color: var(--green); font-weight: 500; white-space: nowrap; }
-.cmd-table .arg { color: var(--yellow); }
-.cmd-table .desc { color: var(--text2); font-size: 13px; }
-
-/* ── File tree ────────────────────────────────────────── */
-.tree {
-  background: var(--bg3);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  padding: 20px 24px;
-  margin: 16px 0 24px;
-  font-size: 13px;
-  line-height: 1.9;
-}
-.tree-dir  { color: var(--cyan); }
-.tree-file { color: var(--text); }
-.tree-opt  { color: var(--dim); }
-.tree-ann  { color: var(--dim); font-style: italic; }
-
-/* ── Info boxes ───────────────────────────────────────── */
-.box {
-  border-radius: 4px;
-  padding: 16px 20px;
-  margin: 16px 0 24px;
-  border-left: 3px solid;
-  font-size: 13px;
-}
-.box-note  { background: rgba(0,229,255,0.06); border-color: var(--cyan); color: var(--text); }
-.box-warn  { background: rgba(255,214,0,0.06); border-color: var(--yellow); color: var(--text); }
-.box-tip   { background: rgba(57,255,20,0.06); border-color: var(--green); color: var(--text); }
-
-.box strong { color: #fff; display: block; margin-bottom: 4px; font-family: var(--head); font-size: 11px; letter-spacing: 1px; text-transform: uppercase; }
-
-/* ── Badge row ────────────────────────────────────────── */
-.badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
-.badge {
-  font-size: 11px;
-  padding: 3px 10px;
-  border-radius: 2px;
-  border: 1px solid;
-  letter-spacing: 0.5px;
-}
-.badge-g { color: var(--green); border-color: rgba(57,255,20,0.3); background: rgba(57,255,20,0.07); }
-.badge-c { color: var(--cyan);  border-color: rgba(0,229,255,0.3); background: rgba(0,229,255,0.07); }
-.badge-y { color: var(--yellow);border-color: rgba(255,214,0,0.3); background: rgba(255,214,0,0.07); }
-
-/* ── Comparison table ─────────────────────────────────── */
-.compare { width: 100%; border-collapse: collapse; margin: 20px 0; }
-.compare th {
-  font-family: var(--head);
-  font-size: 12px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  padding: 10px 16px;
-  border-bottom: 1px solid var(--border2);
-  color: var(--dim);
-}
-.compare th:first-child { color: var(--text2); }
-.compare th.hl { color: var(--green); }
-.compare td {
-  padding: 9px 16px;
-  border-bottom: 1px solid var(--border);
-  font-size: 13px;
-  color: var(--text2);
-}
-.compare td:first-child { color: var(--text); }
-.compare .yes { color: var(--green); }
-.compare .no  { color: var(--red); }
-.compare .par { color: var(--yellow); }
-
-/* ── Footer ───────────────────────────────────────────── */
-footer {
-  margin-top: 80px;
-  padding-top: 24px;
-  border-top: 1px solid var(--border);
-  color: var(--dim);
-  font-size: 12px;
-}
-
-/* ── Scrollbar ────────────────────────────────────────── */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: var(--bg2); }
-::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--dim); }
-
-@media (max-width: 900px) {
-  nav { display: none; }
-  main { padding: 32px 24px; }
-  .hero h1 { font-size: 36px; }
-}
+:root{--bg:#080a0d;--bg2:#0d1017;--bg3:#111520;--border:#1c2030;--border2:#252d42;--red:#ff2040;--red2:#ff4060;--red3:#ff6080;--cyan:#00d4ff;--yellow:#ffd000;--green:#00ff88;--dim:#3a4558;--text:#c5d3e8;--text2:#6b7f99;--mono:'JetBrains Mono',monospace;--head:'Bebas Neue',sans-serif}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:13.5px;line-height:1.75;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(255,32,64,0.015) 3px,rgba(255,32,64,0.015) 4px);pointer-events:none;z-index:9999}
+.layout{display:flex;min-height:100vh}
+nav{width:250px;min-width:250px;background:var(--bg2);border-right:1px solid var(--border);position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column}
+.nav-logo{padding:28px 24px 24px;border-bottom:1px solid var(--border);background:linear-gradient(135deg,rgba(255,32,64,0.12) 0%,transparent 100%)}
+.logo-big{font-family:var(--head);font-size:48px;line-height:1;color:var(--red);text-shadow:0 0 40px rgba(255,32,64,0.6),0 0 80px rgba(255,32,64,0.2);letter-spacing:2px}
+.logo-sub{color:var(--text2);font-size:10px;letter-spacing:3px;text-transform:uppercase;margin-top:4px}
+.logo-ver{color:var(--red3);font-size:11px;margin-top:6px}
+.nav-section{padding:14px 20px 4px;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--dim)}
+nav a{display:block;padding:5px 20px 5px 28px;color:var(--text2);text-decoration:none;font-size:12px;transition:all .15s;position:relative;border-left:2px solid transparent}
+nav a::before{content:'›';position:absolute;left:14px;color:var(--dim)}
+nav a:hover{color:var(--text);background:rgba(255,32,64,0.04)}
+nav a.active{color:var(--red);border-left-color:var(--red);background:rgba(255,32,64,0.07)}
+nav a.active::before{color:var(--red)}
+main{flex:1;max-width:860px;padding:0 64px 80px}
+.hero{padding:64px 0 56px;border-bottom:1px solid var(--border);margin-bottom:64px;position:relative;overflow:hidden}
+.hero::before{content:'HPM';position:absolute;right:-20px;top:-20px;font-family:var(--head);font-size:200px;color:rgba(255,32,64,0.04);pointer-events:none;user-select:none}
+.hero-tag{display:inline-flex;align-items:center;gap:6px;background:rgba(255,32,64,0.1);border:1px solid rgba(255,32,64,0.3);color:var(--red);font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:4px 12px;border-radius:2px;margin-bottom:24px}
+.hero-tag::before{content:'◆';font-size:8px}
+.hero h1{font-family:var(--head);font-size:64px;line-height:1;letter-spacing:3px;color:#fff;margin-bottom:6px}
+.hero h1 span{color:var(--red);text-shadow:0 0 30px rgba(255,32,64,0.5)}
+.hero-desc{color:var(--text2);font-size:14px;margin-bottom:32px;max-width:560px}
+.hero-cmd{background:var(--bg3);border:1px solid var(--border2);border-left:3px solid var(--red);padding:14px 20px;border-radius:3px;display:inline-block;font-size:14px}
+.prompt{color:var(--dim)}.cmd-s{color:var(--red)}.arg-s{color:var(--text)}
+section{margin-bottom:72px}
+h2{font-family:var(--head);font-size:28px;color:#fff;letter-spacing:2px;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.h2-num{font-size:11px;color:var(--red);letter-spacing:2px;border:1px solid rgba(255,32,64,0.3);padding:2px 8px;border-radius:2px;font-family:var(--mono)}
+h2 a{color:var(--dim);text-decoration:none;font-size:16px;margin-left:auto}
+h2 a:hover{color:var(--red)}
+h3{font-size:13px;color:var(--red2);letter-spacing:1px;margin:28px 0 10px;text-transform:uppercase}
+p{color:var(--text);margin-bottom:14px;max-width:680px}
+pre{background:var(--bg3);border:1px solid var(--border);border-radius:3px;padding:20px 24px;overflow-x:auto;margin:14px 0 24px;position:relative}
+pre::before{content:attr(data-lang);position:absolute;top:8px;right:12px;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--dim)}
+code{font-family:var(--mono);font-size:12.5px;color:var(--text)}
+.hl-r{color:var(--red)}.hl-c{color:var(--cyan)}.hl-y{color:var(--yellow)}.hl-g{color:var(--green)}.hl-d{color:var(--dim)}.hl-w{color:#fff;font-weight:600}
+ci{display:inline;background:rgba(255,32,64,0.1);border:1px solid rgba(255,32,64,0.2);padding:1px 6px;border-radius:2px;font-size:12px;color:var(--red2);font-family:var(--mono)}
+.tbl{width:100%;border-collapse:collapse;margin:16px 0 24px}
+.tbl th{text-align:left;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);padding:8px 14px;border-bottom:1px solid var(--border2)}
+.tbl td{padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:rgba(255,32,64,0.03)}
+.tbl .tc{color:var(--red2);font-weight:500;white-space:nowrap}.tbl .ta{color:var(--yellow)}.tbl .td{color:var(--text2);font-size:12.5px}
+.yes{color:var(--green)}.no{color:var(--red)}.par{color:var(--yellow)}
+.box{border-radius:3px;padding:14px 18px;margin:14px 0 20px;border-left:3px solid;font-size:13px;max-width:680px}
+.box-n{background:rgba(0,212,255,0.06);border-color:var(--cyan)}.box-w{background:rgba(255,208,0,0.06);border-color:var(--yellow)}.box-t{background:rgba(255,32,64,0.06);border-color:var(--red)}
+.box strong{display:block;margin-bottom:4px;font-size:9px;letter-spacing:2px;text-transform:uppercase}
+.box-n strong{color:var(--cyan)}.box-w strong{color:var(--yellow)}.box-t strong{color:var(--red)}
+.tree{background:var(--bg3);border:1px solid var(--border);border-radius:3px;padding:20px 24px;margin:14px 0 24px;font-size:12.5px;line-height:2}
+.td2{color:var(--red2)}.tf{color:var(--text)}.ta2{color:var(--dim);font-style:italic}.to{color:var(--dim)}
+.badges{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px}
+.badge{font-size:10px;padding:3px 10px;border-radius:2px;border:1px solid;letter-spacing:.5px}
+.br{color:var(--red);border-color:rgba(255,32,64,0.3);background:rgba(255,32,64,0.08)}.bc{color:var(--cyan);border-color:rgba(0,212,255,0.3);background:rgba(0,212,255,0.08)}.by{color:var(--yellow);border-color:rgba(255,208,0,0.3);background:rgba(255,208,0,0.08)}.bg{color:var(--green);border-color:rgba(0,255,136,0.3);background:rgba(0,255,136,0.08)}
+.ext{color:var(--red2);text-decoration:none;border-bottom:1px solid rgba(255,64,96,0.3)}
+.ext:hover{color:var(--red);border-bottom-color:var(--red)}
+ul.feat{color:var(--text2);margin:0 0 20px 20px;line-height:2}
+footer{margin-top:80px;padding-top:24px;border-top:1px solid var(--border);color:var(--dim);font-size:11px}
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:var(--red)}
+@media(max-width:860px){nav{display:none}main{padding:32px 20px}.hero h1{font-size:44px}}
 </style>
 </head>
 <body>
 <div class="layout">
-
-<!-- ── Sidebar ─────────────────────────────────────────── -->
 <nav>
   <div class="nav-logo">
-    <div class="logo-text">hpm</div>
+    <div class="logo-big">HPM</div>
     <div class="logo-sub">HackerOS Package Manager</div>
+    <div class="logo-ver">v0.8.0 &middot; HackerOS Ecosystem</div>
   </div>
-
   <span class="nav-section">Getting Started</span>
   <a href="#overview">Overview</a>
-  <a href="#install-hpm">Installing hpm</a>
   <a href="#quickstart">Quickstart</a>
-
   <span class="nav-section">Usage</span>
   <a href="#commands">Command Reference</a>
-  <a href="#search-install">Search &amp; Install</a>
   <a href="#versions">Version Management</a>
   <a href="#sandbox">Sandbox</a>
-
   <span class="nav-section">Packaging</span>
   <a href="#repo-layout">Repository Layout</a>
-  <a href="#info-hk">info.hk Manifest</a>
+  <a href="#manifest">info.hk Manifest</a>
   <a href="#build-toml">build.toml</a>
+  <a href="#gui-apps">GUI Applications</a>
   <a href="#publish">Publishing</a>
-
   <span class="nav-section">Reference</span>
   <a href="#repo-json">repo.json</a>
   <a href="#store">Store Layout</a>
   <a href="#compare">vs AUR / PPA</a>
+  <a href="#hk-format">HK Format &#8599;</a>
 </nav>
-
-<!-- ── Main ───────────────────────────────────────────── -->
 <main>
 
-<!-- Hero -->
 <div class="hero">
-  <div class="hero-badge">v0.8.0 · HackerOS Linux</div>
-  <h1><span>hpm</span> — HackerOS<br>Package Manager</h1>
-  <p class="hero-sub">
-    A git-native, sandboxed package manager for HackerOS and Debian-based systems.
-    No binary archives — packages are git repositories with tagged versions.
-  </p>
-  <div class="hero-cmd">
-    <span class="prompt">$ </span>hpm install &lt;package&gt;
-  </div>
+  <div class="hero-tag">Git-native &middot; Sandboxed &middot; HackerOS Ecosystem</div>
+  <h1><span>HPM</span></h1>
+  <p class="hero-desc">HackerOS Package Manager &mdash; the native package manager of HackerOS. No binary archives. Packages are git repositories. Versions are git tags. Built exclusively for the HackerOS ecosystem.</p>
+  <div class="hero-cmd"><span class="prompt">$ </span><span class="cmd-s">hpm</span> <span class="arg-s">install &lt;package&gt;</span></div>
 </div>
 
-<!-- Overview -->
 <section id="overview">
-  <h2>Overview <a href="#overview" class="anchor">#</a></h2>
+  <h2><span class="h2-num">01</span> OVERVIEW <a href="#overview">#</a></h2>
   <div class="badges">
-    <span class="badge badge-g">Git-native</span>
-    <span class="badge badge-c">Sandboxed</span>
-    <span class="badge badge-y">Debian-compatible</span>
-    <span class="badge badge-g">No binary archives</span>
-    <span class="badge badge-c">Semver tags</span>
+    <span class="badge br">Git-native</span>
+    <span class="badge bc">Linux namespaces</span>
+    <span class="badge by">Landlock LSM</span>
+    <span class="badge bg">HackerOS Ecosystem</span>
+    <span class="badge br">Side-by-side versions</span>
+    <span class="badge bc">GUI app support</span>
   </div>
-  <p>
-    <strong style="color:#fff">hpm</strong> is a modern package manager built for HackerOS.
-    Each package is a plain git repository. Versions are git tags.
-    There are no <code>.deb</code> or <code>.hpm</code> archives — hpm clones the repo,
-    reads <code>info.hk</code>, optionally runs a build step, and copies
-    <code>contents/</code> into a content-addressable store.
-  </p>
-  <p>
-    Every package runs inside a Linux namespace sandbox (user, mount, UTS, PID, cgroup
-    namespaces + Landlock filesystem restrictions). Network, GUI, and device access are
-    opt-in per-package via <code>info.hk</code>.
-  </p>
-
-  <h3>How it works</h3>
+  <p>Each package is a plain git repository with an <ci>info.hk</ci> manifest and a <ci>contents/</ci> directory, or a <ci>build.toml</ci> describing how to obtain the binary. No <ci>.deb</ci> archives &mdash; just git.</p>
+  <p>Every package runs in an isolated environment using Linux namespaces + Landlock. GUI apps get X11/Wayland/D-Bus access and are registered in the system app menu automatically.</p>
+  <h3>Install flow</h3>
   <pre data-lang="flow"><code><span class="hl-d"># 1. Central index</span>
-repo.json  ──►  { "mypkg": { "repo": "https://github.com/user/mypkg" } }
+{ "mypkg": { "repo": "https://github.com/user/mypkg" } }
 
-<span class="hl-d"># 2. Install flow</span>
-hpm install mypkg
-  └─ fetch repo.json                 <span class="hl-d">(HTTP)</span>
-  └─ clone git repo                  <span class="hl-d">(git2)</span>
-  └─ checkout latest semver tag      <span class="hl-d">(blob-by-blob, no conflict)</span>
-  └─ read info.hk                    <span class="hl-d">(hk-parser)</span>
-  └─ install apt deps if needed
-  └─ run build.toml / build.info     <span class="hl-d">(in sandbox)</span>
-  └─ copy contents/ → store          <span class="hl-d">(/usr/lib/HackerOS/hpm/store/)</span>
-  └─ create /usr/bin wrapper         <span class="hl-d">(calls: hpm run pkg bin)</span>
-  └─ update state.json               <span class="hl-d">(/var/lib/hpm/state.json)</span>
+<span class="hl-d"># 2. hpm install mypkg</span>
+  <span class="hl-r">&#8594;</span> fetch repo.json              <span class="hl-d">(HTTP, no clone)</span>
+  <span class="hl-r">&#8594;</span> clone git repo
+  <span class="hl-r">&#8594;</span> checkout latest semver tag
+  <span class="hl-r">&#8594;</span> read info.hk
+  <span class="hl-r">&#8594;</span> install apt deps
+  <span class="hl-r">&#8594;</span> run build.toml / build.info
+  <span class="hl-r">&#8594;</span> copy contents/ &#8594; store
+  <span class="hl-r">&#8594;</span> install .desktop + icon      <span class="hl-d">(GUI apps)</span>
+  <span class="hl-r">&#8594;</span> create /usr/bin wrapper
 
-<span class="hl-d"># 3. Run flow</span>
-$ mypkg
-  └─ /usr/bin/mypkg  →  hpm run mypkg mypkg
-  └─ setup Linux namespaces + Landlock
-  └─ exec /app/bin/mypkg</code></pre>
+<span class="hl-d"># 3. Running</span>
+$ mypkg &#8594; hpm run mypkg &#8594; sandbox &#8594; exec</code></pre>
 </section>
 
-<!-- Installing hpm -->
-<section id="install-hpm">
-  <h2>Installing hpm <a href="#install-hpm" class="anchor">#</a></h2>
-  <pre data-lang="sh"><code><span class="hl-d"># Download and install the hpm binary</span>
-<span class="hl-g">sudo</span> curl -L https://github.com/HackerOS-Linux-System/HackerOS-Package-Manager/releases/latest/download/hpm \
-  -o /usr/bin/hpm
-<span class="hl-g">sudo</span> chmod +x /usr/bin/hpm
-
-<span class="hl-d"># Verify</span>
-hpm --version</code></pre>
-
-  <div class="box box-note">
-    <strong>Note</strong>
-    hpm requires root (sudo) for install/remove operations because it writes to
-    <code>/usr/lib/HackerOS/hpm/store/</code> and <code>/usr/bin/</code>.
-    Search, info, list, and query commands work without root.
-  </div>
-</section>
-
-<!-- Quickstart -->
 <section id="quickstart">
-  <h2>Quickstart <a href="#quickstart" class="anchor">#</a></h2>
-  <pre data-lang="sh"><code><span class="hl-d"># Refresh the package index</span>
-<span class="hl-g">sudo</span> hpm refresh
-
-<span class="hl-d"># Search for a package</span>
-hpm search editor
-
-<span class="hl-d"># Show package details</span>
-hpm info hedit
-
-<span class="hl-d"># Install a package (latest version)</span>
-<span class="hl-g">sudo</span> hpm install hedit
-
-<span class="hl-d"># Install a specific version</span>
-<span class="hl-g">sudo</span> hpm install hedit@2.1.0
-
-<span class="hl-d"># Run it</span>
-hedit myfile.txt
-
-<span class="hl-d"># List installed packages</span>
-hpm list
-
-<span class="hl-d"># Update all packages</span>
-<span class="hl-g">sudo</span> hpm update
-
-<span class="hl-d"># Remove a package</span>
-<span class="hl-g">sudo</span> hpm remove hedit</code></pre>
+  <h2><span class="h2-num">02</span> QUICKSTART <a href="#quickstart">#</a></h2>
+  <pre data-lang="sh"><code>sudo hpm refresh          <span class="hl-d"># update package index</span>
+hpm search editor         <span class="hl-d"># find packages</span>
+hpm info hedit            <span class="hl-d"># show package details</span>
+sudo hpm install hedit    <span class="hl-d"># install</span>
+hedit myfile.txt          <span class="hl-d"># use it</span>
+sudo hpm update           <span class="hl-d"># update all packages</span>
+sudo hpm remove hedit     <span class="hl-d"># remove</span></code></pre>
+  <div class="box box-n"><strong>Root required</strong>Install, remove, update and upgrade commands require <ci>sudo</ci>. Search, info, list and query commands work as normal user.</div>
 </section>
 
-<!-- Commands -->
 <section id="commands">
-  <h2>Command Reference <a href="#commands" class="anchor">#</a></h2>
-
+  <h2><span class="h2-num">03</span> COMMAND REFERENCE <a href="#commands">#</a></h2>
   <h3>Package Commands</h3>
-  <table class="cmd-table">
+  <table class="tbl">
     <tr><th>Command</th><th>Description</th></tr>
-    <tr><td class="cmd">hpm refresh</td><td class="desc">Download the package index and pre-fetch metadata for all packages</td></tr>
-    <tr><td class="cmd">hpm install <span class="arg">&lt;pkg&gt;[@&lt;ver&gt;]...</span></td><td class="desc">Install one or more packages, resolving hpm and apt dependencies automatically</td></tr>
-    <tr><td class="cmd">hpm remove <span class="arg">&lt;pkg&gt;[@&lt;ver&gt;]</span></td><td class="desc">Remove a package or a specific version</td></tr>
-    <tr><td class="cmd">hpm update</td><td class="desc">Update all non-pinned packages to their latest tagged version</td></tr>
-    <tr><td class="cmd">hpm upgrade</td><td class="desc">Upgrade hpm itself</td></tr>
-    <tr><td class="cmd">hpm switch <span class="arg">&lt;pkg&gt; &lt;ver&gt;</span></td><td class="desc">Switch the active version of an installed package</td></tr>
+    <tr><td class="tc">hpm refresh</td><td class="td">Download package index and pre-fetch metadata</td></tr>
+    <tr><td class="tc">hpm install <span class="ta">&lt;pkg&gt;[@&lt;ver&gt;]...</span></td><td class="td">Install packages, resolve hpm and apt dependencies automatically</td></tr>
+    <tr><td class="tc">hpm remove <span class="ta">&lt;pkg&gt;[@&lt;ver&gt;]</span></td><td class="td">Remove a package or a specific installed version</td></tr>
+    <tr><td class="tc">hpm update</td><td class="td">Update all non-pinned packages to latest version</td></tr>
+    <tr><td class="tc">hpm upgrade</td><td class="td">Upgrade hpm itself</td></tr>
+    <tr><td class="tc">hpm switch <span class="ta">&lt;pkg&gt; &lt;ver&gt;</span></td><td class="td">Switch the active version of an installed package</td></tr>
   </table>
-
   <h3>Query Commands</h3>
-  <table class="cmd-table">
+  <table class="tbl">
     <tr><th>Command</th><th>Description</th></tr>
-    <tr><td class="cmd">hpm search <span class="arg">&lt;query&gt;</span></td><td class="desc">Search by name or description — fast HTTP fetch, never clones git</td></tr>
-    <tr><td class="cmd">hpm info <span class="arg">&lt;package&gt;</span></td><td class="desc">Show full package details: version, author, license, description, build type</td></tr>
-    <tr><td class="cmd">hpm list</td><td class="desc">List all installed packages and their versions</td></tr>
-    <tr><td class="cmd">hpm outdated</td><td class="desc">Show packages that have newer versions available</td></tr>
-    <tr><td class="cmd">hpm deps <span class="arg">&lt;pkg&gt;[@&lt;ver&gt;]</span></td><td class="desc">Print the full dependency tree for a package</td></tr>
-    <tr><td class="cmd">hpm verify <span class="arg">&lt;package&gt;</span></td><td class="desc">Verify installed package integrity against stored SHA-256 checksum</td></tr>
+    <tr><td class="tc">hpm search <span class="ta">&lt;query&gt;</span></td><td class="td">Search by name or description &mdash; HTTP only, never clones git</td></tr>
+    <tr><td class="tc">hpm info <span class="ta">&lt;package&gt;</span></td><td class="td">Show full package details</td></tr>
+    <tr><td class="tc">hpm list</td><td class="td">List all installed packages with versions and pinned status</td></tr>
+    <tr><td class="tc">hpm outdated</td><td class="td">Show packages with newer versions available</td></tr>
+    <tr><td class="tc">hpm deps <span class="ta">&lt;pkg&gt;</span></td><td class="td">Print the full dependency tree</td></tr>
+    <tr><td class="tc">hpm verify <span class="ta">&lt;package&gt;</span></td><td class="td">Verify installed package integrity (SHA-256)</td></tr>
   </table>
-
   <h3>Maintenance Commands</h3>
-  <table class="cmd-table">
+  <table class="tbl">
     <tr><th>Command</th><th>Description</th></tr>
-    <tr><td class="cmd">hpm run <span class="arg">&lt;pkg&gt; &lt;bin&gt; [args]</span></td><td class="desc">Run a binary from an installed package inside its sandbox</td></tr>
-    <tr><td class="cmd">hpm build <span class="arg">&lt;name&gt;</span></td><td class="desc">Package the current directory (creates a tar.zst archive)</td></tr>
-    <tr><td class="cmd">hpm clean</td><td class="desc">Remove cached git repos (~/.cache/hpm/repos/) and temp files</td></tr>
-    <tr><td class="cmd">hpm pin <span class="arg">&lt;pkg&gt; &lt;ver&gt;</span></td><td class="desc">Pin a package to a version — prevents automatic updates</td></tr>
-    <tr><td class="cmd">hpm unpin <span class="arg">&lt;pkg&gt;</span></td><td class="desc">Unpin the current version</td></tr>
+    <tr><td class="tc">hpm run <span class="ta">&lt;pkg&gt; &lt;bin&gt; [args]</span></td><td class="td">Run a binary from an installed package inside its sandbox</td></tr>
+    <tr><td class="tc">hpm build <span class="ta">&lt;name&gt;</span></td><td class="td">Package the current directory as an hpm package</td></tr>
+    <tr><td class="tc">hpm clean</td><td class="td">Remove cached git repos and temporary files</td></tr>
+    <tr><td class="tc">hpm pin <span class="ta">&lt;pkg&gt; &lt;ver&gt;</span></td><td class="td">Pin a package to a specific version</td></tr>
+    <tr><td class="tc">hpm unpin <span class="ta">&lt;pkg&gt;</span></td><td class="td">Unpin the current version</td></tr>
   </table>
 </section>
 
-<!-- Search & Install -->
-<section id="search-install">
-  <h2>Search &amp; Install <a href="#search-install" class="anchor">#</a></h2>
-  <p>
-    <code>hpm search</code> fetches only <code>info.hk</code> via raw HTTP — it never clones
-    a git repository. This makes search nearly instant regardless of package size.
-  </p>
-  <pre data-lang="sh"><code>$ hpm search editor
-
-→ Search results for 'editor' (2 found):
-
-  Package                Version      Description
-  ────────────────────────────────────────────────────────────────────────
-  hedit                  2.1.0        Lightweight terminal text editor
-  nanovim                0.9.3        Nano-style editor with vim motions
-
-  Run hpm info &lt;package&gt; for details, hpm install &lt;package&gt; to install.</code></pre>
-
-  <pre data-lang="sh"><code><span class="hl-d"># Install latest</span>
-sudo hpm install hedit
-
-<span class="hl-d"># Install exact version</span>
-sudo hpm install hedit@2.0.0
-
-<span class="hl-d"># Install multiple</span>
-sudo hpm install hedit nanovim ripgrep</code></pre>
-</section>
-
-<!-- Versions -->
 <section id="versions">
-  <h2>Version Management <a href="#versions" class="anchor">#</a></h2>
-  <p>
-    hpm reads versions from git tags in the format <code>v1.2.3</code> or <code>1.2.3</code>.
-    Multiple versions can be installed side by side. Only one is "current" at a time,
-    tracked via a <code>current</code> symlink in the store.
-  </p>
-  <pre data-lang="sh"><code><span class="hl-d"># See installed versions</span>
-hpm list
-
-<span class="hl-d"># Install an older version alongside the current</span>
-sudo hpm install hedit@1.9.0
-
-<span class="hl-d"># Switch active version</span>
-sudo hpm switch hedit 1.9.0
-
-<span class="hl-d"># Pin to prevent updates</span>
-sudo hpm pin hedit 1.9.0
-
-<span class="hl-d"># Unpin when ready to update</span>
-sudo hpm unpin hedit
-
-<span class="hl-d"># Remove a specific old version</span>
-sudo hpm remove hedit@1.9.0</code></pre>
+  <h2><span class="h2-num">04</span> VERSION MANAGEMENT <a href="#versions">#</a></h2>
+  <p>hpm reads versions from git tags in the format <ci>v1.2.3</ci> or <ci>1.2.3</ci>. Multiple versions can be installed side by side.</p>
+  <pre data-lang="sh"><code>sudo hpm install hedit@1.9.0   <span class="hl-d"># install specific version alongside current</span>
+sudo hpm switch hedit 1.9.0    <span class="hl-d"># switch active version</span>
+sudo hpm pin hedit 1.9.0       <span class="hl-d"># pin — prevents automatic updates</span>
+sudo hpm unpin hedit            <span class="hl-d"># unpin when ready to update</span>
+sudo hpm remove hedit@1.9.0    <span class="hl-d"># remove specific version only</span></code></pre>
 </section>
 
-<!-- Sandbox -->
 <section id="sandbox">
-  <h2>Sandbox <a href="#sandbox" class="anchor">#</a></h2>
-  <p>
-    Every package binary runs inside an isolated environment using Linux kernel primitives.
-    Isolation layers (from outermost to innermost):
-  </p>
-
-  <table class="cmd-table">
-    <tr><th>Layer</th><th>Mechanism</th><th>What it isolates</th></tr>
-    <tr><td class="cmd">Namespaces</td><td class="desc">user, mount, UTS, PID, cgroup</td><td class="desc">Filesystem view, process tree, hostname, control groups</td></tr>
-    <tr><td class="cmd">Network</td><td class="desc">CLONE_NEWNET (opt-in)</td><td class="desc">Network stack — disabled by default</td></tr>
-    <tr><td class="cmd">Pivot root</td><td class="desc">pivot_root(2)</td><td class="desc">Root filesystem replaced with tmpfs + bind mounts</td></tr>
-    <tr><td class="cmd">Landlock</td><td class="desc">Landlock LSM v1</td><td class="desc">Fine-grained filesystem access control</td></tr>
-    <tr><td class="cmd">Resource limits</td><td class="desc">setrlimit(2)</td><td class="desc">CPU (60s), memory (512 MB), processes (1024)</td></tr>
+  <h2><span class="h2-num">05</span> SANDBOX <a href="#sandbox">#</a></h2>
+  <p>hpm automatically selects the right isolation level. No manual configuration required &mdash; the sandbox is transparent to the user.</p>
+  <h3>Sandbox modes</h3>
+  <table class="tbl">
+    <tr><th>Mode</th><th>When</th><th>Isolation</th></tr>
+    <tr><td class="tc">Full</td><td class="td">Pure CLI, no network/GUI/extra paths</td><td class="td">New user+mount+UTS+PID+net+cgroup namespaces + pivot_root + Landlock</td></tr>
+    <tr><td class="tc">Compat</td><td class="td">GUI apps, network, home dir access</td><td class="td">New mount namespace only &mdash; shares host user/network/IPC. Landlock active.</td></tr>
+    <tr><td class="tc">None</td><td class="td"><ci>sandbox.disabled = true</ci></td><td class="td">Direct exec &mdash; no isolation. Only for trusted system tools.</td></tr>
   </table>
-
   <h3>Sandbox options in info.hk</h3>
   <pre data-lang="hk"><code>[sandbox]
--> network   => false   <span class="hl-d"># allow outbound network</span>
--> gui       => false   <span class="hl-d"># bind-mount X11/Wayland/D-Bus/PulseAudio</span>
--> full_gui  => false   <span class="hl-d"># same as gui but includes /dev/dri</span>
--> dev       => false   <span class="hl-d"># expose /dev (null, zero, random, urandom, tty)</span>
--> filesystem => {      <span class="hl-d"># extra host paths to bind-mount read-write</span>
-     /home/user/Documents => ""
-   }</code></pre>
-
-  <div class="box box-warn">
-    <strong>Warning</strong>
-    Setting <code>network = true</code>, <code>gui = true</code>, or adding filesystem paths
-    reduces isolation. Only enable what the package genuinely requires.
-  </div>
+-> network   => false   <span class="hl-d"># allow network access</span>
+-> gui       => true    <span class="hl-d"># bind X11/Wayland/D-Bus/PulseAudio/PipeWire</span>
+-> full_gui  => false   <span class="hl-d"># gui + /dev/shm (Electron/Chromium apps)</span>
+-> dev       => false   <span class="hl-d"># expose /dev devices</span>
+-> disabled  => false   <span class="hl-d"># disable sandbox entirely</span>
+-> filesystem => {}     <span class="hl-d"># extra host paths to bind-mount</span></code></pre>
+  <div class="box box-w"><strong>Warning</strong><ci>sandbox.disabled = true</ci> gives the binary full host access. Use only for packages you fully trust.</div>
+  <h3>What Landlock protects</h3>
+  <table class="tbl">
+    <tr><th>Path</th><th>Access</th></tr>
+    <tr><td class="tc">/usr, /lib, /bin, /etc</td><td class="td">Read + execute only</td></tr>
+    <tr><td class="tc">/proc, /sys</td><td class="td">Read only</td></tr>
+    <tr><td class="tc">/app (package dir)</td><td class="td">Full read/write/execute</td></tr>
+    <tr><td class="tc">/tmp</td><td class="td">Full read/write</td></tr>
+    <tr><td class="tc">$HOME</td><td class="td">Full read/write (compat mode)</td></tr>
+    <tr><td class="tc">Extra filesystem paths</td><td class="td">Full read/write</td></tr>
+  </table>
 </section>
 
-<!-- Repo Layout -->
 <section id="repo-layout">
-  <h2>Repository Layout <a href="#repo-layout" class="anchor">#</a></h2>
-  <p>
-    An hpm package is a git repository with this structure:
-  </p>
+  <h2><span class="h2-num">06</span> REPOSITORY LAYOUT <a href="#repo-layout">#</a></h2>
   <div class="tree">
-    <span class="tree-dir">my-package/</span><br>
-    &nbsp;&nbsp;├── <span class="tree-file">info.hk</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tree-ann">← required: manifest</span><br>
-    &nbsp;&nbsp;├── <span class="tree-file">build.toml</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tree-ann tree-opt">← optional: build/download instructions</span><br>
-    &nbsp;&nbsp;├── <span class="tree-dir">contents/</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tree-ann tree-opt">← optional: pre-built files (copied to store)</span><br>
-    &nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;└── <span class="tree-dir">bin/</span><br>
-    &nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── <span class="tree-file">my-binary</span>&nbsp;&nbsp;<span class="tree-ann">← executable, chmod +x in git</span><br>
-    &nbsp;&nbsp;└── <span class="tree-file">README.md</span>
+    <span class="td2">my-package/</span><br>
+    &nbsp;&nbsp;&#9500;&#9472;&#9472; <span class="tf">info.hk</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ta2">&#8592; required: manifest</span><br>
+    &nbsp;&nbsp;&#9500;&#9472;&#9472; <span class="to">build.toml</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ta2">&#8592; optional: build/download instructions</span><br>
+    &nbsp;&nbsp;&#9500;&#9472;&#9472; <span class="to">contents/</span><br>
+    &nbsp;&nbsp;&#9474;&nbsp;&nbsp;&nbsp;&#9500;&#9472;&#9472; <span class="td2">bin/</span><br>
+    &nbsp;&nbsp;&#9474;&nbsp;&nbsp;&nbsp;&#9474;&nbsp;&nbsp;&nbsp;&#9492;&#9472;&#9472; <span class="tf">my-binary</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ta2">&#8592; chmod +x in git (0o100755)</span><br>
+    &nbsp;&nbsp;&#9474;&nbsp;&nbsp;&nbsp;&#9500;&#9472;&#9472; <span class="to">icons/</span><br>
+    &nbsp;&nbsp;&#9474;&nbsp;&nbsp;&nbsp;&#9474;&nbsp;&nbsp;&nbsp;&#9492;&#9472;&#9472; <span class="to">my-package.png</span>&nbsp;<span class="ta2">&#8592; app icon (GUI apps)</span><br>
+    &nbsp;&nbsp;&#9474;&nbsp;&nbsp;&nbsp;&#9492;&#9472;&#9472; <span class="to">my-package.desktop</span>&nbsp;<span class="ta2">&#8592; custom .desktop (optional)</span><br>
+    &nbsp;&nbsp;&#9492;&#9472;&#9472; <span class="tf">README.md</span>
   </div>
-
-  <div class="box box-tip">
-    <strong>Tip</strong>
-    The <code>contents/</code> directory is copied verbatim to the store.
-    Use <code>contents/bin/&lt;name&gt;</code> for binaries — this maps to
-    <code>/usr/lib/HackerOS/hpm/store/&lt;pkg&gt;/&lt;ver&gt;/bin/&lt;name&gt;</code>.
-  </div>
-
-  <h3>Versioning via git tags</h3>
-  <pre data-lang="sh"><code><span class="hl-d"># Tag a release — hpm reads this as version 1.0.0</span>
-git tag v1.0.0
-git push origin v1.0.0
-
-<span class="hl-d"># Both formats are accepted</span>
-git tag 1.0.0    <span class="hl-d"># also fine</span></code></pre>
+  <div class="box box-t"><strong>Key rule</strong>The binary name in <ci>bins.&lt;name&gt;</ci> must match the actual filename in <ci>contents/bin/&lt;name&gt;</ci>. hpm searches recursively and shows a list of all files found when it doesn't match.</div>
 </section>
 
-<!-- info.hk -->
-<section id="info-hk">
-  <h2>info.hk Manifest <a href="#info-hk" class="anchor">#</a></h2>
-  <p>
-    The manifest is written in <a href="https://github.com/HackerOS-Linux-System/hk-parser" style="color:var(--cyan)">HK format</a>,
-    parsed by <code>hk-parser</code>.
-  </p>
-  <pre data-lang="hk"><code>[metadata]
--> name    => hello-hpm           <span class="hl-d"># package name (must match repo.json key)</span>
--> version => 1.0.0               <span class="hl-d"># must match the git tag</span>
--> authors => HackerOS Team
+<section id="manifest">
+  <h2><span class="h2-num">07</span> INFO.HK MANIFEST <a href="#manifest">#</a></h2>
+  <div class="box box-n"><strong>HK Format documentation</strong>The <ci>info.hk</ci> manifest uses the <strong>HK format</strong> &mdash; HackerOS's native configuration language. Full syntax reference is documented separately:<br><br><a href="https://hackeros-linux-system.github.io/HackerOS-Website/tools-docs/hk.html" class="ext" target="_blank">hackeros-linux-system.github.io &#8594; HK Format Documentation &#8599;</a></div>
+  <h3>Complete manifest reference</h3>
+  <pre data-lang="info.hk"><code>[metadata]
+-> name    => my-package
+-> version => 1.0.0
+-> authors => Your Name
 -> license => MIT
--> bins.hello-hpm => ""           <span class="hl-d"># binary name → gets /usr/bin/hello-hpm wrapper</span>
+-> gui     => false               <span class="hl-d"># shorthand for sandbox.gui = true</span>
+-> bins.my-binary => ""           <span class="hl-d"># each binary gets a /usr/bin wrapper</span>
 
 [description]
 -> summary => One-line shown in hpm search
 -> long    => Longer description shown in hpm info
 
 [sandbox]
--> network  => false
--> gui      => false
--> dev      => false
--> full_gui => false
--> filesystem => {}
-
-[build]
--> commands => {}                 <span class="hl-d"># shell commands if no build.toml</span>
--> deb_deps => {}                 <span class="hl-d"># apt packages required at build time</span>
-
-[runtime]
--> deb_deps => {}                 <span class="hl-d"># apt packages required at runtime</span>
-
-[specs]
--> dependencies.other-hpm-pkg => ">=1.0"   <span class="hl-d"># hpm package dependency</span></code></pre>
-
-  <h3>Multiple binaries</h3>
-  <pre data-lang="hk"><code>[metadata]
--> bins.editor  => ""
--> bins.editorx => ""             <span class="hl-d"># creates /usr/bin/editor and /usr/bin/editorx</span></code></pre>
-
-  <h3>Dependency version constraints</h3>
-  <table class="cmd-table">
-    <tr><th>Constraint</th><th>Meaning</th></tr>
-    <tr><td class="cmd">""</td><td class="desc">Any version</td></tr>
-    <tr><td class="cmd">=1.2.0</td><td class="desc">Exactly 1.2.0</td></tr>
-    <tr><td class="cmd">&gt;=1.2.0</td><td class="desc">1.2.0 or newer</td></tr>
-    <tr><td class="cmd">&gt;1.2.0</td><td class="desc">Strictly newer than 1.2.0</td></tr>
-    <tr><td class="cmd">1.2.0</td><td class="desc">Exactly 1.2.0 (same as =1.2.0)</td></tr>
-  </table>
-</section>
-
-<!-- build.toml -->
-<section id="build-toml">
-  <h2>build.toml <a href="#build-toml" class="anchor">#</a></h2>
-  <p>
-    When <code>build.toml</code> is absent, hpm uses <code>contents/</code> directly (prebuilt layout).
-    Add <code>build.toml</code> when the binary must be downloaded or compiled.
-  </p>
-
-  <h3>type = "prebuilt" (default)</h3>
-  <pre data-lang="toml"><code><span class="hl-d"># Explicit — same as having no build.toml at all</span>
-type = "prebuilt"</code></pre>
-
-  <h3>type = "download"</h3>
-  <pre data-lang="toml"><code>type         = "download"
-url          = "https://github.com/user/repo/releases/download/v<span class="hl-y">{version}</span>/mybinary-linux-x86_64"
-install_path = "bin/mybinary"     <span class="hl-d"># destination inside contents/</span>
-
-<span class="hl-d"># For tar archives:</span>
-type             = "download"
-url              = "https://example.com/releases/v<span class="hl-y">{version}</span>/tool-linux.tar.gz"
-binary_path      = "tool-linux/bin/tool"   <span class="hl-d"># path inside the archive</span>
-strip_components = 1
-install_path     = "bin/tool"</code></pre>
-
-  <h3>type = "build"</h3>
-  <pre data-lang="toml"><code>type         = "build"
-commands     = ["cargo build --release"]
-output       = "target/release/mytool"     <span class="hl-d"># where the binary appears after build</span>
-install_path = "bin/mytool"
-
-build_deps   = ["build-essential", "rustup"]  <span class="hl-d"># apt packages for build</span>
-runtime_deps = ["libssl3"]                     <span class="hl-d"># apt packages for runtime</span>
-
-[env]
-CARGO_PROFILE_RELEASE_LTO = "true"</code></pre>
-
-  <div class="box box-note">
-    <strong>Note</strong>
-    Build commands run inside the hpm sandbox. The sandbox has access to
-    <code>/usr</code>, <code>/lib</code>, <code>/bin</code>, <code>/etc</code> (read-only)
-    and <code>/app</code> + <code>/tmp</code> (read-write).
-    Set <code>network = true</code> in <code>info.hk</code> if the build step needs internet access.
-  </div>
-</section>
-
-<!-- Publishing -->
-<section id="publish">
-  <h2>Publishing a Package <a href="#publish" class="anchor">#</a></h2>
-
-  <h3>1. Create the repository</h3>
-  <pre data-lang="sh"><code>mkdir my-package && cd my-package
-git init
-
-<span class="hl-d"># Create info.hk</span>
-cat &gt; info.hk &lt;&lt; 'EOF'
-[metadata]
--> name    => my-package
--> version => 1.0.0
--> authors => Your Name
--> license => MIT
--> bins.my-package => ""
-
-[description]
--> summary => What my package does
-
-[sandbox]
--> network  => false
--> gui      => false
--> dev      => false
--> full_gui => false
+-> network   => false
+-> gui       => false
+-> full_gui  => false
+-> dev       => false
+-> disabled  => false
 -> filesystem => {}
 
 [build]
@@ -788,18 +271,91 @@ cat &gt; info.hk &lt;&lt; 'EOF'
 
 [runtime]
 -> deb_deps => {}
-EOF
 
-<span class="hl-d"># Add your binary</span>
+[specs]
+-> dependencies.other-pkg => ">=1.0"
+
+[desktop]
+-> display_name => My Application
+-> icon         => icons/my-package.png
+-> categories   => Utility;GTK;
+-> comment      => Short description for the app menu
+-> mime_types   => text/plain;
+-> keywords     => tool;utility;
+-> desktop_file => my-package.desktop</code></pre>
+</section>
+
+<section id="build-toml">
+  <h2><span class="h2-num">08</span> BUILD.TOML <a href="#build-toml">#</a></h2>
+  <p>When absent, hpm copies <ci>contents/</ci> directly. Add <ci>build.toml</ci> when the binary needs downloading or compiling.</p>
+  <h3>type = "download"</h3>
+  <pre data-lang="toml"><code>type         = "download"
+url          = "https://github.com/user/repo/releases/download/v{version}/bin-linux-x86_64"
+install_path = "bin/mybinary"
+runtime_deps = ["libssl3"]
+
+<span class="hl-d"># From a tar.gz archive:</span>
+type             = "download"
+url              = "https://example.com/v{version}/tool.tar.gz"
+binary_path      = "tool/bin/tool"
+strip_components = 0
+install_path     = "bin/tool"</code></pre>
+  <h3>type = "build"</h3>
+  <pre data-lang="toml"><code>type         = "build"
+commands     = ["cargo build --release"]
+output       = "target/release/mytool"
+install_path = "bin/mytool"
+build_deps   = ["build-essential"]
+runtime_deps = ["libssl3"]
+
+[env]
+CARGO_PROFILE_RELEASE_LTO = "true"</code></pre>
+</section>
+
+<section id="gui-apps">
+  <h2><span class="h2-num">09</span> GUI APPLICATIONS <a href="#gui-apps">#</a></h2>
+  <p>When <ci>gui = true</ci> or <ci>sandbox.gui = true</ci>, hpm automatically:</p>
+  <ul class="feat">
+    <li>Runs in <strong>compat mode</strong> &mdash; shares X11/Wayland/D-Bus with the host</li>
+    <li>Installs a <strong>.desktop file</strong> to <ci>/usr/share/applications/</ci></li>
+    <li>Installs the <strong>icon</strong> to hicolor and pixmaps</li>
+    <li>Runs <ci>update-desktop-database</ci> and <ci>gtk-update-icon-cache</ci></li>
+  </ul>
+  <h3>GUI info.hk example</h3>
+  <pre data-lang="info.hk"><code>[metadata]
+-> name    => myapp
+-> version => 1.0.0
+-> gui     => true
+-> bins.myapp => ""
+
+[sandbox]
+-> gui      => true
+-> network  => false
+
+[runtime]
+-> deb_deps => { libgtk-3-0 => "" }
+
+[desktop]
+-> display_name => My App
+-> icon         => icons/myapp.png
+-> categories   => Graphics;Viewer;</code></pre>
+  <div class="box box-t"><strong>Custom .desktop file</strong>If you ship a <ci>.desktop</ci> file in <ci>contents/</ci>, hpm uses it automatically and patches only the <ci>Exec=</ci> line to route through <ci>hpm run</ci>.</div>
+  <h3>Electron / Chromium apps</h3>
+  <pre data-lang="info.hk"><code>[sandbox]
+-> full_gui => true    <span class="hl-d"># adds /dev/shm for shared memory</span>
+-> network  => true    <span class="hl-d"># if the app needs internet access</span></code></pre>
+</section>
+
+<section id="publish">
+  <h2><span class="h2-num">10</span> PUBLISHING <a href="#publish">#</a></h2>
+  <h3>1. Create the repository</h3>
+  <pre data-lang="sh"><code>mkdir my-package &amp;&amp; cd my-package &amp;&amp; git init
 mkdir -p contents/bin
-cp /path/to/my-binary contents/bin/my-package
+cp /path/to/binary contents/bin/my-package
 chmod +x contents/bin/my-package
-
-git add .
-git commit -m "initial release"
-git tag v1.0.0
-git push origin main --tags</code></pre>
-
+<span class="hl-d"># create info.hk (see section 07 for full reference)</span>
+git add . &amp;&amp; git commit -m "initial release"
+git tag v1.0.0 &amp;&amp; git push origin main --tags</code></pre>
   <h3>2. Add to repo.json</h3>
   <pre data-lang="json"><code>{
   "packages": {
@@ -808,33 +364,18 @@ git push origin main --tags</code></pre>
     }
   }
 }</code></pre>
-
-  <div class="box box-tip">
-    <strong>Tip — versions field is optional</strong>
-    You only need to add the <code>"repo"</code> URL. hpm discovers available versions
-    automatically from git tags. The optional <code>"versions"</code> array is only
-    needed if you want to hint at supported versions in the index.
-  </div>
-
+  <div class="box box-t"><strong>Versions field is optional</strong>hpm discovers available versions automatically from git tags. The <ci>"versions"</ci> array is optional hint-only metadata.</div>
   <h3>3. Submit a pull request</h3>
-  <p>
-    Open a PR to the
-    <a href="https://github.com/HackerOS-Linux-System/HackerOS-Package-Manager" style="color:var(--cyan)">HackerOS-Package-Manager</a>
-    repository adding your entry to <code>repo/repo.json</code>.
-  </p>
+  <p>Open a PR to <a href="https://github.com/HackerOS-Linux-System/HackerOS-Package-Manager" class="ext" target="_blank">HackerOS-Package-Manager &#8599;</a> adding your entry to <ci>repo/repo.json</ci>.</p>
 </section>
 
-<!-- repo.json -->
 <section id="repo-json">
-  <h2>repo.json Format <a href="#repo-json" class="anchor">#</a></h2>
+  <h2><span class="h2-num">11</span> REPO.JSON <a href="#repo-json">#</a></h2>
   <pre data-lang="json"><code>{
   "packages": {
-    <span class="hl-d">// Minimal entry — versions read from git tags</span>
     "hello-hpm": {
       "repo": "https://github.com/HackerOS-Linux-System/hpm-example-repo"
     },
-
-    <span class="hl-d">// With optional version hints</span>
     "hedit": {
       "repo": "https://github.com/hackerOS/hedit",
       "versions": ["1.0.0", "2.0.0", "2.1.0"]
@@ -843,117 +384,53 @@ git push origin main --tags</code></pre>
 }</code></pre>
 </section>
 
-<!-- Store Layout -->
 <section id="store">
-  <h2>Store Layout <a href="#store" class="anchor">#</a></h2>
+  <h2><span class="h2-num">12</span> STORE LAYOUT <a href="#store">#</a></h2>
   <div class="tree">
-    <span class="tree-dir">/usr/lib/HackerOS/hpm/store/</span><br>
-    &nbsp;&nbsp;└── <span class="tree-dir">my-package/</span><br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── <span class="tree-dir">1.0.0/</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tree-ann">← installed version</span><br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;├── <span class="tree-dir">bin/</span><br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;└── <span class="tree-file">my-package</span>&nbsp;&nbsp;<span class="tree-ann">← the binary</span><br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;└── <span class="tree-file">info.hk</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tree-ann">← manifest copy</span><br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── <span class="tree-dir">2.0.0/</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tree-ann">← another version (side-by-side)</span><br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── <span class="tree-file">current</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tree-ann">← symlink → 2.0.0</span><br>
-    <br>
-    <span class="tree-dir">/usr/bin/</span><br>
-    &nbsp;&nbsp;└── <span class="tree-file">my-package</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tree-ann">← wrapper: exec hpm run my-package my-package</span><br>
-    <br>
-    <span class="tree-dir">/var/lib/hpm/</span><br>
-    &nbsp;&nbsp;└── <span class="tree-file">state.json</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tree-ann">← installed packages + checksums</span>
+    <span class="td2">/usr/lib/HackerOS/hpm/store/my-package/</span><br>
+    &nbsp;&nbsp;&#9500;&#9472;&#9472; <span class="td2">1.0.0/</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ta2">&#8592; installed version</span><br>
+    &nbsp;&nbsp;&#9500;&#9472;&#9472; <span class="td2">2.0.0/</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ta2">&#8592; side-by-side</span><br>
+    &nbsp;&nbsp;&#9492;&#9472;&#9472; <span class="tf">current</span>&nbsp;&nbsp;&nbsp;<span class="ta2">&#8592; symlink &#8594; 2.0.0</span><br><br>
+    <span class="tf">/usr/bin/my-package</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ta2">&#8592; wrapper script</span><br>
+    <span class="tf">/usr/share/applications/my-package.desktop</span>&nbsp;<span class="ta2">&#8592; GUI apps only</span><br>
+    <span class="tf">/usr/share/icons/hicolor/256x256/apps/my-package.png</span><br>
+    <span class="tf">/var/lib/hpm/state.json</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ta2">&#8592; state + checksums</span>
   </div>
 </section>
 
-<!-- Comparison -->
 <section id="compare">
-  <h2>hpm vs AUR vs PPA <a href="#compare" class="anchor">#</a></h2>
-  <table class="compare">
-    <tr>
-      <th>Feature</th>
-      <th class="hl">hpm</th>
-      <th>AUR (yay)</th>
-      <th>PPA (apt)</th>
-    </tr>
-    <tr>
-      <td>Package format</td>
-      <td class="yes">Git repo + info.hk</td>
-      <td>PKGBUILD</td>
-      <td>.deb archive</td>
-    </tr>
-    <tr>
-      <td>Sandbox / isolation</td>
-      <td class="yes">Built-in (namespaces + Landlock)</td>
-      <td class="no">None</td>
-      <td class="no">None</td>
-    </tr>
-    <tr>
-      <td>Multiple versions installed</td>
-      <td class="yes">Yes (side-by-side)</td>
-      <td class="no">No</td>
-      <td class="no">No</td>
-    </tr>
-    <tr>
-      <td>Version pinning</td>
-      <td class="yes">Yes</td>
-      <td class="par">Partial</td>
-      <td class="par">Partial (hold)</td>
-    </tr>
-    <tr>
-      <td>Search speed</td>
-      <td class="yes">Fast (raw HTTP, no clone)</td>
-      <td class="par">Medium (AUR RPC)</td>
-      <td class="yes">Fast (apt cache)</td>
-    </tr>
-    <tr>
-      <td>Binary integrity check</td>
-      <td class="yes">SHA-256 on install</td>
-      <td class="par">Optional</td>
-      <td class="yes">GPG signed</td>
-    </tr>
-    <tr>
-      <td>Dependency resolution</td>
-      <td class="par">hpm + apt deps</td>
-      <td class="yes">Full (makepkg)</td>
-      <td class="yes">Full (dpkg)</td>
-    </tr>
-    <tr>
-      <td>Build from source</td>
-      <td class="yes">Yes (build.toml)</td>
-      <td class="yes">Yes (PKGBUILD)</td>
-      <td class="no">No (binary only)</td>
-    </tr>
-    <tr>
-      <td>Pre-built binary download</td>
-      <td class="yes">Yes (build.toml download)</td>
-      <td class="par">Partial</td>
-      <td class="yes">Yes</td>
-    </tr>
+  <h2><span class="h2-num">13</span> HPM VS AUR VS PPA <a href="#compare">#</a></h2>
+  <table class="tbl">
+    <tr><th>Feature</th><th style="color:var(--red)">hpm</th><th>AUR (yay)</th><th>PPA (apt)</th></tr>
+    <tr><td>Package format</td><td class="yes">Git repo + info.hk</td><td>PKGBUILD</td><td>.deb archive</td></tr>
+    <tr><td>Sandbox / isolation</td><td class="yes">Built-in (namespaces+Landlock)</td><td class="no">None</td><td class="no">None</td></tr>
+    <tr><td>GUI app support</td><td class="yes">Yes (.desktop + icons)</td><td class="yes">Yes</td><td class="yes">Yes</td></tr>
+    <tr><td>Side-by-side versions</td><td class="yes">Yes</td><td class="no">No</td><td class="no">No</td></tr>
+    <tr><td>Version pinning</td><td class="yes">Yes</td><td class="par">Partial</td><td class="par">hold</td></tr>
+    <tr><td>Search speed</td><td class="yes">Fast (raw HTTP)</td><td class="par">Medium</td><td class="yes">Fast</td></tr>
+    <tr><td>Binary integrity</td><td class="yes">SHA-256</td><td class="par">Optional</td><td class="yes">GPG</td></tr>
+    <tr><td>Build from source</td><td class="yes">Yes (build.toml)</td><td class="yes">Yes</td><td class="no">No</td></tr>
+    <tr><td>Pre-built download</td><td class="yes">Yes (build.toml)</td><td class="par">Partial</td><td class="yes">Yes</td></tr>
+    <tr><td>Auto dep resolution</td><td class="par">hpm + apt deps</td><td class="yes">Full</td><td class="yes">Full</td></tr>
   </table>
 </section>
 
-<footer>
-  hpm v0.8.0 · HackerOS Package Manager ·
-  <a href="https://github.com/HackerOS-Linux-System/HackerOS-Package-Manager" style="color:var(--dim)">GitHub</a>
-  &nbsp;·&nbsp; MIT License
-</footer>
+<section id="hk-format">
+  <h2><span class="h2-num">14</span> HK FORMAT <a href="#hk-format">#</a></h2>
+  <p>The <ci>info.hk</ci> manifest uses the <strong>HK format</strong> &mdash; HackerOS's native configuration language. Readable, hierarchical, with built-in interpolation, strong typing and precise error messages.</p>
+  <div style="margin:20px 0">
+    <a href="https://hackeros-linux-system.github.io/HackerOS-Website/tools-docs/hk.html" class="ext" target="_blank" style="font-size:15px;font-weight:600">hackeros-linux-system.github.io/tools-docs/hk.html &#8599;</a>
+  </div>
+</section>
 
+<footer>hpm v0.8.0 &middot; HackerOS Package Manager &middot; HackerOS Ecosystem &middot; <a href="https://github.com/HackerOS-Linux-System/HackerOS-Package-Manager" style="color:var(--dim)">GitHub &#8599;</a> &middot; MIT License</footer>
 </main>
 </div>
-
 <script>
-// Active nav link on scroll
-const sections = document.querySelectorAll('section[id], div[id]');
-const navLinks = document.querySelectorAll('nav a');
-const obs = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      navLinks.forEach(a => a.classList.remove('active'));
-      const link = document.querySelector(`nav a[href="#${e.target.id}"]`);
-      if (link) link.classList.add('active');
-    }
-  });
-}, { rootMargin: '-20% 0px -70% 0px' });
-sections.forEach(s => obs.observe(s));
+const sections=document.querySelectorAll('section[id]');
+const navLinks=document.querySelectorAll('nav a');
+const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){navLinks.forEach(a=>a.classList.remove('active'));const l=document.querySelector('nav a[href="#'+e.target.id+'"]');if(l)l.classList.add('active')}})},{rootMargin:'-15% 0px -75% 0px'});
+sections.forEach(s=>obs.observe(s));
 </script>
 </body>
 </html>
