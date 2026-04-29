@@ -1,4 +1,3 @@
-// ─── Sidebar active link tracking ────────────────────────────────────────────
 const sections = document.querySelectorAll('section[id]');
 const links    = document.querySelectorAll('.sidebar a');
 
@@ -29,18 +28,13 @@ document.querySelectorAll('.code-block').forEach(block => {
     cursor: pointer; text-transform: uppercase; transition: all 0.15s;
   `;
 
-  btn.addEventListener('mouseenter', () => {
-    btn.style.background = 'rgba(168,85,247,0.22)';
-  });
-  btn.addEventListener('mouseleave', () => {
-    btn.style.background = 'rgba(168,85,247,0.12)';
-  });
+  btn.addEventListener('mouseenter', () => { btn.style.background = 'rgba(168,85,247,0.22)'; });
+  btn.addEventListener('mouseleave', () => { btn.style.background = 'rgba(168,85,247,0.12)'; });
 
   btn.addEventListener('click', () => {
     const pre = block.querySelector('pre');
     if (!pre) return;
-    const text = pre.innerText;
-    navigator.clipboard.writeText(text).then(() => {
+    navigator.clipboard.writeText(pre.innerText).then(() => {
       btn.textContent = 'SKOPIOWANO';
       btn.style.color = '#34d399';
       btn.style.borderColor = 'rgba(52,211,153,0.3)';
@@ -53,13 +47,4 @@ document.querySelectorAll('.code-block').forEach(block => {
   });
 
   header.appendChild(btn);
-});
-
-// ─── Keyboard shortcut: '/' focuses search (if present) ──────────────────────
-document.addEventListener('keydown', e => {
-  if (e.key === '/' && document.activeElement.tagName !== 'INPUT') {
-    e.preventDefault();
-    const first = document.querySelector('.sidebar a');
-    if (first) first.focus();
-  }
 });
