@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hacker Lang — Dokumentacja v0.4</title>
+<title>Hacker Lang — Dokumentacja</title>
 <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/HackerOS-Linux-System/Hacker-Lang/main/images/icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -16,7 +16,7 @@
   <div class="sidebar-logo">
     <img class="logo-img" src="https://raw.githubusercontent.com/HackerOS-Linux-System/Hacker-Lang/main/images/icon.png" alt="HL">
     <div class="logo-name">Hacker Lang</div>
-    <div class="logo-ver">// v0.4 — dokumentacja</div>
+    <div class="logo-ver">// gen 1 — dokumentacja</div>
   </div>
 
   <div class="sidebar-section">// wstęp</div>
@@ -32,26 +32,35 @@
   <a href="#output"><span class="op">~></span>Wyjście (print)</a>
   <a href="#quick"><span class="op">::</span>Quick-funkcje</a>
   <a href="#commands"><span class="op">></span>Komendy</a>
+  <a href="#hsh"><span class="op">*></span>Hsh shell</a>
+  <a href="#background"><span class="op">&amp;</span>Tło (&amp;)</a>
+  <a href="#repeat"><span class="op">_N</span>Pętla _N</a>
   <a href="#variables"><span class="op">%@</span>Zmienne lokalne</a>
   <a href="#export"><span class="op">=></span>Export</a>
   <a href="#functions"><span class="op">:--</span>Funkcje</a>
   <a href="#logic"><span class="op">?</span>Logika</a>
+  <a href="#goroutines"><span class="op">:*</span>Goroutines/Channels</a>
   <a href="#comments"><span class="op">;;</span>Komentarze</a>
   <a href="#deps"><span class="op">//</span>Zależności</a>
   <a href="#imports"><span class="op">#</span>Biblioteki</a>
+  <a href="#fileimport"><span class="op">&lt;&lt;</span>Import pliku</a>
+
+  <div class="sidebar-section">// manager bit</div>
+  <a href="#bit"><span class="op">bit</span>Manager bit</a>
+  <a href="#bit-libs"><span class="op">#</span>Biblioteki bit</a>
 
   <div class="sidebar-section">// narzędzia</div>
   <a href="#cli"><span class="op">hl</span>CLI</a>
+  <a href="#compile"><span class="op">bc</span>Kompilacja (.bc)</a>
   <a href="#exec"><span class="op">exec</span>hl exec / search</a>
   <a href="#shell"><span class="op">»</span>Powłoka</a>
-  <a href="#compiler"><span class="op">cc</span>Kompilator</a>
   <a href="#diag"><span class="op">!</span>Diagnostyka</a>
 
   <div class="sidebar-section">// przykłady</div>
   <a href="#ex-basic"><span class="op">&lt;/></span>Podstawowe</a>
+  <a href="#ex-async"><span class="op">&lt;/></span>Async / goroutines</a>
   <a href="#ex-network"><span class="op">&lt;/></span>Sieć / Audyt</a>
   <a href="#ex-system"><span class="op">&lt;/></span>Systemowe</a>
-  <a href="#ex-advanced"><span class="op">&lt;/></span>Zaawansowane</a>
 </nav>
 
 <!-- MAIN CONTENT -->
@@ -63,13 +72,13 @@
     <h1><span class="h">Hacker</span><span class="l"> Lang</span></h1>
     <p class="hero-desc">
       Interpretowany język programowania dla HackerOS (Debian-based).<br>
-      Własna składnia operatorowa, wbudowany linter, REPL, kompilator Cranelift i C runtime.
+      Własna składnia operatorowa, wbudowany linter, REPL, kompilator bytecode+Cranelift, manager pakietów <strong>bit</strong>.
     </p>
     <div class="hero-tags">
       <span class="tag tag-p">wbudowany w HackerOS</span>
       <span class="tag tag-o">tylko dla HackerOS</span>
-      <span class="tag tag-c">pliki .hl</span>
-      <span class="tag tag-pk">v0.4 · gen 1</span>
+      <span class="tag tag-c">pliki .hl / .bc</span>
+      <span class="tag tag-pk">gen 1</span>
     </div>
   </div>
 
@@ -79,19 +88,22 @@
     <p>
       Hacker Lang (<strong>HL</strong>) to interpretowany język programowania napisany w Rust,
       zaprojektowany jako natywny język skryptowy systemu <strong>HackerOS</strong>.
-      Pliki źródłowe mają rozszerzenie <code>.hl</code>.
+      Pliki źródłowe mają rozszerzenie <code>.hl</code>, skompilowany bytecode <code>.bc</code>.
     </p>
     <p>
       HL łączy własną składnię operatorową z bezpośrednim dostępem do powłoki systemowej,
-      wbudowanym linterem, bibliotekami standardowymi (<code>std/net</code>, <code>std/sys</code>…),
-      ponad 40 quick-funkcjami oraz prawdziwym kompilatorem opartym na Cranelift.
+      wbudowanym linterem, bibliotekami standardowymi (<code>main/net</code>, <code>main/sys</code>…),
+      ponad 40 quick-funkcjami, prawdziwym kompilatorem, managerem pakietów <strong>bit</strong>
+      oraz goroutines/channels inspirowanymi Go.
     </p>
     <div class="callout info">
       <span class="callout-icon">✨</span>
       <div class="callout-body">
-        <strong>Nowe w v0.4:</strong> kompilator Cranelift (ELF x86_64 + C runtime),
-        system Genów (<code>using &lt;gen 1&gt;</code>), obsługa shebangu (<code>#!/usr/bin/env hl</code>),
-        operator export (<code>=></code>), <code>hl exec</code> i <code>hl search</code>.
+        <strong>Nowe w gen 1:</strong> kompilacja dwuetapowa (<code>.hl → .bc → ELF</code>),
+        operator <code>&</code> (tło), <code>*&gt;</code> (hsh), <code>_N</code> (pętla N razy),
+        <code>&lt;&lt; plik.hl</code> (import pliku), goroutines (<code>:*</code>), channels (<code>:**</code>),
+        manager pakietów <strong>bit</strong>, nowe przestrzenie nazw importów (<code>main/</code>, <code>bit/</code>, <code>github/</code>),
+        nowe biblioteki (<code>main/colors</code>, <code>main/cli</code>, <code>main/progress-bar</code>, <code>main/json</code>, <code>main/hk-parser</code>, <code>main/hacker</code>).
       </div>
     </div>
   </section>
@@ -102,14 +114,14 @@
     <div class="callout info">
       <span class="callout-icon">🔒</span>
       <div class="callout-body">
-        <strong>Hacker Lang jest wbudowany w HackerOS.</strong> Nie wymaga instalacji —
-        binarka <code>hl</code> jest częścią systemu od pierwszego uruchomienia.
-        HL nie jest przeznaczony do użytku poza HackerOS.
+        <strong>Hacker Lang jest wbudowany w HackerOS.</strong> Nie wymaga instalacji.
+        Binarka <code>hl</code> oraz manager pakietów <code>bit</code> są częścią systemu od pierwszego uruchomienia.
       </div>
     </div>
     <div class="code-block">
       <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>SPRAWDŹ WERSJĘ</div>
-      <pre>hl version</pre>
+      <pre>hl version
+bit</pre>
     </div>
   </section>
 
@@ -123,11 +135,13 @@
 <span class="hl-gen">using &lt;gen 1&gt;</span>
 
 <span class="hl-dep">// curl</span>
+<span class="hl-import">#</span> <span class="hl-string">&lt;main/net&gt;</span>
+<span class="hl-import">#</span> <span class="hl-string">&lt;main/colors&gt;</span>
 
 <span class="hl-var-decl">% name</span>    = HackerOS
-<span class="hl-var-decl">% version</span> = 0.4
+<span class="hl-var-decl">% version</span> = gen 1
 
-<span class="hl-print">~></span> <span class="hl-string">Witaj w @name v@version!</span>
+<span class="hl-print">~></span> <span class="hl-string">Witaj w @name @version!</span>
 
 <span class="hl-func">:</span> greet <span class="hl-kw">def</span>
     <span class="hl-print">~></span> <span class="hl-string">Kernel:</span>
@@ -137,523 +151,515 @@
 
 <span class="hl-func">--</span> greet
 
+<span class="hl-comment">;; uruchom serwer w tle</span>
+<span class="hl-bg">& python3 -m http.server 8080</span>
+
 <span class="hl-logic">? ok</span>
     <span class="hl-quick">::</span>green System gotowy ✓
 <span class="hl-done">done</span></pre>
     </div>
     <div class="code-block">
-      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>URUCHAMIANIE</div>
+      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>URUCHAMIANIE I KOMPILACJA</div>
       <pre>hl hello.hl              <span class="hl-comment"># uruchom skrypt</span>
-hl run hello.hl          <span class="hl-comment"># jawna forma</span>
-hl repl                  <span class="hl-comment"># interaktywna powłoka REPL</span>
-hl check hello.hl        <span class="hl-comment"># sprawdź składnię + linter</span>
-hl compile hello.hl      <span class="hl-comment"># skompiluj do binarki ELF</span>
-hl -c "~> Hej!"          <span class="hl-comment"># jednolinijkowy kod</span></pre>
+hl compile hello.hl      <span class="hl-comment"># .hl → hello.bc (bytecode)</span>
+hl compile hello.bc      <span class="hl-comment"># .bc → binarka ELF</span>
+./hello.bc               <span class="hl-comment"># uruchom .bc bezposrednio (shebang)</span>
+hl run hello.bc          <span class="hl-comment"># uruchom .bc przez hl</span>
+hl repl                  <span class="hl-comment"># interaktywna powloka REPL</span>
+hl check hello.hl        <span class="hl-comment"># sprawdz skladnie + linter</span></pre>
     </div>
   </section>
 
   <!-- SHEBANG -->
   <section id="shebang">
     <div class="section-header"><span class="section-num">04</span><h2>Shebang — <code>#!</code></h2></div>
-    <p>
-      Pliki <code>.hl</code> mogą zaczynać się od linii shebang, co umożliwia
-      ich bezpośrednie uruchamianie jako skrypty. Shebang jest <strong>opcjonalny</strong>.
-    </p>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>SKŁADNIA SHEBANG</div>
+      <pre><span class="hl-shebang">#!/usr/bin/env hl</span>          <span class="hl-comment"># zalecana forma dla .hl</span>
+<span class="hl-shebang">#!/usr/bin/hl</span>              <span class="hl-comment"># bezposrednia sciezka</span>
+<span class="hl-shebang">#!/usr/bin/env -S /usr/bin/hl run</span>  <span class="hl-comment"># automatyczny shebang dla .bc</span></pre>
+    </div>
     <div class="callout note">
       <span class="callout-icon">💡</span>
       <div class="callout-body">
-        <strong>Ważne:</strong> <code>#!</code> to shebang — rozpoznawany <strong>tylko w pierwszej linii</strong>.
-        Operator <code>#</code> w pozostałych miejscach to import biblioteki (<code># &lt;std/net&gt;</code>).
-        Nie ma konfliktu.
+        Pliki <code>.bc</code> (bytecode) mają automatycznie dodany shebang
+        <code>#!/usr/bin/env -S /usr/bin/hl run</code> — można je uruchamiać bezpośrednio.
       </div>
-    </div>
-    <div class="code-block">
-      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>SKŁADNIA SHEBANG</div>
-      <pre><span class="hl-shebang">#!/usr/bin/env hl</span>         <span class="hl-comment"># zalecana forma</span>
-<span class="hl-shebang">#!/usr/bin/hl</span>             <span class="hl-comment"># bezpośrednia ścieżka</span>
-<span class="hl-shebang">#!/usr/bin/env hl --verbose</span> <span class="hl-comment"># z argumentami</span></pre>
-    </div>
-    <div class="code-block">
-      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>BASH — uruchamianie jako skrypt</div>
-      <pre>chmod +x skrypt.hl
-./skrypt.hl              <span class="hl-comment"># uruchom bezpośrednio</span></pre>
     </div>
   </section>
 
   <!-- GEN -->
   <section id="gen">
     <div class="section-header"><span class="section-num">05</span><h2>System Genów — <code>using</code></h2></div>
-    <p>
-      Geny to odpowiednik <em>Rust editions</em> — wydawane co 3 lata, definiują dostępną
-      składnię i semantykę języka. Deklaracja jest <strong>opcjonalna</strong> — bez niej
-      przyjmowany jest gen 1 (domyślny).
-    </p>
-    <div class="callout info">
-      <span class="callout-icon">🧬</span>
-      <div class="callout-body">
-        <strong>Aktualny maksymalny gen: gen 1.</strong>
-        Nowe geny będą dodawane co 3 lata wraz z rozwojem języka.
-        Każdy gen może dodać nowe operatory lub zmienić semantykę — z zachowaniem
-        kompatybilności wstecznej w ramach gena.
-      </div>
-    </div>
+    <p>Geny to odpowiednik <em>Rust editions</em>. Deklaracja jest opcjonalna — domyślnie gen 1.</p>
     <div class="code-block">
       <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>DEKLARACJA GENA</div>
-      <pre><span class="hl-shebang">#!/usr/bin/env hl</span>         <span class="hl-comment"># shebang (opcjonalny)</span>
-<span class="hl-gen">using &lt;gen 1&gt;</span>             <span class="hl-comment"># gen (opcjonalny, domyślnie: gen 1)</span>
-<span class="hl-doc">/// Opis skryptu</span>
-
-<span class="hl-comment">;; ... kod ...</span></pre>
+      <pre><span class="hl-shebang">#!/usr/bin/env hl</span>
+<span class="hl-gen">using &lt;gen 1&gt;</span>
+<span class="hl-doc">/// Opis skryptu</span></pre>
     </div>
     <table class="ref-table">
       <tr><th>Gen</th><th>Status</th><th>Opis</th></tr>
-      <tr><td>gen 1</td><td><span style="color:#34d399">aktywny</span></td><td>Pełna składnia podstawowa, export, shebang, kompilator Cranelift</td></tr>
-      <tr><td>gen 2</td><td><span style="color:#7c6fa0">zarezerwowany</span></td><td>Async komendy, typowane zmienne (planowane)</td></tr>
+      <tr><td>gen 1</td><td><span style="color:#34d399">aktywny</span></td><td>Pełna składnia podstawowa, export, shebang, bytecode .bc, bit, goroutines, hsh, &amp;, _N, &lt;&lt;</td></tr>
+      <tr><td>gen 2</td><td><span style="color:#7c6fa0">zarezerwowany</span></td><td>Typowane zmienne (planowane)</td></tr>
       <tr><td>gen 3</td><td><span style="color:#7c6fa0">zarezerwowany</span></td><td>Domknięcia (planowane)</td></tr>
     </table>
-    <div class="code-block">
-      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>INFO O GENIE PLIKU</div>
-      <pre>hl gen-info skrypt.hl     <span class="hl-comment"># wyświetl gen, shebang i liczbę węzłów AST</span>
-hl check --meta skrypt.hl <span class="hl-comment"># sprawdź z meta-informacjami</span></pre>
-    </div>
   </section>
 
   <!-- OUTPUT -->
   <section id="output">
     <div class="section-header"><span class="section-num">06</span><h2>Wyjście — <code>~></code></h2></div>
-    <p>
-      Operator <code>~></code> to jedyny sposób wypisywania tekstu na stdout w Hacker Lang.
-      Używanie <code>echo</code> wewnątrz bloków komend jest <strong>zakazane</strong> i generuje błąd.
-    </p>
-    <div class="callout">
-      <span class="callout-icon">🚫</span>
-      <div class="callout-body">
-        <strong>echo jest zabronione.</strong> Użycie <code>&gt; echo tekst</code> generuje błąd.
-        Linter automatycznie sugeruje zamianę na <code>~&gt; tekst</code>.
-        Jeśli potrzebujesz <code>echo</code> w skrypcie powłoki, użyj <code>&gt; bash -c "echo ..."</code>.
-      </div>
-    </div>
+    <p>Operator <code>~&gt;</code> to jedyny sposób wypisywania tekstu. <code>echo</code> jest zakazane.</p>
     <div class="code-block">
       <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>SKŁADNIA ~></div>
       <pre><span class="hl-print">~></span> Zwykły tekst
 <span class="hl-print">~></span> Wartość zmiennej: <span class="hl-var-ref">@nazwa</span>
-<span class="hl-print">~></span> Host: <span class="hl-var-ref">@target</span>, Port: <span class="hl-var-ref">@port</span>
-<span class="hl-print">~></span> Wersja HL: <span class="hl-var-ref">@HL_VERSION</span>
-<span class="hl-print">~></span>              <span class="hl-comment">;; pusta linia (lub ::nl)</span></pre>
+<span class="hl-print">~></span> Host: <span class="hl-var-ref">@target</span>, Port: <span class="hl-var-ref">@port</span></pre>
     </div>
   </section>
 
-  <!-- QUICK FUNCTIONS -->
+  <!-- QUICK -->
   <section id="quick">
     <div class="section-header"><span class="section-num">07</span><h2>Quick-funkcje — <code>::</code></h2></div>
-    <p>
-      Operator <code>::</code> wywołuje wbudowane funkcje bezpośrednio z interpretera.
-      Wynik trafia na stdout i ustawia <code>last_exit</code> — można go sprawdzić blokiem <code>? ok</code>.
-    </p>
     <div class="code-block">
-      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>PRZYKŁADY :: QUICK-CALLS</div>
-      <pre><span class="hl-quick">::</span>upper   <span class="hl-string">hello world</span>       <span class="hl-comment">;; → HELLO WORLD</span>
-<span class="hl-quick">::</span>lower   <span class="hl-var-ref">@name</span>             <span class="hl-comment">;; → małe litery</span>
-<span class="hl-quick">::</span>len     <span class="hl-var-ref">@text</span>             <span class="hl-comment">;; → długość stringa</span>
-<span class="hl-quick">::</span>trim    <span class="hl-var-ref">@input</span>            <span class="hl-comment">;; → usuń białe znaki</span>
-<span class="hl-quick">::</span>rev     <span class="hl-string">hacker</span>            <span class="hl-comment">;; → rekcah</span>
-<span class="hl-quick">::</span>replace <span class="hl-var-ref">@text</span> <span class="hl-string">old new</span>    <span class="hl-comment">;; → zamień wystąpienia</span>
-<span class="hl-quick">::</span>contains <span class="hl-var-ref">@text</span> <span class="hl-string">wzorzec</span>  <span class="hl-comment">;; → exit 0 jeśli zawiera</span>
-<span class="hl-quick">::</span>split   <span class="hl-var-ref">@text</span> <span class="hl-string">:</span>          <span class="hl-comment">;; → każda część = linia</span>
-<span class="hl-quick">::</span>rand                      <span class="hl-comment">;; → losowa 0-99</span>
-<span class="hl-quick">::</span>exists  <span class="hl-string">/etc/passwd</span>       <span class="hl-comment">;; → exit 0 jeśli istnieje</span>
-<span class="hl-quick">::</span>green   <span class="hl-string">Sukces!</span>           <span class="hl-comment">;; → kolorowy output</span>
-<span class="hl-quick">::</span>hr      <span class="hl-string">40</span>                <span class="hl-comment">;; → ────────────────────</span>
-<span class="hl-quick">::</span>set     <span class="hl-string">result ok</span>         <span class="hl-comment">;; → @result = "ok"</span></pre>
+      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>PRZYKŁADY</div>
+      <pre><span class="hl-quick">::</span>upper   <span class="hl-string">hello world</span>
+<span class="hl-quick">::</span>green   <span class="hl-string">Sukces!</span>
+<span class="hl-quick">::</span>exists  <span class="hl-string">/etc/passwd</span>
+<span class="hl-quick">::</span>hr      <span class="hl-string">40</span>
+<span class="hl-quick">::</span>set     <span class="hl-string">result ok</span></pre>
     </div>
-    <h3>Wszystkie wbudowane quick-funkcje</h3>
     <div class="quick-grid">
-      <div class="quick-item"><span class="fn">::upper</span><span class="desc">tekst → WIELKIE LITERY</span></div>
-      <div class="quick-item"><span class="fn">::lower</span><span class="desc">tekst → małe litery</span></div>
-      <div class="quick-item"><span class="fn">::len</span><span class="desc">długość stringa</span></div>
-      <div class="quick-item"><span class="fn">::trim</span><span class="desc">usuń białe znaki</span></div>
-      <div class="quick-item"><span class="fn">::rev</span><span class="desc">odwróć string</span></div>
-      <div class="quick-item"><span class="fn">::repeat</span><span class="desc">tekst N razy</span></div>
-      <div class="quick-item"><span class="fn">::replace</span><span class="desc">zamień podstring</span></div>
-      <div class="quick-item"><span class="fn">::contains</span><span class="desc">sprawdź zawieranie</span></div>
-      <div class="quick-item"><span class="fn">::startswith</span><span class="desc">sprawdź prefix</span></div>
-      <div class="quick-item"><span class="fn">::endswith</span><span class="desc">sprawdź suffix</span></div>
-      <div class="quick-item"><span class="fn">::split</span><span class="desc">podziel po separatorze</span></div>
-      <div class="quick-item"><span class="fn">::lines</span><span class="desc">podziel po liniach</span></div>
-      <div class="quick-item"><span class="fn">::words</span><span class="desc">podziel po słowach</span></div>
-      <div class="quick-item"><span class="fn">::abs</span><span class="desc">wartość bezwzględna</span></div>
-      <div class="quick-item"><span class="fn">::ceil</span><span class="desc">zaokrąglij w górę</span></div>
-      <div class="quick-item"><span class="fn">::floor</span><span class="desc">zaokrąglij w dół</span></div>
-      <div class="quick-item"><span class="fn">::round</span><span class="desc">zaokrąglij</span></div>
-      <div class="quick-item"><span class="fn">::max</span><span class="desc">większa z dwóch liczb</span></div>
-      <div class="quick-item"><span class="fn">::min</span><span class="desc">mniejsza z dwóch</span></div>
-      <div class="quick-item"><span class="fn">::rand</span><span class="desc">losowa liczba 0-99</span></div>
-      <div class="quick-item"><span class="fn">::env</span><span class="desc">zmienna środowiskowa</span></div>
-      <div class="quick-item"><span class="fn">::date</span><span class="desc">bieżąca data</span></div>
-      <div class="quick-item"><span class="fn">::time</span><span class="desc">bieżący czas</span></div>
-      <div class="quick-item"><span class="fn">::pid</span><span class="desc">PID procesu HL</span></div>
-      <div class="quick-item"><span class="fn">::which</span><span class="desc">ścieżka do narzędzia</span></div>
-      <div class="quick-item"><span class="fn">::exists</span><span class="desc">czy ścieżka istnieje?</span></div>
-      <div class="quick-item"><span class="fn">::isdir</span><span class="desc">czy to katalog?</span></div>
-      <div class="quick-item"><span class="fn">::isfile</span><span class="desc">czy to plik?</span></div>
-      <div class="quick-item"><span class="fn">::basename</span><span class="desc">nazwa pliku</span></div>
-      <div class="quick-item"><span class="fn">::dirname</span><span class="desc">katalog nadrzędny</span></div>
-      <div class="quick-item"><span class="fn">::read</span><span class="desc">odczytaj plik</span></div>
-      <div class="quick-item"><span class="fn">::set</span><span class="desc">ustaw zmienną</span></div>
-      <div class="quick-item"><span class="fn">::get</span><span class="desc">pobierz zmienną</span></div>
-      <div class="quick-item"><span class="fn">::type</span><span class="desc">typ zmiennej</span></div>
-      <div class="quick-item"><span class="fn">::unset</span><span class="desc">usuń zmienną</span></div>
-      <div class="quick-item"><span class="fn">::nl</span><span class="desc">pusta linia</span></div>
-      <div class="quick-item"><span class="fn">::hr</span><span class="desc">pozioma linia (hr N)</span></div>
-      <div class="quick-item"><span class="fn">::bold</span><span class="desc">pogrubiony tekst</span></div>
-      <div class="quick-item"><span class="fn">::red</span><span class="desc">czerwony tekst</span></div>
-      <div class="quick-item"><span class="fn">::green</span><span class="desc">zielony tekst</span></div>
-      <div class="quick-item"><span class="fn">::yellow</span><span class="desc">żółty tekst</span></div>
-      <div class="quick-item"><span class="fn">::cyan</span><span class="desc">cyjanowy tekst</span></div>
+      <div class="quick-item"><span class="fn">::upper/lower</span><span class="desc">zmiana wielkości liter</span></div>
+      <div class="quick-item"><span class="fn">::len/trim/rev</span><span class="desc">operacje na stringach</span></div>
+      <div class="quick-item"><span class="fn">::replace/split</span><span class="desc">transformacje stringów</span></div>
+      <div class="quick-item"><span class="fn">::contains/startswith/endswith</span><span class="desc">sprawdzanie stringów</span></div>
+      <div class="quick-item"><span class="fn">::abs/ceil/floor/round</span><span class="desc">matematyka</span></div>
+      <div class="quick-item"><span class="fn">::max/min/rand</span><span class="desc">matematyka</span></div>
+      <div class="quick-item"><span class="fn">::env/date/time/pid</span><span class="desc">system</span></div>
+      <div class="quick-item"><span class="fn">::which/exists/isdir/isfile</span><span class="desc">pliki</span></div>
+      <div class="quick-item"><span class="fn">::basename/dirname/read</span><span class="desc">ścieżki/pliki</span></div>
+      <div class="quick-item"><span class="fn">::set/get/type/unset</span><span class="desc">zmienne</span></div>
+      <div class="quick-item"><span class="fn">::nl/hr/bold</span><span class="desc">formatowanie</span></div>
+      <div class="quick-item"><span class="fn">::red/green/yellow/cyan</span><span class="desc">kolory</span></div>
     </div>
   </section>
 
   <!-- COMMANDS -->
   <section id="commands">
     <div class="section-header"><span class="section-num">08</span><h2>Komendy — <code>> ^ -></code></h2></div>
-    <p>Hacker Lang oferuje siedem trybów uruchamiania komend systemowych:</p>
     <div class="cmd-grid">
-      <div class="cmd-card"><span class="op">> komenda</span><p>Zwykłe wykonanie. Dziedziczy środowisko.</p></div>
-      <div class="cmd-card sudo-card"><span class="op sudo">^> komenda</span><p>Wykonanie z <strong>sudo</strong>. Natywny odpowiednik.</p></div>
-      <div class="cmd-card iso-card"><span class="op iso">-> komenda</span><p>Izolowany namespace Linux (<code>unshare</code>). Oddzielny mount/pid/net.</p></div>
-      <div class="cmd-card iso-card"><span class="op iso">^-> komenda</span><p>Izolacja namespace <strong>+</strong> sudo.</p></div>
-      <div class="cmd-card"><span class="op">>> komenda @var</span><p>Komenda z interpolacją zmiennych <code>@nazwa</code>.</p></div>
-      <div class="cmd-card sudo-card"><span class="op sudo">^>> komenda @var</span><p>Interpolacja <strong>+</strong> sudo.</p></div>
-      <div class="cmd-card iso-card"><span class="op iso">->> komenda @var</span><p>Interpolacja <strong>+</strong> izolacja namespace.</p></div>
+      <div class="cmd-card"><span class="op">> komenda</span><p>Zwykłe wykonanie.</p></div>
+      <div class="cmd-card sudo-card"><span class="op sudo">^> komenda</span><p>Wykonanie z sudo.</p></div>
+      <div class="cmd-card iso-card"><span class="op iso">-> komenda</span><p>Izolowany namespace (unshare).</p></div>
+      <div class="cmd-card iso-card"><span class="op iso">^-> komenda</span><p>Izolacja + sudo.</p></div>
+      <div class="cmd-card"><span class="op">>> komenda @var</span><p>Interpolacja zmiennych.</p></div>
+      <div class="cmd-card sudo-card"><span class="op sudo">^>> komenda</span><p>Interpolacja + sudo.</p></div>
+      <div class="cmd-card iso-card"><span class="op iso">->> komenda</span><p>Interpolacja + izolacja.</p></div>
     </div>
+  </section>
+
+  <!-- HSH -->
+  <section id="hsh">
+    <div class="section-header"><span class="section-num">09</span><h2>Hsh Shell — <code>*></code></h2></div>
+    <p>Operator <code>*&gt;</code> uruchamia komendę przez <code>hsh -c "..."</code> — autorską powłokę HackerOS.</p>
     <div class="code-block">
-      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>PRZYKŁADY KOMEND</div>
-      <pre><span class="hl-var-decl">% target</span> = 192.168.1.1
-<span class="hl-var-decl">% port</span>   = 22
+      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>SKŁADNIA *></div>
+      <pre><span class="hl-hsh">*></span> ls -la
+<span class="hl-hsh">*></span> cat /etc/os-release
+<span class="hl-hsh">*></span> echo "Hello from hsh"  <span class="hl-comment">;; echo dozwolone w hsh</span>
 
-<span class="hl-cmd">></span>   ls -la /tmp
-<span class="hl-sudo">^></span>  apt-get update
-<span class="hl-iso">-></span>  curl -s http://test.internal
-<span class="hl-iso">^-></span> nmap -sS 10.0.0.0/24
-<span class="hl-cmd">>></span>  nmap -p <span class="hl-var-ref">@port</span> <span class="hl-var-ref">@target</span>
-<span class="hl-sudo">^>></span> ssh <span class="hl-var-ref">@user</span>@<span class="hl-var-ref">@target</span>
-<span class="hl-iso">->></span> curl -s http://<span class="hl-var-ref">@target</span>
-
-<span class="hl-comment">;; Przekierowania i potoki — normalna składnia powłoki:</span>
-<span class="hl-cmd">></span> ls -la | grep ".hl"
-<span class="hl-cmd">></span> cat /etc/passwd | cut -d: -f1 > /tmp/users.txt
-<span class="hl-cmd">></span> bash -c "printf 'tekst' > /tmp/plik.tmp"</pre>
-    </div>
-    <div class="callout info">
-      <span class="callout-icon">🔒</span>
-      <div class="callout-body">
-        <strong>Izolacja namespace:</strong> tryby <code>-&gt;</code> i <code>^-&gt;</code> używają
-        <code>unshare --mount --pid --net --fork</code>. Komenda uruchamiana jest w oddzielnych
-        przestrzeniach nazw Linuksa, bez dostępu do sieci hosta.
-      </div>
+<span class="hl-comment">;; *> nie obsluguje interpolacji @zmiennych — uzyj >> dla tego celu</span></pre>
     </div>
     <div class="callout note">
       <span class="callout-icon">💡</span>
       <div class="callout-body">
-        <strong>Linter:</strong> użycie <code>&gt; sudo cmd</code> jest automatycznie wykrywane
-        i sugeruje zamianę na natywny operator <code>^&gt; cmd</code>.
+        <code>*&gt;</code> przekazuje komendę verbatim do <code>hsh -c</code>. Nie obsługuje interpolacji
+        <code>@zmiennych</code> — użyj <code>&gt;&gt;</code> gdy potrzebujesz zmiennych HL.
+        <code>echo</code> jest dozwolone wewnątrz <code>*&gt;</code> (bo to kontekst hsh, nie HL).
       </div>
+    </div>
+  </section>
+
+  <!-- BACKGROUND -->
+  <section id="background">
+    <div class="section-header"><span class="section-num">10</span><h2>Tło — <code>&amp;</code></h2></div>
+    <p>Operator <code>&amp;</code> uruchamia komendę w tle — nie czeka na jej zakończenie. PID jest dostępny przez <code>@_bg_pid</code>.</p>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>SKŁADNIA &amp;</div>
+      <pre><span class="hl-bg">&amp;</span> python3 -m http.server 8080
+<span class="hl-bg">&amp;</span> redis-server --port 6380
+
+<span class="hl-comment">;; Równoległe pobieranie</span>
+<span class="hl-bg">&amp;</span> wget -q https://example.com/plik1.zip
+<span class="hl-bg">&amp;</span> wget -q https://example.com/plik2.zip
+<span class="hl-bg">&amp;</span> wget -q https://example.com/plik3.zip
+
+<span class="hl-comment">;; PID ostatniego procesu w tle</span>
+<span class="hl-print">~></span> PID: <span class="hl-var-ref">@_bg_pid</span>
+
+<span class="hl-comment">;; Działa też ze zmiennymi HL (interpolacja)</span>
+<span class="hl-var-decl">% port</span> = 9000
+<span class="hl-bg">&amp;</span> python3 -m http.server <span class="hl-var-ref">@port</span></pre>
+    </div>
+  </section>
+
+  <!-- REPEAT N -->
+  <section id="repeat">
+    <div class="section-header"><span class="section-num">11</span><h2>Pętla _N</h2></div>
+    <p>Operator <code>_N</code> powtarza następną instrukcję N razy. Działa z komendami, zmiennymi, quick-funkcjami.</p>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>SKŁADNIA _N</div>
+      <pre><span class="hl-repeat">_10</span> <span class="hl-cmd">></span> hacker update
+<span class="hl-repeat">_5</span>  <span class="hl-print">~></span> Powtarzam...
+<span class="hl-repeat">_3</span>  <span class="hl-quick">::</span>green OK
+<span class="hl-repeat">_100</span> <span class="hl-cmd">></span> ping -c 1 192.168.1.1
+
+<span class="hl-comment">;; _N z komenda systemowa</span>
+<span class="hl-repeat">_10</span> <span class="hl-cmd">>></span> curl -s http://<span class="hl-var-ref">@target</span>/test
+
+<span class="hl-comment">;; _N z quick-funkcja</span>
+<span class="hl-repeat">_20</span> <span class="hl-quick">::</span>nl</pre>
     </div>
   </section>
 
   <!-- VARIABLES -->
   <section id="variables">
-    <div class="section-header"><span class="section-num">09</span><h2>Zmienne lokalne — <code>%</code> i <code>@</code></h2></div>
-    <p>
-      Operator <code>%</code> deklaruje zmienną <strong>lokalną HL</strong> — widoczną tylko
-      w środowisku interpretera. Operator <code>@</code> odwołuje się do wartości zmiennej.
-    </p>
+    <div class="section-header"><span class="section-num">12</span><h2>Zmienne lokalne — <code>%</code> i <code>@</code></h2></div>
     <div class="code-block">
       <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>TYPY WARTOŚCI</div>
-      <pre><span class="hl-var-decl">% host</span>    = 192.168.1.1        <span class="hl-comment">;; string</span>
-<span class="hl-var-decl">% port</span>    = 8080               <span class="hl-comment">;; liczba</span>
-<span class="hl-var-decl">% debug</span>   = true               <span class="hl-comment">;; bool</span>
-<span class="hl-var-decl">% path</span>    = /tmp/audit/<span class="hl-var-ref">@host</span>   <span class="hl-comment">;; interpolowany string</span>
+      <pre><span class="hl-var-decl">% host</span>    = 192.168.1.1
+<span class="hl-var-decl">% port</span>    = 8080
+<span class="hl-var-decl">% debug</span>   = true
+<span class="hl-var-decl">% path</span>    = /tmp/audit/<span class="hl-var-ref">@host</span>
 
-<span class="hl-print">~></span> Skanowanie <span class="hl-var-ref">@host</span>:<span class="hl-var-ref">@port</span> → <span class="hl-var-ref">@path</span></pre>
+<span class="hl-print">~></span> Skanowanie <span class="hl-var-ref">@host</span>:<span class="hl-var-ref">@port</span></pre>
     </div>
-    <h3>Zmienne systemowe</h3>
     <table class="ref-table">
       <tr><th>Zmienna</th><th>Wartość</th></tr>
-      <tr><td>@HL_VERSION</td><td>Wersja interpretera (np. 0.4.0)</td></tr>
+      <tr><td>@HL_VERSION</td><td>gen 1</td></tr>
       <tr><td>@HL_OS</td><td>HackerOS/Debian</td></tr>
       <tr><td>@HL_SCRIPT</td><td>Ścieżka do bieżącego skryptu</td></tr>
-      <tr><td>@HL_GEN</td><td>Aktywny numer gena (np. 1)</td></tr>
-      <tr><td>@HL_SHEBANG</td><td>Linia shebang (jeśli była)</td></tr>
-      <tr><td>@HL_SHELL_MODE</td><td>true gdy uruchomiony jako powłoka</td></tr>
-      <tr><td>@HL_EXEC_NAME</td><td>Nazwa skryptu gdy uruchomiony przez hl exec</td></tr>
-      <tr><td>@argc</td><td>Liczba argumentów skryptu</td></tr>
-      <tr><td>@arg0, @arg1…</td><td>Argumenty przekazane do skryptu</td></tr>
+      <tr><td>@HL_GEN</td><td>Numer aktywnego gena (1)</td></tr>
+      <tr><td>@_bg_pid</td><td>PID ostatniego procesu w tle (&amp;)</td></tr>
+      <tr><td>@argc, @arg0…</td><td>Argumenty skryptu</td></tr>
     </table>
   </section>
 
   <!-- EXPORT -->
   <section id="export">
-    <div class="section-header"><span class="section-num">10</span><h2>Export — <code>=></code></h2></div>
-    <p>
-      Operator <code>=></code> ustawia zmienną <strong>w środowisku procesu</strong> (<code>setenv</code>).
-      Wszystkie uruchamiane podprocesy dziedziczą tę zmienną.
-      Różni się od <code>%</code> — zmienna lokalna HL nie jest widoczna dla podprocesów.
-    </p>
+    <div class="section-header"><span class="section-num">13</span><h2>Export — <code>=></code></h2></div>
     <div class="code-block">
-      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>POJEDYNCZA WARTOŚĆ</div>
+      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>EXPORT</div>
       <pre><span class="hl-export">=></span> EDITOR   = nvim
-<span class="hl-export">=></span> BROWSER  = firefox
-<span class="hl-export">=></span> JAVA_HOME = /usr/lib/jvm/java-17
-<span class="hl-export">=></span> GOPATH   = /home/hacker/go</pre>
-    </div>
-    <div class="code-block">
-      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>LISTA WARTOŚCI (PATH)</div>
-      <pre><span class="hl-export">=></span> PATH [
+<span class="hl-export">=></span> GOPATH   = /home/hacker/go
+
+<span class="hl-export">=></span> PATH [
 | /usr/local/bin
 | /usr/bin
 | /usr/lib/HackerOS
-| /home/hacker/.cargo/bin
 | /home/hacker/.local/bin
 ]</pre>
     </div>
-    <div class="callout note">
-      <span class="callout-icon">💡</span>
-      <div class="callout-body">
-        <strong>Lista wartości</strong> jest łączona znakiem <code>:</code> (konwencja PATH i podobnych).
-        Elementy listy obsługują interpolację <code>@zmiennych</code>.
-      </div>
-    </div>
-    <div class="code-block">
-      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>LISTA Z INTERPOLACJĄ</div>
-      <pre><span class="hl-var-decl">% home</span> = /home/hacker
-
-<span class="hl-export">=></span> PATH [
-| <span class="hl-var-ref">@home</span>/.local/bin
-| <span class="hl-var-ref">@home</span>/go/bin
-| <span class="hl-var-ref">@home</span>/.cargo/bin
-| /usr/local/bin
-| /usr/bin
-]
-
-<span class="hl-export">=></span> EDITOR = nvim
-<span class="hl-export">=></span> GOPATH = <span class="hl-var-ref">@home</span>/go
-
-<span class="hl-comment">;; Teraz podprocesy widzą PATH, EDITOR, GOPATH</span>
-<span class="hl-cmd">></span> bash -c "echo $PATH"</pre>
-    </div>
-    <table class="ref-table">
-      <tr><th>Operator</th><th>Zasięg</th><th>Dziedziczenie</th></tr>
-      <tr><td>% name = val</td><td>Tylko HL (lokalna)</td><td>Podprocesy NIE widzą</td></tr>
-      <tr><td>=> NAME = val</td><td>Środowisko procesu</td><td>Podprocesy WIDZĄ (setenv)</td></tr>
-    </table>
   </section>
 
   <!-- FUNCTIONS -->
   <section id="functions">
-    <div class="section-header"><span class="section-num">11</span><h2>Funkcje — <code>:</code> i <code>--</code></h2></div>
-    <p>
-      Funkcje definiuje się operatorem <code>:</code>, po którym następuje nazwa i słowo <code>def</code>.
-      Ciało funkcji kończy się słowem <code>done</code>. Wywołanie to <code>-- nazwa</code>.
-    </p>
+    <div class="section-header"><span class="section-num">14</span><h2>Funkcje — <code>:</code> i <code>--</code></h2></div>
     <div class="code-block">
-      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>SKŁADNIA FUNKCJI</div>
-      <pre><span class="hl-func">:</span> perform_audit <span class="hl-kw">def</span>
-    <span class="hl-print">~></span> Rozpoczynam skan <span class="hl-var-ref">@target</span>...
-    <span class="hl-quick">::</span>hr 40
-
-    <span class="hl-cmd">>></span> nmap -sV -T4 <span class="hl-var-ref">@target</span>
-
+      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>SKŁADNIA</div>
+      <pre><span class="hl-func">:</span> audit <span class="hl-kw">def</span>
+    <span class="hl-print">~></span> Skanowanie <span class="hl-var-ref">@target</span>...
+    <span class="hl-cmd">>></span> nmap -sV <span class="hl-var-ref">@target</span>
     <span class="hl-logic">? ok</span>
-        <span class="hl-quick">::</span>green Skan zakończony pomyślnie.
-    <span class="hl-done">done</span>
-
-    <span class="hl-logic">? err</span>
-        <span class="hl-quick">::</span>red Błąd podczas skanowania!
+        <span class="hl-quick">::</span>green Skan zakończony.
     <span class="hl-done">done</span>
 <span class="hl-done">done</span>
 
-<span class="hl-comment">;; Wywołanie:</span>
-<span class="hl-func">--</span> perform_audit</pre>
+<span class="hl-func">--</span> audit</pre>
     </div>
   </section>
 
   <!-- LOGIC -->
   <section id="logic">
-    <div class="section-header"><span class="section-num">12</span><h2>Logika — <code>? ok</code> / <code>? err</code></h2></div>
-    <p>
-      Bloki warunkowe sprawdzają <code>last_exit</code> — kod wyjścia ostatnio wykonanej komendy.
-      <code>? ok</code> uruchamia blok gdy exit = 0, <code>? err</code> gdy exit ≠ 0.
-    </p>
+    <div class="section-header"><span class="section-num">15</span><h2>Logika — <code>? ok</code> / <code>? err</code></h2></div>
     <div class="code-block">
-      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>PRZYKŁADY LOGIKI</div>
+      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>WARUNKI</div>
       <pre><span class="hl-cmd">></span> ping -c 1 192.168.1.1
 
 <span class="hl-logic">? ok</span>
     <span class="hl-quick">::</span>green Host online ✓
-    <span class="hl-cmd">>></span> nmap -sV <span class="hl-var-ref">@target</span>
 <span class="hl-done">done</span>
 
 <span class="hl-logic">? err</span>
     <span class="hl-quick">::</span>red Host niedostępny ✗
-    <span class="hl-print">~></span> Sprawdź połączenie sieciowe.
-<span class="hl-done">done</span>
-
-<span class="hl-comment">;; Quick-funkcje też ustawiają exit code:</span>
-<span class="hl-quick">::</span>contains <span class="hl-var-ref">@text</span> <span class="hl-string">error</span>
-
-<span class="hl-logic">? ok</span>
-    <span class="hl-print">~></span> Znaleziono błąd w tekście
-<span class="hl-done">done</span>
-
-<span class="hl-comment">;; Zagnieżdżanie:</span>
-<span class="hl-quick">::</span>exists /etc/passwd
-<span class="hl-logic">? ok</span>
-    <span class="hl-quick">::</span>exists /etc/shadow
-    <span class="hl-logic">? ok</span>
-        <span class="hl-quick">::</span>green Oba pliki istnieją
-    <span class="hl-done">done</span>
 <span class="hl-done">done</span></pre>
     </div>
   </section>
 
-  <!-- COMMENTS -->
-  <section id="comments">
-    <div class="section-header"><span class="section-num">13</span><h2>Komentarze — <code>;; /// //</code></h2></div>
+  <!-- GOROUTINES -->
+  <section id="goroutines">
+    <div class="section-header"><span class="section-num">16</span><h2>Goroutines i Channels — <code>:*</code> <code>:**</code></h2></div>
+    <p>
+      Goroutines (<code>:*</code>) i channels (<code>:**</code>) to mechanizm współbieżności inspirowany Go.
+      Goroutine uruchamia blok kodu w osobnym wątku. Channel służy do komunikacji między goroutines.
+    </p>
+    <div class="callout note">
+      <span class="callout-icon">💡</span>
+      <div class="callout-body">
+        W trybie kompilacji (<code>.bc → ELF</code>) goroutines i channels są pomijane — działają tylko
+        w trybie interpretowanym. Dla pełnej współbieżności w skompilowanych binkarkach użyj operatora <code>&amp;</code>.
+      </div>
+    </div>
     <div class="code-block">
-      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>TYPY KOMENTARZY</div>
-      <pre><span class="hl-comment">;; Komentarz liniowy — ignorowany w runtime i AST</span>
+      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>SKŁADNIA GOROUTINE / CHANNEL</div>
+      <pre><span class="hl-comment">;; Goroutine — uruchom blok w tle (wg. Go goroutines)</span>
+<span class="hl-goroutine">:*</span>
+    <span class="hl-cmd">></span> python3 -m http.server 9090
+<span class="hl-done">done</span>
 
-<span class="hl-doc">/// Komentarz dokumentacyjny — zachowany w AST</span>
-<span class="hl-doc">/// Wyświetlany przez hl search jako opis skryptu</span>
+<span class="hl-comment">;; Channel — komunikacja miedzy goroutines</span>
+<span class="hl-channel">:**</span> wyniki
 
-<span class="hl-comment">// Komentarz blokowy
-   może rozciągać się na wiele linii
-   kończy się dwoma backslashami \\</span></pre>
+<span class="hl-goroutine">:*</span>
+    <span class="hl-cmd">></span> nmap -sn 192.168.1.0/24
+    <span class="hl-chanop">*--</span> wyniki
+<span class="hl-done">done</span>
+
+<span class="hl-goroutine">:*</span>
+    <span class="hl-cmd">></span> masscan -p1-1000 192.168.1.0/24
+    <span class="hl-chanop">*--</span> wyniki
+<span class="hl-done">done</span>
+
+<span class="hl-comment">;; Odbierz z kanalu</span>
+<span class="hl-chanop">*--</span> wyniki</pre>
     </div>
     <table class="ref-table">
-      <tr><th>Składnia</th><th>Typ</th><th>Opis</th></tr>
-      <tr><td>;; tekst</td><td>Liniowy</td><td>Ignorowany w runtime i AST</td></tr>
-      <tr><td>/// tekst</td><td>Dokumentacyjny</td><td>Zachowany w AST; wyświetlany przez hl search</td></tr>
-      <tr><td>// tekst \\</td><td>Blokowy</td><td>Wieloliniowy — ends with \\</td></tr>
+      <tr><th>Symbol</th><th>Nazwa</th><th>Opis</th></tr>
+      <tr><td>:*</td><td>Goroutine</td><td>Uruchom blok w osobnym wątku</td></tr>
+      <tr><td>:**</td><td>Channel</td><td>Zadeklaruj kanał komunikacji</td></tr>
+      <tr><td>*--</td><td>Channel Op</td><td>Wyślij/odbierz przez kanał</td></tr>
     </table>
+  </section>
+
+  <!-- COMMENTS -->
+  <section id="comments">
+    <div class="section-header"><span class="section-num">17</span><h2>Komentarze</h2></div>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>TYPY KOMENTARZY</div>
+      <pre><span class="hl-comment">;; Komentarz liniowy</span>
+<span class="hl-doc">/// Komentarz dokumentacyjny (zachowany w AST)</span>
+<span class="hl-comment">// Komentarz blokowy
+   moze byc wieloliniowy
+   konczy sie \\</span></pre>
+    </div>
   </section>
 
   <!-- DEPS -->
   <section id="deps">
-    <div class="section-header"><span class="section-num">14</span><h2>Zależności — <code>// pakiet</code></h2></div>
-    <p>
-      Operator <code>//</code> (bez domknięcia <code>\\</code>) deklaruje zależność systemową.
-      Interpreter sprawdza dostępność w PATH i automatycznie instaluje brakujące narzędzie.
-    </p>
+    <div class="section-header"><span class="section-num">18</span><h2>Zależności — <code>//</code></h2></div>
     <div class="code-block">
-      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>DEKLARACJA ZALEŻNOŚCI</div>
-      <pre><span class="hl-dep">// nmap</span>    <span class="hl-comment">;; wymaga nmap</span>
-<span class="hl-dep">// curl</span>    <span class="hl-comment">;; wymaga curl</span>
-<span class="hl-dep">// whois</span>   <span class="hl-comment">;; wymaga whois</span>
-<span class="hl-dep">// git</span>     <span class="hl-comment">;; wymaga git</span></pre>
+      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>DEKLARACJA</div>
+      <pre><span class="hl-dep">// nmap</span>
+<span class="hl-dep">// curl</span>
+<span class="hl-dep">// git</span></pre>
     </div>
-    <p>Kolejność instalacji: <code>apt-get</code> → <code>sudo apt-get</code> → <code>sudo lpm</code></p>
   </section>
 
   <!-- IMPORTS -->
   <section id="imports">
-    <div class="section-header"><span class="section-num">15</span><h2>Biblioteki — <code>#</code></h2></div>
+    <div class="section-header"><span class="section-num">19</span><h2>Biblioteki — <code>#</code></h2></div>
+    <p>
+      Biblioteki <code>main/</code> to pliki <code>.hl</code> przechowywane w
+      <code>/usr/lib/HackerOS/Hacker-Lang/main-libs/</code> — <strong>nie są wbudowane do binarki</strong>.
+      Biblioteki <code>bit/</code> to natywne <code>.so</code> instalowane przez manager <strong>bit</strong>.
+    </p>
     <div class="code-block">
-      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>SKŁADNIA IMPORTU</div>
-      <pre><span class="hl-import">#</span> <span class="hl-string">&lt;std/net&gt;</span>              <span class="hl-comment">;; IP, gateway, iface, net_ping()</span>
-<span class="hl-import">#</span> <span class="hl-string">&lt;std/net&gt;</span> | <span class="hl-string">&lt;ports&gt;</span>    <span class="hl-comment">;; tylko stałe portów</span>
-<span class="hl-import">#</span> <span class="hl-string">&lt;std/net:1.2&gt;</span>           <span class="hl-comment">;; konkretna wersja</span>
-<span class="hl-import">#</span> <span class="hl-string">&lt;std/fs&gt;</span>               <span class="hl-comment">;; FS_HOME, FS_TMP…</span>
-<span class="hl-import">#</span> <span class="hl-string">&lt;std/sys&gt;</span>              <span class="hl-comment">;; SYS_OS, SYS_KERNEL…</span>
-<span class="hl-import">#</span> <span class="hl-string">&lt;std/crypto&gt;</span>           <span class="hl-comment">;; sha256, md5, gpg</span>
-<span class="hl-import">#</span> <span class="hl-string">&lt;virus/hashlib&gt;</span>        <span class="hl-comment">;; Virus — natywna .so</span>
-<span class="hl-import">#</span> <span class="hl-string">&lt;community/owner/repo&gt;</span> <span class="hl-comment">;; GitHub</span>
+      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>SKŁADNIA IMPORTU — gen 1</div>
+      <pre><span class="hl-import">#</span> <span class="hl-string">&lt;main/net&gt;</span>            <span class="hl-comment">;; siec: IP, gateway, porty</span>
+<span class="hl-import">#</span> <span class="hl-string">&lt;main/net&gt;</span> | <span class="hl-string">&lt;ports&gt;</span>  <span class="hl-comment">;; tylko stale portow</span>
+<span class="hl-import">#</span> <span class="hl-string">&lt;main/fs&gt;</span>             <span class="hl-comment">;; FS_HOME, FS_TMP...</span>
+<span class="hl-import">#</span> <span class="hl-string">&lt;main/sys&gt;</span>            <span class="hl-comment">;; SYS_OS, SYS_KERNEL...</span>
+<span class="hl-import">#</span> <span class="hl-string">&lt;main/crypto&gt;</span>         <span class="hl-comment">;; sha256, md5, gpg</span>
+<span class="hl-import">#</span> <span class="hl-string">&lt;main/colors&gt;</span>         <span class="hl-comment">;; stale kolorow ANSI</span>
+<span class="hl-import">#</span> <span class="hl-string">&lt;main/cli&gt;</span>            <span class="hl-comment">;; argumenty CLI</span>
+<span class="hl-import">#</span> <span class="hl-string">&lt;main/progress-bar&gt;</span>   <span class="hl-comment">;; pasek postepu</span>
+<span class="hl-import">#</span> <span class="hl-string">&lt;main/json&gt;</span>           <span class="hl-comment">;; parser JSON</span>
+<span class="hl-import">#</span> <span class="hl-string">&lt;main/hk-parser&gt;</span>      <span class="hl-comment">;; parser plikow .hk</span>
+<span class="hl-import">#</span> <span class="hl-string">&lt;main/hacker&gt;</span>         <span class="hl-comment">;; parser plikow .hacker v1/v2/v3</span>
+<span class="hl-import">#</span> <span class="hl-string">&lt;bit/hashlib&gt;</span>         <span class="hl-comment">;; bit — natywna .so</span>
+<span class="hl-import">#</span> <span class="hl-string">&lt;github/user/repo&gt;</span>    <span class="hl-comment">;; GitHub</span>
 
-<span class="hl-comment">;; Stara składnia (kompatybilna):</span>
-<span class="hl-import">#</span> std/net &lt;- ports</pre>
+<span class="hl-comment">;; Stara skladnia (kompatybilna — automatycznie normalizowana):</span>
+<span class="hl-import">#</span> <span class="hl-string">&lt;std/net&gt;</span>             <span class="hl-comment">;; → main/net</span>
+<span class="hl-import">#</span> <span class="hl-string">&lt;virus/hashlib&gt;</span>       <span class="hl-comment">;; → bit/hashlib</span>
+<span class="hl-import">#</span> <span class="hl-string">&lt;community/u/repo&gt;</span>    <span class="hl-comment">;; → github/u/repo</span>
+<span class="hl-import">#</span> std/net <span class="hl-string">&lt;-</span> ports      <span class="hl-comment">;; legacy arrow-syntax</span></pre>
     </div>
     <table class="ref-table">
-      <tr><th>Biblioteka</th><th>Zmienne i funkcje</th></tr>
-      <tr><td>std/net</td><td>NET_LOCALHOST, NET_GATEWAY, NET_IFACE, NET_MYIP, net_ping()</td></tr>
-      <tr><td>std/net | ports</td><td>PORT_SSH=22, PORT_HTTP=80, PORT_HTTPS=443, PORT_FTP=21…</td></tr>
-      <tr><td>std/fs</td><td>FS_HOME, FS_TMP, FS_ETC, FS_VAR_LOG, FS_PROC</td></tr>
-      <tr><td>std/sys</td><td>SYS_OS, SYS_VERSION, SYS_ARCH, SYS_KERNEL, SYS_HOSTNAME, SYS_CPU, SYS_MEMTOTAL, SYS_UPTIME</td></tr>
-      <tr><td>std/crypto</td><td>CRYPTO_SHA256_CMD, CRYPTO_MD5_CMD, CRYPTO_GPG_CMD</td></tr>
-      <tr><td>std/proc</td><td>PROC_SELF_PID, PROC_PPID</td></tr>
+      <tr><th>Biblioteka</th><th>Zawartość</th></tr>
+      <tr><td>main/net</td><td>NET_LOCALHOST, NET_BROADCAST</td></tr>
+      <tr><td>main/fs</td><td>FS_HOME, FS_TMP, FS_ETC, FS_VAR_LOG</td></tr>
+      <tr><td>main/sys</td><td>SYS_ARCH, SYS_HOSTNAME</td></tr>
+      <tr><td>main/colors</td><td>COLOR_RED, COLOR_GREEN, COLOR_CYAN, COLOR_RESET, COLOR_BOLD…</td></tr>
+      <tr><td>main/cli</td><td>CLI_ARGC, CLI_ARG0, CLI_PROG, CLI_VERBOSE</td></tr>
+      <tr><td>main/progress-bar</td><td>Funkcje: progress_bar_show, progress_bar_label, progress_bar_done</td></tr>
+      <tr><td>main/json</td><td>Funkcje: json_get, json_array, json_keys, json_validate</td></tr>
+      <tr><td>main/hk-parser</td><td>Parser .hk: hk_get, hk_has_section, hk_sections, hk_validate</td></tr>
+      <tr><td>main/hacker</td><td>Parser .hacker v1/v2/v3: hacker_parse, hacker_detect_version</td></tr>
     </table>
+  </section>
+
+  <!-- FILE IMPORT -->
+  <section id="fileimport">
+    <div class="section-header"><span class="section-num">20</span><h2>Import pliku — <code>&lt;&lt;</code></h2></div>
+    <p>Operator <code>&lt;&lt;</code> importuje zewnętrzny plik <code>.hl</code> i wykonuje go w bieżącym kontekście.</p>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>SKŁADNIA &lt;&lt;</div>
+      <pre><span class="hl-import">&lt;&lt;</span> utils.hl
+<span class="hl-import">&lt;&lt;</span> helpers/network.hl
+<span class="hl-import">&lt;&lt;</span> /usr/share/HackerOS/lib/common.hl
+
+<span class="hl-comment">;; Z detalami (dostepne jako @_import_detail)</span>
+<span class="hl-import">&lt;&lt;</span> config.hl | produkcja
+<span class="hl-import">&lt;&lt;</span> db.hl | mysql</pre>
+    </div>
+  </section>
+
+  <!-- BIT -->
+  <section id="bit">
+    <div class="section-header"><span class="section-num">21</span><h2>Manager pakietów — <code>bit</code></h2></div>
+    <p>
+      <strong>bit</strong> to manager pakietów napisany w Hacker Lang dla ekosystemu HL.
+      Lista paczek: <code>https://github.com/bit-io/repository/blob/main/bit-repo/repo-list.json</code>
+    </p>
+    <div class="callout info">
+      <span class="callout-icon">📦</span>
+      <div class="callout-body">
+        Wywołanie <code>bit</code> bez argumentów wyświetla pomoc.
+      </div>
+    </div>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>KOMENDY bit</div>
+      <pre>bit                           <span class="hl-comment"># wyswietl pomoc</span>
+bit install &lt;nazwa&gt;           <span class="hl-comment"># zainstaluj pakiet</span>
+bit remove  &lt;nazwa&gt;           <span class="hl-comment"># usun pakiet</span>
+bit list                      <span class="hl-comment"># pokaz dostepne pakiety</span>
+bit update                    <span class="hl-comment"># zaktualizuj liste pakietow</span>
+bit info    &lt;nazwa&gt;           <span class="hl-comment"># informacje o pakiecie</span></pre>
+    </div>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>STRUKTURA PROJEKTU BIT</div>
+      <pre><span class="hl-comment">;; Struktura katalogu z plikami bit:</span>
+projekt/
+  build.hl          <span class="hl-comment"># glowny skrypt budowania</span>
+  main.hl           <span class="hl-comment"># kod zrodlowy</span>
+  .cache/           <span class="hl-comment"># izolowane srodowisko (tworzone przez bit)</span>
+    repo-list.json  <span class="hl-comment"># lista paczek</span>
+    hashlib/        <span class="hl-comment"># pobrane biblioteki</span>
+  main               <span class="hl-comment"># binarka wynikowa (kolo build.hl)</span>
+
+<span class="hl-comment">;; Lub Rust-like (source-code/):</span>
+projekt/
+  source-code/      <span class="hl-comment"># kod zrodlowy</span>
+  build.hl          <span class="hl-comment"># dodatkowe informacje</span>
+  .cache/           <span class="hl-comment"># izolowane srodowisko (usuwane po zakonczeniu)</span>
+
+<span class="hl-comment">;; Lub run-only (bez kompilacji):</span>
+projekt/
+  run.hl            <span class="hl-comment"># skrypt uruchamiany (nie kompilowany)</span>
+  .cache/           <span class="hl-comment"># izolowane srodowisko</span></pre>
+    </div>
+  </section>
+
+  <!-- BIT LIBS -->
+  <section id="bit-libs">
+    <div class="section-header"><span class="section-num">22</span><h2>Biblioteki bit</h2></div>
+    <p>Biblioteki <code>bit/</code> to natywne pliki <code>.so</code> lub <code>.hl</code> instalowane przez managera <code>bit</code>.</p>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>INSTALACJA I UŻYCIE</div>
+      <pre>bit install hashlib
+bit install obsidian
+bit install yuy
+
+<span class="hl-comment">;; W pliku .hl:</span>
+<span class="hl-import">#</span> <span class="hl-string">&lt;bit/hashlib&gt;</span>
+<span class="hl-import">#</span> <span class="hl-string">&lt;bit/obsidian&gt;</span></pre>
+    </div>
   </section>
 
   <!-- CLI -->
   <section id="cli">
-    <div class="section-header"><span class="section-num">16</span><h2>CLI — binarka <code>hl</code></h2></div>
+    <div class="section-header"><span class="section-num">23</span><h2>CLI — binarka <code>hl</code></h2></div>
     <div class="code-block">
-      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>WSZYSTKIE POLECENIA hl</div>
-      <pre>hl [PLIK.hl] [ARGS...]       <span class="hl-comment"># uruchom skrypt</span>
-hl run PLIK.hl [ARGS...]     <span class="hl-comment"># uruchom (jawna forma)</span>
+      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>WSZYSTKIE POLECENIA</div>
+      <pre>hl [PLIK.hl] [ARGS...]       <span class="hl-comment"># uruchom skrypt .hl</span>
+hl run PLIK.hl               <span class="hl-comment"># uruchom skrypt .hl</span>
+hl run PLIK.bc               <span class="hl-comment"># uruchom bytecode .bc</span>
 hl exec &lt;nazwa&gt;              <span class="hl-comment"># uruchom skrypt systemowy</span>
-hl search &lt;fraza&gt;            <span class="hl-comment"># szukaj skryptów systemowych</span>
-hl search all                <span class="hl-comment"># wylistuj wszystkie skrypty</span>
+hl search &lt;fraza&gt;            <span class="hl-comment"># szukaj skryptow</span>
+hl search all                <span class="hl-comment"># wylistuj wszystkie</span>
 hl repl                      <span class="hl-comment"># REPL interaktywny</span>
-hl shell                     <span class="hl-comment"># HL jako powłoka systemowa</span>
-hl shell -c "~> inline"      <span class="hl-comment"># komenda inline</span>
-hl check PLIK.hl             <span class="hl-comment"># sprawdź składnię + linter</span>
-hl check --meta PLIK.hl      <span class="hl-comment"># + pokaż gen i shebang</span>
-hl ast PLIK.hl               <span class="hl-comment"># wydrukuj AST (JSON)</span>
-hl compile PLIK.hl           <span class="hl-comment"># skompiluj do binarki ELF</span>
-hl compile --shared PLIK.hl  <span class="hl-comment"># skompiluj jako .so (Virus)</span>
-hl compile --opt size PLIK.hl <span class="hl-comment"># optymalizacja rozmiaru</span>
-hl gen-info PLIK.hl          <span class="hl-comment"># gen + shebang + węzły AST</span>
-hl docs                      <span class="hl-comment"># otwórz dokumentację TUI</span>
-hl clean                     <span class="hl-comment"># wyczyść ~/.hl/cache</span>
+hl shell                     <span class="hl-comment"># HL jako powloka</span>
+hl check PLIK.hl             <span class="hl-comment"># sprawdz skladnie + linter</span>
+hl check --meta PLIK.hl      <span class="hl-comment"># + gen i shebang</span>
+hl ast PLIK.hl               <span class="hl-comment"># AST jako JSON</span>
+hl compile PLIK.hl           <span class="hl-comment"># .hl → PLIK.bc (bytecode)</span>
+hl compile PLIK.bc           <span class="hl-comment"># .bc → binarka ELF</span>
+hl compile --shared PLIK.bc  <span class="hl-comment"># .bc → .so (bit)</span>
+hl gen-info PLIK.hl          <span class="hl-comment"># gen + shebang + wezly AST</span>
+hl docs                      <span class="hl-comment"># dokumentacja TUI</span>
+hl clean                     <span class="hl-comment"># wyczysc cache</span>
 hl version                   <span class="hl-comment"># informacje o wersji</span>
-hl -c "~> Hej!"              <span class="hl-comment"># jednolinijkowy kod inline</span>
-hl -v PLIK.hl                <span class="hl-comment"># tryb verbose (debug)</span></pre>
+hl -c "~> Hej!"              <span class="hl-comment"># kod inline</span></pre>
     </div>
   </section>
 
-  <!-- EXEC/SEARCH -->
-  <section id="exec">
-    <div class="section-header"><span class="section-num">17</span><h2><code>hl exec</code> i <code>hl search</code></h2></div>
-    <p>
-      Skrypty systemowe HackerOS są przechowywane w <code>/usr/share/HackerOS/Scripts/Bin/</code>.
-      Komendy <code>hl exec</code> i <code>hl search</code> ułatwiają pracę z nimi.
-    </p>
-    <div class="code-block">
-      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>hl search</div>
-      <pre>hl search all                <span class="hl-comment"># wylistuj wszystkie skrypty</span>
-hl search update             <span class="hl-comment"># skrypty zawierające "update"</span>
-hl search kernel             <span class="hl-comment"># skrypty dotyczące kernela</span></pre>
-    </div>
-    <div class="code-block">
-      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>hl exec</div>
-      <pre>hl exec update-system        <span class="hl-comment"># uruchom update-system.hl</span>
-hl exec check-updates-notify <span class="hl-comment"># sprawdź aktualizacje</span>
-hl exec unpack-xanmod        <span class="hl-comment"># zainstaluj kernel XanMod</span></pre>
-    </div>
-    <div class="callout note">
-      <span class="callout-icon">💡</span>
-      <div class="callout-body">
-        <strong>hl search</strong> automatycznie czyta opis skryptu z pierwszego komentarza
-        <code>///</code> lub <code>;;</code> — dlatego warto dokumentować skrypty.
+  <!-- COMPILE -->
+  <section id="compile">
+    <div class="section-header"><span class="section-num">24</span><h2>Kompilacja — <code>.hl → .bc → ELF</code></h2></div>
+    <p>Kompilacja jest <strong>dwuetapowa</strong>:</p>
+    <div class="cmd-grid">
+      <div class="cmd-card">
+        <span class="op">.hl → .bc</span>
+        <p>Etap 1: parsuj <code>.hl</code>, serializuj AST do JSON bytecode <code>.bc</code>. Plik <code>.bc</code> jest wykonywalny (ma shebang).</p>
       </div>
+      <div class="cmd-card">
+        <span class="op">.bc → ELF</span>
+        <p>Etap 2: wczytaj <code>.bc</code>, lower AST → HlIR → Cranelift → obiekt + C runtime → binarka ELF / <code>.so</code>.</p>
+      </div>
+    </div>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>PRZEPŁYW KOMPILACJI</div>
+      <pre>hl compile skrypt.hl         <span class="hl-comment"># → skrypt.bc  (bytecode)</span>
+./skrypt.bc                  <span class="hl-comment"># → uruchom bezposrednio (shebang)</span>
+hl run skrypt.bc             <span class="hl-comment"># → uruchom przez hl</span>
+hl compile skrypt.bc         <span class="hl-comment"># → skrypt      (binarka ELF)</span>
+hl compile --shared skrypt.bc <span class="hl-comment"># → skrypt.so   (biblioteka bit)</span>
+./skrypt                     <span class="hl-comment"># → uruchom binarke</span></pre>
+    </div>
+  </section>
+
+  <!-- EXEC -->
+  <section id="exec">
+    <div class="section-header"><span class="section-num">25</span><h2><code>hl exec</code> i <code>hl search</code></h2></div>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>SKRYPTY SYSTEMOWE</div>
+      <pre>hl search all                <span class="hl-comment"># pokaz wszystkie skrypty</span>
+hl search update             <span class="hl-comment"># szukaj skryptow update</span>
+hl exec update-system        <span class="hl-comment"># uruchom update-system.hl</span>
+hl exec cleanup              <span class="hl-comment"># uruchom cleanup.hl</span></pre>
     </div>
   </section>
 
   <!-- SHELL -->
   <section id="shell">
-    <div class="section-header"><span class="section-num">18</span><h2>Powłoka REPL / Shell</h2></div>
-    <p>
-      <code>hl repl</code> uruchamia interaktywną powłokę z historią, podświetlaniem i autouzupełnianiem.
-      <code>hl shell</code> działa jako pełnoprawny zamiennik powłoki — ładuje <code>~/.hlrc</code>.
-    </p>
+    <div class="section-header"><span class="section-num">26</span><h2>Powłoka REPL / Shell</h2></div>
     <div class="code-block">
-      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>PRZYKŁADOWY ~/.hlrc</div>
-      <pre><span class="hl-doc">/// Konfiguracja powłoki HL</span>
+      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>~/.hlrc</div>
+      <pre><span class="hl-doc">/// Konfiguracja powłoki HL gen 1</span>
 
 <span class="hl-export">=></span> EDITOR  = nvim
-<span class="hl-export">=></span> BROWSER = firefox
-
 <span class="hl-export">=></span> PATH [
 | /usr/local/bin
 | /usr/bin
@@ -663,545 +669,196 @@ hl exec unpack-xanmod        <span class="hl-comment"># zainstaluj kernel XanMod
 
 <span class="hl-func">:</span> ll <span class="hl-kw">def</span>
     <span class="hl-cmd">></span> ls -la
-<span class="hl-done">done</span>
-
-<span class="hl-func">:</span> update <span class="hl-kw">def</span>
-    <span class="hl-cmd">></span> hl exec update-system
 <span class="hl-done">done</span></pre>
     </div>
-    <table class="ref-table">
-      <tr><th>Komenda</th><th>Opis</th></tr>
-      <tr><td>cd [ścieżka]</td><td>Zmień katalog roboczy</td></tr>
-      <tr><td>vars</td><td>Wyświetl wszystkie zmienne HL</td></tr>
-      <tr><td>funcs</td><td>Wyświetl wszystkie funkcje</td></tr>
-      <tr><td>help</td><td>Skrócona dokumentacja składni</td></tr>
-      <tr><td>clear / cls</td><td>Wyczyść terminal</td></tr>
-      <tr><td>exit [n]</td><td>Wyjdź z powłoki</td></tr>
-    </table>
   </section>
 
-  <!-- COMPILER -->
-  <section id="compiler">
-    <div class="section-header"><span class="section-num">19</span><h2>Kompilator — Cranelift + C Runtime</h2></div>
-    <p>
-      HL posiada prawdziwy kompilator oparty na <strong>Cranelift</strong> (nie LLVM, nie rustc).
-      Kompilator generuje statyczną binkarkę ELF x86_64 lub bibliotekę <code>.so</code> (ekosystem Virus).
-      Runtime C jest wbudowany w binkarkę kompilatora — użytkownik nigdy go nie widzi.
-    </p>
-    <div class="code-block">
-      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>KOMPILACJA</div>
-      <pre>hl compile skrypt.hl           <span class="hl-comment"># → statyczna binarka ELF</span>
-hl compile skrypt.hl -o mojprog <span class="hl-comment"># → niestandardowa nazwa</span>
-hl compile --shared wirus.hl   <span class="hl-comment"># → wirus.so (ekosystem Virus)</span>
-hl compile --opt none skrypt.hl <span class="hl-comment"># → bez optymalizacji</span>
-hl compile --opt size skrypt.hl <span class="hl-comment"># → optymalizacja rozmiaru</span>
-hl compile -v skrypt.hl        <span class="hl-comment"># → verbose (pipeline steps)</span></pre>
-    </div>
-    <div class="callout info">
-      <span class="callout-icon">⚙</span>
-      <div class="callout-body">
-        <strong>Pipeline kompilatora:</strong>
-        <code>.hl</code> → AST → HlIR → Cranelift IR → <code>.o</code> + <code>hl_runtime.o</code> → ELF/SO
-      </div>
-    </div>
-  </section>
-
-  <!-- DIAGNOSTICS -->
+  <!-- DIAG -->
   <section id="diag">
-    <div class="section-header"><span class="section-num">20</span><h2>Diagnostyka i linter</h2></div>
-    <p>
-      HL posiada wbudowany linter wyświetlający błędy w stylu Rust —
-      z numerami linii, podkreśleniami i sugestiami naprawy.
-    </p>
+    <div class="section-header"><span class="section-num">27</span><h2>Diagnostyka i linter</h2></div>
     <div class="code-block">
-      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>PRZYKŁADOWY OUTPUT LINTER</div>
+      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>PRZYKŁADOWY OUTPUT</div>
       <pre><span class="hl-comment">error: `echo` jest zabronione w blokach komend Hacker Lang</span>
   --> update.hl:5:1
  5 │ > echo hello
    ^^^^^^^^^^^
   help: zamień na: `~> hello`
-  note: operator `~>` to jedyny sposób wypisywania tekstu w HL
 
-<span class="hl-comment">warning: użycie `> sudo apt-get update` — zamiast tego użyj `^>`</span>
+<span class="hl-comment">warning: użycie `> sudo cmd` — użyj `^>`</span>
   --> update.hl:8:1
  8 │ > sudo apt-get update
-   ^^^^^^^^^^^^^^^^^^^^^
-  help: zamień na: `^> apt-get update`
-
-<span class="hl-comment">hint: `% PATH` deklaruje zmienną lokalną HL — użyj `=>`</span>
-  --> config.hl:3:1
- 3 │ % PATH = /usr/bin
-   ^^^^^^^^^^^^^^^^^
-  help: zamień na: `=> PATH = /usr/bin`</pre>
+  help: zamień na: `^> apt-get update`</pre>
     </div>
-    <p>Linter wykrywa automatycznie: użycie <code>echo</code>, <code>&gt; sudo cmd</code>,
-    <code>% PATH</code> zamiast <code>=&gt;</code>, puste definicje funkcji,
-    <code>using</code> po kodzie, oraz brakujące deklaracje <code>//</code> dla narzędzi sieciowych.</p>
   </section>
 
   <!-- EXAMPLES BASIC -->
   <section id="ex-basic">
-    <div class="section-header"><span class="section-num">21</span><h2>Przykłady — podstawowe</h2></div>
-
-    <h3>Zmienne, funkcje, logika</h3>
+    <div class="section-header"><span class="section-num">28</span><h2>Przykłady — podstawowe</h2></div>
+    <h3>Pętla i operatory tła</h3>
     <div class="code-block">
-      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>variables.hl</div>
-      <pre><span class="hl-doc">/// Demonstracja zmiennych i exportu</span>
+      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>background_loop.hl</div>
+      <pre><span class="hl-shebang">#!/usr/bin/env hl</span>
+<span class="hl-doc">/// Przyklad: tlo + petla + hsh</span>
 <span class="hl-gen">using &lt;gen 1&gt;</span>
 
-<span class="hl-comment">;; Zmienne lokalne HL</span>
-<span class="hl-var-decl">% imie</span>    = Michal
-<span class="hl-var-decl">% wiek</span>    = 25
-<span class="hl-var-decl">% katalog</span> = /home/<span class="hl-var-ref">@imie</span>
+<span class="hl-comment">;; Uruchom serwery w tle</span>
+<span class="hl-bg">&amp;</span> python3 -m http.server 8080
+<span class="hl-bg">&amp;</span> redis-server --port 6379
 
-<span class="hl-print">~></span> Uzytkownik: <span class="hl-var-ref">@imie</span>, Wiek: <span class="hl-var-ref">@wiek</span>
-<span class="hl-print">~></span> Katalog:   <span class="hl-var-ref">@katalog</span>
+<span class="hl-print">~></span> Serwery uruchomione:
+<span class="hl-print">~></span>   HTTP PID: <span class="hl-var-ref">@_bg_pid</span>
 
-<span class="hl-comment">;; Export do srodowiska</span>
-<span class="hl-export">=></span> EDITOR = nvim
-<span class="hl-export">=></span> CUSTOM_HOME = <span class="hl-var-ref">@katalog</span>
+<span class="hl-comment">;; Powtorz 5 razy</span>
+<span class="hl-repeat">_5</span> <span class="hl-quick">::</span>green Sprawdzam status...
+<span class="hl-repeat">_3</span> <span class="hl-cmd">></span> curl -s http://localhost:8080
 
-<span class="hl-comment">;; Podproces widzi EDITOR i CUSTOM_HOME</span>
-<span class="hl-cmd">></span> bash -c "echo Editor: $EDITOR"
-<span class="hl-cmd">></span> bash -c "echo Home: $CUSTOM_HOME"</pre>
+<span class="hl-comment">;; Uzyj hsh dla specjalnych komend</span>
+<span class="hl-hsh">*></span> ls -la | head -5
+
+<span class="hl-comment">;; Import zewnetrznego pliku</span>
+<span class="hl-import">&lt;&lt;</span> utils.hl</pre>
     </div>
 
-    <h3>Sprawdzanie wersji i aktualizacja</h3>
+    <h3>Import pliku z detalami</h3>
     <div class="code-block">
-      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>check-version.hl</div>
-      <pre><span class="hl-doc">/// Porownaj wersje lokalna z zdalna</span>
+      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>main.hl</div>
+      <pre><span class="hl-gen">using &lt;gen 1&gt;</span>
+<span class="hl-import">#</span> <span class="hl-string">&lt;main/colors&gt;</span>
+<span class="hl-import">#</span> <span class="hl-string">&lt;main/json&gt;</span>
 
-<span class="hl-dep">// curl</span>
+<span class="hl-comment">;; Zaladuj konfiguracje</span>
+<span class="hl-import">&lt;&lt;</span> config.hl | produkcja
 
-<span class="hl-var-decl">% LOCAL_JSON</span>  = /usr/share/myapp/version.json
-<span class="hl-var-decl">% REMOTE_URL</span>  = https://example.com/version.txt
-<span class="hl-var-decl">% LOCAL_TMP</span>   = /tmp/local_ver.tmp
-<span class="hl-var-decl">% REMOTE_TMP</span>  = /tmp/remote_ver.tmp
-<span class="hl-var-decl">% CHECK_TMP</span>   = /tmp/check_ver.tmp
+<span class="hl-print">~></span> <span class="hl-var-ref">@COLOR_GREEN</span>Zaladowano konfiguracje<span class="hl-var-ref">@COLOR_RESET</span>
 
-<span class="hl-comment">;; Odczyt wersji lokalnej</span>
-<span class="hl-cmd">>></span> grep version <span class="hl-var-ref">@LOCAL_JSON</span> | grep -o "[0-9][0-9.]*" | head -1 > <span class="hl-var-ref">@LOCAL_TMP</span>
+<span class="hl-comment">;; Parsuj JSON</span>
+<span class="hl-var-decl">% _json_file</span> = /etc/hackeros/settings.json
+<span class="hl-var-decl">% _json_key</span>  = .version
+<span class="hl-func">--</span> json_get</pre>
+    </div>
+  </section>
 
-<span class="hl-comment">;; Pobierz zdalna</span>
-<span class="hl-cmd">>></span> curl -fsSL -o <span class="hl-var-ref">@REMOTE_TMP</span> <span class="hl-var-ref">@REMOTE_URL</span>
+  <!-- EXAMPLES ASYNC -->
+  <section id="ex-async">
+    <div class="section-header"><span class="section-num">29</span><h2>Przykłady — Async / Goroutines</h2></div>
+    <h3>Równoległy skan sieci</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>parallel_scan.hl</div>
+      <pre><span class="hl-doc">/// Rownolegle skanowanie sieci przez goroutines</span>
+<span class="hl-gen">using &lt;gen 1&gt;</span>
 
-<span class="hl-comment">;; Porownaj sort -V (semantyczne wersjonowanie)</span>
-<span class="hl-cmd">>></span> cat <span class="hl-var-ref">@LOCAL_TMP</span> <span class="hl-var-ref">@REMOTE_TMP</span> | sort -V | tail -n1 > <span class="hl-var-ref">@CHECK_TMP</span>
+<span class="hl-dep">// nmap</span>
+<span class="hl-dep">// masscan</span>
 
-<span class="hl-comment">;; Czy zdalna jest wieksza?</span>
-<span class="hl-cmd">>></span> diff -q <span class="hl-var-ref">@REMOTE_TMP</span> <span class="hl-var-ref">@CHECK_TMP</span> > /dev/null 2>&amp;1
+<span class="hl-var-decl">% network</span> = 192.168.1.0/24
 
-<span class="hl-logic">? ok</span>
-    <span class="hl-cmd">>></span> diff -q <span class="hl-var-ref">@LOCAL_TMP</span> <span class="hl-var-ref">@REMOTE_TMP</span> > /dev/null 2>&amp;1
-    <span class="hl-logic">? ok</span>
-        <span class="hl-quick">::</span>green Aplikacja jest aktualna!
-    <span class="hl-done">done</span>
-    <span class="hl-logic">? err</span>
-        <span class="hl-quick">::</span>yellow Dostepna nowa wersja!
-    <span class="hl-done">done</span>
+<span class="hl-comment">;; Zadeklaruj kanaly wynikow</span>
+<span class="hl-channel">:**</span> nmap_result
+<span class="hl-channel">:**</span> masscan_result
+
+<span class="hl-comment">;; Goroutine 1 — nmap</span>
+<span class="hl-goroutine">:*</span>
+    <span class="hl-print">~></span> [goroutine 1] nmap...
+    <span class="hl-cmd">>></span> nmap -sn <span class="hl-var-ref">@network</span> -oG /tmp/nmap.txt
+    <span class="hl-chanop">*--</span> nmap_result
 <span class="hl-done">done</span>
 
-<span class="hl-cmd">>></span> rm -f <span class="hl-var-ref">@LOCAL_TMP</span> <span class="hl-var-ref">@REMOTE_TMP</span> <span class="hl-var-ref">@CHECK_TMP</span></pre>
-    </div>
+<span class="hl-comment">;; Goroutine 2 — masscan</span>
+<span class="hl-goroutine">:*</span>
+    <span class="hl-print">~></span> [goroutine 2] masscan...
+    <span class="hl-cmd">>></span> masscan -p80,443,22 <span class="hl-var-ref">@network</span> -oG /tmp/masscan.txt
+    <span class="hl-chanop">*--</span> masscan_result
+<span class="hl-done">done</span>
 
-    <h3>Konfiguracja środowiska deweloperskiego</h3>
-    <div class="code-block">
-      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>devenv.hl</div>
-      <pre><span class="hl-shebang">#!/usr/bin/env hl</span>
-<span class="hl-doc">/// Konfiguracja srodowiska deweloperskiego HackerOS</span>
+<span class="hl-comment">;; Rownolegly download w tle (alternatywa dla goroutines w kompilacji)</span>
+<span class="hl-bg">&amp;</span> wget -q https://example.com/plik1.zip
+<span class="hl-bg">&amp;</span> wget -q https://example.com/plik2.zip
+<span class="hl-bg">&amp;</span> wget -q https://example.com/plik3.zip
 
-<span class="hl-var-decl">% home</span> = /home/hacker
-
-<span class="hl-export">=></span> EDITOR   = nvim
-<span class="hl-export">=></span> BROWSER  = firefox
-<span class="hl-export">=></span> GOPATH   = <span class="hl-var-ref">@home</span>/go
-<span class="hl-export">=></span> CARGO_HOME = <span class="hl-var-ref">@home</span>/.cargo
-<span class="hl-export">=></span> JAVA_HOME  = /usr/lib/jvm/java-17
-
-<span class="hl-export">=></span> PATH [
-| <span class="hl-var-ref">@home</span>/.local/bin
-| <span class="hl-var-ref">@home</span>/go/bin
-| <span class="hl-var-ref">@home</span>/.cargo/bin
-| /usr/local/bin
-| /usr/bin
-| /usr/lib/HackerOS
-]
-
-<span class="hl-quick">::</span>green Srodowisko deweloperskie aktywne
-<span class="hl-print">~></span> GOPATH: <span class="hl-var-ref">@GOPATH</span>
-<span class="hl-print">~></span> EDITOR: <span class="hl-var-ref">@EDITOR</span></pre>
+<span class="hl-print">~></span> Wszystkie zadania uruchomione</pre>
     </div>
   </section>
 
   <!-- EXAMPLES NETWORK -->
   <section id="ex-network">
-    <div class="section-header"><span class="section-num">22</span><h2>Przykłady — sieć i audyt</h2></div>
-
-    <h3>Pełny audyt sieciowy</h3>
+    <div class="section-header"><span class="section-num">30</span><h2>Przykłady — sieć i audyt</h2></div>
     <div class="code-block">
       <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>network_audit.hl</div>
-      <pre><span class="hl-doc">/// Network Audit Tool — HackerOS</span>
+      <pre><span class="hl-doc">/// Network Audit Tool — HackerOS gen 1</span>
+<span class="hl-gen">using &lt;gen 1&gt;</span>
 
 <span class="hl-dep">// nmap</span>
 <span class="hl-dep">// curl</span>
-<span class="hl-dep">// whois</span>
-<span class="hl-import">#</span> <span class="hl-string">&lt;std/net&gt;</span> | <span class="hl-string">&lt;ports&gt;</span>
-<span class="hl-import">#</span> <span class="hl-string">&lt;std/sys&gt;</span>
+<span class="hl-import">#</span> <span class="hl-string">&lt;main/net&gt;</span>
+<span class="hl-import">#</span> <span class="hl-string">&lt;main/colors&gt;</span>
 
-<span class="hl-var-decl">% target</span>     = 192.168.1.1
-<span class="hl-var-decl">% output_dir</span> = /tmp/audit
-<span class="hl-var-decl">% ports</span>      = 1-1024
+<span class="hl-var-decl">% target</span> = 192.168.1.1
+<span class="hl-var-decl">% ports</span>  = 1-1024
 
 <span class="hl-quick">::</span>hr 50
-<span class="hl-quick">::</span>bold Network Audit — HackerOS
-<span class="hl-print">~></span> System: <span class="hl-var-ref">@SYS_OS</span> | Kernel: <span class="hl-var-ref">@SYS_KERNEL</span>
-<span class="hl-quick">::</span>hr 50
-
-<span class="hl-func">:</span> check_host <span class="hl-kw">def</span>
-    <span class="hl-print">~></span> Sprawdzam: <span class="hl-var-ref">@target</span>
-    <span class="hl-cmd">>></span> ping -c 1 -W 2 <span class="hl-var-ref">@target</span>
-    <span class="hl-logic">? ok</span>
-        <span class="hl-quick">::</span>green @target ONLINE ✓
-    <span class="hl-done">done</span>
-    <span class="hl-logic">? err</span>
-        <span class="hl-quick">::</span>red @target nie odpowiada ✗
-    <span class="hl-done">done</span>
-<span class="hl-done">done</span>
+<span class="hl-quick">::</span>bold Network Audit gen 1
 
 <span class="hl-func">:</span> port_scan <span class="hl-kw">def</span>
-    <span class="hl-print">~></span> Skanuję porty <span class="hl-var-ref">@ports</span> na <span class="hl-var-ref">@target</span>...
+    <span class="hl-print">~></span> Skanuje porty <span class="hl-var-ref">@ports</span> na <span class="hl-var-ref">@target</span>...
     <span class="hl-cmd">>></span> nmap -sV -T4 -p <span class="hl-var-ref">@ports</span> <span class="hl-var-ref">@target</span>
-    <span class="hl-logic">? ok</span>
-        <span class="hl-quick">::</span>green Skan zakończony.
-    <span class="hl-done">done</span>
 <span class="hl-done">done</span>
 
-<span class="hl-func">:</span> isolated_probe <span class="hl-kw">def</span>
-    <span class="hl-print">~></span> Sondowanie w izolacji sieciowej...
+<span class="hl-func">:</span> probe_isolated <span class="hl-kw">def</span>
     <span class="hl-iso">->></span> curl -s --max-time 5 http://<span class="hl-var-ref">@target</span>
 <span class="hl-done">done</span>
 
-<span class="hl-sudo">^></span> mkdir -p <span class="hl-var-ref">@output_dir</span>
-
-<span class="hl-func">--</span> check_host
 <span class="hl-func">--</span> port_scan
-<span class="hl-func">--</span> isolated_probe
+<span class="hl-func">--</span> probe_isolated
 
-<span class="hl-quick">::</span>nl
-<span class="hl-print">~></span> Audyt zakończony. Wyniki: <span class="hl-var-ref">@output_dir</span></pre>
-    </div>
-
-    <h3>Skaner subdomen</h3>
-    <div class="code-block">
-      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>subdomain_scan.hl</div>
-      <pre><span class="hl-doc">/// Skaner subdomen — sprawdza liste przez DNS</span>
-
-<span class="hl-dep">// nmap</span>
-<span class="hl-dep">// curl</span>
-
-<span class="hl-var-decl">% domain</span>   = example.com
-<span class="hl-var-decl">% wordlist</span> = /usr/share/wordlists/subdomains.txt
-<span class="hl-var-decl">% output</span>   = /tmp/found_subdomains.txt
-
-<span class="hl-quick">::</span>hr 50
-<span class="hl-quick">::</span>cyan Subdomain Scanner
-<span class="hl-print">~></span> Cel: <span class="hl-var-ref">@domain</span>
-<span class="hl-quick">::</span>hr 50
-
-<span class="hl-quick">::</span>exists <span class="hl-var-ref">@wordlist</span>
-<span class="hl-logic">? err</span>
-    <span class="hl-quick">::</span>red Brak pliku wordlist: <span class="hl-var-ref">@wordlist</span>
-    <span class="hl-cmd">></span> exit 1
-<span class="hl-done">done</span>
-
-<span class="hl-func">:</span> check_subdomain <span class="hl-kw">def</span>
-    <span class="hl-cmd">>></span> nmap -sn <span class="hl-var-ref">@sub</span>.<span class="hl-var-ref">@domain</span> -oG - 2>/dev/null | grep "Up"
-    <span class="hl-logic">? ok</span>
-        <span class="hl-quick">::</span>green Znaleziono: @sub.@domain
-        <span class="hl-cmd">>></span> bash -c "printf '@sub.@domain\n' >> @output"
-    <span class="hl-done">done</span>
-<span class="hl-done">done</span>
-
-<span class="hl-comment">;; Iteruj po poddomnach z pliku</span>
-<span class="hl-cmd">>></span> while read sub; do hl -c "% sub = $sub && -- check_subdomain"; done &lt; <span class="hl-var-ref">@wordlist</span>
-
-<span class="hl-quick">::</span>nl
-<span class="hl-quick">::</span>green Skanowanie zakonczone
-<span class="hl-print">~></span> Wyniki: <span class="hl-var-ref">@output</span></pre>
+<span class="hl-comment">;; Rownolegly skan w tle</span>
+<span class="hl-bg">&amp;</span> masscan -p1-65535 <span class="hl-var-ref">@target</span></pre>
     </div>
   </section>
 
   <!-- EXAMPLES SYSTEM -->
   <section id="ex-system">
-    <div class="section-header"><span class="section-num">23</span><h2>Przykłady — systemowe</h2></div>
-
-    <h3>Informacje o systemie</h3>
+    <div class="section-header"><span class="section-num">31</span><h2>Przykłady — systemowe</h2></div>
+    <h3>System info z main/sys</h3>
     <div class="code-block">
       <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>sysinfo.hl</div>
-      <pre><span class="hl-doc">/// Informacje systemowe z std/sys + std/net</span>
-
-<span class="hl-import">#</span> <span class="hl-string">&lt;std/sys&gt;</span>
-<span class="hl-import">#</span> <span class="hl-string">&lt;std/net&gt;</span>
+      <pre><span class="hl-doc">/// Informacje systemowe</span>
+<span class="hl-gen">using &lt;gen 1&gt;</span>
+<span class="hl-import">#</span> <span class="hl-string">&lt;main/sys&gt;</span>
+<span class="hl-import">#</span> <span class="hl-string">&lt;main/net&gt;</span>
+<span class="hl-import">#</span> <span class="hl-string">&lt;main/colors&gt;</span>
 
 <span class="hl-quick">::</span>hr 50
-<span class="hl-quick">::</span>cyan === HACKEROS SYSTEM INFO ===
+<span class="hl-print">~></span> <span class="hl-var-ref">@COLOR_CYAN</span>=== HACKEROS SYSTEM INFO ===<span class="hl-var-ref">@COLOR_RESET</span>
 <span class="hl-quick">::</span>hr 50
-<span class="hl-print">~></span> OS       : <span class="hl-var-ref">@SYS_OS</span> <span class="hl-var-ref">@SYS_VERSION</span>
-<span class="hl-print">~></span> Kernel   : <span class="hl-var-ref">@SYS_KERNEL</span>
+<span class="hl-print">~></span> OS       : <span class="hl-var-ref">@SYS_OS</span>
 <span class="hl-print">~></span> Arch     : <span class="hl-var-ref">@SYS_ARCH</span>
-<span class="hl-print">~></span> CPU      : <span class="hl-var-ref">@SYS_CPU</span> rdzeni
-<span class="hl-print">~></span> RAM      : <span class="hl-var-ref">@SYS_MEMTOTAL</span>
-<span class="hl-print">~></span> Uptime   : <span class="hl-var-ref">@SYS_UPTIME</span>
 <span class="hl-print">~></span> Hostname : <span class="hl-var-ref">@SYS_HOSTNAME</span>
-<span class="hl-print">~></span> IP       : <span class="hl-var-ref">@NET_MYIP</span>
-<span class="hl-print">~></span> Gateway  : <span class="hl-var-ref">@NET_GATEWAY</span>
-<span class="hl-print">~></span> Iface    : <span class="hl-var-ref">@NET_IFACE</span>
-<span class="hl-quick">::</span>hr 50
-<span class="hl-quick">::</span>date
-<span class="hl-quick">::</span>time</pre>
+<span class="hl-print">~></span> IP       : <span class="hl-var-ref">@NET_LOCALHOST</span></pre>
     </div>
 
     <h3>Aktualizacja systemu</h3>
     <div class="code-block">
       <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>update.hl</div>
-      <pre><span class="hl-doc">/// Aktualizacja systemu HackerOS</span>
+      <pre><span class="hl-doc">/// Aktualizacja systemu HackerOS gen 1</span>
+<span class="hl-gen">using &lt;gen 1&gt;</span>
 
-<span class="hl-func">:</span> aktualizuj_apt <span class="hl-kw">def</span>
+<span class="hl-func">:</span> aktualizuj <span class="hl-kw">def</span>
     <span class="hl-quick">::</span>hr 50
     <span class="hl-quick">::</span>bold APT — Aktualizacja
-    <span class="hl-quick">::</span>hr 50
     <span class="hl-sudo">^></span> apt-get update -y
     <span class="hl-logic">? ok</span>
         <span class="hl-sudo">^></span> apt-get upgrade -y
-        <span class="hl-sudo">^></span> apt-get autoremove -y
         <span class="hl-quick">::</span>green APT zaktualizowany ✓
     <span class="hl-done">done</span>
-    <span class="hl-logic">? err</span>
-        <span class="hl-quick">::</span>red Blad aktualizacji APT
-    <span class="hl-done">done</span>
 <span class="hl-done">done</span>
 
-<span class="hl-func">:</span> aktualizuj_flatpak <span class="hl-kw">def</span>
-    <span class="hl-quick">::</span>which flatpak
-    <span class="hl-logic">? ok</span>
-        <span class="hl-cmd">></span> flatpak update -y
-        <span class="hl-quick">::</span>green Flatpak zaktualizowany ✓
-    <span class="hl-done">done</span>
-<span class="hl-done">done</span>
+<span class="hl-comment">;; Uruchom aktualizacje snap w tle</span>
+<span class="hl-bg">&amp;</span> snap refresh
 
-<span class="hl-func">:</span> sprawdz_internet <span class="hl-kw">def</span>
-    <span class="hl-cmd">></span> ping -c 1 -W 2 google.com > /dev/null 2>&amp;1
-    <span class="hl-logic">? err</span>
-        <span class="hl-quick">::</span>red Brak polaczenia z internetem!
-        <span class="hl-cmd">></span> exit 1
-    <span class="hl-done">done</span>
-<span class="hl-done">done</span>
+<span class="hl-func">--</span> aktualizuj
 
-<span class="hl-quick">::</span>hr 50
-<span class="hl-quick">::</span>bold System Update — HackerOS
-<span class="hl-quick">::</span>hr 50
-
-<span class="hl-func">--</span> sprawdz_internet
-<span class="hl-func">--</span> aktualizuj_apt
-<span class="hl-func">--</span> aktualizuj_flatpak
-
-<span class="hl-quick">::</span>nl
-<span class="hl-quick">::</span>green Aktualizacja zakonczona!</pre>
-    </div>
-
-    <h3>Backup katalogów</h3>
-    <div class="code-block">
-      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>backup.hl</div>
-      <pre><span class="hl-shebang">#!/usr/bin/env hl</span>
-<span class="hl-doc">/// Backup katalogow uzytkownika</span>
-
-<span class="hl-var-decl">% src</span>    = /home/hacker
-<span class="hl-var-decl">% dst</span>    = /backup
-<span class="hl-var-decl">% stamp</span>  = /tmp/backup_date.tmp
-
-<span class="hl-cmd">></span> date +%Y%m%d_%H%M%S > <span class="hl-var-ref">@stamp</span>
-
-<span class="hl-func">:</span> zrob_backup <span class="hl-kw">def</span>
-    <span class="hl-quick">::</span>exists <span class="hl-var-ref">@src</span>
-    <span class="hl-logic">? err</span>
-        <span class="hl-quick">::</span>red Brak katalogu zrodlowego: @src
-        <span class="hl-cmd">></span> exit 1
-    <span class="hl-done">done</span>
-
-    <span class="hl-sudo">^></span> mkdir -p <span class="hl-var-ref">@dst</span>
-
-    <span class="hl-print">~></span> Tworzenie backupu <span class="hl-var-ref">@src</span> → <span class="hl-var-ref">@dst</span>...
-    <span class="hl-cmd">>></span> tar -czf <span class="hl-var-ref">@dst</span>/backup_$(cat <span class="hl-var-ref">@stamp</span>).tar.gz <span class="hl-var-ref">@src</span>
-
-    <span class="hl-logic">? ok</span>
-        <span class="hl-quick">::</span>green Backup zakończony pomyślnie ✓
-    <span class="hl-done">done</span>
-
-    <span class="hl-logic">? err</span>
-        <span class="hl-quick">::</span>red Blad tworzenia backupu!
-    <span class="hl-done">done</span>
-<span class="hl-done">done</span>
-
-<span class="hl-func">--</span> zrob_backup
-<span class="hl-cmd">></span> rm -f <span class="hl-var-ref">@stamp</span></pre>
-    </div>
-  </section>
-
-  <!-- EXAMPLES ADVANCED -->
-  <section id="ex-advanced">
-    <div class="section-header"><span class="section-num">24</span><h2>Przykłady — zaawansowane</h2></div>
-
-    <h3>Skrypt z genami, shebangiem i exportem</h3>
-    <div class="code-block">
-      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>full_featured.hl</div>
-      <pre><span class="hl-shebang">#!/usr/bin/env hl</span>
-<span class="hl-doc">/// Pelny przyklad z gen 1, shebang i exportem</span>
-<span class="hl-gen">using &lt;gen 1&gt;</span>
-
-<span class="hl-dep">// curl</span>
-<span class="hl-dep">// git</span>
-<span class="hl-import">#</span> <span class="hl-string">&lt;std/sys&gt;</span>
-
-<span class="hl-comment">;; Zmienne lokalne (tylko HL)</span>
-<span class="hl-var-decl">% projekt</span>  = moj-projekt
-<span class="hl-var-decl">% wersja</span>   = 1.0.0
-<span class="hl-var-decl">% repo_url</span> = https://github.com/user/<span class="hl-var-ref">@projekt</span>
-
-<span class="hl-comment">;; Export do srodowiska (podprocesy widza)</span>
-<span class="hl-export">=></span> APP_NAME    = <span class="hl-var-ref">@projekt</span>
-<span class="hl-export">=></span> APP_VERSION = <span class="hl-var-ref">@wersja</span>
-<span class="hl-export">=></span> APP_HOME    = /opt/<span class="hl-var-ref">@projekt</span>
-
-<span class="hl-export">=></span> PATH [
-| /opt/<span class="hl-var-ref">@projekt</span>/bin
-| /usr/local/bin
-| /usr/bin
-]
-
-<span class="hl-func">:</span> show_info <span class="hl-kw">def</span>
-    <span class="hl-quick">::</span>hr 60
-    <span class="hl-quick">::</span>bold @APP_NAME v@APP_VERSION
-    <span class="hl-print">~></span> System: <span class="hl-var-ref">@SYS_OS</span> | HL Gen: <span class="hl-var-ref">@HL_GEN</span>
-    <span class="hl-quick">::</span>hr 60
-<span class="hl-done">done</span>
-
-<span class="hl-func">:</span> klonuj_repo <span class="hl-kw">def</span>
-    <span class="hl-quick">::</span>exists <span class="hl-var-ref">@APP_HOME</span>
-    <span class="hl-logic">? ok</span>
-        <span class="hl-quick">::</span>yellow Repo juz istnieje w @APP_HOME
-    <span class="hl-done">done</span>
-
-    <span class="hl-logic">? err</span>
-        <span class="hl-print">~></span> Klonuję <span class="hl-var-ref">@repo_url</span>...
-        <span class="hl-sudo">^></span> mkdir -p /opt
-        <span class="hl-cmd">>></span> git clone <span class="hl-var-ref">@repo_url</span> <span class="hl-var-ref">@APP_HOME</span>
-
-        <span class="hl-logic">? ok</span>
-            <span class="hl-quick">::</span>green Repozytorium sklonowane ✓
-        <span class="hl-done">done</span>
-
-        <span class="hl-logic">? err</span>
-            <span class="hl-quick">::</span>red Blad klonowania!
-            <span class="hl-cmd">></span> exit 1
-        <span class="hl-done">done</span>
-    <span class="hl-done">done</span>
-<span class="hl-done">done</span>
-
-<span class="hl-func">--</span> show_info
-<span class="hl-func">--</span> klonuj_repo</pre>
-    </div>
-
-    <h3>Monitor usług systemowych</h3>
-    <div class="code-block">
-      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>service_monitor.hl</div>
-      <pre><span class="hl-doc">/// Monitor uslug systemowych</span>
-
-<span class="hl-var-decl">% services_ok</span>  = /tmp/hl_svc_ok.tmp
-<span class="hl-var-decl">% services_err</span> = /tmp/hl_svc_err.tmp
-
-<span class="hl-func">:</span> sprawdz_usluge <span class="hl-kw">def</span>
-    <span class="hl-cmd">>></span> systemctl is-active --quiet <span class="hl-var-ref">@usługa</span>
-
-    <span class="hl-logic">? ok</span>
-        <span class="hl-quick">::</span>green [OK]  @usługa
-        <span class="hl-cmd">>></span> bash -c "printf '@usługa\n' >> @services_ok"
-    <span class="hl-done">done</span>
-
-    <span class="hl-logic">? err</span>
-        <span class="hl-quick">::</span>red [ERR] @usługa
-        <span class="hl-cmd">>></span> bash -c "printf '@usługa\n' >> @services_err"
-    <span class="hl-done">done</span>
-<span class="hl-done">done</span>
-
-<span class="hl-quick">::</span>hr 50
-<span class="hl-quick">::</span>bold Monitor uslug — HackerOS
-<span class="hl-quick">::</span>hr 50
-
-<span class="hl-comment">;; Lista usług do monitorowania</span>
-<span class="hl-var-decl">% usługa</span> = ssh
-<span class="hl-func">--</span> sprawdz_usluge
-
-<span class="hl-var-decl">% usługa</span> = NetworkManager
-<span class="hl-func">--</span> sprawdz_usluge
-
-<span class="hl-var-decl">% usługa</span> = cron
-<span class="hl-func">--</span> sprawdz_usluge
-
-<span class="hl-var-decl">% usługa</span> = ufw
-<span class="hl-func">--</span> sprawdz_usluge
-
-<span class="hl-quick">::</span>nl
-<span class="hl-quick">::</span>hr 50
-<span class="hl-print">~></span> Usługi OK:
-<span class="hl-cmd">>></span> cat <span class="hl-var-ref">@services_ok</span>
-<span class="hl-print">~></span> Usługi z bledem:
-<span class="hl-cmd">>></span> cat <span class="hl-var-ref">@services_err</span>
-
-<span class="hl-cmd">>></span> rm -f <span class="hl-var-ref">@services_ok</span> <span class="hl-var-ref">@services_err</span></pre>
-    </div>
-
-    <h3>Skrypt uruchamiany przez hl exec</h3>
-    <div class="code-block">
-      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>/usr/share/HackerOS/Scripts/Bin/cleanup.hl</div>
-      <pre><span class="hl-shebang">#!/usr/bin/env hl</span>
-<span class="hl-doc">/// Czyszczenie katalogow tymczasowych HackerOS</span>
-<span class="hl-gen">using &lt;gen 1&gt;</span>
-
-<span class="hl-comment">;; Ten skrypt jest dostepny jako: hl exec cleanup</span>
-<span class="hl-comment">;; Opis z komentarza /// wyswietla hl search</span>
-
-<span class="hl-var-decl">% tmp_dirs</span> = /tmp/hl_*.tmp /tmp/hackeros_* /var/tmp/hl_*
-
-<span class="hl-func">:</span> wyczysc_tmp <span class="hl-kw">def</span>
-    <span class="hl-print">~></span> Czyszczenie plikow tymczasowych...
-    <span class="hl-sudo">^></span> rm -f /tmp/hl_*.tmp
-    <span class="hl-sudo">^></span> rm -rf /tmp/HackerOS-Updates
-    <span class="hl-sudo">^></span> rm -rf /var/tmp/hl_*
-
-    <span class="hl-logic">? ok</span>
-        <span class="hl-quick">::</span>green Pliki tymczasowe usuniete ✓
-    <span class="hl-done">done</span>
-<span class="hl-done">done</span>
-
-<span class="hl-func">:</span> wyczysc_cache <span class="hl-kw">def</span>
-    <span class="hl-print">~></span> Czyszczenie cache APT...
-    <span class="hl-sudo">^></span> apt-get autoclean -y
-    <span class="hl-sudo">^></span> apt-get autoremove -y
-
-    <span class="hl-logic">? ok</span>
-        <span class="hl-quick">::</span>green Cache APT wyczyszczony ✓
-    <span class="hl-done">done</span>
-<span class="hl-done">done</span>
-
-<span class="hl-quick">::</span>hr 50
-<span class="hl-quick">::</span>bold Czyszczenie systemu HackerOS
-<span class="hl-quick">::</span>hr 50
-
-<span class="hl-func">--</span> wyczysc_tmp
-<span class="hl-func">--</span> wyczysc_cache
-
-<span class="hl-quick">::</span>nl
-<span class="hl-quick">::</span>green Czyszczenie zakonczone ✓</pre>
+<span class="hl-comment">;; Powiedz przez hsh</span>
+<span class="hl-hsh">*></span> notify-send "System zaktualizowany" "HackerOS gen 1"</pre>
     </div>
   </section>
 
