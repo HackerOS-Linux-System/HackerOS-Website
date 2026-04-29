@@ -185,7 +185,7 @@ body::after {
 .hero-desc {
   font-size: 15px; color: var(--text-dim);
   max-width: 540px; margin-bottom: 36px;
-  line-height: 1.8; font-family: 'JetBrains Mono', monospace;
+  line-height: 1.8;
 }
 
 .hero-tags { display: flex; gap: 8px; flex-wrap: wrap; }
@@ -306,6 +306,13 @@ code {
 .hl-export   { color: #fb923c; font-weight: 600; }
 .hl-shebang  { color: #4a3d6a; font-style: italic; }
 .hl-gen      { color: #d8b4fe; font-style: italic; }
+/* Nowe operatory gen 1 */
+.hl-bg       { color: #22d3ee; font-weight: 700; }         /* & background */
+.hl-hsh      { color: #fbbf24; font-weight: 700; }         /* *> hsh */
+.hl-repeat   { color: #f97316; font-weight: 700; }         /* _N */
+.hl-goroutine { color: #c084fc; font-weight: 700; }        /* :* */
+.hl-channel  { color: #a855f7; font-weight: 700; }         /* :** */
+.hl-chanop   { color: #9d4edd; font-weight: 700; }         /* *-- */
 
 /* ─── REFERENCE TABLE ─── */
 .ref-table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 13px; }
@@ -343,9 +350,9 @@ code {
 
 .cmd-card:hover { border-color: rgba(168,85,247,0.35); box-shadow: 0 0 24px rgba(168,85,247,0.08); }
 .cmd-card:hover::before { opacity: 1; }
-.cmd-card.sudo-card:hover { border-color: rgba(249,115,22,0.35); box-shadow: 0 0 24px rgba(249,115,22,0.08); }
+.cmd-card.sudo-card:hover { border-color: rgba(249,115,22,0.35); }
 .cmd-card.sudo-card::before { background: var(--orange); }
-.cmd-card.iso-card:hover { border-color: rgba(236,72,153,0.35); box-shadow: 0 0 24px rgba(236,72,153,0.08); }
+.cmd-card.iso-card:hover { border-color: rgba(236,72,153,0.35); }
 .cmd-card.iso-card::before { background: var(--pink); }
 
 .cmd-card .op {
@@ -356,7 +363,6 @@ code {
 
 .cmd-card .op.sudo  { color: var(--orange); }
 .cmd-card .op.iso   { color: var(--pink); }
-.cmd-card .op.quick { color: #34d399; }
 .cmd-card p { font-size: 12.5px; color: var(--text-dim); margin: 0; line-height: 1.6; }
 
 /* ─── QUICK FUNCTIONS GRID ─── */
@@ -384,8 +390,6 @@ code {
 .callout-body { font-size: 13px; color: var(--text); }
 .callout-body strong { color: var(--orange); }
 
-.callout.tip { background: rgba(52,211,153,0.05); border-color: rgba(52,211,153,0.18); }
-.callout.tip .callout-body strong { color: #34d399; }
 .callout.info { background: rgba(168,85,247,0.06); border-color: rgba(168,85,247,0.2); }
 .callout.info .callout-body strong { color: var(--purple2); }
 .callout.note { background: rgba(34,211,238,0.05); border-color: rgba(34,211,238,0.15); }
@@ -404,29 +408,3 @@ code {
   .cmd-grid, .quick-grid { grid-template-columns: 1fr; }
   .hero h1 { font-size: 42px; }
 }
-
-.badge-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
-
-.badge {
-  font-family: 'Space Mono', monospace;
-  font-size: 9px; letter-spacing: 1.5px;
-  padding: 3px 10px; border-radius: 2px; text-transform: uppercase;
-  background: rgba(168,85,247,0.08);
-  border: 1px solid rgba(168,85,247,0.2);
-  color: var(--text-dim);
-}
-
-/* ─── GEN BADGE ─── */
-.gen-badge {
-  display: inline-flex; align-items: center; gap: 6px;
-  background: rgba(168,85,247,0.08);
-  border: 1px solid rgba(168,85,247,0.2);
-  color: var(--purple2);
-  font-family: 'Space Mono', monospace;
-  font-size: 10px; letter-spacing: 2px;
-  padding: 4px 12px; border-radius: 2px; text-transform: uppercase;
-}
-
-/* ─── TWO COLUMN LAYOUT ─── */
-.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
-@media (max-width: 768px) { .two-col { grid-template-columns: 1fr; } }
