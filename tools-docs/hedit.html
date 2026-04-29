@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>hedit — dokumentacja</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+    background: #1a1b26;
+    color: #c0caf5;
+    line-height: 1.7;
+    font-size: 15px;
+  }
+
+  /* ── TOPBAR ── */
+  .topbar {
+    background: #7D56F4;
+    color: #fff;
+    padding: 0.6rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 14px;
+    letter-spacing: 0.02em;
+  }
+  .topbar .logo {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+  .topbar .badge {
+    background: rgba(255,255,255,0.2);
+    border-radius: 4px;
+    padding: 1px 8px;
+    font-size: 12px;
+  }
+  .back-btn {
+    margin-left: auto;
+    color: #fff;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 6px;
+    padding: 3px 14px;
+    font-size: 13px;
+    text-decoration: none;
+    font-family: -apple-system, sans-serif;
+    letter-spacing: 0.02em;
+    transition: background 0.15s;
+  }
+  .back-btn:hover { background: rgba(255,255,255,0.28); color: #fff; }
+
+  /* ── LAYOUT ── */
+  .layout {
+    display: flex;
+    min-height: calc(100vh - 42px);
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: 220px;
+    min-width: 220px;
+    background: #16161e;
+    border-right: 1px solid #2a2b3d;
+    padding: 1.5rem 0;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+  .sidebar-section {
+    margin-bottom: 1.5rem;
+  }
+  .sidebar-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #565f89;
+    padding: 0 1.25rem;
+    margin-bottom: 0.4rem;
+  }
+  .sidebar a {
+    display: block;
+    padding: 0.3rem 1.25rem;
+    color: #a9b1d6;
+    text-decoration: none;
+    font-size: 13px;
+    border-left: 2px solid transparent;
+    transition: all 0.15s;
+  }
+  .sidebar a:hover {
+    color: #c0caf5;
+    background: #1e2030;
+    border-left-color: #7D56F4;
+  }
+
+  /* ── MAIN CONTENT ── */
+  main {
+    flex: 1;
+    padding: 3rem 4rem 4rem;
+    max-width: 860px;
+  }
+
+  h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #c0caf5;
+    letter-spacing: -1px;
+    margin-bottom: 0.5rem;
+  }
+  .subtitle {
+    color: #565f89;
+    font-size: 14px;
+    margin-bottom: 3rem;
+  }
+
+  h2 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #7D56F4;
+    margin: 3rem 0 1rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid #2a2b3d;
+    letter-spacing: 0.02em;
+  }
+  h3 {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #a9b1d6;
+    margin: 1.5rem 0 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  p {
+    color: #a9b1d6;
+    margin-bottom: 1rem;
+    font-size: 14px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  /* ── SHORTCUT TABLE ── */
+  .shortcut-grid {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1.5rem;
+    font-size: 13px;
+  }
+  .shortcut-grid thead th {
+    text-align: left;
+    color: #565f89;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 0.4rem 0.75rem;
+    border-bottom: 1px solid #2a2b3d;
+    font-weight: 400;
+  }
+  .shortcut-grid tbody tr:hover td {
+    background: #1e2030;
+  }
+  .shortcut-grid td {
+    padding: 0.45rem 0.75rem;
+    border-bottom: 1px solid #1e2030;
+    vertical-align: middle;
+  }
+  .shortcut-grid td:first-child {
+    width: 42%;
+  }
+
+  /* ── KBD CHIP ── */
+  kbd {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-family: inherit;
+    font-size: 11px;
+    background: #24283b;
+    border: 1px solid #3b3f5c;
+    border-bottom-width: 2px;
+    border-radius: 4px;
+    padding: 1px 6px;
+    color: #c0caf5;
+    white-space: nowrap;
+  }
+  .keys {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .key-sep {
+    color: #565f89;
+    font-size: 10px;
+  }
+
+  /* ── NEW BADGE ── */
+  .new {
+    display: inline-block;
+    font-size: 9px;
+    font-weight: 700;
+    background: #7D56F4;
+    color: #fff;
+    border-radius: 3px;
+    padding: 1px 5px;
+    letter-spacing: 0.05em;
+    vertical-align: middle;
+    margin-left: 6px;
+    font-family: -apple-system, sans-serif;
+  }
+
+  /* ── CODE BLOCK ── */
+  .codeblock {
+    background: #16161e;
+    border: 1px solid #2a2b3d;
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    font-size: 13px;
+    overflow-x: auto;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+  }
+  .codeblock .comment { color: #565f89; }
+  .codeblock .cmd     { color: #9ece6a; }
+  .codeblock .flag    { color: #e0af68; }
+  .codeblock .str     { color: #9ece6a; }
+  .codeblock .kw      { color: #7D56F4; }
+
+  /* ── TERMINAL MOCK ── */
+  .terminal {
+    background: #0d0e17;
+    border: 1px solid #2a2b3d;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+  }
+  .terminal-bar {
+    background: #1e2030;
+    padding: 0.4rem 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border-bottom: 1px solid #2a2b3d;
+  }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-r { background: #f7768e; }
+  .dot-y { background: #e0af68; }
+  .dot-g { background: #9ece6a; }
+  .terminal-title {
+    font-size: 11px;
+    color: #565f89;
+    margin-left: auto;
+    margin-right: auto;
+    font-family: -apple-system, sans-serif;
+  }
+  .terminal-body {
+    padding: 1rem 1.25rem;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+  .terminal-body .prompt { color: #7D56F4; }
+  .terminal-body .out    { color: #a9b1d6; }
+  .terminal-body .ok     { color: #9ece6a; }
+  .terminal-body .err    { color: #f7768e; }
+
+  /* ── EDITOR MOCK ── */
+  .editor-mock {
+    border: 1px solid #2a2b3d;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 2rem;
+    font-size: 13px;
+  }
+  .editor-title {
+    background: #7D56F4;
+    color: #fff;
+    padding: 0.35rem 0.75rem;
+    font-size: 13px;
+  }
+  .editor-body {
+    display: flex;
+    background: #1a1b26;
+  }
+  .line-nums {
+    background: #16161e;
+    color: #3b3f5c;
+    padding: 0.75rem 0.5rem 0.75rem 0.75rem;
+    text-align: right;
+    line-height: 1.7;
+    user-select: none;
+    min-width: 42px;
+    border-right: 1px solid #2a2b3d;
+  }
+  .editor-code {
+    padding: 0.75rem 1rem;
+    flex: 1;
+    line-height: 1.7;
+    overflow-x: auto;
+  }
+  .editor-footer {
+    background: #16161e;
+    color: #565f89;
+    font-size: 11px;
+    padding: 0.3rem 0.75rem;
+    display: flex;
+    gap: 2rem;
+    border-top: 1px solid #2a2b3d;
+    font-family: -apple-system, sans-serif;
+  }
+
+  /* ── SYNTAX COLORS (Tokyo Night) ── */
+  .kw2  { color: #bb9af7; }
+  .fn   { color: #7aa2f7; }
+  .str2 { color: #9ece6a; }
+  .num  { color: #ff9e64; }
+  .cmt  { color: #565f89; }
+  .typ  { color: #2ac3de; }
+  .sel  { background: #3b3f5c; border-radius: 2px; }
+  .cur  { background: #c0caf5; color: #1a1b26; border-radius: 2px; }
+
+  /* ── FEATURE CARDS ── */
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    margin-bottom: 2rem;
+  }
+  .feature-card {
+    background: #16161e;
+    border: 1px solid #2a2b3d;
+    border-radius: 8px;
+    padding: 1rem;
+  }
+  .feature-card .fc-icon {
+    font-size: 20px;
+    margin-bottom: 0.5rem;
+  }
+  .feature-card .fc-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #c0caf5;
+    margin-bottom: 0.25rem;
+    font-family: -apple-system, sans-serif;
+  }
+  .feature-card .fc-desc {
+    font-size: 12px;
+    color: #565f89;
+    font-family: -apple-system, sans-serif;
+    line-height: 1.5;
+  }
+
+  /* ── CALLOUT ── */
+  .callout {
+    border-left: 3px solid #7D56F4;
+    background: #1e2030;
+    border-radius: 0 6px 6px 0;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1.5rem;
+    font-size: 13px;
+    color: #a9b1d6;
+    font-family: -apple-system, sans-serif;
+  }
+  .callout strong { color: #c0caf5; }
+
+  /* ── FLAG TABLE ── */
+  .flag-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-bottom: 1.5rem;
+  }
+  .flag-table td {
+    padding: 0.4rem 0.75rem;
+    border-bottom: 1px solid #1e2030;
+    vertical-align: top;
+  }
+  .flag-table td:first-child { color: #e0af68; white-space: nowrap; width: 35%; }
+  .flag-table td:last-child  { color: #a9b1d6; font-family: -apple-system, sans-serif; }
+
+  /* ── DESC ── */
+  .desc { color: #a9b1d6; font-size: 13px; font-family: -apple-system, sans-serif; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: #16161e;
+    border-top: 1px solid #2a2b3d;
+    text-align: center;
+    font-size: 12px;
+    color: #3b3f5c;
+    padding: 1.5rem;
+    font-family: -apple-system, sans-serif;
+  }
+
+  a { color: #7D56F4; }
+  ul { padding-left: 1.2rem; margin-bottom: 1rem; }
+  li { color: #a9b1d6; font-size: 13px; font-family: -apple-system, sans-serif; margin-bottom: 0.3rem; }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR (hedit sim) -->
+<div class="topbar">
+  <span class="logo">hedit</span>
+  <span class="badge">v0.5</span>
+  <span style="color:rgba(255,255,255,0.5); font-size:13px;">— dokumentacja</span>
+  <a href="https://hackeros-linux-system.github.io/HackerOS-Website/tools-docs/index.html" class="back-btn">&#8592; back</a>
+</div>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Wprowadzenie</div>
+      <a href="#overview">Czym jest hedit</a>
+      <a href="#uruchomienie">Uruchomienie</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Interfejs</div>
+      <a href="#ui">Budowa ekranu</a>
+      <a href="#tryby">Tryby pracy</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Skróty</div>
+      <a href="#plik">Plik</a>
+      <a href="#nawigacja">Nawigacja</a>
+      <a href="#edycja">Edycja</a>
+      <a href="#zaznaczanie">Zaznaczanie</a>
+      <a href="#schowek">Schowek</a>
+      <a href="#szukaj">Szukaj i zamień</a>
+      <a href="#undo">Undo / Redo</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Nowe funkcje</div>
+      <a href="#nowe">Przegląd nowości</a>
+      <a href="#komentarz">Komentowanie</a>
+      <a href="#duplicate">Duplikowanie linii</a>
+      <a href="#replace">Find &amp; Replace</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Konfiguracja</div>
+      <a href="#flagi">Flagi startowe</a>
+      <a href="#motywy">Motywy kolorów</a>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main>
+    <h1>hedit</h1>
+    <p class="subtitle">Wbudowany edytor HackerOS — dokumentacja v0.5</p>
+
+    <!-- ── CZYM JEST ── -->
+    <h2 id="overview">Czym jest hedit</h2>
+    <p>hedit to terminalowy edytor tekstu wbudowany w system <strong>HackerOS</strong>, inspirowany nano. Napisany w Go, działa w trybie pełnoekranowym (alt screen), oferuje podświetlanie składni przez bibliotekę <a href="https://github.com/alecthomas/chroma">chroma</a>, cofanie/ponawianie zmian, schowek systemowy oraz zestaw skrótów klawiszowych zbliżonych do nano. hedit jest dostępny <strong>wyłącznie</strong> jako część systemu HackerOS — nie jest dystrybuowany osobno.</p>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="fc-icon">🎨</div>
+        <div class="fc-title">Podświetlanie składni</div>
+        <div class="fc-desc">Obsługa 300+ języków przez bibliotekę chroma. Motywy kompatybilne z Pygments.</div>
+      </div>
+      <div class="feature-card">
+        <div class="fc-icon">↩</div>
+        <div class="fc-title">Undo / Redo</div>
+        <div class="fc-desc">Pełny stos cofania z inteligentnym grupowaniem szybkiego pisania (batch 500 ms).</div>
+      </div>
+      <div class="feature-card">
+        <div class="fc-icon">📋</div>
+        <div class="fc-title">Schowek systemowy</div>
+        <div class="fc-desc">Ctrl+P / Ctrl+U (wewnętrzny) oraz Ctrl+Shift+C / Ctrl+Shift+V (systemowy).</div>
+      </div>
+      <div class="feature-card">
+        <div class="fc-icon">🔍</div>
+        <div class="fc-title">Szukaj i zamień</div>
+        <div class="fc-desc">Wyszukiwanie przyrostowe (Ctrl+W) oraz zamiana globalna (Ctrl+R).</div>
+      </div>
+      <div class="feature-card">
+        <div class="fc-icon">💬</div>
+        <div class="fc-title">Komentowanie</div>
+        <div class="fc-desc">Ctrl+/ przełącza komentarz linii. Prefix dostosowany do języka pliku.</div>
+      </div>
+      <div class="feature-card">
+        <div class="fc-icon">⚡</div>
+        <div class="fc-title">Skoki po słowach</div>
+        <div class="fc-desc">Ctrl+← / Ctrl+→ przeskakują o jedno słowo — jak w nowoczesnych edytorach.</div>
+      </div>
+    </div>
+
+    <!-- ── INSTALACJA ── -->
+    <!-- ── URUCHOMIENIE ── -->
+    <h2 id="uruchomienie">Uruchomienie</h2>
+    <div class="codeblock">
+      <span class="cmd">hedit</span> <span class="flag">[opcje]</span> <span class="str">&lt;plik&gt;</span>
+    </div>
+
+    <table class="flag-table">
+      <tr><td>hedit plik.go</td><td>Otwiera plik.go w domyślnym motywie (monokai)</td></tr>
+      <tr><td>hedit --theme dracula plik.py</td><td>Otwiera z motywem Dracula</td></tr>
+      <tr><td>hedit --theme github plik.md</td><td>Jasny motyw GitHub</td></tr>
+    </table>
+
+    <!-- ── BUDOWA EKRANU ── -->
+    <h2 id="ui">Budowa ekranu</h2>
+    <p>hedit dzieli ekran na cztery strefy:</p>
+
+    <div class="editor-mock">
+      <div class="editor-title">hedit - main.go *</div>
+      <div class="editor-body">
+        <div class="line-nums">1<br>2<br>3<br>4<br>5<br>6<br>7<br>8</div>
+        <div class="editor-code">
+          <span class="kw2">package</span> <span class="typ">main</span><br>
+          <br>
+          <span class="kw2">import</span> <span class="str2">"fmt"</span><br>
+          <br>
+          <span class="kw2">func</span> <span class="fn">main</span>() {<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;<span class="sel">msg := <span class="str2">"hello, hedit"</span></span><br>
+          &nbsp;&nbsp;&nbsp;&nbsp;fmt.<span class="fn">Println</span>(<span class="cur">m</span>sg)<br>
+          }<br>
+        </div>
+      </div>
+      <div class="editor-footer">
+        <span>Ln 7 / 8</span>
+        <span>Col 18</span>
+        <span>Go</span>
+        <span>monokai</span>
+        <span style="margin-left:auto; color:#7D56F4;">ZMIENIONY</span>
+      </div>
+    </div>
+
+    <ul>
+      <li><strong>Pasek tytułu</strong> — nazwa pliku, gwiazdka (*) gdy są niezapisane zmiany</li>
+      <li><strong>Obszar edycji</strong> — numery linii po lewej, podświetlona treść po prawej</li>
+      <li><strong>Pasek statusu</strong> — aktualny wiersz/kolumna, typ pliku, motyw</li>
+      <li><strong>Stopka pomocy</strong> — lista aktywnych skrótów klawiszowych</li>
+    </ul>
+
+    <!-- ── TRYBY ── -->
+    <h2 id="tryby">Tryby pracy</h2>
+    <table class="shortcut-grid">
+      <thead><tr><th>Tryb</th><th>Opis</th><th>Wyjście</th></tr></thead>
+      <tbody>
+        <tr><td><kbd>edit</kbd></td><td class="desc">Normalny tryb edycji tekstu</td><td class="desc">—</td></tr>
+        <tr><td><kbd>search</kbd></td><td class="desc">Wyszukiwanie frazy (Ctrl+W)</td><td class="desc"><kbd>Esc</kbd> lub <kbd>Enter</kbd></td></tr>
+        <tr><td><kbd>replace</kbd></td><td class="desc">Znajdź i zamień (Ctrl+R)</td><td class="desc"><kbd>Esc</kbd> lub <kbd>Enter</kbd>×2</td></tr>
+        <tr><td><kbd>gotoline</kbd></td><td class="desc">Przejście do linii (Ctrl+G)</td><td class="desc"><kbd>Esc</kbd> lub <kbd>Enter</kbd></td></tr>
+        <tr><td><kbd>prompt</kbd></td><td class="desc">Pytanie o zapis przy wyjściu</td><td class="desc"><kbd>Y</kbd> / <kbd>N</kbd> / <kbd>Ctrl+C</kbd></td></tr>
+      </tbody>
+    </table>
+
+    <!-- ── PLIK ── -->
+    <h2 id="plik">Skróty — plik</h2>
+    <table class="shortcut-grid">
+      <thead><tr><th>Skrót</th><th>Działanie</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><div class="keys"><kbd>Ctrl</kbd><span class="key-sep">+</span><kbd>O</kbd></div></td>
+          <td class="desc">Zapisz plik (tworzy kopię .bak przed nadpisaniem)</td>
+        </tr>
+        <tr>
+          <td><div class="keys"><kbd>Ctrl</kbd><span class="key-sep">+</span><kbd>X</kbd></div></td>
+          <td class="desc">Wyjdź — jeśli są zmiany, pyta o zapis (Y/N/^C)</td>
+        </tr>
+        <tr>
+          <td><div class="keys"><kbd>Ctrl</kbd><span class="key-sep">+</span><kbd>C</kbd></div></td>
+          <td class="desc">Pokaż aktualną pozycję kursora (wiersz, kolumna)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ── NAWIGACJA ── -->
+    <h2 id="nawigacja">Skróty — nawigacja</h2>
+    <table class="shortcut-grid">
+      <thead><tr><th>Skrót</th><th>Działanie</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><div class="keys"><kbd>↑</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd></div></td>
+          <td class="desc">Ruch kursora o jeden znak / wiersz</td>
+        </tr>
+        <tr>
+          <td><div class="keys"><kbd>Ctrl</kbd><span class="key-sep">+</span><kbd>←</kbd></div></td>
+          <td class="desc">Skocz o słowo w lewo <span class="new">NEW</span></td>
+        </tr>
+        <tr>
+          <td><div class="keys"><kbd>Ctrl</kbd><span class="key-sep">+</span><kbd>→</kbd></div></td>
+          <td class="desc">Skocz o słowo w prawo <span class="new">NEW</span></td>
+        </tr>
+        <tr>
+          <td><div class="keys"><kbd>Home</kbd> / <kbd>Ctrl</kbd><span class="key-sep">+</span><kbd>A</kbd></div></td>
+          <td class="desc">Początek linii</td>
+        </tr>
+        <tr>
+          <td><div class="keys"><kbd>End</kbd> / <kbd>Ctrl</kbd><span class="key-sep">+</span><kbd>E</kbd></div></td>
+          <td class="desc">Koniec linii</td>
+        </tr>
+        <tr>
+          <td><div class="keys"><kbd>PgUp</kbd> / <kbd>PgDn</kbd></div></td>
+          <td class="desc">Strona w górę / w dół</td>
+        </tr>
+        <tr>
+          <td><div class="keys"><kbd>Ctrl</kbd><span class="key-sep">+</span><kbd>G</kbd></div></td>
+          <td class="desc">Przejdź do podanego numeru linii</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ── EDYCJA ── -->
+    <h2 id="edycja">Skróty — edycja tekstu</h2>
+    <table class="shortcut-grid">
+      <thead><tr><th>Skrót</th><th>Działanie</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><div class="keys"><kbd>Enter</kbd></div></td>
+          <td class="desc">Nowa linia z auto-wcięciem (kopiuje wiodące spacje/tabulatory)</td>
+        </tr>
+        <tr>
+          <td><div class="keys"><kbd>Tab</kbd></div></td>
+          <td class="desc">Wstaw wcięcie (4 spacje lub tabulatory — zależy od trybu)</td>
+        </tr>
+        <tr>
+          <td><div class="keys"><kbd>Shift</kbd><span class="key-sep">+</span><kbd>Tab</kbd></div></td>
+          <td class="desc">Usuń wcięcie (un-indent)</td>
+        </tr>
+        <tr>
+          <td><div class="keys"><kbd>Backspace</kbd></div></td>
+          <td class="desc">Usuń znak przed kursorem; na początku linii — scal z poprzednią</td>
+        </tr>
+        <tr>
+          <td><div class="keys"><kbd>Delete</kbd></div></td>
+          <td class="desc">Usuń znak za kursorem; na końcu linii — scal z następną</td>
+        </tr>
+        <tr>
+          <td><div class="keys"><kbd>Ctrl</kbd><span class="key-sep">+</span><kbd>D</kbd></div></td>
+          <td class="desc">Duplikuj bieżącą linię <span class="new">NEW</span></td>
+        </tr>
+        <tr>
+          <td><div class="keys"><kbd>Ctrl</kbd><span class="key-sep">+</span><kbd>/</kbd></div></td>
+          <td class="desc">Przełącz komentarz linii (auto-prefix per język) <span class="new">NEW</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ── ZAZNACZANIE ── -->
+    <h2 id="zaznaczanie">Skróty — zaznaczanie</h2>
+    <table class="shortcut-grid">
+      <thead><tr><th>Skrót</th><th>Działanie</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><div class="keys"><kbd>Shift</kbd><span class="key-sep">+</span><kbd>↑/↓/←/→</kbd></div></td>
+          <td class="desc">Rozszerz zaznaczenie</td>
+        </tr>
+        <tr>
+          <td><div class="keys"><kbd>Ctrl</kbd><span class="key-sep">+</span><kbd>A</kbd></div></td>
+          <td class="desc">Zaznacz cały plik <span class="new">NEW</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Zaznaczony tekst jest podświetlony szarym tłem. Wpisanie dowolnego znaku zastępuje zaznaczenie. Backspace / Delete usuwa zaznaczenie.</p>
+
+    <!-- ── SCHOWEK ── -->
+    <h2 id="schowek">Skróty — schowek</h2>
+    <table class="shortcut-grid">
+      <thead><tr><th>Skrót</th><th>Działanie</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><div class="keys"><kbd>Ctrl</kbd><span class="key-sep">+</span><kbd>K</kbd></div></td>
+          <td class="desc">Wytnij — zaznaczenie lub całą linię</td>
+        </tr>
+        <tr>
+          <td><div class="keys"><kbd>Ctrl</kbd><span class="key-sep">+</span><kbd>P</kbd></div></td>
+          <td class="desc">Kopiuj — zaznaczenie lub całą linię</td>
+        </tr>
+        <tr>
+          <td><div class="keys"><kbd>Ctrl</kbd><span class="key-sep">+</span><kbd>U</kbd></div></td>
+          <td class="desc">Wklej ze schowka wewnętrznego</td>
+        </tr>
+        <tr>
+          <td><div class="keys"><kbd>Ctrl</kbd><span class="key-sep">+</span><kbd>Shift</kbd><span class="key-sep">+</span><kbd>C</kbd></div></td>
+          <td class="desc">Kopiuj do <strong>systemowego</strong> schowka <span class="new">NEW</span></td>
+        </tr>
+        <tr>
+          <td><div class="keys"><kbd>Ctrl</kbd><span class="key-sep">+</span><kbd>Shift</kbd><span class="key-sep">+</span><kbd>V</kbd></div></td>
+          <td class="desc">Wklej z <strong>systemowego</strong> schowka <span class="new">NEW</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout">
+      <strong>Ctrl+K bez zaznaczenia</strong> usuwa całą bieżącą linię i umieszcza ją w schowku — tak samo jak nano.
+    </div>
+
+    <!-- ── SZUKAJ ── -->
+    <h2 id="szukaj">Szukaj i zamień</h2>
+    <table class="shortcut-grid">
+      <thead><tr><th>Skrót</th><th>Działanie</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><div class="keys"><kbd>Ctrl</kbd><span class="key-sep">+</span><kbd>W</kbd></div></td>
+          <td class="desc">Otwórz pole szukania lub znajdź następne wystąpienie</td>
+        </tr>
+        <tr>
+          <td><div class="keys"><kbd>Ctrl</kbd><span class="key-sep">+</span><kbd>R</kbd></div></td>
+          <td class="desc">Znajdź i zamień (globalna podmiana w pliku) <span class="new">NEW</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 id="replace">Jak działa Find &amp; Replace</h3>
+    <p>Po naciśnięciu Ctrl+R w stopce pojawia się dwuetapowy prompt:</p>
+    <ol style="padding-left:1.2rem; margin-bottom:1rem; font-family:-apple-system,sans-serif; font-size:13px; color:#a9b1d6; line-height:1.9;">
+      <li><strong>Find:</strong> wpisz szukaną frazę → <kbd>Enter</kbd></li>
+      <li><strong>Replace with:</strong> wpisz zamiennik → <kbd>Enter</kbd></li>
+    </ol>
+    <p>Zamiana odbywa się globalnie (we wszystkich liniach pliku). W pasku statusu pojawi się liczba podmienionych wystąpień. <kbd>Esc</kbd> anuluje w każdym kroku.</p>
+
+    <!-- ── UNDO ── -->
+    <h2 id="undo">Undo / Redo</h2>
+    <table class="shortcut-grid">
+      <thead><tr><th>Skrót</th><th>Działanie</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><div class="keys"><kbd>Ctrl</kbd><span class="key-sep">+</span><kbd>Z</kbd></div></td>
+          <td class="desc">Cofnij ostatnią operację</td>
+        </tr>
+        <tr>
+          <td><div class="keys"><kbd>Ctrl</kbd><span class="key-sep">+</span><kbd>Y</kbd></div></td>
+          <td class="desc">Ponów cofniętą operację</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Szybkie pisanie (znaki wpisywane w odstępach &lt; 500 ms) jest grupowane w jedną operację undo. Dzięki temu <kbd>Ctrl+Z</kbd> cofa całe „słowo", a nie pojedyncze litery.</p>
+
+    <!-- ── NOWE FUNKCJE ── -->
+    <h2 id="nowe">Nowe funkcje — przegląd</h2>
+    <p>Poniżej szczegółowy opis funkcji dodanych w v1.1.0, których brakowało względem nano:</p>
+
+    <h3 id="komentarz">Ctrl+/ — toggle komentarza</h3>
+    <p>Automatycznie dobiera prefix w zależności od rozszerzenia pliku:</p>
+    <table class="flag-table">
+      <tr><td>.go .c .cpp .js .ts .java</td><td><code>// </code></td></tr>
+      <tr><td>.py .sh .bash .rb .yaml .yml .toml</td><td><code># </code></td></tr>
+      <tr><td>.sql .lua</td><td><code>-- </code></td></tr>
+      <tr><td>inne</td><td><code>// </code> (domyślnie)</td></tr>
+    </table>
+    <p>Jeśli linia już zaczyna się od prefiksu — zostaje on usunięty. Operacja jest dodawana do stosu undo.</p>
+
+    <h3 id="duplicate">Ctrl+D — duplikowanie linii</h3>
+    <p>Kopiuje bieżącą linię bezpośrednio pod nią i przenosi kursor na kopię. Odpowiednik <kbd>Ctrl+D</kbd> z VS Code czy nano's <em>duplicate</em> z wbudowanych skryptów. Operacja jest cofalna przez Ctrl+Z.</p>
+
+    <h3>Ctrl+A — zaznacz wszystko</h3>
+    <p>Ustawia kotwicę zaznaczenia na początku pierwszej linii i kursor na końcu ostatniej linii pliku. Po zaznaczeniu działa kopiowanie, wycinanie lub zastąpienie wpisanym tekstem.</p>
+
+    <h3>Ctrl+← / Ctrl+→ — skoki po słowach</h3>
+    <p>Ctrl+← cofa kursor do początku bieżącego (lub poprzedniego) słowa, pomijając białe znaki. Ctrl+→ przesuwa do końca następnego słowa. Działa zgodnie ze standardem terminali i edytorów pokroju nano/vim.</p>
+
+    <!-- ── FLAGI ── -->
+    <h2 id="flagi">Flagi startowe</h2>
+    <table class="flag-table">
+      <tr><td>--theme &lt;nazwa&gt;</td><td>Wybór motywu kolorów. Domyślnie: <code>monokai</code></td></tr>
+    </table>
+
+    <!-- ── MOTYWY ── -->
+    <h2 id="motywy">Motywy kolorów</h2>
+    <p>hedit używa motywów biblioteki <a href="https://github.com/alecthomas/chroma">chroma</a> (kompatybilnych z Pygments). Wybrane popularne motywy:</p>
+    <table class="flag-table">
+      <tr><td>monokai</td><td>Ciemny, klasyczny motyw Monokai (domyślny)</td></tr>
+      <tr><td>dracula</td><td>Ciemny motyw Dracula</td></tr>
+      <tr><td>nord</td><td>Zimny, północny motyw</td></tr>
+      <tr><td>github</td><td>Jasny motyw GitHub</td></tr>
+      <tr><td>solarized-dark</td><td>Ciemny Solarized</td></tr>
+      <tr><td>solarized-light</td><td>Jasny Solarized</td></tr>
+      <tr><td>vs</td><td>Visual Studio (jasny)</td></tr>
+      <tr><td>onedark</td><td>One Dark (ciemny)</td></tr>
+      <tr><td>autumn</td><td>Jesienny, ciepły motyw</td></tr>
+    </table>
+    <div class="callout">
+      Pełna lista dostępna na: <a href="https://xyproto.github.io/splash/docs/">xyproto.github.io/splash/docs</a>
+    </div>
+
+  </main>
+</div>
+
+<footer>
+  hedit v0.5 &nbsp;·&nbsp; Wbudowany w HackerOS &nbsp;·&nbsp; Inspirowany nano &nbsp;·&nbsp; Go + Bubbletea + Chroma
+</footer>
+
+</body>
+</html>
