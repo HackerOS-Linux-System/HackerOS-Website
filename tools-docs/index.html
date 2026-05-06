@@ -1,101 +1,89 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>HackerOS · Ekosystem & narzędzia</title>
-    <link rel="icon" type="image/png" href="../HackerOS.png">
-    <!-- Font Awesome 6 -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+<title>HackerOS · Ekosystem &amp; narzędzia</title>
+<link rel="icon" type="image/png" href="../HackerOS.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
 <header class="top-bar">
-    <div class="navbar-container">
-        <div class="logo-area">
-            <a href="https://hackeros-linux-system.github.io/HackerOS-Website/Home-page.html" target="_blank" rel="noopener noreferrer">
-                <img src="../HackerOS.png" alt="HackerOS - strona główna" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20120%2040%22%20fill%3D%22%23333%22%3E%3Crect%20width%3D%22120%22%20height%3D%2240%22%20fill%3D%22%230d1117%22%20rx%3D%228%22%2F%3E%3Ctext%20x%3D%2210%22%20y%3D%2225%22%20fill%3D%22%23f0f3fa%22%20font-size%3D%2214%22%20font-family%3D%27monospace%27%3EHackerOS%3C%2Ftext%3E%3C%2Fsvg%3E';">
-            </a>
-        </div>
-        <nav class="nav-menu" aria-label="Menu ekosystemu HackerOS">
-            <ul class="nav-list">
-                <li><a href="hpm.html">HPM</a></li>
-                <li><a href="hackeros-containers.html">HackerOS Containers</a></li>
-                <li><a href="lpm.html">lpm</a></li>
-                <li><a href="hammer.html">hammer</a></li>
-                <li><a href="hacker.html">hacker</a></li>
-                <li><a href="hbuild.html">hbuild</a></li>
-                <li><a href="ulb.html">ULB</a></li>
-                <li><a href="hk.html">.hk</a></li>
-                <li><a href="hsh.html">hsh</a></li>
-                <li><a href="hedit.html">hedit</a></li>
-                <li><a href="hdev.html">hdev</a></li>   <!-- NOWY: hdev -->
-                <li><a href="ngt.html">ngt</a></li>
-                <!-- TRYBY (istniejące) -->
-                <li><a href="penetration-mode.html">Penetration Mode</a></li>
-                <li><a href="cybersecurity-mode.html">Cybersecurity Mode</a></li>
-                <li><a href="hacker-term.html">Hacker Term</a></li>
-                <li><a href="hackerdeck.html">HackerDeck</a></li>
-                <li><a href="ghostfs.html">GhostFS</a></li>
-                <li><a href="hexai.html">HexAI</a></li>
-
-                <!-- NOWE POZYCJE WG ZADANIA -->
-                <li><a href="hnm.html">HNM</a></li>
-                <li><a href="hacker-mode.html">Hacker Mode</a></li>
-                <li><a href="isolator.html">Isolator</a></li>
-                <li><a href="hackeros-steam.html">HackerOS Steam</a></li>
-
-                <!-- DROPDOWN języki programowania -->
-                <li class="dropdown" id="langDropdown">
-                    <button class="dropdown-btn" id="langDropdownBtn">
-                        Języki programowania <i class="fas fa-chevron-down"></i>
-                    </button>
-                    <div class="dropdown-content">
-                        <a href="https://hackeros-linux-system.github.io/HackerOS-Website/h-sharp/docs.html" target="_blank" rel="noopener noreferrer">H# – dokumentacja</a>
-                        <a href="https://hackeros-linux-system.github.io/HackerOS-Website/hacker-lang/docs.html" target="_blank" rel="noopener noreferrer">Hacker Lang – dokumentacja</a>
-                    </div>
-                </li>
-            </ul>
-        </nav>
-    </div>
+<div class="navbar-container">
+<div class="logo-area">
+<a href="https://hackeros-linux-system.github.io/HackerOS-Website/Home-page.html" target="_blank" rel="noopener noreferrer">
+<img src="../HackerOS.png" alt="HackerOS"
+onerror="this.onerror=null;this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20120%2040%22%3E%3Crect%20width%3D%22120%22%20height%3D%2240%22%20fill%3D%22%230d1117%22%20rx%3D%228%22%2F%3E%3Ctext%20x%3D%2210%22%20y%3D%2225%22%20fill%3D%22%23f0f3fa%22%20font-size%3D%2214%22%20font-family%3D%27monospace%27%3EHackerOS%3C%2Ftext%3E%3C%2Fsvg%3E';">
+</a>
+</div>
+<nav class="nav-menu" aria-label="HackerOS ecosystem menu">
+<ul class="nav-list" id="nav-list">
+<li><a href="gaming-cli.html" data-key="gaming-cli">gaming-cli</a></li>
+<li><a href="hpm.html" data-key="hpm">HPM</a></li>
+<li><a href="hackeros-containers.html" data-key="hackeros-containers">HackerOS Containers</a></li>
+<li><a href="lpm.html" data-key="lpm">lpm</a></li>
+<li><a href="hammer.html" data-key="hammer">hammer</a></li>
+<li><a href="hacker.html" data-key="hacker">hacker</a></li>
+<li><a href="hbuild.html" data-key="hbuild">hbuild</a></li>
+<li><a href="ulb.html" data-key="ulb">ULB</a></li>
+<li><a href="hk.html" data-key="hk">.hk</a></li>
+<li><a href="hsh.html" data-key="hsh">hsh</a></li>
+<li><a href="hedit.html" data-key="hedit">hedit</a></li>
+<li><a href="hdev.html" data-key="hdev">hdev</a></li>
+<li><a href="ngt.html" data-key="ngt">ngt</a></li>
+<li><a href="penetration-mode.html" data-key="penetration-mode">Penetration Mode</a></li>
+<li><a href="cybersecurity-mode.html" data-key="cybersecurity-mode">Cybersecurity Mode</a></li>
+<li><a href="hacker-term.html" data-key="hacker-term">Hacker Term</a></li>
+<li><a href="hackerdeck.html" data-key="hackerdeck">HackerDeck</a></li>
+<li><a href="ghostfs.html" data-key="ghostfs">GhostFS</a></li>
+<li><a href="hexai.html" data-key="hexai">HexAI</a></li>
+<li><a href="hnm.html" data-key="hnm">HNM</a></li>
+<li><a href="hacker-mode.html" data-key="hacker-mode">Hacker Mode</a></li>
+<li><a href="isolator.html" data-key="isolator">Isolator</a></li>
+<li><a href="hackeros-steam.html" data-key="hackeros-steam">HackerOS Steam</a></li>
+<li class="dropdown" id="langDropdown">
+<button class="dropdown-btn" id="langDropdownBtn">
+<span id="lang-drop-label">Języki programowania</span> <i class="fas fa-chevron-down"></i>
+</button>
+<div class="dropdown-content">
+<a id="lang-drop-hsharp" href="https://hackeros-linux-system.github.io/HackerOS-Website/h-sharp/docs.html" target="_blank" rel="noopener noreferrer">H# – dokumentacja</a>
+<a id="lang-drop-hackerlang" href="https://hackeros-linux-system.github.io/HackerOS-Website/hacker-lang/docs.html" target="_blank" rel="noopener noreferrer">Hacker Lang – dokumentacja</a>
+</div>
+</li>
+</ul>
+</nav>
+</div>
 </header>
-
 <main class="main-content">
-    <div class="section-header">
-        <h2>Poznaj ekosystem HackerOS.</h2>
-    </div>
-
-    <div class="slider-shell">
-        <div class="slider-container" id="sliderContainer">
-            <div class="slides-wrapper">
-                <div class="slides-track" id="slidesTrack"></div>
-            </div>
-            <button class="slider-btn btn-prev" id="prevSlideBtn" aria-label="poprzedni slajd">‹</button>
-            <button class="slider-btn btn-next" id="nextSlideBtn" aria-label="następny slajd">›</button>
-        </div>
-        <div class="dots-container" id="dotsContainer"></div>
-    </div>
+<div class="section-header"><h2 id="section-h2">Poznaj ekosystem HackerOS.</h2></div>
+<div class="slider-shell">
+<div class="slider-container" id="sliderContainer">
+<div class="slides-wrapper"><div class="slides-track" id="slidesTrack"></div></div>
+<button class="slider-btn btn-prev" id="prevSlideBtn" aria-label="poprzedni slajd">‹</button>
+<button class="slider-btn btn-next" id="nextSlideBtn" aria-label="następny slajd">›</button>
+</div>
+<div class="dots-container" id="dotsContainer"></div>
+</div>
 </main>
-
 <footer>
-    <div class="footer-copyright">
-        HackerOS · © 2026 HackerOS. Wszelkie prawa zastrzeżone. | Dokumentacja ekosystemu HackerOS
-    <div class="footer-social-row">
-        <div class="footer-left">
-            <a href="https://sourceforge.net/projects/hackeros/" target="_blank" rel="noopener noreferrer" class="social-link"><i class="fab fa-sourceforge"></i> SourceForge</a>
-            <a href="https://discord.com/invite/8yHNcBaEKy" target="_blank" rel="noopener noreferrer" class="social-link"><i class="fab fa-discord"></i> Discord</a>
-            <a href="https://linuxiarze.pl/distro-hackeros/" target="_blank" rel="noopener noreferrer" class="social-link"><i class="fas fa-globe"></i> Linuxiarze</a>
-        </div>
-        <div class="footer-right">
-            <a href="https://github.com/HackerOS-Linux-System" target="_blank" rel="noopener noreferrer" class="social-link"><i class="fab fa-github"></i> GitHub</a>
-            <a href="https://x.com/hackeros_linux" target="_blank" rel="noopener noreferrer" class="social-link"><i class="fab fa-x-twitter"></i> X</a>
-            <a href="https://distrowatch.com/table.php?distribution=hackeros" target="_blank" rel="noopener noreferrer" class="social-link"><i class="fas fa-chart-line"></i> DistroWatch</a>
-            <a href="https://www.reddit.com/r/HackerOS_/" target="_blank" rel="noopener noreferrer" class="social-link"><i class="fab fa-reddit-alien"></i> Reddit</a>
-        </div>
-    </div>
+<div class="footer-copyright" id="footer-copy">HackerOS · © 2026 HackerOS. Wszelkie prawa zastrzeżone. | Dokumentacja ekosystemu HackerOS</div>
+<div class="footer-social-row">
+<div class="footer-left">
+<a href="https://sourceforge.net/projects/hackeros/" target="_blank" rel="noopener noreferrer" class="social-link"><i class="fab fa-sourceforge"></i> SourceForge</a>
+<a href="https://discord.com/invite/8yHNcBaEKy" target="_blank" rel="noopener noreferrer" class="social-link"><i class="fab fa-discord"></i> Discord</a>
+<a href="https://linuxiarze.pl/distro-hackeros/" target="_blank" rel="noopener noreferrer" class="social-link"><i class="fas fa-globe"></i> Linuxiarze</a>
+</div>
+<div class="footer-right">
+<a href="https://github.com/HackerOS-Linux-System" target="_blank" rel="noopener noreferrer" class="social-link"><i class="fab fa-github"></i> GitHub</a>
+<a href="https://x.com/hackeros_linux" target="_blank" rel="noopener noreferrer" class="social-link"><i class="fab fa-x-twitter"></i> X</a>
+<a href="https://distrowatch.com/table.php?distribution=hackeros" target="_blank" rel="noopener noreferrer" class="social-link"><i class="fas fa-chart-line"></i> DistroWatch</a>
+<a href="https://www.reddit.com/r/HackerOS_/" target="_blank" rel="noopener noreferrer" class="social-link"><i class="fab fa-reddit-alien"></i> Reddit</a>
+</div>
+</div>
 </footer>
-
+<script src="../translations/lang-core.js"></script>
+<script src="../translations/tools-docs.js"></script>
+<script src="../translations/lang-switcher.js"></script>
 <script src="script.js"></script>
 </body>
 </html>
