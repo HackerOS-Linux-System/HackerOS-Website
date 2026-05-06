@@ -1,780 +1,90 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HackerOS - Dokumentacja</title>
-    <link rel="icon" type="image/png" href="HackerOS.png">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Arial', sans-serif;
-        }
-        body {
-            background-color: #000000;
-            color: #FFFFFF;
-            line-height: 1.6;
-        }
-        header {
-            background-color: #1A1A1A;
-            padding: 20px 0;
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 1000;
-        }
-        nav {
-            max-width: 100%;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 20px;
-        }
-        nav .logo img {
-            height: 40px;
-            width: auto;
-        }
-        nav ul {
-            list-style: none;
-            display: flex;
-            gap: 25px;
-        }
-        nav ul li a {
-            color: #FFFFFF;
-            text-decoration: none;
-            font-size: 18px;
-            transition: color 0.3s, transform 0.3s;
-            position: relative;
-        }
-        nav ul li a::after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 2px;
-            bottom: -5px;
-            left: 0;
-            background-color: #B0B0B0;
-            transition: width 0.3s;
-        }
-        nav ul li a:hover::after {
-            width: 100%;
-        }
-        nav ul li a:hover {
-            color: #B0B0B0;
-            transform: translateY(-2px);
-        }
-        .main-section {
-            max-width: 100%;
-            margin: 80px auto 0;
-            padding: 20px;
-            text-align: center;
-        }
-        .search-bar {
-            margin-bottom: 30px;
-            text-align: center;
-        }
-        .search-wrapper {
-            position: relative;
-            width: 65%;
-            max-width: 700px;
-            margin: 0 auto;
-        }
-        .search-bar input {
-            width: 100%;
-            padding: 14px 50px 14px 20px;
-            border-radius: 12px;
-            border: 2px solid #2F3A44;
-            background-color: #1A1A1A;
-            color: #FFFFFF;
-            font-size: 18px;
-            transition: all 0.3s;
-        }
-        .search-bar input:focus {
-            border-color: #FFFFFF;
-            box-shadow: 0 0 18px rgba(255, 255, 255, 0.25);
-            outline: none;
-        }
-        .clear-btn {
-            position: absolute;
-            right: 18px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            color: #B0B0B0;
-            font-size: 24px;
-            cursor: pointer;
-            display: none;
-            transition: color 0.3s ease;
-            padding: 0;
-        }
-        .clear-btn:hover {
-            color: #FFFFFF;
-        }
-        .main-section img {
-            max-width: 100%;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-        .main-section h2 {
-            font-size: 28px;
-            margin: 30px 0 15px;
-            color: #FFFFFF;
-        }
-        .main-section h3 {
-            font-size: 24px;
-            margin: 25px 0 12px;
-            color: #FFFFFF;
-        }
-        .main-section p {
-            font-size: 18px;
-            color: #B0B0B0;
-            margin-bottom: 20px;
-        }
-        .copy-button {
-            background-color: #B0B0B0;
-            color: #1C2526;
-            border: none;
-            padding: 6px 14px;
-            cursor: pointer;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-            font-size: 14px;
-        }
-        .copy-button:hover {
-            background-color: #FFFFFF;
-            color: #000;
-        }
-        .tab-pane table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-            background: #121212;
-        }
-        .tab-pane th, .tab-pane td {
-            padding: 14px 18px;
-            text-align: left;
-            border: 1px solid #2F3A44;
-        }
-        .tab-pane th {
-            background: #1A1A1A;
-            color: #FFFFFF;
-            font-weight: bold;
-        }
-        .tab-pane code {
-            background-color: #1A1A1A;
-            padding: 2px 6px;
-            border-radius: 4px;
-            color: #AA6DFF;
-        }
-        .tab-pane img {
-            max-width: 100%;
-            border-radius: 12px;
-            margin: 15px 0;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.6);
-        }
-        .tabs-container {
-            display: flex;
-            max-width: 100%;
-            margin: 0 auto;
-            border-radius: 12px;
-            overflow: hidden;
-            transition: box-shadow 0.3s ease;
-        }
-        .tabs-container:hover {
-            box-shadow: 0 6px 16px rgba(0,0,0,0.5);
-        }
-        .tab-menu {
-            width: 250px;
-            padding: 25px;
-            border-right: 2px solid #2F3A44;
-        }
-        .tab-menu ul {
-            list-style: none;
-        }
-        .tab-menu li {
-            margin-bottom: 20px;
-            cursor: pointer;
-            padding: 12px 15px;
-            border-radius: 8px;
-            transition: background-color 0.3s, color 0.3s, transform 0.3s;
-            color: #B0B0B0;
-            font-weight: bold;
-            font-size: 18px;
-        }
-        .tab-menu li:hover {
-            color: #FFFFFF;
-            transform: translateX(5px);
-        }
-        .tab-menu li.active {
-            color: #FFFFFF;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-        }
-        .highlight {
-            background-color: rgba(255, 255, 255, 0.15);
-            padding: 2px 4px;
-            border-radius: 3px;
-        }
-        .tab-content {
-            flex: 1;
-            padding: 30px;
-            text-align: left;
-        }
-        .tab-pane {
-            display: none;
-        }
-        .tab-pane.active {
-            display: block;
-        }
-        .tab-pane ol, .tab-pane ul {
-            color: #B0B0B0;
-            font-size: 18px;
-            list-style-position: inside;
-        }
-        .tab-pane ul li {
-            margin-bottom: 0.75rem;
-        }
-        .tab-pane pre {
-            padding: 12px;
-            border-radius: 5px;
-            font-family: 'Courier New', Courier, monospace;
-            color: #B0B0B0;
-            overflow-x: auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #121212;
-        }
-        .release-cycle {
-            background: #121212;
-            border-left: 4px solid #AA6DFF;
-            padding: 20px;
-            margin-top: 30px;
-            border-radius: 8px;
-        }
-        .release-cycle h3 {
-            margin-top: 0;
-            color: #AA6DFF;
-        }
-        .release-cycle p {
-            margin-bottom: 0;
-        }
-        .doc-link {
-            color: #4a9eff;
-            text-decoration: underline;
-            transition: opacity 0.2s;
-        }
-        .doc-link:hover {
-            opacity: 0.8;
-            text-decoration: none;
-        }
-        @media (max-width: 768px) {
-            .tabs-container {
-                flex-direction: column;
-            }
-            .tab-menu {
-                width: 100%;
-                border-right: none;
-                border-bottom: 2px solid #2F3A44;
-                padding: 15px;
-            }
-            .search-wrapper {
-                width: 90%;
-            }
-        }
-        footer {
-            padding: 20px;
-            text-align: center;
-            color: #B0B0B0;
-            position: relative;
-            bottom: 0;
-            width: 100%;
-        }
-    </style>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const searchInput = document.getElementById('search-input');
-            const clearBtn = document.getElementById('clear-search');
-            const tabLinks = document.querySelectorAll('.tab-link');
-            function highlightText(text, term) {
-                if (!term) return text;
-                const regex = new RegExp(`(${term})`, 'gi');
-                return text.replace(regex, '<span class="highlight">$1</span>');
-            }
-            searchInput.addEventListener('input', () => {
-                const rawTerm = searchInput.value.toLowerCase().trim();
-                const words = rawTerm.split(/\s+/).filter(w => w.length > 0);
-                tabLinks.forEach(link => {
-                    const originalText = link.textContent;
-                    const lowerText = originalText.toLowerCase();
-                    let matches = true;
-                    if (words.length > 0) {
-                        matches = words.every(word => lowerText.includes(word));
-                    }
-                    if (matches) {
-                        link.style.display = 'block';
-                        if (rawTerm) {
-                            link.innerHTML = highlightText(originalText, rawTerm);
-                        } else {
-                            link.innerHTML = originalText;
-                        }
-                    } else {
-                        link.style.display = 'none';
-                        link.innerHTML = originalText;
-                    }
-                });
-                clearBtn.style.display = rawTerm ? 'block' : 'none';
-            });
-            clearBtn.addEventListener('click', () => {
-                searchInput.value = '';
-                clearBtn.style.display = 'none';
-                tabLinks.forEach(link => {
-                    link.style.display = 'block';
-                    link.innerHTML = link.textContent;
-                });
-                searchInput.focus();
-            });
-            const copyButtons = document.querySelectorAll('.copy-button');
-            copyButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    const cmd = button.getAttribute('data-command');
-                    navigator.clipboard.writeText(cmd).then(() => {
-                        const originalText = button.textContent;
-                        button.textContent = 'Skopiowano!';
-                        setTimeout(() => button.textContent = originalText, 1500);
-                    });
-                });
-            });
-            const tabMenuLinks = document.querySelectorAll('.tab-link');
-            const tabPanes = document.querySelectorAll('.tab-pane');
-            tabMenuLinks.forEach(link => {
-                link.addEventListener('click', () => {
-                    tabMenuLinks.forEach(l => l.classList.remove('active'));
-                    link.classList.add('active');
-                    tabPanes.forEach(p => p.classList.remove('active'));
-                    document.getElementById(link.dataset.tab).classList.add('active');
-                });
-            });
-            // English fallback
-            const userLang = navigator.language || navigator.userLanguage;
-            if (!userLang.startsWith('pl')) {
-                document.documentElement.lang = 'en';
-                document.title = 'HackerOS - Documentation';
-                const tabs = document.querySelectorAll('.tab-link');
-                if (tabs.length >= 13) {
-                    tabs[0].textContent = 'Introduction';
-                    tabs[1].textContent = 'Hardware Requirements';
-                    tabs[2].textContent = 'Installation';
-                    tabs[3].textContent = 'First Steps';
-                    tabs[4].textContent = 'Graphical Environment';
-                    tabs[5].textContent = 'Configuration';
-                    tabs[6].textContent = 'Troubleshooting';
-                    tabs[7].textContent = 'License';
-                    tabs[8].textContent = 'Tools and Applications';
-                    tabs[9].textContent = 'Programming Languages';
-                    tabs[10].textContent = 'Editions';
-                    tabs[11].textContent = 'Gaming';
-                    tabs[12].textContent = 'Gallery';
-                }
-                const panes = document.querySelectorAll('.tab-pane');
-                if (panes.length >= 13) {
-                    panes[0].querySelector('h2').textContent = '1. Introduction';
-                    panes[1].querySelector('h2').textContent = '2. Hardware Requirements';
-                    panes[2].querySelector('h2').textContent = '3. Installation';
-                    panes[3].querySelector('h2').textContent = '4. First Steps';
-                    panes[4].querySelector('h2').textContent = '5. Graphical Environment';
-                    panes[5].querySelector('h2').textContent = '6. Configuration';
-                    panes[6].querySelector('h2').textContent = '7. Troubleshooting';
-                    panes[7].querySelector('h2').textContent = '8. License';
-                    panes[8].querySelector('h2').textContent = '9. Tools and Applications';
-                    panes[9].querySelector('h2').textContent = '10. Programming Languages';
-                    panes[10].querySelector('h2').textContent = '11. Editions';
-                    panes[11].querySelector('h2').textContent = '12. Gaming';
-                    panes[12].querySelector('h2').textContent = '13. Gallery';
-                }
-                document.querySelector('footer p').textContent = '© 2026 HackerOS. All rights reserved.';
-            }
-        });
-    </script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>HackerOS - Dokumentacja</title>
+<link rel="icon" type="image/png" href="HackerOS.png">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Arial',sans-serif;}
+body{background-color:#000;color:#FFF;line-height:1.6;}
+header{background-color:#1A1A1A;padding:20px 0;position:fixed;width:100%;top:0;z-index:1000;}
+nav{max-width:100%;margin:0 auto;display:flex;justify-content:space-between;align-items:center;padding:0 20px;}
+nav .logo img{height:40px;width:auto;}
+nav ul{list-style:none;display:flex;gap:20px;align-items:center;}
+nav ul li a{color:#FFF;text-decoration:none;font-size:17px;transition:color .3s,transform .3s;position:relative;}
+nav ul li a::after{content:'';position:absolute;width:0;height:2px;bottom:-5px;left:0;background:#B0B0B0;transition:width .3s;}
+nav ul li a:hover::after{width:100%;}
+nav ul li a:hover{color:#B0B0B0;transform:translateY(-2px);}
+.main-section{max-width:100%;margin:80px auto 0;padding:20px;text-align:center;}
+.search-bar{margin-bottom:16px;text-align:center;}
+.search-wrapper{position:relative;width:65%;max-width:700px;margin:0 auto;}
+.search-bar input{width:100%;padding:14px 50px 14px 20px;border-radius:12px;border:2px solid #2F3A44;background:#1A1A1A;color:#FFF;font-size:18px;transition:all .3s;}
+.search-bar input:focus{border-color:#FFF;box-shadow:0 0 18px rgba(255,255,255,.25);outline:none;}
+.clear-btn{position:absolute;right:18px;top:50%;transform:translateY(-50%);background:none;border:none;color:#B0B0B0;font-size:24px;cursor:pointer;display:none;padding:0;}
+.clear-btn:hover{color:#FFF;}
+.search-results-note{text-align:center;color:#B0B0B0;font-size:14px;margin-bottom:10px;min-height:20px;}
+.tabs-container{display:flex;max-width:100%;margin:0 auto;border-radius:12px;overflow:hidden;}
+.tab-menu{width:250px;padding:25px;border-right:2px solid #2F3A44;flex-shrink:0;}
+.tab-menu ul{list-style:none;}
+.tab-link{margin-bottom:20px;cursor:pointer;padding:12px 15px;border-radius:8px;transition:background-color .3s,color .3s,transform .3s;color:#B0B0B0;font-weight:bold;font-size:18px;}
+.tab-link:hover{color:#FFF;transform:translateX(5px);}
+.tab-link.active{color:#FFF;background:rgba(255,255,255,.07);}
+.tab-link.search-hidden{display:none;}
+.hl{background:rgba(255,255,255,.2);border-radius:3px;padding:1px 3px;}
+.tab-content{flex:1;padding:30px;text-align:left;overflow:auto;}
+.tab-pane{display:none;}
+.tab-pane.active{display:block;}
+.tab-pane h2{font-size:28px;margin:30px 0 15px;}
+.tab-pane h3{font-size:24px;margin:25px 0 12px;color:#FFF;}
+.tab-pane h4{font-size:18px;margin:18px 0 8px;color:#DDD;}
+.tab-pane p{font-size:18px;color:#B0B0B0;margin-bottom:20px;}
+.tab-pane ul,.tab-pane ol{color:#B0B0B0;font-size:18px;list-style-position:inside;}
+.tab-pane ul li{margin-bottom:0.75rem;}
+.tab-pane code{background:#1A1A1A;padding:2px 6px;border-radius:4px;color:#AA6DFF;}
+.tab-pane pre{padding:12px;border-radius:5px;font-family:'Courier New',monospace;color:#B0B0B0;overflow-x:auto;display:flex;justify-content:space-between;align-items:center;background:#121212;gap:10px;}
+.tab-pane img{max-width:100%;border-radius:12px;margin:12px 0;}
+.tab-pane a{color:#4a9eff;}
+.tab-pane table{width:100%;border-collapse:collapse;margin:16px 0;background:#121212;}
+.tab-pane th,.tab-pane td{padding:14px 18px;text-align:left;border:1px solid #2F3A44;}
+.tab-pane th{background:#1A1A1A;font-weight:bold;}
+.copy-button{background:#B0B0B0;color:#1C2526;border:none;padding:5px 12px;cursor:pointer;border-radius:5px;font-size:13px;white-space:nowrap;flex-shrink:0;}
+.copy-button:hover{background:#FFF;color:#000;}
+.release-cycle{background:#121212;border-left:4px solid #AA6DFF;padding:18px;margin-top:24px;border-radius:8px;}
+.release-cycle h3{margin-top:0;color:#AA6DFF;}
+.release-cycle p{margin-bottom:0;}
+.doc-link{color:#4a9eff;text-decoration:underline;}
+@media(max-width:768px){.tabs-container{flex-direction:column;}.tab-menu{width:100%;border-right:none;border-bottom:2px solid #2F3A44;padding:15px;}.search-wrapper{width:90%;}}
+footer{padding:20px;text-align:center;color:#B0B0B0;width:100%;}
+</style>
 </head>
 <body>
-    <header>
-        <nav>
-            <div class="logo"><img src="HackerOS.png" alt="HackerOS Logo"></div>
-            <ul>
-                <li><a href="Home-page.html">Home</a></li>
-                <li><a href="download.html">Download</a></li>
-                <li><a href="releases.html">Releases</a></li>
-                <li><a href="hackeros-team.html">HackerOS Team</a></li>
-                <li><a href="hackeros-documentation.html">Documentation</a></li>
-            </ul>
-        </nav>
-    </header>
-    <section class="main-section">
-        <div class="search-bar">
-            <div class="search-wrapper">
-                <input type="text" id="search-input" placeholder="🔍 Wyszukaj w dokumentacji (np. gaming, edycje, hacker update...)">
-                <button id="clear-search" class="clear-btn">✕</button>
-            </div>
-        </div>
-        <div class="tabs-container">
-            <div class="tab-menu">
-                <ul>
-                    <li class="tab-link active" data-tab="introduction">Wprowadzenie</li>
-                    <li class="tab-link" data-tab="hardware">Wymagania sprzętowe</li>
-                    <li class="tab-link" data-tab="installation">Instalacja</li>
-                    <li class="tab-link" data-tab="first-steps">Pierwsze kroki</li>
-                    <li class="tab-link" data-tab="environment">Środowisko graficzne</li>
-                    <li class="tab-link" data-tab="configuration">Konfiguracja</li>
-                    <li class="tab-link" data-tab="troubleshooting">Rozwiązywanie błędów</li>
-                    <li class="tab-link" data-tab="license">Licencja i prawa</li>
-                    <li class="tab-link" data-tab="tools">Narzędzia i aplikacje</li>
-                    <li class="tab-link" data-tab="programming">Języki programowania</li>
-                    <li class="tab-link" data-tab="editions">Edycje</li>
-                    <li class="tab-link" data-tab="gaming">Gaming</li>
-                    <li class="tab-link" data-tab="gallery">Galeria</li>
-                </ul>
-            </div>
-            <div class="tab-content">
-                <!-- 1. Wprowadzenie -->
-                <div id="introduction" class="tab-pane active">
-                    <img src="installed-hackeros.png" alt="Zainstalowany HackerOS" style="max-width: 100%; border-radius: 10px; margin-bottom: 20px;">
-                    <h2>1. Wprowadzenie</h2>
-                    <p>HackerOS to dystrybucja linuksowa bazująca na <strong>Debianie (testing)</strong>, stworzona z myślą o:</p>
-                    <ul>
-                        <li>zwykłych użytkownikach,</li>
-                        <li>graczach,</li>
-                        <li>entuzjastach cyberbezpieczeństwa,</li>
-                        <li>deweloperach,</li>
-                        <li>power-userach,</li>
-                        <li>użytkownikach ceniących stabilność.</li>
-                    </ul>
-                    <p>Domyślnie HackerOS posiada zwykłe jądro Debiana, chyba że mówimy o edycji gaming, która ma wbudowane w wersji old jądro Liquorix, a w wersji new jądro XanMod LTS.</p>
-                    <h3>Filozofia</h3>
-                    <p>HackerOS ma dawać użytkownikowi <strong>pełną kontrolę</strong>, jednocześnie oferując gotowe, przyjazne środowisko do codziennego użytku i grania. Projekt stawia na:</p>
-                    <ul>
-                        <li>dostępność (łatwe instalatory i GUI),</li>
-                        <li>bezpieczeństwo i prywatność użytkownika,</li>
-                        <li>stabilność (używa zwykłego jądra Debiana, ale można zmienić na customowe za pomocą chker).</li>
-                    </ul>
-                    <h3>Cel</h3>
-                    <p>Celem HackerOS jest dostarczyć stabilne środowisko gotowe do pracy i rozrywki:</p>
-                    <ul>
-                        <li><strong>stabilność</strong> — baza Debian testing (w niektórych edycjach Debian stable),</li>
-                        <li><strong>prostota aktualizacji</strong> — jedną komendą zaktualizuj cały system (<code>hacker update</code>),</li>
-                        <li><strong>dostosowanie</strong> — łatwa personalizacja i integracja narzędzi dla pentesterów i graczy.</li>
-                    </ul>
-                </div>
-                <!-- 2. Wymagania sprzętowe -->
-                <div id="hardware" class="tab-pane">
-                    <h2>2. Wymagania sprzętowe</h2>
-                    <h3>Minimalne</h3>
-                    <ul>
-                        <li><strong>Procesor:</strong> 2 rdzenie, 1.6 GHz (x86_64 / ARMv8)</li>
-                        <li><strong>Pamięć RAM:</strong> 2 GB</li>
-                        <li><strong>Dysk:</strong> 20 GB wolnej przestrzeni</li>
-                        <li><strong>Grafika:</strong> zintegrowana, obsługa rozdzielczości 1024×768</li>
-                        <li><strong>Sieć:</strong> karta sieciowa Ethernet/Wi-Fi</li>
-                    </ul>
-                    <p>Te parametry pozwolą uruchomić system; przy nich wydajność GUI i gier będzie ograniczona.</p>
-                    <h3>Rekomendowane</h3>
-                    <ul>
-                        <li><strong>Procesor:</strong> 4 rdzenie, 2.5 GHz lub szybszy (x86_64 / ARM64)</li>
-                        <li><strong>Pamięć RAM:</strong> 8 GB lub więcej</li>
-                        <li><strong>Dysk:</strong> 50 GB wolnej przestrzeni (SSD zalecany)</li>
-                        <li><strong>Grafika:</strong> GPU z akceleracją 3D (NVIDIA/AMD/Intel)</li>
-                        <li><strong>Sieć:</strong> stabilne łącze internetowe</li>
-                    </ul>
-                    <h3>Obsługiwane architektury</h3>
-                    <ul>
-                        <li><strong>x86_64 (amd64)</strong> — pełne wsparcie</li>
-                    </ul>
-                </div>
-                <!-- 3. Instalacja -->
-                <div id="installation" class="tab-pane">
-                    <h2>3. Instalacja</h2>
-                    <h3>Pobieranie</h3>
-                    <p>Pobierz obraz ISO ze strony projektu:</p>
-                    <p><a href="https://hackeros-linux-system.github.io/HackerOS-Website/download.html">https://hackeros-linux-system.github.io/HackerOS-Website/download.html</a></p>
-                    <h3>Tworzenie bootowalnego nośnika</h3>
-                    <ul>
-                        <li><strong>Windows:</strong> Rufus</li>
-                        <li><strong>Linux:</strong> <code>dd</code>, balenaEtcher, Fedora Media Writer</li>
-                        <li>Przykład <code>dd</code> (UWAGA: dobierz poprawne <code>/dev/sdX</code>):</li>
-                    </ul>
-                    <pre><span>sudo dd if=HackerOS.iso of=/dev/sdX bs=4M status=progress oflag=sync</span> <button class="copy-button" data-command="sudo dd if=HackerOS.iso of=/dev/sdX bs=4M status=progress oflag=sync">Kopiuj</button></pre>
-                    <h3>Uruchamianie w trybie Live</h3>
-                    <p>Po uruchomieniu komputera z pendrive'a / płyty z obrazem HackerOS, zostaniesz powitany przez ekran wyboru trybu. Wybierz opcję "Uruchom HackerOS Live".</p>
-                    <p><strong>Domyślne hasło dla użytkownika live to: <code>live</code></strong> – zostaniesz automatycznie zalogowany w środowisku graficznym, ale w razie potrzeby (np. blokada ekranu lub logowanie przez konsolę) użyj tego hasła.</p>
-                    <h3>Instalacja z nośnika</h3>
-                    <ol>
-                        <li>Uruchom komputer z pendrive/USB.</li>
-                        <li>Uruchom instalator (skrót na pulpicie lub w menu).</li>
-                        <li>Instalator Calamares poprowadzi przez: wybór języka, partycjonowanie, tworzenie użytkownika.</li>
-                        <li>Po zakończeniu uruchom system z dysku.</li>
-                    </ol>
-                    <h3>Dual-boot</h3>
-                    <ul>
-                        <li>Instalator posiada opcję instalacji obok istniejącego systemu.</li>
-                        <li>Zawsze wykonaj backup przed zmianami partycji.</li>
-                        <li>Jeżeli chcesz, by Bootloader (GRUB) był zarządzany ręcznie — wybierz opcję zaawansowaną.</li>
-                    </ul>
-                </div>
-                <!-- 4. Pierwsze kroki -->
-                <div id="first-steps" class="tab-pane">
-                    <h2>4. Pierwsze kroki po instalacji</h2>
-                    <h3>Logowanie</h3>
-                    <ul>
-                        <li>Jeżeli wybrałeś automatyczne logowanie — zostaniesz zalogowany od razu (w instalatorze Calamares).</li>
-                        <li>W przeciwnym razie: zaloguj się przy użyciu utworzonego użytkownika.</li>
-                    </ul>
-                    <h3>Menedżerzy pakietów</h3>
-                    <p>HackerOS kładzie nacisk na szeroką dostępność oprogramowania, dlatego oferuje wiele menedżerów pakietów do wyboru:</p>
-                    <h4>APT (Debian)</h4>
-                    <p>Repozytorium Debiana (testing lub stable). Możesz również używać <strong>lpm</strong> – następcy APT w fazie BETA (instalacja: <code>hacker unpack lpm</code>). Przykładowe komendy APT:</p>
-                    <pre><span>sudo apt update
-sudo apt upgrade
-sudo apt install &lt;pakiet&gt;
-sudo apt remove &lt;pakiet&gt;
-sudo apt autoremove
-sudo apt autoclean</span> <button class="copy-button" data-command="sudo apt update&#10;sudo apt upgrade&#10;sudo apt install &lt;pakiet&gt;&#10;sudo apt remove &lt;pakiet&gt;&#10;sudo apt autoremove&#10;sudo apt autoclean">Kopiuj</button></pre>
-                    
-                    <h4>Flatpak</h4>
-                    <p>HackerOS posiada w pełni skonfigurowane wsparcie dla Flatpak. Podstawowe komendy:</p>
-                    <pre><span>flatpak install &lt;pakiet&gt;
-flatpak update
-flatpak remove &lt;pakiet&gt;
-flatpak search &lt;nazwa&gt;</span> <button class="copy-button" data-command="flatpak install &lt;pakiet&gt;&#10;flatpak update&#10;flatpak remove &lt;pakiet&gt;&#10;flatpak search &lt;nazwa&gt;">Kopiuj</button></pre>
-                    
-                    <h4>Snap</h4>
-                    <p>HackerOS obsługuje również Snap. Przykładowe komendy:</p>
-                    <pre><span>snap install &lt;pakiet&gt;
-snap refresh
-snap remove &lt;pakiet&gt;
-snap find &lt;nazwa&gt;</span> <button class="copy-button" data-command="snap install &lt;pakiet&gt;&#10;snap refresh&#10;snap remove &lt;pakiet&gt;&#10;snap find &lt;nazwa&gt;">Kopiuj</button></pre>
-                    
-                    <h4>Brew (Homebrew)</h4>
-                    <p>Wbudowane narzędzie CLI Homebrew. Aby upewnić się, że jest dostępne, wykonaj <code>hacker update</code>. Podstawowe komendy:</p>
-                    <pre><span>brew install &lt;pakiet&gt;
-brew upgrade
-brew uninstall &lt;pakiet&gt;
-brew update</span> <button class="copy-button" data-command="brew install &lt;pakiet&gt;&#10;brew upgrade&#10;brew uninstall &lt;pakiet&gt;&#10;brew update">Kopiuj</button></pre>
-                    
-                    <h4>HackerOS Package Manager (hpm)</h4>
-                    <p>Repozytorium społecznościowe HackerOS. Pełna dokumentacja: <a href="https://hackeros-linux-system.github.io/HackerOS-Website/tools-docs/hpm.html" target="_blank">https://hackeros-linux-system.github.io/HackerOS-Website/tools-docs/hpm.html</a></p>
-                    
-                    <h4>HackerOS Nix Manager (hnm)</h4>
-                    <p>Nakładka dla Nix, umożliwiająca korzystanie z repozytorium Nixpkgs. Pełna dokumentacja: <a href="https://hackeros-linux-system.github.io/HackerOS-Website/tools-docs/hnm.html" target="_blank">https://hackeros-linux-system.github.io/HackerOS-Website/tools-docs/hnm.html</a></p>
-                    
-                    <h3>Konfiguracja sieci – szybkie łączenie</h3>
-                    <p>Jeśli masz problem z połączeniem internetowym lub po prostu chcesz łatwo skonfigurować Wi-Fi / sieć przewodową, użyj wygodnego narzędzia:</p>
-                    <pre><span>hacker network</span> <button class="copy-button" data-command="hacker network">Kopiuj</button></pre>
-                    <p><strong>hacker network</strong> to przyjazny frontend GUI dla nmcli – pozwala w kilku kliknięciach połączyć się z dostępnymi sieciami, zarządzać VPN, edytować połączenia. Działa zarówno w środowisku graficznym, jak i w konsoli (wtedy uruchamia się w trybie tekstowym z interaktywnym menu).</p>
-                    
-                    <h3>Instalacja specjalnych jąder (XanMod/Liquorix)</h3>
-                    <p>Domyślnie w systemie można zainstalować jądro XanMod czy Liquorix za pomocą narzędzia <code>chker</code>.</p>
-                    <p>Aby zainstalować jądro XanMod lub Liquorix:</p>
-                    <ol>
-                        <li>Użyj komendy: <code>sudo chker xanmod</code> lub dla Liquorix: <code>sudo chker liquorix</code></li>
-                        <li>Uruchom ponownie komputer.</li>
-                    </ol>
-                    <p>Czy specjalne jądra dają dużą różnicę wydajności w grach? Zazwyczaj są to niewielkie różnice.</p>
-                </div>
-                <!-- 5. Środowisko graficzne -->
-                <div id="environment" class="tab-pane">
-                    <h2>5. Środowisko graficzne i aplikacje</h2>
-                    <h3>Domyślne środowisko</h3>
-                    <p><strong>KDE Plasma</strong> (edycja Official HackerOS), skonfigurowane pod codzienne użytkowanie.</p>
-                    <h3>Preinstalowane aplikacje</h3>
-                    <ul>
-                        <li><strong>Przeglądarka:</strong> Vivaldi</li>
-                        <li><strong>Terminale:</strong> Alacritty, Hacker Term (własny terminal)</li>
-                        <li><strong>Sklep/aplikacje:</strong> GNOME Software (lub <code>software</code>)</li>
-                        <li><strong>Gry i autorskie aplikacje od HackerOS</strong></li>
-                    </ul>
-                    <h3>Instalacja dodatkowego oprogramowania</h3>
-                    <ul>
-                        <li>Z poziomu GUI: otwórz <code>Software</code> i zainstaluj wybrane aplikacje.</li>
-                        <li>Z CLI: <code>sudo apt install &lt;pakiet&gt;</code> lub <code>sudo hacker install &lt;pakiet&gt;</code> lub <code>sudo lpm install &lt;pakiet&gt;</code>.</li>
-                        <li>Możesz także instalować za pomocą <strong>Flatpak</strong>, <strong>Snap</strong> lub <strong>brew</strong>.</li>
-                    </ul>
-                </div>
-                <!-- 6. Konfiguracja -->
-                <div id="configuration" class="tab-pane">
-                    <h2>6. Konfiguracja i personalizacja</h2>
-                    <p>Wszystkie ustawienia graficzne i użytkowe znajdziesz w:</p>
-                    <ul>
-                        <li><strong>Aplikacja Ustawienia</strong> (KDE) — wygląd, motywy, skróty, dźwięki, starupy.</li>
-                        <li>Dodatkowe pliki konfiguracyjne: <code>~/.config/</code>, <code>~/.local/share/</code></li>
-                        <li>Globalne ustawienia powłoki: <code>/etc/zshrc</code>.</li>
-                        <li>Komendy <code>hacker unpack</code> lub <code>hacker pack</code> (do instalacji i usuwania konkretnego oprogramowania lub ich zestawów).</li>
-                    </ul>
-                </div>
-                <!-- 7. Rozwiązywanie błędów -->
-                <div id="troubleshooting" class="tab-pane">
-                    <h2>7. Rozwiązywanie błędów (troubleshooting)</h2>
-                    <ul>
-                        <li><strong>Problem z siecią?</strong> Użyj narzędzia <code>hacker network</code> – interaktywne GUI do zarządzania połączeniami sieciowymi (Wi-Fi, Ethernet, VPN).</li>
-                        <li><strong>Hasło w trybie Live:</strong> Jeśli system poprosi o hasło (np. po blokadzie ekranu) – domyślnym hasłem dla użytkownika <code>live</code> jest <code>live</code>.</li>
-                        <li><strong>Sprawdź logi:</strong> <code>journalctl -b</code> (możesz też sprawdzić logi za pomocą <code>hacker-syslog</code>).</li>
-                        <li><strong>Dmesg:</strong> <code>dmesg | less</code>.</li>
-                        <li><strong>Logi X/Wayland:</strong> <code>~/.local/share/sddm/</code> lub <code>~/.xsession-errors</code>.</li>
-                        <li><strong>Sieć z poziomu CLI:</strong> <code>nmcli device status</code>, <code>ping 8.8.8.8</code>.</li>
-                        <li><strong>Problemy z pakietami:</strong> <code>sudo apt --fix-broken install</code>, <code>sudo dpkg --configure -a</code>.</li>
-                        <li><strong>Spróbuj użyć</strong> <code>hacker repair</code> (BETA).</li>
-                        <li><strong>Jeśli nic nie pomaga:</strong> napisz mail lub zgłoś issue:</li>
-                        <li>Email: <a href="mailto:hackeros068@gmail.com">hackeros068@gmail.com</a></li>
-                        <li>Zgłoś issue: <a href="https://github.com/HackerOS-Linux-System/HackerOS-Website/issues">https://github.com/HackerOS-Linux-System/HackerOS-Website/issues</a></li>
-                        <li>Opisz krok po kroku problem, załącz logi (pastebin/plik), wersję systemu (<code>hacker info</code>) i konfigurację sprzętową.</li>
-                    </ul>
-                </div>
-                <!-- 8. Licencja i prawa -->
-                <div id="license" class="tab-pane">
-                    <h2>8. Licencja i prawa</h2>
-                    <ul>
-                        <li>HackerOS stosuje mieszankę licencji zależnie od komponentu:</li>
-                        <li><strong>Jądro i dystrybucyjne komponenty Debiana</strong> — zgodne z licencjami oryginalnych pakietów (GPL, itp.).</li>
-                        <li><strong>Aplikacje i narzędzia customowe od HackerOS:</strong></li>
-                        <li>domyślnie <strong>GNU GPL v3.0</strong> (jeśli wymagasz kompatybilności z GPL dla modyfikacji),</li>
-                        <li>niektóre narzędzia mogą być pod <strong>BSD 3-Clause</strong>, <strong>MPL-2</strong>, <strong>MIT</strong>, lub <strong>Apache License 2.0</strong> (w zależności od autora/komponentu).</li>
-                        <li><strong>Znak towarowy / nazwa:</strong> zastrzeżona przez projekt.</li>
-                    </ul>
-                </div>
-                <!-- 9. Narzędzia i aplikacje (ROZBUDOWANA TABELA) -->
-                <div id="tools" class="tab-pane">
-                    <h2>9. Narzędzia i aplikacje</h2>
-                    <p>Oto pełna lista autorskich narzędzi i aplikacji HackerOS wraz z opisami i informacjami o instalacji:</p>
-                    <table>
-                        <thead>
-                            <tr><th>Narzędzie / Aplikacja</th><th>Opis</th><th>Instalacja / Uwagi</th></tr>
-                        </thead>
-                        <tbody>
-                            <tr><td><code>ngt</code></td><td>Narzędzie inspirowane mc (Midnight Commander), napisane w GoLang.</td><td>wbudowane we wszystkich edycjach</td></tr>
-                            <tr><td><code>hedit</code></td><td>Narzędzie inspirowane nano, napisane w GoLang.</td><td>wbudowane we wszystkich edycjach</td></tr>
-                            <tr><td><code>hbuild</code></td><td>Narzędzie inspirowane cmake/meson, napisane w Rust.</td><td>wbudowane we wszystkich edycjach</td></tr>
-                            <tr><td><code>hacker</code></td><td>Główne narzędzie HackerOS (instaluj, usuwaj, napraw system, szybka aktualizacja).</td><td>Wbudowane we wszystkich edycjach</td></tr>
-                            <tr><td><code>HackerOS-Steam</code></td><td>Uruchom Steam w izolowanym środowisku (kontener).</td><td>wbudowane we wszystkich edycjach</td></tr>
-                            <tr><td><code>lpm</code></td><td>Własny następca apt (szybszy i zoptymalizowany pod HackerOS).</td><td><code>hacker unpack lpm</code></td></tr>
-                            <tr><td><code>h#</code></td><td>Własny język programowania H# (Język programowania do ogólnego zastosowania w HackerOS).</td><td><code>hacker unpack h#</code></td></tr>
-                            <tr><td><code>vira/bytes</code></td><td>Managery pakietów dla H# (bytes: interpretacja, vira: kompilacja do binarki).</td><td><code>hacker unpack h#-utils</code></td></tr>
-                            <tr><td><code>hl</code></td><td>Język programowania Hacker Lang – następca shella (lub alternatywa).</td><td>wbudowany w każdej edycji</td></tr>
-                            <tr><td><code>hexai</code></td><td>AI dla HackerOS – lokalny asystent oparty na modelach językowych.</td><td><code>hacker unpack hexai</code></td></tr>
-                            <tr><td><code>hammer</code></td><td>Atomowy manager pakietów (dla edycji Atomic).</td><td>Wbudowane tylko w edycji Atomic</td></tr>
-                            <tr><td><code>anvil</code></td><td>Narzędzie do zarządzania systemem readonly (dla edycji Atomic).</td><td>Wbudowane tylko w edycji Atomic</td></tr>
-                            <tr><td><code>isolator</code></td><td>Manager pakietów / nakładka dla distrobox.</td><td>Wbudowane w edycji Atomic • w innych: <code>hacker unpack isolator</code></td></tr>
-                            <tr><td><code>Hacker-Mode</code></td><td>Sesja inspirowana gamescope / Steam (tryb gry na pełnym ekranie).</td><td><code>hacker unpack hacker-mode</code></td></tr>
-                            <tr><td><code>bph</code></td><td>Narzędzie CLI edukacyjne do testów penetracyjnych.</td><td>Wbudowane tylko w edycji Cybersecurity</td></tr>
-                            <tr><td><code>Hacker-Term</code></td><td>Własny terminal HackerOS (z dodatkowymi funkcjami).</td><td>Wbudowany w każdej edycji</td></tr>
-                            <tr><td><code>HackerOS-App</code></td><td>Aplikacja mobilna dla telefonów Android.</td><td><a href="https://github.com/HackerOS-Linux-System/HackerOS-App/releases/download/v0.4/HackerOS-App-0.4.apk" target="_blank" style="color:#FFFFFF;">Pobierz APK v0.4</a></td></tr>
-                            <tr><td><code>hsh</code></td><td>Własna powłoka HackerOS (zastępuje bash/zsh).</td><td>Wbudowana w każdej edycji</td></tr>
-                            <tr><td><code>hpm</code> (HackerOS Package Manager)</td><td>Manager pakietów z repozytorium community.</td><td>Wbudowany w każdej edycji</td></tr>
-                            <tr><td><code>hnm</code> (HackerOS Nix Manager)</td><td>Nakładka dla Nix – integracja z repozytorium Nixpkgs.</td><td>Wbudowany we wszystkich edycjach</td></tr>
-                            <tr><td><code>Hacker Launcher</code></td><td>Aplikacja do uruchamiania gier Windowsowych (Proton).</td><td>wbudowane we wszystkich edycjach</td></tr>
-                            <tr><td><code>HackerOS-Games</code></td><td>Aplikacja do uruchamiania gier od HackerOS:<br>• StarBlaster<br>• Bit Jump<br>• The Racer<br>• Bark Squadron</td><td>wbudowane we wszystkich edycjach</td></tr>
-                            <tr><td><code>getit</code></td><td>Połączenie git + wget + własnego systemu pobierania całych katalogów z GitHub/GitLab.</td><td>wbudowane we wszystkich edycjach</td></tr>
-                            <tr><td><code>chker</code></td><td>Narzędzie CLI do zmiany jądra systemowego (Debian → XanMod lub Liquorix).</td><td>wbudowane we wszystkich edycjach</td></tr>
-                            <tr><td><code>eiq</code></td><td>Narzędzie do cyberbezpieczeństwa (szyfrowanie w tle).</td><td>Tylko w edycji Cybersecurity</td></tr>
-                            <tr><td><code>Cybersecurity Mode</code></td><td>Sesja/aplikacja nakładka dla narzędzi cyberbezpieczeństwa (działa w kontenerze).</td><td>Tylko w edycji Cybersecurity</td></tr>
-                            <tr><td><code>Penetration Mode</code></td><td>Aplikacja z własnymi narzędziami do testów penetracyjnych (tylko do celów edukacyjnych).</td><td>Tylko w edycji Cybersecurity</td></tr>
-                            <tr><td><code>HackerOS-Store</code></td><td>Sklep HackerOS z programami i dodatkami.</td><td>wbudowany we wszystkich edycjach</td></tr>
-                            <tr><td><code>HackerOS-Containers</code></td><td>Własny system kontenerów – lekka, zintegrowana platforma do uruchamiania izolowanych środowisk.</td><td><code>hacker unpack hackeros-containers</code></td></tr>
-                            <tr><td><code>HackerOS-Game-Mode</code></td><td>Nakładka optymalizująca system pod kątem grania, wyświetla FPS.</td><td><code>hacker unpack hackeros-game-mode</code></td></tr>
-                            <!-- NOWE DODANE WIERSZE zgodnie z wymaganiami -->
-                            <tr><td><code>.hk</code></td><td>Format konfiguracyjny jako alternatywa dla innych formatów stosowany głównie w HackerOS - dostępny w H#/Hacker Lang i Hacker Lang ++ oraz posiada biblioteki dla Rust.</td><td>Dostępny w H#/Hacker Lang/Hacker Lang++ i biblioteki dla Rust</td></tr>
-                            <tr><td>Blue Environment</td><td>Używane w edycji HackerOS Blue Edition z autorskim środowiskiem graficznym o nazwie Blue Environment.</td><td>Wbudowane natywnie w Blue Edition</td></tr>
-                            <tr><td><code>a</code></td><td>Proste narzędzie CLI do prostych aktualizacji systemu napisane w Hacker Lang.</td><td>Wbudowane we wszystkich edycjach</td></tr>
-                            <tr><td><code>GhostFS</code></td><td>Autorski system plików (Beta).</td><td>Nie dostępne (trwają prace nad GhostFS)</td></tr>
-                            <tr><td><code>HackerOS Cockpit</code></td><td>Panel sterowania systemu w przeglądarce.</td><td>Wbudowane we wszystkich edycjach</td></tr>
-                            <tr><td><code>hlpp/virus</code></td><td>Rozbudowana wersja Hacker Lang kompilowana do bytecodu, dostępne programowanie obiektowe.</td><td><code>hacker unpack hacker-lang++</code></td></tr>
-                        </tbody>
-                    </table>
-                    <p>Dla tych zaawansowanych narzędzi jest specjalna dokumentacja (<a href="https://hackeros-linux-system.github.io/HackerOS-Website/tools-docs/index.html" target="_blank">tutaj</a>).</p>
-                </div>
-                <!-- 10. Języki programowania -->
-                <div id="programming" class="tab-pane">
-                    <h2>10. Języki programowania</h2>
+<header><nav>
+<div class="logo"><img src="HackerOS.png" alt="HackerOS Logo"></div>
+<ul>
+<li><a id="nav-home" href="Home-page.html">Home</a></li>
+<li><a id="nav-download" href="download.html">Download</a></li>
+<li><a id="nav-releases" href="releases.html">Releases</a></li>
+<li><a id="nav-team" href="hackeros-team.html">HackerOS Team</a></li>
+<li><a id="nav-docs" href="hackeros-documentation.html">Documentation</a></li>
+</ul>
+</nav></header>
 
-                    <!-- Hacker Lang -->
-                    <h3>Hacker Lang</h3>
-                    <p>Jest to wydajna alternatywa dla shella z wyjątkową składnią. Hacker Lang ma zarówno własną unikalną składnię, jak i własną powłokę.</p>
-                    <p><strong>Przykład użycia:</strong></p>
-                    <pre><span>&gt; hacker update</span> <button class="copy-button" data-command="hacker update">Kopiuj</button></pre>
-                    <p>Więcej informacji o składni i narzędziach Hacker Lang znajdziesz w <a href="https://hackeros-linux-system.github.io/HackerOS-Website/hacker-lang/docs.html" target="_blank">oficjalnej dokumentacji Hacker Lang</a>.</p>
+<section class="main-section">
+<div class="search-bar"><div class="search-wrapper">
+<input type="text" id="search-input" placeholder="🔍 Wyszukaj...">
+<button id="clear-search" class="clear-btn">✕</button>
+</div></div>
+<div class="search-results-note" id="search-note"></div>
+<div class="tabs-container">
+<div class="tab-menu"><ul id="tab-menu-ul"></ul></div>
+<div class="tab-content" id="tab-content-area"></div>
+</div>
+</section>
+<footer><p id="footer-copy">© 2026 HackerOS.</p></footer>
 
-                    <!-- H# (zaktualizowany) -->
-                    <h3>H#</h3>
-                    <p>HackerOS posiada własny, w pełni zintegrowany z systemem język programowania o nazwie <strong>H#</strong>. Jego głównym celem (w przyszłości) będzie zastosowanie w ogólnych narzędziach HackerOS (w całym ekosystemie) oraz w ekosystemie HackerOS cybersecurity.</p>
-                    <p><strong>Możliwości uruchomienia:</strong></p>
-                    <ul>
-                        <li><strong>Kompilowany</strong> – kompilacja zaawansowanych programów w H# do natywnego kodu binarnego.</li>
-                        <li><strong>Interpretowany (wydajny - JIT)</strong> - wydajne uruchomienie programów H# w sposób interpretowany.</li>
-                        <li><strong>Interpretowany (podgląd)</strong> – szybki podgląd efektów dla zaawansowanych programów w H#.</li>
-                    </ul>
-                    <p><strong>Managerzy pakietów H#:</strong></p>
-                    <ul>
-                        <li><code>bytes</code> – manager pakietów pozwala na uruchomienie kodu w sposób wydajny programów w H#.</li>
-                        <li><code>vira</code> – manager pakietów (kompiluje kod do jednej statycznej binarki).</li>
-                    </ul>
-                    <p>Więcej informacji o składni, narzędziach i ekosystemie H# znajdziesz w <a href="https://hackeros-linux-system.github.io/HackerOS-Website/h-sharp/docs.html" target="_blank">oficjalnej dokumentacji H#</a>.</p>
-                </div>
-                <!-- 11. Edycje -->
-                <div id="editions" class="tab-pane">
-                    <h2>11. Edycje</h2>
-                    <h3>Edycja Official</h3>
-                    <img src="official-edition.png" alt="Edycja Official">
-                    <p>Edycja Official to podstawowa wersja dla użytkowników, graczy i programistów – praktycznie dla każdego.</p>
-                    <h3>Edycja Hydra</h3>
-                    <img src="hydra-edition.png" alt="Edycja Hydra">
-                    <p>Edycja Hydra to kopia edycji Official, ale z innym wyglądem (Garuda-like).</p>
-                    <h3>Edycja GNOME</h3>
-                    <img src="gnome-edition.png" alt="Edycja GNOME">
-                    <p>To samo co edycja Official, ale ze środowiskiem graficznym GNOME.</p>
-                    <h3>Edycja XFCE</h3>
-                    <img src="xfce-edition.png" alt="Edycja XFCE">
-                    <p>To samo co edycja Official, ale ze środowiskiem graficznym Xfce.</p>
-                    <h3>Edycja Blue (w przyszłości)</h3>
-                    <img src="blue-edition.png" alt="Edycja Blue">
-                    <p>HackerOS z autorskim środowiskiem graficznym.</p>
-                    <h3>Edycja Gaming (w przyszłości)</h3>
-                    <img src="gaming-edition.png" alt="Edycja Gaming">
-                    <p>Edycja Gaming jest wyposażona w własny instalator oraz inspirowana SteamOS/Bazzite (posiada również tryb gry). Edycja Gaming ma dwa rozgałęzienia: <strong>old</strong> – przeznaczona dla starszych urządzeń z wbudowanym jądrem Liquorix, oraz <strong>New</strong> – dla nowszych urządzeń z jądrem XanMod LTS.</p>
-                    <h3>Edycja Cybersecurity</h3>
-                    <p>Edycja Cybersecurity nie posiada modyfikacji wyglądu. Jest to kopia wersji Official, ale przeznaczona dla entuzjastów cyberbezpieczeństwa (zawiera narzędzia do testów penetracyjnych oraz jądro Xen znane z systemu Qubes OS).</p>
-                    <h3>Edycja LTS</h3>
-                    <p>Edycja LTS to to samo co edycja Official, ale zamiast Debiana Testing używa Debiana Stable.</p>
-                    <h3>Edycja Atomic</h3>
-                    <p>Edycja Atomic bazuje na gałęzi Debiana stabilnego lub testowego. Jest okrojona z części narzędzi HackerOS i posiada własne narzędzie do instalacji aktualizacji – <strong>hammer</strong>. <strong>UWAGA:</strong> Aktualnie edycja Atomic jest w fazie pre-release. Użyj <code>hammer issue</code>, aby zgłosić błąd.</p>
-                    <h3>Edycja NVIDIA</h3>
-                    <p>Edycja NVIDIA zawiera wszystko to samo co wersja Official (Debian Testing), ale posiada preinstalowane sterowniki NVIDIA.</p>
-                    <div class="release-cycle">
-                        <h3>Cykl wydawniczy</h3>
-                        <p>Standardowe edycje – <strong>Official, Cybersecurity oraz NVIDIA</strong> – są wydawane co miesiąc (każda wersja).<br>
-                        Edycje poboczne, takie jak <strong>GNOME, Hydra i XFCE</strong>, ukazują się przy okazji wydań głównych <strong>x.0</strong> oraz <strong>x.5</strong>.<br>
-                        Edycja <strong>LTS</strong> jest wydawana wyłącznie w wersjach <strong>x.0</strong> (co 9 miesięcy każda nowa wersja).<br>
-                        Edycja <strong>Atomic</strong> nie posiada jeszcze stabilnego harmonogramu wydawniczego – jest w fazie intensywnego rozwoju.</p>
-                    </div>
-                </div>
-                <!-- 12. Gaming (ROZBUDOWANY O LINK DO DOKUMENTACJI) -->
-                <div id="gaming" class="tab-pane">
-                    <h2>12. Gaming</h2>
-                    <p>HackerOS jest świetny do gier dzięki bazie Debian Testing oraz specjalnym narzędziom, takim jak <strong>Hacker Launcher</strong> (narzędzie do uruchamiania gier .exe za pomocą konkretnych wersji Proton). HackerOS posiada również specjalne edycje, takie jak <strong>Gaming Edition</strong> i <strong>NVIDIA Edition</strong>.</p>
-                    <p>Ponadto HackerOS ma własne gry, takie jak <strong>Bark Squadron</strong>, <strong>The Racer</strong>, <strong>Bit Jump</strong>, <strong>StarBlaster</strong> – możesz je uruchomić za pomocą <strong>HackerOS Games</strong>.<br>
-                    Dokumentacje dla HackerOS Games znajdziesz <a href="https://hackeros-linux-system.github.io/HackerOS-Website/hackeros-games/docs.html" target="_blank" class="doc-link" style="color: #4a9eff; text-decoration: underline;">tutaj</a>.</p>
-                </div>
-                <!-- 13. Galeria -->
-                <div id="gallery" class="tab-pane">
-                    <h2>13. Galeria</h2>
-                    <p>Galeria zrzutów ekranu, zdjęć i materiałów wizualnych z HackerOS (edycje, interfejs, gry, narzędzia).</p>
-                    <p><strong>Placeholder</strong> – sekcja w budowie. Wkrótce pojawią się tutaj prawdziwe zdjęcia i galerie!</p>
-                </div>
-            </div>
-        </div>
-    </section>
-    <footer>
-        <p>&copy; 2026 HackerOS. Wszelkie prawa zastrzeżone.</p>
-    </footer>
+<script src="translations/lang-core.js"></script>
+<script src="translations/hackeros-documentation.js"></script>
+<script src="translations/lang-switcher.js"></script>
+<script src="translations/doc-engine.js"></script>
 </body>
 </html>
