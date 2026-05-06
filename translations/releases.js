@@ -1,4 +1,3 @@
- */
 window.HACKEROS_TRANS_RELEASES = {
     pl: {
         pageTitle:    'HackerOS - Releases',
@@ -12,6 +11,19 @@ window.HACKEROS_TRANS_RELEASES = {
         navTeam:      'HackerOS Team',
         navDocs:      'Documentation',
         releases: [
+            {
+                version: 'HackerOS V4.6',
+                desc: 'Nowa edycja z zaktualizowanymi narzędziami CLI oraz zaktualizowanym motd.',
+                dates: [
+                    'HackerOS Official: 6.05.2026',
+                    'HackerOS NVIDIA: 5.05.2026',
+                    'HackerOS Cybersecurity: 5.05.2026',
+                ],
+                changelog: [
+                    'Rozbudowano narzędzia: hacker, Hacker Lang (narzędzie hl), hdev, hnm, hpm, hedit',
+                    'Zaktualizowano motd',
+                ]
+            },
             {
                 version: 'HackerOS V4.5',
                 desc: 'Nowa edycja głównie z poprawą narzędzi.',
@@ -267,6 +279,20 @@ window.HACKEROS_TRANS_RELEASES = {
         navDocs:      'Documentation',
         releases: [
             {
+                version: 'HackerOS V4.6',
+                desc: 'New edition with updated CLI tools and updated MOTD.',
+                dates: [
+                    'HackerOS Official: 6.05.2026',
+                    'HackerOS NVIDIA: 5.05.2026',
+                    'HackerOS Cybersecurity: 5.05.2026',
+                ],
+                changelog: [
+                    'Expanded tools: hacker, Hacker Lang (hl tool), hdev, hnm, hpm, hedit',
+                    'Updated MOTD',
+                ]
+            },
+            
+            {
                 version: 'HackerOS V4.5',
                 desc: 'New edition mainly with tool improvements.',
                 dates: [
@@ -509,3 +535,21 @@ window.HACKEROS_TRANS_RELEASES = {
         ]
     }
 };
+
+// Additional language UI strings for releases.js (content falls back to EN releases array)
+
+window.HACKEROS_TRANS_RELEASES.de = Object.assign({}, window.HACKEROS_TRANS_RELEASES.en, {"pageTitle": "HackerOS - Releases", "sectionH1": "HackerOS Versionen", "releaseDateLabel": "Veröffentlichungsdatum:", "changelogLabel": "Changelog:", "footerCopy": "© 2026 HackerOS. Alle Rechte vorbehalten.", "navHome": "Home", "navDownload": "Download", "navReleases": "Releases", "navTeam": "HackerOS Team", "navDocs": "Dokumentation"});
+
+window.HACKEROS_TRANS_RELEASES.fr = Object.assign({}, window.HACKEROS_TRANS_RELEASES.en, {"pageTitle": "HackerOS - Versions", "sectionH1": "Versions de HackerOS", "releaseDateLabel": "Date de publication :", "changelogLabel": "Journal des modifications :", "footerCopy": "© 2026 HackerOS. Tous droits réservés.", "navHome": "Accueil", "navDownload": "Télécharger", "navReleases": "Versions", "navTeam": "Équipe HackerOS", "navDocs": "Documentation"});
+
+window.HACKEROS_TRANS_RELEASES.es = Object.assign({}, window.HACKEROS_TRANS_RELEASES.en, {"pageTitle": "HackerOS - Versiones", "sectionH1": "Versiones de HackerOS", "releaseDateLabel": "Fecha de lanzamiento:", "changelogLabel": "Registro de cambios:", "footerCopy": "© 2026 HackerOS. Todos los derechos reservados.", "navHome": "Inicio", "navDownload": "Descargar", "navReleases": "Versiones", "navTeam": "Equipo HackerOS", "navDocs": "Documentación"});
+
+window.HACKEROS_TRANS_RELEASES.it = Object.assign({}, window.HACKEROS_TRANS_RELEASES.en, {"pageTitle": "HackerOS - Versioni", "sectionH1": "Versioni di HackerOS", "releaseDateLabel": "Data di rilascio:", "changelogLabel": "Changelog:", "footerCopy": "© 2026 HackerOS. Tutti i diritti riservati.", "navHome": "Home", "navDownload": "Download", "navReleases": "Versioni", "navTeam": "Team HackerOS", "navDocs": "Documentazione"});
+
+window.HACKEROS_TRANS_RELEASES.ru = Object.assign({}, window.HACKEROS_TRANS_RELEASES.en, {"pageTitle": "HackerOS - Релизы", "sectionH1": "Релизы HackerOS", "releaseDateLabel": "Дата выпуска:", "changelogLabel": "Список изменений:", "footerCopy": "© 2026 HackerOS. Все права защищены.", "navHome": "Главная", "navDownload": "Скачать", "navReleases": "Релизы", "navTeam": "Команда HackerOS", "navDocs": "Документация"});
+
+window.HACKEROS_TRANS_RELEASES.uk = Object.assign({}, window.HACKEROS_TRANS_RELEASES.en, {"pageTitle": "HackerOS - Релізи", "sectionH1": "Релізи HackerOS", "releaseDateLabel": "Дата випуску:", "changelogLabel": "Список змін:", "footerCopy": "© 2026 HackerOS. Усі права захищені.", "navHome": "Головна", "navDownload": "Завантажити", "navReleases": "Релізи", "navTeam": "Команда HackerOS", "navDocs": "Документація"});
+
+window.HACKEROS_TRANS_RELEASES.zh = Object.assign({}, window.HACKEROS_TRANS_RELEASES.en, {"pageTitle": "HackerOS - 版本", "sectionH1": "HackerOS 版本", "releaseDateLabel": "发布日期：", "changelogLabel": "更新日志：", "footerCopy": "© 2026 HackerOS. 保留所有权利。", "navHome": "主页", "navDownload": "下载", "navReleases": "版本", "navTeam": "HackerOS 团队", "navDocs": "文档"});
+
+window.HACKEROS_TRANS_RELEASES.ja = Object.assign({}, window.HACKEROS_TRANS_RELEASES.en, {"pageTitle": "HackerOS - リリース", "sectionH1": "HackerOS リリース", "releaseDateLabel": "リリース日：", "changelogLabel": "変更履歴：", "footerCopy": "© 2026 HackerOS. 全著作権所有。", "navHome": "ホーム", "navDownload": "ダウンロード", "navReleases": "リリース", "navTeam": "HackerOS チーム", "navDocs": "ドキュメント"});
