@@ -1,1 +1,903 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gaming-cli — HackerOS Gaming Edition Docs</title>
+  <link rel="icon" type="image/png" href="../HackerOS.png">
+  <style>
+    :root {
+      --bg:         #0f0e17;
+      --bg2:        #16141f;
+      --bg3:        #1e1b2e;
+      --border:     #2d2a45;
+      --primary:    #7c3aed;
+      --primary-l:  #a855f7;
+      --accent:     #22d3ee;
+      --green:      #22c55e;
+      --yellow:     #f59e0b;
+      --red:        #ef4444;
+      --text:       #e2e0f0;
+      --text-dim:   #7b7a9a;
+      --text-muted: #4b4a6a;
+      --code-bg:    #13111e;
+      --radius:     10px;
+      --radius-sm:  6px;
+    }
 
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    /* ── Sidebar ─────────────────────────────────────────────────────────── */
+    .layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    nav {
+      width: 260px;
+      min-width: 260px;
+      background: var(--bg2);
+      border-right: 1px solid var(--border);
+      padding: 2rem 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .nav-logo {
+      padding: 0 1.5rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1.5rem;
+    }
+
+    .nav-logo .distro {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.25rem;
+    }
+
+    .nav-logo .tool-name {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--primary-l);
+    }
+
+    .nav-logo .version-badge {
+      display: inline-block;
+      background: var(--primary);
+      color: #fff;
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 1px 7px;
+      border-radius: 20px;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+
+    .nav-section {
+      padding: 0 1rem 0.5rem;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    nav a {
+      display: block;
+      padding: 0.4rem 1.5rem;
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 0.875rem;
+      border-left: 2px solid transparent;
+      transition: all 0.15s;
+    }
+
+    nav a:hover {
+      color: var(--accent);
+      border-left-color: var(--accent);
+      background: rgba(34,211,238,0.05);
+    }
+
+    nav a.active {
+      color: var(--primary-l);
+      border-left-color: var(--primary);
+      background: rgba(124,58,237,0.08);
+    }
+
+    /* ── Główna treść ────────────────────────────────────────────────────── */
+    main {
+      flex: 1;
+      max-width: 860px;
+      padding: 3rem 3.5rem;
+    }
+
+    /* ── Nagłówki ────────────────────────────────────────────────────────── */
+    h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 0.4rem;
+    }
+
+    h1 .tool { color: var(--primary-l); }
+
+    h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin: 2.5rem 0 1rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--primary-l);
+      margin: 1.5rem 0 0.5rem;
+    }
+
+    /* ── Tekst ───────────────────────────────────────────────────────────── */
+    p { margin-bottom: 0.9rem; color: var(--text); }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    strong { color: #fff; font-weight: 600; }
+
+    ul, ol {
+      padding-left: 1.4rem;
+      color: var(--text-dim);
+      font-size: 0.9rem;
+      line-height: 2;
+      margin-bottom: 0.9rem;
+    }
+
+    /* ── Header / meta ───────────────────────────────────────────────────── */
+    .page-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 2px 10px;
+      border-radius: 20px;
+    }
+
+    .badge-purple { background: var(--primary); color: #fff; }
+    .badge-cyan   { background: rgba(34,211,238,0.15); color: var(--accent); border: 1px solid var(--accent); }
+    .badge-green  { background: rgba(34,197,94,0.12); color: var(--green); border: 1px solid var(--green); }
+    .badge-yellow { background: rgba(245,158,11,0.12); color: var(--yellow); border: 1px solid var(--yellow); }
+
+    /* ── Callout ─────────────────────────────────────────────────────────── */
+    .callout {
+      border-radius: var(--radius-sm);
+      padding: 0.9rem 1.1rem;
+      margin: 1.2rem 0;
+      border-left: 3px solid;
+      font-size: 0.9rem;
+    }
+
+    .callout-info    { background: rgba(34,211,238,0.07); border-color: var(--accent); }
+    .callout-warn    { background: rgba(245,158,11,0.07); border-color: var(--yellow); }
+    .callout-danger  { background: rgba(239,68,68,0.07);  border-color: var(--red); }
+    .callout-success { background: rgba(34,197,94,0.07);  border-color: var(--green); }
+
+    .callout .callout-title {
+      font-weight: 700;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.3rem;
+    }
+
+    .callout-info    .callout-title { color: var(--accent); }
+    .callout-warn    .callout-title { color: var(--yellow); }
+    .callout-danger  .callout-title { color: var(--red); }
+    .callout-success .callout-title { color: var(--green); }
+
+    /* ── Kod ─────────────────────────────────────────────────────────────── */
+    code {
+      background: var(--code-bg);
+      color: var(--accent);
+      font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+      font-size: 0.82em;
+      padding: 1px 6px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+    }
+
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 1.1rem 1.3rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 0.83rem;
+      line-height: 1.6;
+    }
+
+    pre code {
+      background: none;
+      border: none;
+      padding: 0;
+      color: var(--text);
+      font-size: 1em;
+    }
+
+    /* Highlighting */
+    .kw  { color: var(--primary-l); font-weight: 600; }
+    .cm  { color: var(--text-muted); font-style: italic; }
+    .st  { color: var(--green); }
+    .fl  { color: var(--accent); }
+    .pn  { color: var(--yellow); }
+    .ok  { color: var(--green); font-weight: 600; }
+    .er  { color: var(--red); font-weight: 600; }
+
+    /* ── Tabele ──────────────────────────────────────────────────────────── */
+    .cmd-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+      font-size: 0.875rem;
+    }
+
+    .cmd-table th {
+      text-align: left;
+      padding: 0.5rem 0.8rem;
+      background: var(--bg3);
+      color: var(--text-dim);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 700;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .cmd-table td {
+      padding: 0.6rem 0.8rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    .cmd-table tr:hover td { background: rgba(124,58,237,0.05); }
+
+    .cmd-table td:first-child {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent);
+      white-space: nowrap;
+      font-size: 0.82rem;
+    }
+
+    .cmd-table td.desc { color: var(--text-dim); }
+
+    .cfg-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+      font-size: 0.875rem;
+    }
+
+    .cfg-table th {
+      text-align: left;
+      padding: 0.5rem 0.8rem;
+      background: var(--bg3);
+      color: var(--text-dim);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 700;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .cfg-table td {
+      padding: 0.6rem 0.8rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    .cfg-table tr:hover td { background: rgba(34,211,238,0.03); }
+    .cfg-table .key   { color: var(--primary-l); font-family: monospace; font-size: 0.85rem; }
+    .cfg-table .type  { color: var(--accent); font-size: 0.78rem; font-family: monospace; }
+    .cfg-table .def   { color: var(--green); font-family: monospace; font-size: 0.82rem; }
+    .cfg-table .desc2 { color: var(--text-dim); font-size: 0.85rem; }
+
+    /* ── Anchors ─────────────────────────────────────────────────────────── */
+    .section-anchor {
+      display: block;
+      margin-top: -80px;
+      padding-top: 80px;
+    }
+
+    /* ── Stopka ──────────────────────────────────────────────────────────── */
+    footer {
+      margin-top: 4rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    footer a { color: var(--text-dim); }
+
+    @media (max-width: 768px) {
+      nav { display: none; }
+      main { padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- ── Nawigacja ────────────────────────────────────────────────────────── -->
+  <nav>
+    <div class="nav-logo">
+      <div class="distro">HackerOS Gaming Edition</div>
+      <div class="tool-name">
+        gaming-cli
+        <span class="version-badge">v0.0.1</span>
+      </div>
+    </div>
+
+    <div class="nav-section">Wprowadzenie</div>
+    <a href="#overview">Przegląd</a>
+    <a href="#requirements">Wymagania</a>
+
+    <div class="nav-section" style="margin-top:1rem">Użycie</div>
+    <a href="#tui">Tryb interaktywny (TUI)</a>
+    <a href="#cli">Interfejs CLI</a>
+    <a href="#wrapper">Wrapper gaming</a>
+
+    <div class="nav-section" style="margin-top:1rem">Komendy</div>
+    <a href="#cmd-switch">switch</a>
+    <a href="#cmd-status">status</a>
+    <a href="#cmd-info">info</a>
+    <a href="#cmd-gamescope">gamescope</a>
+    <a href="#cmd-version">version</a>
+
+    <div class="nav-section" style="margin-top:1rem">Powiązane</div>
+    <a href="#gamescope-manager">gamescope-manager</a>
+    <a href="#hk-format">Format .hk</a>
+
+    <div class="nav-section" style="margin-top:1rem">Projekt</div>
+    <a href="#roadmap">Roadmapa</a>
+    <a href="#license">Licencja</a>
+  </nav>
+
+  <!-- ── Treść ────────────────────────────────────────────────────────────── -->
+  <main>
+
+    <!-- Nagłówek -->
+    <span class="section-anchor" id="overview"></span>
+    <h1><span class="tool">gaming-cli</span></h1>
+    <div class="page-meta">
+      <span class="badge badge-purple">v0.0.1</span>
+      <span class="badge badge-cyan">HackerOS Gaming Edition</span>
+      <span class="badge badge-green">Debian Testing (Forky)</span>
+      <span class="badge badge-yellow">PC / Laptop</span>
+    </div>
+
+    <p>
+      <strong>gaming-cli</strong> to główne narzędzie do zarządzania trybem gry wbudowane
+      w <strong>HackerOS Gaming Edition</strong>. Pozwala przełączać system między
+      środowiskiem KDE Plasma a trybem gry opartym na
+      <a href="https://github.com/ValveSoftware/gamescope" target="_blank">Gamescope</a>
+      i Steam Big Picture Mode — bez potrzeby ponownego uruchamiania systemu.
+    </p>
+    <p>
+      Narzędzie oferuje zarówno <strong>interaktywne TUI</strong> (terminal user interface)
+      zbudowane na BubbleTea, jak i klasyczny <strong>interfejs CLI</strong> do użycia
+      w skryptach i skrótach klawiszowych. Na pulpicie znajdziesz gotowy skrót
+      <em>Switch to Game Mode</em>, który uruchamia przełączenie jednym kliknięciem.
+    </p>
+
+    <div class="callout callout-info">
+      <div class="callout-title">ℹ Wbudowane narzędzie</div>
+      gaming-cli, gaming oraz gamescope-manager są preinstalowane w HackerOS Gaming Edition
+      i nie wymagają żadnej dodatkowej konfiguracji. Wszystkie zależności — w tym
+      Gamescope i Steam — są gotowe od razu po pierwszym uruchomieniu systemu.
+    </div>
+
+    <!-- ── Wymagania ──────────────────────────────────────────────────────── -->
+    <span class="section-anchor" id="requirements"></span>
+    <h2>Wymagania</h2>
+
+    <table class="cmd-table">
+      <thead>
+        <tr><th>Wymaganie</th><th>Szczegóły</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Dystrybucja</td>
+          <td class="desc">HackerOS Gaming Edition (Debian Testing / Forky)</td>
+        </tr>
+        <tr>
+          <td>Architektura</td>
+          <td class="desc">x86_64 — PC, laptop (handheldowe urządzenia nie są obsługiwane)</td>
+        </tr>
+        <tr>
+          <td>Jądro</td>
+          <td class="desc">XanMod LTS lub Liquorix (preinstalowane w Gaming Edition)</td>
+        </tr>
+        <tr>
+          <td>Display manager</td>
+          <td class="desc">SDDM zarządzany przez <code>systemctl</code></td>
+        </tr>
+        <tr>
+          <td>Uprawnienia</td>
+          <td class="desc">
+            <code>sudo</code> / <code>pkexec</code> do zatrzymania SDDM
+            i przełączania TTY. Skrót na pulpicie używa pkexec automatycznie.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ── TUI ───────────────────────────────────────────────────────────── -->
+    <span class="section-anchor" id="tui"></span>
+    <h2>Tryb interaktywny (TUI)</h2>
+    <p>
+      Uruchomienie <code>gaming-cli</code> lub <code>gaming</code> bez argumentów
+      otwiera pełnoekranowy interfejs TUI zbudowany na
+      <a href="https://github.com/charmbracelet/bubbletea" target="_blank">BubbleTea</a>
+      i <a href="https://github.com/charmbracelet/lipgloss" target="_blank">Lip Gloss</a>.
+    </p>
+
+    <pre><code>gaming-cli
+<span class="cm"># lub krócej:</span>
+gaming</code></pre>
+
+    <p>TUI oferuje menu z następującymi opcjami:</p>
+    <table class="cmd-table">
+      <thead><tr><th>Opcja</th><th>Działanie</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>🎮 Tryb gry</td>
+          <td class="desc">Zatrzymuje SDDM, przełącza na TTY2, uruchamia Gamescope + Steam BPM</td>
+        </tr>
+        <tr>
+          <td>🖥 Tryb pulpitu</td>
+          <td class="desc">Zatrzymuje sesję gamescope, przełącza na TTY1, uruchamia SDDM</td>
+        </tr>
+        <tr>
+          <td>📊 Info</td>
+          <td class="desc">Wyświetla informacje o środowisku (kernel, GPU, Steam, Gamescope, tryb)</td>
+        </tr>
+        <tr>
+          <td>🔧 Gamescope</td>
+          <td class="desc">Uruchamia gamescope standalone i wychodzi z TUI</td>
+        </tr>
+        <tr>
+          <td>✖ Wyjdź</td>
+          <td class="desc">Zamknij TUI bez żadnych zmian</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Nawigacja w TUI</h3>
+    <table class="cmd-table">
+      <thead><tr><th>Klawisz</th><th>Działanie</th></tr></thead>
+      <tbody>
+        <tr><td>↑ / k</td><td class="desc">Przesuń kursor w górę</td></tr>
+        <tr><td>↓ / j</td><td class="desc">Przesuń kursor w dół</td></tr>
+        <tr><td>Enter / Spacja</td><td class="desc">Wybierz opcję</td></tr>
+        <tr><td>Esc / Backspace</td><td class="desc">Wróć do menu głównego</td></tr>
+        <tr><td>q / Ctrl+C</td><td class="desc">Wyjdź z TUI</td></tr>
+      </tbody>
+    </table>
+
+    <!-- ── CLI ───────────────────────────────────────────────────────────── -->
+    <span class="section-anchor" id="cli"></span>
+    <h2>Interfejs CLI</h2>
+    <p>
+      gaming-cli akceptuje komendy jako argumenty wiersza poleceń — przydatne
+      w skryptach, regułach udev i skrótach klawiszowych pulpitu.
+    </p>
+
+    <pre><code>gaming-cli <span class="fl">&lt;komenda&gt;</span> [argumenty]</code></pre>
+
+    <!-- switch -->
+    <span class="section-anchor" id="cmd-switch"></span>
+    <h3>switch</h3>
+    <p>Przełącza system między trybem gry a trybem pulpitu.</p>
+    <pre><code>gaming-cli switch <span class="fl">game-mode</span>
+gaming-cli switch <span class="fl">desktop-mode</span></code></pre>
+
+    <p><strong>Działanie <code>switch game-mode</code>:</strong></p>
+    <ol>
+      <li>Sprawdza aktualny tryb — jeśli już w game-mode, kończy z komunikatem</li>
+      <li>Zatrzymuje <code>sddm.service</code> (zamknięcie KDE Plasma)</li>
+      <li>Czeka 2 sekundy na zamknięcie display servera</li>
+      <li>Przełącza konsolę na TTY2 (<code>chvt 2</code>)</li>
+      <li>Uruchamia <code>hackeros-game-mode.service</code> (Gamescope + Steam BPM)</li>
+      <li>Zapisuje stan do <code>/var/lib/hackeros-gaming/current-mode</code></li>
+    </ol>
+
+    <p><strong>Działanie <code>switch desktop-mode</code>:</strong></p>
+    <ol>
+      <li>Sprawdza aktualny tryb — jeśli już w desktop-mode, kończy z komunikatem</li>
+      <li>Zatrzymuje <code>hackeros-game-mode.service</code> lub ubija proces <code>gamescope</code></li>
+      <li>Czeka na zakończenie procesu</li>
+      <li>Przełącza konsolę na TTY1 (<code>chvt 1</code>)</li>
+      <li>Uruchamia <code>sddm.service</code></li>
+      <li>Zapisuje stan trybu</li>
+    </ol>
+
+    <div class="callout callout-warn">
+      <div class="callout-title">⚠ Uprawnienia</div>
+      Zatrzymanie SDDM i przełączenie TTY wymaga uprawnień roota.
+      Skrót na pulpicie (<em>Switch to Game Mode</em>) używa <code>pkexec</code>
+      automatycznie — zostaniesz poproszony o hasło przy pierwszym użyciu.
+      W skryptach systemowych uruchom jako root lub przez sudo.
+    </div>
+
+    <!-- status -->
+    <span class="section-anchor" id="cmd-status"></span>
+    <h3>status</h3>
+    <p>Wyświetla aktualnie aktywny tryb.</p>
+    <pre><code>gaming-cli status
+
+  Aktywny tryb : <span class="ok"> 🎮 GAME MODE </span></code></pre>
+
+    <!-- info -->
+    <span class="section-anchor" id="cmd-info"></span>
+    <h3>info</h3>
+    <p>Wyświetla szczegółowe informacje o środowisku gaming.</p>
+    <pre><code>gaming-cli info
+
+  📊 Środowisko gaming
+  ────────────────────────────────────────────────────────
+  Dystrybucja    : HackerOS Gaming Edition 4.7
+  Debian         : forky/sid
+  Jądro          : 6.12.0-xanmod1
+  GPU            : NVIDIA GeForce RTX 4070 Ti
+  Gamescope      : gamescope 3.15.x
+  Steam          : zainstalowany (/usr/bin/steam)
+  Tryb           : <span class="ok">game-mode</span></code></pre>
+
+    <!-- gamescope -->
+    <span class="section-anchor" id="cmd-gamescope"></span>
+    <h3>gamescope</h3>
+    <p>Uruchamia <code>gamescope</code> bezpośrednio z przekazanymi argumentami.</p>
+    <pre><code>gaming-cli gamescope <span class="fl">--width 1920 --height 1080 --refresh 144</span>
+gaming-cli gamescope <span class="fl">-f -w 2560 -h 1440</span></code></pre>
+
+    <!-- version -->
+    <span class="section-anchor" id="cmd-version"></span>
+    <h3>version</h3>
+    <pre><code>gaming-cli version
+
+  gaming-cli <span class="st">0.0.1</span>
+  HackerOS Gaming Edition · Debian Testing (Forky)</code></pre>
+
+    <!-- ── Wrapper gaming ─────────────────────────────────────────────────── -->
+    <span class="section-anchor" id="wrapper"></span>
+    <h2>Wrapper <code>gaming</code></h2>
+    <p>
+      <code>gaming</code> to krótki wrapper dla <code>gaming-cli</code> — zamiast
+      wpisywać pełne komendy, możesz używać intuicyjnych skrótów:
+    </p>
+
+    <table class="cmd-table">
+      <thead><tr><th>Skrót</th><th>Ekwiwalent</th><th>Opis</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>gaming</td>
+          <td><code>gaming-cli</code></td>
+          <td class="desc">Otwórz TUI (bez argumentów)</td>
+        </tr>
+        <tr>
+          <td>gaming game</td>
+          <td><code>gaming-cli switch game-mode</code></td>
+          <td class="desc">Przełącz na tryb gry</td>
+        </tr>
+        <tr>
+          <td>gaming desktop</td>
+          <td><code>gaming-cli switch desktop-mode</code></td>
+          <td class="desc">Przełącz na KDE Plasma</td>
+        </tr>
+        <tr>
+          <td>gaming tui</td>
+          <td><code>gaming-cli tui</code></td>
+          <td class="desc">Otwórz TUI jawnie</td>
+        </tr>
+        <tr>
+          <td>gaming status</td>
+          <td><code>gaming-cli status</code></td>
+          <td class="desc">Pokaż aktywny tryb</td>
+        </tr>
+        <tr>
+          <td>gaming info</td>
+          <td><code>gaming-cli info</code></td>
+          <td class="desc">Informacje o środowisku</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout callout-info">
+      <div class="callout-title">ℹ Przekazywanie argumentów</div>
+      Argumenty nierozpoznane jako skrót są przekazywane bezpośrednio do
+      <code>gaming-cli</code>. Możesz więc używać pełnych komend przez
+      <code>gaming</code> bez żadnych ograniczeń.
+    </div>
+
+    <!-- ── gamescope-manager ──────────────────────────────────────────────── -->
+    <span class="section-anchor" id="gamescope-manager"></span>
+    <h2>gamescope-manager</h2>
+    <p>
+      <code>gamescope-manager</code> to narzędzie zarządzające sesją Gamescope,
+      wywoływane przez <code>gaming-cli</code> w tle (lub przez serwis systemd
+      <code>hackeros-game-mode.service</code>). Możesz też używać go bezpośrednio:
+    </p>
+    <pre><code>gamescope-manager start                    <span class="cm"># uruchom z domyślną konfiguracją</span>
+gamescope-manager start <span class="fl">--width 2560 --height 1440 --refresh 144</span>
+gamescope-manager start <span class="fl">--no-steam</span>         <span class="cm"># sam gamescope bez Steam</span>
+gamescope-manager stop                     <span class="cm"># zatrzymaj sesję</span>
+gamescope-manager restart
+gamescope-manager status
+gamescope-manager config                   <span class="cm"># pokaż konfigurację</span>
+gamescope-manager config set refresh 144  <span class="cm"># zmień klucz</span>
+gamescope-manager config reset             <span class="cm"># przywróć domyślne</span></code></pre>
+
+    <h3>Opcje dla <code>start</code></h3>
+    <table class="cmd-table">
+      <thead><tr><th>Opcja</th><th>Opis</th></tr></thead>
+      <tbody>
+        <tr><td>--steam</td><td class="desc">Uruchom z Steam BPM (domyślnie)</td></tr>
+        <tr><td>--no-steam</td><td class="desc">Sam gamescope bez Steam</td></tr>
+        <tr><td>--width &lt;px&gt;</td><td class="desc">Szerokość wewnętrzna (domyślnie: 1920)</td></tr>
+        <tr><td>--height &lt;px&gt;</td><td class="desc">Wysokość wewnętrzna (domyślnie: 1080)</td></tr>
+        <tr><td>--refresh &lt;hz&gt;</td><td class="desc">Częstotliwość odświeżania (domyślnie: 60)</td></tr>
+        <tr><td>--hdr</td><td class="desc">Włącz HDR (wymaga wsparcia GPU)</td></tr>
+        <tr><td>--no-mangoapp</td><td class="desc">Wyłącz overlay FPS</td></tr>
+        <tr><td>--no-vsync</td><td class="desc">Wyłącz synchronizację pionową</td></tr>
+        <tr><td>--no-fullscreen</td><td class="desc">Tryb okienkowy zamiast pełnego ekranu</td></tr>
+        <tr><td>--extra "flagi"</td><td class="desc">Dodatkowe flagi przekazywane do gamescope</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Konfiguracja gamescope-manager</h3>
+    <p>
+      Konfiguracja jest przechowywana w pliku
+      <code>/etc/hackeros/gamescope-manager.hk</code>
+      w autorskim formacie HackerOS <strong>.hk</strong>.
+    </p>
+
+    <table class="cfg-table">
+      <thead>
+        <tr><th>Klucz</th><th>Typ</th><th>Domyślnie</th><th>Opis</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="key">width</td><td class="type">number</td>
+          <td class="def">1920</td>
+          <td class="desc2">Szerokość wewnętrzna gamescope (px)</td>
+        </tr>
+        <tr>
+          <td class="key">height</td><td class="type">number</td>
+          <td class="def">1080</td>
+          <td class="desc2">Wysokość wewnętrzna gamescope (px)</td>
+        </tr>
+        <tr>
+          <td class="key">refresh</td><td class="type">number</td>
+          <td class="def">60</td>
+          <td class="desc2">Częstotliwość odświeżania (Hz)</td>
+        </tr>
+        <tr>
+          <td class="key">fullscreen</td><td class="type">bool</td>
+          <td class="def">true</td>
+          <td class="desc2">Pełnoekranowy tryb gamescope</td>
+        </tr>
+        <tr>
+          <td class="key">vsync</td><td class="type">bool</td>
+          <td class="def">true</td>
+          <td class="desc2">Adaptive sync (VSync)</td>
+        </tr>
+        <tr>
+          <td class="key">hdr</td><td class="type">bool</td>
+          <td class="def">false</td>
+          <td class="desc2">High Dynamic Range (wymaga wsparcia GPU)</td>
+        </tr>
+        <tr>
+          <td class="key">mangoapp</td><td class="type">bool</td>
+          <td class="def">true</td>
+          <td class="desc2">Overlay FPS przez MangoApp</td>
+        </tr>
+        <tr>
+          <td class="key">auto_steam</td><td class="type">bool</td>
+          <td class="def">true</td>
+          <td class="desc2">Automatyczne uruchamianie Steam BPM</td>
+        </tr>
+        <tr>
+          <td class="key">extra_flags</td><td class="type">array</td>
+          <td class="def">[]</td>
+          <td class="desc2">Dodatkowe flagi przekazywane do gamescope</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Przykład pliku konfiguracyjnego (.hk)</h3>
+    <pre><code><span class="cm">! HackerOS Gamescope Manager — konfiguracja</span>
+<span class="cm">! Format: .hk (HackerOS Configuration Format)</span>
+
+[gamescope]
+<span class="kw">-></span> width       <span class="kw">=></span> <span class="st">2560</span>
+<span class="kw">-></span> height      <span class="kw">=></span> <span class="st">1440</span>
+<span class="kw">-></span> refresh     <span class="kw">=></span> <span class="st">144</span>
+<span class="kw">-></span> fullscreen  <span class="kw">=></span> <span class="st">true</span>
+<span class="kw">-></span> vsync       <span class="kw">=></span> <span class="st">true</span>
+<span class="kw">-></span> hdr         <span class="kw">=></span> <span class="st">false</span>
+<span class="kw">-></span> mangoapp    <span class="kw">=></span> <span class="st">true</span>
+<span class="kw">-></span> auto_steam  <span class="kw">=></span> <span class="st">true</span>
+<span class="kw">-></span> extra_flags <span class="kw">=></span> <span class="st">[]</span></code></pre>
+
+    <!-- ── Format .hk ─────────────────────────────────────────────────────── -->
+    <span class="section-anchor" id="hk-format"></span>
+    <h2>Format konfiguracyjny .hk</h2>
+    <p>
+      HackerOS używa autorskiego formatu plików konfiguracyjnych <strong>.hk</strong>
+      (HackerOS Configuration Format). Pełna dokumentacja formatu wraz ze
+      specyfikacją składni, typami wartości i przykładami dostępna jest tutaj:
+    </p>
+    <p>
+      <a href="https://hackeros-linux-system.github.io/HackerOS-Website/tools-docs/hk.html"
+         target="_blank" style="font-size:1.05rem;font-weight:700;">
+        📄 Dokumentacja formatu .hk →
+      </a>
+    </p>
+
+    <!-- ── Roadmapa ───────────────────────────────────────────────────────── -->
+    <span class="section-anchor" id="roadmap"></span>
+    <h2>Roadmapa</h2>
+
+    <h3>Krótkoterminowo (v0.1.x)</h3>
+    <table class="cmd-table">
+      <thead><tr><th>Funkcja</th><th>Opis</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Profile gamescope</td>
+          <td class="desc">
+            Wiele profili konfiguracji w .hk (np. <code>1080p60</code>,
+            <code>1440p144</code>, <code>4K30</code>) — przełączanie z poziomu TUI
+          </td>
+        </tr>
+        <tr>
+          <td>Auto-detect rozdzielczości</td>
+          <td class="desc">
+            Wykrywanie natywnej rozdzielczości monitora przez
+            <code>xrandr</code> / <code>wayland-info</code>
+          </td>
+        </tr>
+        <tr>
+          <td>Reguła polkit</td>
+          <td class="desc">
+            Możliwość przełączania trybu bez hasła dla użytkowników
+            z grupy <code>gaming</code>
+          </td>
+        </tr>
+        <tr>
+          <td>gaming-cli log</td>
+          <td class="desc">
+            Komenda do przeglądania logu sesji gamescope bezpośrednio w TUI
+          </td>
+        </tr>
+        <tr>
+          <td>Plasmoid</td>
+          <td class="desc">
+            Widget na pasku KDE Plasma pokazujący aktywny tryb
+            z przyciskiem przełączenia
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Średnioterminowo (v0.2.x)</h3>
+    <table class="cmd-table">
+      <thead><tr><th>Funkcja</th><th>Opis</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>RetroArch / Heroic</td>
+          <td class="desc">
+            Wsparcie dla alternatywnych launcherów zamiast Steam BPM
+          </td>
+        </tr>
+        <tr>
+          <td>GPU profiling</td>
+          <td class="desc">
+            Automatyczne ustawianie performance governor CPU i trybu wydajności GPU
+            przy wejściu w game mode
+          </td>
+        </tr>
+        <tr>
+          <td>Gamepad wake-up</td>
+          <td class="desc">
+            Automatyczne przełączenie na tryb gry po wykryciu kontrolera (reguła udev)
+          </td>
+        </tr>
+        <tr>
+          <td>gaming-cli update</td>
+          <td class="desc">
+            Sprawdzanie dostępności nowej wersji i aktualizacja przez apt
+          </td>
+        </tr>
+        <tr>
+          <td>Wayland-native</td>
+          <td class="desc">
+            Bezpośrednia sesja Wayland bez TTY-hop gdy Plasma używa Wayland
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Długoterminowo (v1.0)</h3>
+    <table class="cmd-table">
+      <thead><tr><th>Funkcja</th><th>Opis</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Daemon trybu gry</td>
+          <td class="desc">
+            Lekki daemon monitorujący stan systemu i obsługujący zdarzenia
+            (kontroler, sieć, zasilanie)
+          </td>
+        </tr>
+        <tr>
+          <td>IPC (Unix socket)</td>
+          <td class="desc">
+            API do sterowania trybem gry z innych aplikacji
+            — skryptów bash, widgetów KDE, aplikacji zewnętrznych
+          </td>
+        </tr>
+        <tr>
+          <td>Statystyki sesji</td>
+          <td class="desc">
+            Czas spędzony w trybie gry, historia sesji, zużycie zasobów
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ── Licencja ───────────────────────────────────────────────────────── -->
+    <span class="section-anchor" id="license"></span>
+    <h2>Licencja</h2>
+    <p>
+      gaming-cli, gaming i gamescope-manager są udostępniane na licencji
+      <strong>GNU GPL3</strong>.
+    </p>
+
+    <!-- Stopka -->
+    <footer>
+      <p>
+        HackerOS Gaming Edition v0.0.1 ·
+        <a href="https://hackeros-linux-system.github.io/HackerOS-Website/hackeros-documentation.html">Dokumentacja HackerOS</a> ·
+        <a href="https://hackeros-linux-system.github.io/HackerOS-Website/tools-docs/hk.html">Format .hk</a>
+      </p>
+    </footer>
+
+  </main>
+</div>
+
+</body>
+</html>
