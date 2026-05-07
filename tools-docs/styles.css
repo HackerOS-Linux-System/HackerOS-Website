@@ -15,7 +15,7 @@ body{background-color:#0c0f14;font-family:'Inter','Segoe UI',system-ui,-apple-sy
 #hl-settings-li{display:flex!important;align-items:center;margin-left:8px;}
 .hl-settings-btn{background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:6px;border-radius:8px;transition:opacity .2s,transform .3s;opacity:.85;}
 .hl-settings-btn:hover{opacity:1;transform:rotate(30deg);}
-.hl-settings-btn img{width:26px;height:26px;display:block;object-fit:contain;filter:brightness(0) invert(1);}
+.hl-settings-btn img{width:30px;height:30px;display:block;object-fit:contain;}
 
 /* ── Dropdown ── */
 .dropdown{position:relative;}
