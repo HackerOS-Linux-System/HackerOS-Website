@@ -1,5 +1,5 @@
 # HackerOS-Website
 
-Lost? Visit the home page: https://hackeros-linux-system.github.io/HackerOS-Website/Home-page.html
+Lost? Visit the home page: https://legendaryos-linux-system.github.io/website/ or https://legendaryos-linux-system.github.io/website/index.html
 
-### Witaj na polskiej dystrbucji HackerOS bazujacej na debianie testowym :D
+### Welcome on LegendaryOS immuntable linux distro based on fedora
