@@ -408,3 +408,10 @@ code {
   .cmd-grid, .quick-grid { grid-template-columns: 1fr; }
   .hero h1 { font-size: 42px; }
 }
+
+/* Gen 2 operators */
+.hl-arith    { color: #fbbf24; font-weight: 700; }         /* $() arytmetyka */
+.hl-pipe     { color: #22d3ee; font-weight: 700; }         /* |> pipe do var */
+.hl-forin    { color: #f97316; font-weight: 700; }         /* @ item in */
+.hl-while    { color: #a855f7; font-weight: 700; }         /* ?~ while */
+.hl-hackeros { color: #ec4899; font-weight: 700; }         /* || HackerOS API */
