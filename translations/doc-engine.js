@@ -1,9 +1,3 @@
-/**
- * HackerOS Documentation Engine
- * Renders all tab content dynamically from HACKEROS_TRANS_DOCS.
- * Full-content search across all panes.
- */
-
 const TAB_KEYS = [
     'introduction','hardware','installation','firstSteps',
     'environment','configuration','troubleshooting','license',
