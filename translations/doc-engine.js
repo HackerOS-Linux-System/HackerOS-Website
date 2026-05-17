@@ -1,3 +1,9 @@
+/**
+ * HackerOS Documentation Engine
+ * Renders all tab content dynamically from HACKEROS_TRANS_DOCS.
+ * Full-content search across all panes.
+ */
+
 const TAB_KEYS = [
     'introduction','hardware','installation','firstSteps',
     'environment','configuration','troubleshooting','license',
@@ -87,9 +93,9 @@ function buildToolsHTML(lang) {
         ['<code>HackerOS-Steam</code>',
             en ? 'Run Steam in an isolated container.' : 'Uruchom Steam w izolowanym środowisku (kontener).',
             en ? 'built-in all editions' : 'wbudowane we wszystkich edycjach'],
-        ['<code>lpm</code>',
-            en ? 'Custom successor to apt (faster, optimized for HackerOS).' : 'Własny następca apt (szybszy i zoptymalizowany pod HackerOS).',
-            '<code>hacker unpack lpm</code>'],
+        ['<code>hackeros-builder</code>',
+            en ? 'Tool for building OCI images inspired by bootc. Can be used as an overlay for live-build, as a fully independent standalone builder, or to create configurable live environments and deployment images.' : 'Narzędzie do budowania obrazów OCI inspirowane bootc. Może działać jako nakładka dla live-build, jako samodzielny niezależny builder lub służyć do tworzenia konfigurowalnych środowisk live i obrazów wdrożeniowych.',
+            '<code>hacker unpack hackeros-builder</code>'],
         ['<code>h#</code>',
             en ? 'Own programming language H# for general use in HackerOS.' : 'Własny język programowania H# do ogólnego zastosowania w HackerOS.',
             '<code>hacker unpack h#</code>'],
