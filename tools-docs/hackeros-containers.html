@@ -52,7 +52,7 @@
     z-index: 9999;
   }
 
-  /* BACK BUTTON (top right) */
+  /* BACK BUTTON */
   .back-btn {
     position: fixed;
     top: 20px;
@@ -297,6 +297,14 @@
   a { color: var(--accent2); text-decoration: none; }
   a:hover { text-decoration: underline; }
 
+  ul, ol {
+    margin-left: 20px;
+    margin-bottom: 14px;
+    color: var(--text);
+  }
+
+  li { margin-bottom: 4px; }
+
   /* ── CODE ── */
   pre, code {
     font-family: 'IBM Plex Mono', monospace;
@@ -402,6 +410,12 @@
     color: var(--accent3);
   }
 
+  .callout-success {
+    background: rgba(0,229,160,0.07);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
   .callout strong { display: block; margin-bottom: 4px; font-size: 0.8rem; letter-spacing: 0.1em; }
 
   /* ── CMD CARDS ── */
@@ -435,7 +449,7 @@
     line-height: 1.5;
   }
 
-  /* ── MODULE GRID (unused but kept style) ── */
+  /* ── MODULE GRID ── */
   .module-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -483,6 +497,20 @@
   .method-post   { background: rgba(0,184,255,0.15); color: var(--accent2); }
   .method-delete { background: rgba(255,78,106,0.15); color: var(--accent3); }
 
+  /* NEW: status badges */
+  .status {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    padding: 2px 7px;
+    border-radius: 2px;
+    display: inline-block;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+  .status-new  { background: rgba(0,229,160,0.15); color: var(--accent); border: 1px solid rgba(0,229,160,0.3); }
+  .status-upd  { background: rgba(0,184,255,0.15); color: var(--accent2); border: 1px solid rgba(0,184,255,0.3); }
+  .status-pub  { background: rgba(255,179,71,0.12); color: var(--warn); border: 1px solid rgba(255,179,71,0.25); }
+
   /* ── FOOTER ── */
   .footer {
     border-top: 1px solid var(--border);
@@ -518,7 +546,7 @@
 </head>
 <body>
 
-<!-- BACK BUTTON (top right) -->
+<!-- BACK BUTTON -->
 <a href="https://hackeros-linux-system.github.io/HackerOS-Website/tools-docs/index.html" class="back-btn">BACK</a>
 
 <!-- SIDEBAR -->
@@ -541,10 +569,15 @@
 
   <div class="nav-section-label">API & Integracja</div>
   <a class="nav-link" href="#api">REST API</a>
+  <a class="nav-link" href="#api-auth">Autoryzacja API</a>
+  <a class="nav-link" href="#api-tls">TLS / HTTPS</a>
   <a class="nav-link" href="#metrics">Metryki Prometheus</a>
+  <a class="nav-link" href="#observability">Observability / OTel</a>
   <a class="nav-link" href="#seccomp">Seccomp / Bezpieczeństwo</a>
 
-  <div class="nav-section-label">Moduły</div>
+  <div class="nav-section-label">Infrastruktura</div>
+  <a class="nav-link" href="#state">Stan — SQLite</a>
+  <a class="nav-link" href="#systemd">Systemd / Socket Activation</a>
   <a class="nav-link" href="#network">Sieć / CNI</a>
   <a class="nav-link" href="#images">Obrazy OCI</a>
 
@@ -563,7 +596,8 @@
     <p class="hero-desc">
       Zaawansowane środowisko uruchomieniowe dla kontenerów napisane w języku Rust.
       Obsługuje przestrzenie nazw Linux, OverlayFS, cgroups v2, seccomp, CNI,
-      REST API oraz automatyczne restartowanie procesów.
+      REST API z TLS i autoryzacją, SQLite jako backend stanu, metryki Prometheus
+      z realnym pomiarem CPU oraz OpenTelemetry tracing.
     </p>
     <div class="hero-badges">
       <span class="badge badge-green">Rust 2021</span>
@@ -574,6 +608,10 @@
       <span class="badge badge-warn">REST API</span>
       <span class="badge badge-blue">CNI</span>
       <span class="badge badge-green">Prometheus</span>
+      <span class="badge badge-blue">SQLite</span>
+      <span class="badge badge-red">TLS/rustls</span>
+      <span class="badge badge-warn">OpenTelemetry</span>
+      <span class="badge badge-green">Systemd</span>
     </div>
   </div>
 
@@ -589,19 +627,23 @@
         kontenerów bezpośrednio przez syscalle Linuksa.
       </p>
       <p>Główne możliwości:</p>
-      <ul style="margin-left:20px; margin-bottom:14px; color: var(--text);">
+      <ul>
         <li>Izolacja przez przestrzenie nazw (UTS, PID, MNT, NET, IPC, USER)</li>
         <li>OverlayFS — wielowarstwowy system plików jak w Dockerze</li>
         <li>Ograniczenia zasobów przez cgroups v2 (pamięć, CPU)</li>
         <li>Pobieranie obrazów OCI z rejestrów (Docker Hub, własne)</li>
-        <li>Przekierowanie portów przez iptables/DNAT</li>
+        <li>Przekierowanie portów przez iptables/DNAT (TCP i UDP)</li>
         <li>Seccomp — filtrowanie syscalli z profili JSON</li>
         <li>Tryb rootless (user namespaces)</li>
         <li>Pods — grupy kontenerów ze wspólną siecią/PID/IPC</li>
-        <li>REST API (axum) do zarządzania przez HTTP</li>
-        <li>Eksport metryk w formacie Prometheus</li>
+        <li>REST API (axum) z opcjonalnym TLS (rustls) i Bearer token auth</li>
+        <li>Eksport metryk w formacie Prometheus z realnym pomiarem CPU (delta)</li>
+        <li>Structured logging (tracing) + OpenTelemetry OTLP exporter</li>
+        <li>SQLite WAL jako backend stanu (zamiast JSON w /var/run)</li>
+        <li>IPAM — pula IP z gwarancją braku kolizji</li>
         <li>Automatyczne restartowanie (<code>auto_restart</code>)</li>
         <li>PTY shell — wejście do działającego kontenera</li>
+        <li>Systemd unit + socket activation</li>
       </ul>
       <div class="callout callout-warn">
         <strong>⚠ WYMAGANIA</strong>
@@ -610,7 +652,7 @@
       </div>
     </section>
 
-    <!-- INSTALLATION (zmienione) -->
+    <!-- INSTALLATION -->
     <section id="installation">
       <h2><span class="section-num">02</span> Instalacja</h2>
       <div class="pre-label">HackerOS Linux — instalacja</div>
@@ -631,23 +673,82 @@
         który konfiguruje sieć, montuje OverlayFS, wykonuje <code>pivot_root</code>
         i uruchamia docelowy program przez <code>execve</code>.
       </p>
+      <p>
+        Stan kontenerów i podów jest przechowywany w bazie SQLite w trybie WAL
+        (<code>/var/lib/hackeros/state.db</code>). Adresy IP są zarządzane przez
+        wbudowany moduł IPAM — każdy kontener dostaje unikalny sufiks z puli 2–254.
+      </p>
       <pre><code>hco run
   │
   ├─ ImageManager::resolve_image_layers()   ← pobierz/cache OCI
   ├─ setup_overlayfs()                      ← zmontuj rootfs
   ├─ setup_bridge() / setup_cni()           ← skonfiguruj sieć
   ├─ setup_cgroups()                        ← ogranicz zasoby
+  ├─ db::ipam_allocate()                    ← przydziel unikalny IP
   ├─ clone(CLONE_NEWUTS|PID|NS|NET|IPC)     ← nowe namespaces
   │     └─ child_entrypoint()
   │           ├─ setup_namespaces()         ← user ns (rootless)
   │           ├─ seccomp_setup()            ← załaduj profil
   │           ├─ sethostname()
-  │           ├─ bind mounts
+  │           ├─ bind mounts (walidowane)
   │           ├─ pivot_root → /
   │           └─ execve(cmd)
   ├─ create_veth_pair()                     ← sieć host↔kontener
-  ├─ setup_port_forwarding()                ← iptables DNAT
-  └─ ContainerLogger::start_capture()      ← capture stdout</code></pre>
+  ├─ setup_port_forwarding()                ← iptables DNAT (TCP+UDP)
+  ├─ db::insert_container()                 ← zapisz stan + pełny HkConfig
+  └─ ContainerLogger::start_capture()      ← capture stdout (100MB limit)</code></pre>
+
+      <h3>Moduły</h3>
+      <div class="module-grid">
+        <div class="module-card">
+          <div class="module-file">src/container.rs</div>
+          <div class="module-desc">Cykl życia kontenerów, clone(), cleanup, PTY, stats</div>
+        </div>
+        <div class="module-card">
+          <div class="module-file">src/db.rs</div>
+          <div class="module-desc">SQLite WAL — containers, pods, IPAM. Singleton z parking_lot::Mutex</div>
+        </div>
+        <div class="module-card">
+          <div class="module-file">src/api.rs</div>
+          <div class="module-desc">REST API (axum 0.7), auth middleware, rate limit, TLS loop</div>
+        </div>
+        <div class="module-card">
+          <div class="module-file">src/tls.rs</div>
+          <div class="module-desc">rustls ServerConfig z PEM cert/key, PKCS8 i RSA PKCS1</div>
+        </div>
+        <div class="module-card">
+          <div class="module-file">src/metrics.rs</div>
+          <div class="module-desc">Prometheus gauges + background CPU delta collector (1 s tick)</div>
+        </div>
+        <div class="module-card">
+          <div class="module-file">src/image.rs</div>
+          <div class="module-desc">OCI pull, cache warstw, digest verify, GC, import tar</div>
+        </div>
+        <div class="module-card">
+          <div class="module-file">src/sandbox.rs</div>
+          <div class="module-desc">overlayfs, cgroups v2, child entrypoint, pivot_root</div>
+        </div>
+        <div class="module-card">
+          <div class="module-file">src/network.rs</div>
+          <div class="module-desc">Bridge, veth pair, iptables DNAT/MASQUERADE, CNI, UDP</div>
+        </div>
+        <div class="module-card">
+          <div class="module-file">src/pod.rs</div>
+          <div class="module-desc">Pods, pause process, shared netns, restart_pod()</div>
+        </div>
+        <div class="module-card">
+          <div class="module-file">src/validation.rs</div>
+          <div class="module-desc">Walidacja inputów API/CLI — path traversal, nazwy, porty, env</div>
+        </div>
+        <div class="module-card">
+          <div class="module-file">src/logging.rs</div>
+          <div class="module-desc">ContainerLogger z limitem 100 MB i rotacją 3 plików</div>
+        </div>
+        <div class="module-card">
+          <div class="module-file">src/seccomp.rs</div>
+          <div class="module-desc">Ładowanie profili JSON seccomp przez libseccomp</div>
+        </div>
+      </div>
 
       <div class="callout callout-info">
         <strong>ℹ OVERLAYFS</strong>
@@ -668,11 +769,11 @@
         </div>
         <div class="cmd-card">
           <div class="cmd-name">stop</div>
-          <div class="cmd-desc">Zatrzymaj działający kontener</div>
+          <div class="cmd-desc">Zatrzymaj działający kontener (SIGTERM → SIGKILL po 10 s)</div>
         </div>
         <div class="cmd-card">
-          <div class="cmd-name">list</div>
-          <div class="cmd-desc">Wyświetl wszystkie kontenery</div>
+          <div class="cmd-name">list / ps</div>
+          <div class="cmd-desc">Wyświetl wszystkie kontenery z obrazem i IP</div>
         </div>
         <div class="cmd-card">
           <div class="cmd-name">enter</div>
@@ -680,15 +781,19 @@
         </div>
         <div class="cmd-card">
           <div class="cmd-name">stats</div>
-          <div class="cmd-desc">Monitoruj zasoby kontenera (live)</div>
+          <div class="cmd-desc">Zasoby kontenera. Dodaj <code>-w</code> dla live loop</div>
         </div>
         <div class="cmd-card">
           <div class="cmd-name">pod</div>
           <div class="cmd-desc">Zarządzaj grupami kontenerów (pods)</div>
         </div>
         <div class="cmd-card">
+          <div class="cmd-name">image</div>
+          <div class="cmd-desc">Zarządzaj obrazami OCI (gc, import)</div>
+        </div>
+        <div class="cmd-card">
           <div class="cmd-name">api</div>
-          <div class="cmd-desc">Uruchom serwer REST API</div>
+          <div class="cmd-desc">Uruchom serwer REST API z opcjonalnym TLS i tokenem</div>
         </div>
       </div>
 
@@ -700,10 +805,15 @@
         <table>
           <thead><tr><th>Flaga</th><th>Opis</th><th>Przykład</th></tr></thead>
           <tbody>
-            <tr><td><code>-i / --image</code></td><td>Obraz OCI do uruchomienia</br><tr><code>alpine:latest</code></td></tr>
-            <tr><td><code>-d / --detached</code></br><td>Uruchom w tle (daemon)</br><td></br></td></tr>
-            <tr><td><code>-p / --publish</code></br><td>Przekierowanie portu host:kontener</br><td><code>8080:80</code></br></td></tr>
-            <tr><td><code>-v / --volume</code></br><td>Montowanie katalogu host:kontener</br><td><code>/data:/mnt/data</code></br></td></tr>
+            <tr><td><code>-i / --image</code></td><td>Obraz OCI do uruchomienia</td><td><code>alpine:latest</code></td></tr>
+            <tr><td><code>-d / --detached</code></td><td>Uruchom w tle (daemon)</td><td></td></tr>
+            <tr><td><code>-p / --publish</code></td><td>Przekierowanie portu host:kontener[/proto]</td><td><code>8080:80/tcp</code></td></tr>
+            <tr><td><code>-v / --volume</code></td><td>Montowanie katalogu host:kontener</td><td><code>/data:/mnt/data</code></td></tr>
+            <tr><td><code>-e / --env</code></td><td>Zmienna środowiskowa KEY=VALUE (powtarzalna)</td><td><code>-e FOO=bar</code></td></tr>
+            <tr><td><code>--memory</code></td><td>Limit pamięci RAM</td><td><code>512MB</code></td></tr>
+            <tr><td><code>--cpu</code></td><td>Limit CPU w % (1–100)</td><td><code>50</code></td></tr>
+            <tr><td><code>--auto-restart</code></td><td>Restart kontenera po zakończeniu</td><td></td></tr>
+            <tr><td><code>--rootless</code></td><td>Uruchom w trybie user namespaces</td><td></td></tr>
           </tbody>
         </table>
       </div>
@@ -712,8 +822,13 @@
       <pre><code># Uruchom nginx w tle z przekierowaniem portu
 hco run my-nginx -i nginx:alpine -p 8080:80 -d
 
-# Uruchom Alpine z wolumenem
-hco run dev-box -i alpine:latest -v /home/user/code:/app -d
+# Uruchom z limitem pamięci i CPU
+hco run db -i postgres:15 -e POSTGRES_PASSWORD=secret \
+    --memory 512MB --cpu 50 -d
+
+# Uruchom Alpine z wolumenem i auto-restartem
+hco run dev-box -i alpine:latest -v /home/user/code:/app \
+    --auto-restart -d
 
 # Uruchom w trybie interaktywnym (foreground)
 hco run test -i alpine:latest</code></pre>
@@ -721,7 +836,13 @@ hco run test -i alpine:latest</code></pre>
       <h3>hco stop</h3>
       <div class="pre-label">składnia</div>
       <pre><code>hco stop &lt;name_lub_id_prefix&gt;</code></pre>
-      <p>Wysyła <code>SIGTERM</code>, czeka 5 sekund, następnie wysyła <code>SIGKILL</code>. Czyści iptables, OverlayFS i cgroups.</p>
+      <p>Wysyła <code>SIGTERM</code>, czeka 10 sekund (sprawdzając co 100 ms), następnie wysyła <code>SIGKILL</code>. Czyści iptables (DNAT + FORWARD), veth, OverlayFS, cgroups i wpis z bazy SQLite.</p>
+
+      <h3>hco list / hco ps</h3>
+      <div class="pre-label">składnia</div>
+      <pre><code>hco list
+hco ps</code></pre>
+      <p>Wyświetla tabelę z kolumnami: ID (skrócony), NAME, IMAGE, STATUS, IP, POD. Dane pobierane z SQLite.</p>
 
       <h3>hco enter</h3>
       <div class="pre-label">składnia</div>
@@ -730,13 +851,44 @@ hco run test -i alpine:latest</code></pre>
 
       <h3>hco stats</h3>
       <div class="pre-label">składnia</div>
-      <pre><code>hco stats &lt;name_lub_id&gt;</code></pre>
-      <p>Wyświetla live statystyki pamięci i CPU z cgroups v2 (odświeżanie co 1s).</p>
+      <pre><code>hco stats &lt;name_lub_id&gt; [-w]</code></pre>
+      <p>Wyświetla statystyki pamięci i CPU z cgroups v2. Flaga <code>-w</code> / <code>--watch</code> włącza live refresh co 1 sekundę (bez czyszczenia całego ekranu — tylko kursor na górę).</p>
+
+      <h3>hco image</h3>
+      <div class="pre-label">składnia</div>
+      <pre><code># Usuń nieużywane warstwy obrazów (garbage collect)
+hco image gc
+
+# Importuj obraz z archiwum Docker save
+hco image import my-image:local -f /tmp/myimage.tar</code></pre>
 
       <h3>hco api</h3>
       <div class="pre-label">składnia</div>
-      <pre><code>hco api [--api-addr 0.0.0.0:8080]</code></pre>
-      <p>Uruchamia serwer HTTP REST API. Domyślny adres: <code>127.0.0.1:8080</code>.</p>
+      <pre><code>hco api [opcje]</code></pre>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Flaga</th><th>Opis</th><th>Domyślnie</th></tr></thead>
+          <tbody>
+            <tr><td><code>--api-addr</code></td><td>Adres i port nasłuchu</td><td><code>127.0.0.1:8080</code></td></tr>
+            <tr><td><code>--api-token</code></td><td>Bearer token dla autoryzacji</td><td>brak (dev mode)</td></tr>
+            <tr><td><code>--tls-cert</code></td><td>Ścieżka do pliku PEM z certyfikatem</td><td>brak (HTTP)</td></tr>
+            <tr><td><code>--tls-key</code></td><td>Ścieżka do pliku PEM z kluczem prywatnym</td><td>brak (HTTP)</td></tr>
+            <tr><td><code>--json-logs</code></td><td>Logi w formacie JSON (structured)</td><td>wyłączone</td></tr>
+            <tr><td><code>--otlp</code></td><td>Endpoint OTLP gRPC (OpenTelemetry)</td><td>brak</td></tr>
+            <tr><td><code>--db</code></td><td>Ścieżka do pliku bazy SQLite</td><td><code>/var/lib/hackeros/state.db</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pre-label">przykład — produkcyjne uruchomienie API</div>
+      <pre><code>hco api \
+  --api-addr 0.0.0.0:8443 \
+  --api-token "$(cat /etc/hco/token)" \
+  --tls-cert /etc/hco/tls.crt \
+  --tls-key  /etc/hco/tls.key \
+  --json-logs \
+  --otlp http://otel-collector:4317</code></pre>
     </section>
 
     <!-- CONFIG -->
@@ -771,36 +923,44 @@ hco run test -i alpine:latest</code></pre>
 -> rootless = false
 -> readonly_root = false
 -> drop_caps = "CAP_SYS_ADMIN"
+-> seccomp_profile = "/etc/hco/profiles/default.json"
 
 [Network]
 -> bridge_name = "hkbr0"
 -> subnet = "10.10.0.0/24"
 -> gateway = "10.10.0.1"</code></pre>
 
+      <div class="callout callout-info">
+        <strong>ℹ PERSIST CONFIG</strong>
+        Pełna konfiguracja (<code>HkConfig</code>) jest serializowana jako JSON i zapisywana
+        w kolumnie <code>config_json</code> w bazie SQLite. Dzięki temu <code>restart_container()</code>
+        może odtworzyć dokładnie te same parametry bez żadnych dodatkowych plików.
+      </div>
+
       <h3>Sekcje konfiguracji</h3>
       <div class="table-wrap">
         <table>
           <thead><tr><th>Sekcja</th><th>Pole</th><th>Typ</th><th>Opis</th></tr></thead>
           <tbody>
-            <tr><td rowspan="4"><code>[Metadata]</code></td><td><code>name</code></td><td>string</br><td>Nazwa kontenera</br></tr>
-            <tr><td><code>version</code></br><td>string</br><td>Wersja obrazu/konfiguracji</br></tr>
-            <tr><td><code>authors</code></br><td>string</br><td>Autorzy</br></tr>
-            <tr><td><code>license</code></br><td>string</br><td>Licencja</br></tr>
-            <tr><td rowspan="7"><code>[Specs]</code></td><td><code>base_image</code></br><td>string</br><td>Obraz OCI (np. <code>alpine:latest</code>)</br></tr>
-            <tr><td><code>memory_limit</code></br><td>string</br><td>Limit pamięci: <code>256MB</code>, <code>1GB</code></br></tr>
-            <tr><td><code>cpu_percent</code></br><td>number</br><td>Limit CPU w procentach (0–100)</br></tr>
-            <tr><td><code>mounts</code></br><td>string</br><td>Montowania oddzielone przecinkami</br></tr>
-            <tr><td><code>port_mappings</code></br><td>string</br><td>Przekierowania portów <code>host:kontenera</code></br></tr>
-            <tr><td><code>env</code></br><td>string</br><td>Zmienne środowiskowe <code>KEY=val</code></br></tr>
-            <tr><td><code>cmd</code></br><td>string</br><td>Komenda do uruchomienia</br></tr>
-            <tr><td rowspan="3"><code>[Runtime]</code></br><td><code>auto_restart</code></br><td>bool</br><td>Automatyczny restart po zakończeniu</br></tr>
-            <tr><td><code>network_mode</code></br><td>string</br><td><code>bridge</code> | <code>cni</code> | <code>none</code></br></tr>
-            <tr><td><code>cni_network</code></br><td>string</br><td>Nazwa sieci CNI (opcjonalne)</br></tr>
-            <tr><td rowspan="5"><code>[Security]</code></br><td><code>rootless</code></br><td>bool</br><td>Tryb bez roota (user namespaces)</br></tr>
-            <tr><td><code>readonly_root</code></br><td>bool</br><td>Read-only rootfs</br></tr>
-            <tr><td><code>drop_caps</code></br><td>string</br><td>Capabilities do usunięcia</br></tr>
-            <tr><td><code>allow_raw_sockets</code></br><td>bool</br><td>Zezwól na gniazda raw</br></tr>
-            <tr><td><code>seccomp_profile</code></br><td>string</br><td>Ścieżka do profilu JSON seccomp</br></tr>
+            <tr><td rowspan="4"><code>[Metadata]</code></td><td><code>name</code></td><td>string</td><td>Nazwa kontenera</td></tr>
+            <tr><td><code>version</code></td><td>string</td><td>Wersja obrazu/konfiguracji</td></tr>
+            <tr><td><code>authors</code></td><td>string</td><td>Autorzy</td></tr>
+            <tr><td><code>license</code></td><td>string</td><td>Licencja</td></tr>
+            <tr><td rowspan="7"><code>[Specs]</code></td><td><code>base_image</code></td><td>string</td><td>Obraz OCI (np. <code>alpine:latest</code>)</td></tr>
+            <tr><td><code>memory_limit</code></td><td>string</td><td>Limit pamięci: <code>256MB</code>, <code>1GB</code></td></tr>
+            <tr><td><code>cpu_percent</code></td><td>number</td><td>Limit CPU w procentach (1–100)</td></tr>
+            <tr><td><code>mounts</code></td><td>string</td><td>Montowania oddzielone przecinkami</td></tr>
+            <tr><td><code>port_mappings</code></td><td>string</td><td>Przekierowania portów <code>host:kontenera[/proto]</code></td></tr>
+            <tr><td><code>env</code></td><td>string</td><td>Zmienne środowiskowe <code>KEY=val</code></td></tr>
+            <tr><td><code>cmd</code></td><td>string</td><td>Komenda do uruchomienia</td></tr>
+            <tr><td rowspan="3"><code>[Runtime]</code></td><td><code>auto_restart</code></td><td>bool</td><td>Automatyczny restart po zakończeniu</td></tr>
+            <tr><td><code>network_mode</code></td><td>string</td><td><code>bridge</code> | <code>cni</code> | <code>none</code></td></tr>
+            <tr><td><code>cni_network</code></td><td>string</td><td>Nazwa sieci CNI (opcjonalne)</td></tr>
+            <tr><td rowspan="5"><code>[Security]</code></td><td><code>rootless</code></td><td>bool</td><td>Tryb bez roota (user namespaces)</td></tr>
+            <tr><td><code>readonly_root</code></td><td>bool</td><td>Read-only rootfs</td></tr>
+            <tr><td><code>drop_caps</code></td><td>string</td><td>Capabilities do usunięcia</td></tr>
+            <tr><td><code>allow_raw_sockets</code></td><td>bool</td><td>Zezwól na gniazda raw</td></tr>
+            <tr><td><code>seccomp_profile</code></td><td>string</td><td>Ścieżka do profilu JSON seccomp</td></tr>
           </tbody>
         </table>
       </div>
@@ -813,6 +973,11 @@ hco run test -i alpine:latest</code></pre>
         Pod to grupa kontenerów współdzielących przestrzenie nazw sieci, PID i/lub IPC.
         Wzorowane na Kubernetes Pods — kontenery w jednym podzie widzą się nawzajem
         przez <code>localhost</code>.
+      </p>
+      <p>
+        Każdy pod uruchamia proces <strong>pause</strong> (<code>/usr/libexec/hco/pause</code>),
+        który trzyma współdzielone przestrzenie nazw przez cały czas życia poda.
+        Jeśli binarium pause nie istnieje, używany jest fallback <code>sleep infinity</code>.
       </p>
 
       <h3>Plik specyfikacji poda (YAML)</h3>
@@ -855,6 +1020,9 @@ hco pod create my-pod -f my-pod.yaml
 # Wyświetl działające pods
 hco pod list
 
+# Zrestartuj zatrzymane kontenery w podzie
+hco pod start my-pod
+
 # Zatrzymaj poda (i wszystkie jego kontenery)
 hco pod stop my-pod</code></pre>
 
@@ -864,30 +1032,46 @@ hco pod stop my-pod</code></pre>
         dla całego poda przez <code>ip netns add pod-&lt;name&gt;</code>. Wszystkie kontenery
         w podzie używają <code>network_mode: none</code> i wchodzą do wspólnego netns.
       </div>
+
+      <div class="callout callout-info">
+        <strong>ℹ RESTART POD</strong>
+        <code>hco pod start &lt;name&gt;</code> sprawdza każdy kontener w podzie przez SQLite.
+        Jeśli kontener nie działa, odczytuje jego <code>config_json</code> i restartuje
+        z dokładnie tymi samymi parametrami.
+      </div>
     </section>
 
     <!-- REST API -->
     <section id="api">
       <h2><span class="section-num">07</span> REST API</h2>
       <p>
-        Po uruchomieniu <code>hco api</code> dostępny jest serwer HTTP (axum) z endpointami
-        do zarządzania kontenerami i podami.
+        Po uruchomieniu <code>hco api</code> dostępny jest serwer HTTP/HTTPS (axum 0.7)
+        z endpointami do zarządzania kontenerami i podami. Serwer obsługuje paginację,
+        timeouty żądań (60 s), limit rozmiaru body (10 MB) oraz opcjonalną autoryzację
+        Bearer tokenem.
       </p>
 
-      <div class="pre-label">uruchomienie</div>
+      <div class="pre-label">uruchomienie (dev — plain HTTP)</div>
       <pre><code>hco api --api-addr 0.0.0.0:8080</code></pre>
+
+      <div class="pre-label">uruchomienie (produkcja — TLS + auth)</div>
+      <pre><code>hco api \
+  --api-addr 0.0.0.0:8443 \
+  --api-token my-secret-token \
+  --tls-cert /etc/hco/tls.crt \
+  --tls-key  /etc/hco/tls.key</code></pre>
 
       <h3>Endpointy — Kontenery</h3>
       <div class="table-wrap">
         <table>
           <thead><tr><th>Metoda</th><th>Ścieżka</th><th>Opis</th></tr></thead>
           <tbody>
-            <tr><td><span class="method method-get">GET</span></br><td><code>/containers</code></br><td>Lista wszystkich kontenerów</br></tr>
-            <tr><td><span class="method method-post">POST</span></br><td><code>/containers</code></br><td>Utwórz i uruchom nowy kontener</br></tr>
-            <tr><td><span class="method method-delete">DELETE</span></br><td><code>/containers/:id</code></br><td>Zatrzymaj i usuń kontener</br></tr>
-            <tr><td><span class="method method-post">POST</span></br><td><code>/containers/:id/start</code></br><td>Uruchom zatrzymany kontener (TODO)</br></tr>
-            <tr><td><span class="method method-post">POST</span></br><td><code>/containers/:id/stop</code></br><td>Zatrzymaj kontener</br></tr>
-            <tr><td><span class="method method-get">GET</span></br><td><code>/containers/:id/logs</code></br><td>Pobierz logi stdout kontenera</br></tr>
+            <tr><td><span class="method method-get">GET</span></td><td><code>/containers</code></td><td>Lista kontenerów (paginacja: <code>?page=1&amp;per_page=50</code>)</td></tr>
+            <tr><td><span class="method method-post">POST</span></td><td><code>/containers</code></td><td>Utwórz i uruchom nowy kontener (timeout 300 s)</td></tr>
+            <tr><td><span class="method method-delete">DELETE</span></td><td><code>/containers/:id</code></td><td>Zatrzymaj i usuń kontener</td></tr>
+            <tr><td><span class="method method-post">POST</span></td><td><code>/containers/:id/start</code></td><td>Zrestartuj kontener (odczytuje config z SQLite) <span class="status status-new">NOWE</span></td></tr>
+            <tr><td><span class="method method-post">POST</span></td><td><code>/containers/:id/stop</code></td><td>Zatrzymaj kontener</td></tr>
+            <tr><td><span class="method method-get">GET</span></td><td><code>/containers/:id/logs</code></td><td>Pobierz logi stdout kontenera</td></tr>
           </tbody>
         </table>
       </div>
@@ -897,85 +1081,283 @@ hco pod stop my-pod</code></pre>
         <table>
           <thead><tr><th>Metoda</th><th>Ścieżka</th><th>Opis</th></tr></thead>
           <tbody>
-            <tr><td><span class="method method-get">GET</span></br><td><code>/pods</code></br><td>Lista wszystkich podów</br></tr>
-            <tr><td><span class="method method-post">POST</span></br><td><code>/pods</code></br><td>Utwórz i uruchom nowego poda</br></tr>
-            <tr><td><span class="method method-delete">DELETE</span></br><td><code>/pods/:name</code></br><td>Zatrzymaj i usuń poda</br></tr>
-            <tr><td><span class="method method-post">POST</span></br><td><code>/pods/:name/stop</code></br><td>Zatrzymaj poda</br></tr>
+            <tr><td><span class="method method-get">GET</span></td><td><code>/pods</code></td><td>Lista podów (paginacja: <code>?page=1&amp;per_page=50</code>)</td></tr>
+            <tr><td><span class="method method-post">POST</span></td><td><code>/pods</code></td><td>Utwórz i uruchom nowego poda (timeout 600 s)</td></tr>
+            <tr><td><span class="method method-delete">DELETE</span></td><td><code>/pods/:name</code></td><td>Zatrzymaj i usuń poda</td></tr>
+            <tr><td><span class="method method-post">POST</span></td><td><code>/pods/:name/start</code></td><td>Zrestartuj zatrzymane kontenery w podzie <span class="status status-new">NOWE</span></td></tr>
+            <tr><td><span class="method method-post">POST</span></td><td><code>/pods/:name/stop</code></td><td>Zatrzymaj poda</td></tr>
           </tbody>
         </table>
       </div>
 
-      <h3>Endpointy — System</h3>
+      <h3>Endpointy — System <span class="status status-upd">ZAKTUALIZOWANE</span></h3>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Metoda</th><th>Ścieżka</th><th>Opis</th></tr></thead>
+          <thead><tr><th>Metoda</th><th>Ścieżka</th><th>Auth</th><th>Opis</th></tr></thead>
           <tbody>
-            <tr><td><span class="method method-get">GET</span></br><td><code>/metrics</code></br><td>Metryki w formacie Prometheus text</br></tr>
+            <tr><td><span class="method method-get">GET</span></td><td><code>/health</code></td><td><span class="status status-pub">publiczny</span></td><td>Health check — status, wersja, liczba działających kontenerów</td></tr>
+            <tr><td><span class="method method-get">GET</span></td><td><code>/metrics</code></td><td><span class="status status-pub">publiczny</span></td><td>Metryki Prometheus text (Content-Type: text/plain; version=0.0.4)</td></tr>
           </tbody>
         </table>
       </div>
+
+      <div class="callout callout-info">
+        <strong>ℹ /health i /metrics są publiczne</strong>
+        Endpointy <code>/health</code> i <code>/metrics</code> nie wymagają tokenu auth —
+        są dostępne publicznie, co umożliwia scraping przez Prometheus i health check przez
+        load balancer bez przekazywania tokenu.
+      </div>
+
+      <h3>Paginacja</h3>
+      <p>Listy kontenerów i podów obsługują paginację przez query string:</p>
+      <pre><code>GET /containers?page=2&amp;per_page=25
+GET /pods?page=1&amp;per_page=10</code></pre>
+      <div class="pre-label">odpowiedź</div>
+      <pre><code>{
+  "containers": [...],
+  "total": 142,
+  "page": 2,
+  "per_page": 25
+}</code></pre>
 
       <h3>Przykład — tworzenie kontenera (curl)</h3>
       <div class="pre-label">bash</div>
-      <pre><code>curl -X POST http://localhost:8080/containers \
+      <pre><code>curl -X POST https://localhost:8443/containers \
   -H "Content-Type: application/json" \
+  -H "Authorization: Bearer my-secret-token" \
   -d '{
     "name": "my-nginx",
     "image": "nginx:alpine",
-    "ports": ["8080:80"],
+    "ports": ["8080:80/tcp"],
+    "env": ["NGINX_ENTRYPOINT_QUIET_LOGS=1"],
     "memory_limit": "128MB",
     "cpu_percent": 25,
-    "auto_restart": true,
-    "detached": true
+    "auto_restart": true
   }'</code></pre>
 
       <div class="pre-label">odpowiedź — 201 Created</div>
-      <pre><code>{ "id": "a3f7c2d1-8b4e-..." }</code></pre>
+      <pre><code>{ "id": "a3f7c2d1-8b4e-4f2a-b1c3-d5e6f7a8b9c0" }</code></pre>
 
-      <h3>Schemat błędu</h3>
-      <div class="pre-label">JSON — 500 Internal Server Error</div>
-      <pre><code>{ "error": "Container not found: my-nginx" }</code></pre>
+      <h3>Health check</h3>
+      <div class="pre-label">bash</div>
+      <pre><code>curl https://localhost:8443/health</code></pre>
+      <div class="pre-label">odpowiedź — 200 OK</div>
+      <pre><code>{
+  "status": "ok",
+  "version": "0.3.0",
+  "containers_running": 5
+}</code></pre>
+
+      <h3>Schemat błędów</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>HTTP</th><th>Kiedy</th></tr></thead>
+          <tbody>
+            <tr><td><code>400 Bad Request</code></td><td>Nieprawidłowy input — błąd walidacji nazwy, obrazu, portu, montowania, timeout startu</td></tr>
+            <tr><td><code>401 Unauthorized</code></td><td>Brakujący lub nieprawidłowy Bearer token</td></tr>
+            <tr><td><code>404 Not Found</code></td><td>Kontener lub pod nie istnieje</td></tr>
+            <tr><td><code>500 Internal Server Error</code></td><td>Błąd runtime — szczegóły w polu <code>error</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pre-label">JSON — błąd</div>
+      <pre><code>{ "error": "Invalid port mapping '99999:80': port numbers must be > 0" }</code></pre>
+    </section>
+
+    <!-- API AUTH -->
+    <section id="api-auth">
+      <h2><span class="section-num">08</span> Autoryzacja API <span class="status status-new">NOWE</span></h2>
+      <p>
+        API obsługuje opcjonalną autoryzację przez Bearer token.
+        Gdy <code>--api-token</code> jest podany, wszystkie chronione endpointy
+        wymagają nagłówka <code>Authorization: Bearer &lt;token&gt;</code>.
+        Brak tokenu lub nieprawidłowy token zwraca <code>401 Unauthorized</code>.
+      </p>
+
+      <div class="callout callout-warn">
+        <strong>⚠ DEV MODE</strong>
+        Jeśli <code>--api-token</code> nie jest podany, API działa bez autoryzacji.
+        W środowisku produkcyjnym zawsze ustaw token i włącz TLS.
+      </div>
+
+      <div class="pre-label">przykład — curl z tokenem</div>
+      <pre><code># Ustaw token przy starcie
+hco api --api-token "$(openssl rand -hex 32)"
+
+# Użyj tokenu w żądaniach
+curl -H "Authorization: Bearer &lt;token&gt;" \
+     https://localhost:8443/containers</code></pre>
+
+      <p>
+        Endpointy <code>GET /health</code> i <code>GET /metrics</code> są <strong>publiczne</strong>
+        — nie wymagają tokenu, co umożliwia zewnętrzny scraping metryk i health check
+        przez load balancer.
+      </p>
+    </section>
+
+    <!-- TLS -->
+    <section id="api-tls">
+      <h2><span class="section-num">09</span> TLS / HTTPS <span class="status status-new">NOWE</span></h2>
+      <p>
+        Serwer API obsługuje TLS przez bibliotekę <strong>rustls</strong> (bez OpenSSL).
+        Certyfikat i klucz prywatny podajesz w formacie PEM. Obsługiwane formaty klucza:
+        PKCS8 i RSA PKCS1.
+      </p>
+
+      <h3>Generowanie self-signed certyfikatu (dev)</h3>
+      <div class="pre-label">bash</div>
+      <pre><code>mkdir -p /etc/hco
+openssl req -x509 -newkey rsa:4096 -keyout /etc/hco/tls.key \
+  -out /etc/hco/tls.crt -days 365 -nodes \
+  -subj "/CN=hco-api/O=HackerOS"</code></pre>
+
+      <h3>Uruchomienie z TLS</h3>
+      <div class="pre-label">bash</div>
+      <pre><code>hco api \
+  --api-addr 0.0.0.0:8443 \
+  --tls-cert /etc/hco/tls.crt \
+  --tls-key  /etc/hco/tls.key \
+  --api-token my-secret</code></pre>
+
+      <div class="callout callout-info">
+        <strong>ℹ FALLBACK</strong>
+        Jeśli <code>--tls-cert</code> lub <code>--tls-key</code> są podane, ale pliki
+        nie istnieją, serwer automatycznie wraca do trybu plain HTTP z ostrzeżeniem w logach.
+      </div>
+
+      <h3>Implementacja</h3>
+      <p>
+        TLS loop w <code>src/api.rs</code> akceptuje połączenia przez <code>tokio::net::TcpListener</code>,
+        opakowuje je w <code>tokio_rustls::TlsAcceptor</code> i podaje do <code>hyper 1.x</code>
+        przez adapter <code>TowerToHyperService</code> (bridge między <code>tower::Service</code>
+        a <code>hyper::service::Service</code>).
+      </p>
     </section>
 
     <!-- METRICS -->
     <section id="metrics">
-      <h2><span class="section-num">08</span> Metryki Prometheus</h2>
+      <h2><span class="section-num">10</span> Metryki Prometheus <span class="status status-upd">ZAKTUALIZOWANE</span></h2>
       <p>
         Serwer API eksportuje metryki pod <code>GET /metrics</code> w formacie
-        Prometheus text. Można je zbierać standardowym scrapingiem.
+        Prometheus text. Metryki CPU są teraz <strong>realne</strong> — background task
+        (<code>spawn_metrics_collector</code>) co 1 sekundę czyta <code>cpu.stat</code>
+        z cgroup v2, oblicza deltę <code>usage_usec</code> i przelicza na procenty
+        z uwzględnieniem liczby rdzeni CPU.
       </p>
 
       <div class="table-wrap">
         <table>
           <thead><tr><th>Metryka</th><th>Typ</th><th>Opis</th></tr></thead>
           <tbody>
-            <tr><td><code>containers_total</code></br><td>Gauge</br><td>Łączna liczba kiedykolwiek stworzonych kontenerów</br></tr>
-            <tr><td><code>containers_running</code></br><td>Gauge</br><td>Aktualnie działające kontenery</br></tr>
-            <tr><td><code>container_memory_bytes</code></br><td>GaugeVec</br><td>Użycie pamięci (labels: <code>id</code>, <code>name</code>)</br></tr>
-            <tr><td><code>container_cpu_usage_percent</code></br><td>GaugeVec</br><td>Użycie CPU w % (labels: <code>id</code>, <code>name</code>)</br></tr>
-            <tr><td><code>container_start_total</code></br><td>Counter</br><td>Łączna liczba startów kontenerów</br></tr>
+            <tr><td><code>hco_containers_total</code></td><td>Gauge</td><td>Łączna liczba kiedykolwiek stworzonych kontenerów</td></tr>
+            <tr><td><code>hco_containers_running</code></td><td>Gauge</td><td>Aktualnie działające kontenery</td></tr>
+            <tr><td><code>hco_container_memory_bytes</code></td><td>GaugeVec</td><td>Użycie pamięci z <code>memory.current</code> (labels: <code>id</code>, <code>name</code>)</td></tr>
+            <tr><td><code>hco_container_cpu_usage_percent</code></td><td>GaugeVec</td><td>Rzeczywiste użycie CPU % w oknie 1 s (labels: <code>id</code>, <code>name</code>)</td></tr>
+            <tr><td><code>hco_container_start_total</code></td><td>Counter</td><td>Łączna liczba startów kontenerów</td></tr>
           </tbody>
         </table>
       </div>
 
-      <div class="pre-label">przykładowe dane</div>
-      <pre><code># HELP containers_running Number of currently running containers
-# TYPE containers_running gauge
-containers_running 3
+      <div class="callout callout-success">
+        <strong>✓ REALNE METRYKI CPU</strong>
+        W poprzedniej wersji metryki CPU były zawsze 0. Teraz background task co sekundę
+        czyta <code>usage_usec</code> z cgroup v2, oblicza:
+        <code>cpu% = (Δusage_usec / Δwall_usec) * 100 / num_cpus</code>.
+      </div>
 
-# HELP container_memory_bytes Memory usage in bytes
-# TYPE container_memory_bytes gauge
-container_memory_bytes{id="a3f7...",name="my-nginx"} 1.24e+07</code></pre>
+      <div class="pre-label">przykładowe dane</div>
+      <pre><code># HELP hco_containers_running Number of currently running containers
+# TYPE hco_containers_running gauge
+hco_containers_running 3
+
+# HELP hco_container_memory_bytes Memory usage in bytes
+# TYPE hco_container_memory_bytes gauge
+hco_container_memory_bytes{id="a3f7...",name="my-nginx"} 1.24e+07
+
+# HELP hco_container_cpu_usage_percent CPU usage percent (1-second window)
+# TYPE hco_container_cpu_usage_percent gauge
+hco_container_cpu_usage_percent{id="a3f7...",name="my-nginx"} 2.3</code></pre>
+
+      <h3>Konfiguracja Prometheus scrape</h3>
+      <div class="pre-label">prometheus.yml</div>
+      <pre><code>scrape_configs:
+  - job_name: 'hco'
+    static_configs:
+      - targets: ['localhost:8080']
+    metrics_path: /metrics
+    scrape_interval: 5s</code></pre>
+    </section>
+
+    <!-- OBSERVABILITY -->
+    <section id="observability">
+      <h2><span class="section-num">11</span> Observability / OpenTelemetry <span class="status status-new">NOWE</span></h2>
+      <p>
+        <code>hco</code> używa biblioteki <code>tracing</code> do structured logging.
+        Wspiera eksport tracingów przez protokół OTLP gRPC do OpenTelemetry Collector,
+        Jaeger, Tempo lub innego backendu.
+      </p>
+
+      <h3>Structured logging</h3>
+      <p>Domyślnie logi są wypisywane w formacie tekstowym. Flaga <code>--json-logs</code> włącza format JSON:</p>
+      <div class="pre-label">bash</div>
+      <pre><code>hco api --json-logs 2>&amp;1 | jq .</code></pre>
+
+      <div class="pre-label">przykładowy log JSON</div>
+      <pre><code>{
+  "timestamp": "2025-05-18T12:34:56.789Z",
+  "level": "INFO",
+  "target": "hco::container",
+  "fields": {
+    "id": "a3f7c2d1",
+    "name": "my-nginx",
+    "pid": 12345,
+    "ip": "10.10.0.5",
+    "message": "Container started"
+  }
+}</code></pre>
+
+      <h3>OpenTelemetry OTLP</h3>
+      <p>Flaga <code>--otlp</code> włącza eksport tracingów do OTLP endpoint (gRPC):</p>
+      <div class="pre-label">bash</div>
+      <pre><code>hco api --otlp http://localhost:4317 --json-logs</code></pre>
+
+      <div class="callout callout-info">
+        <strong>ℹ JSON WYMAGANY Z OTLP</strong>
+        Gdy OTel jest aktywny, logi są automatycznie formatowane jako JSON
+        (wymóg <code>JsonFields</code> dla trait bound <code>OpenTelemetryLayer</code>).
+      </div>
+
+      <h3>Poziom logowania</h3>
+      <p>Steruj poziomem przez zmienną środowiskową:</p>
+      <div class="pre-label">bash</div>
+      <pre><code># Pokaż tylko błędy i ostrzeżenia
+RUST_LOG=warn hco api
+
+# Debug dla modułu hco::container
+RUST_LOG=warn,hco::container=debug hco api</code></pre>
     </section>
 
     <!-- SECCOMP -->
     <section id="seccomp">
-      <h2><span class="section-num">09</span> Seccomp / Bezpieczeństwo</h2>
+      <h2><span class="section-num">12</span> Seccomp / Bezpieczeństwo</h2>
       <p>
         <code>hco</code> obsługuje filtrowanie syscalli przez seccomp przy użyciu
         biblioteki <code>libseccomp</code>. Profile są plikami JSON kompatybilnymi
         ze schematem Docker/Podman.
       </p>
+
+      <h3>Walidacja inputów</h3>
+      <p>Moduł <code>src/validation.rs</code> waliduje wszystkie dane wejściowe CLI i API:</p>
+      <ul>
+        <li><strong>Nazwy</strong> — tylko <code>[a-zA-Z0-9_-]</code>, max 128 znaków</li>
+        <li><strong>Obrazy</strong> — blokuje metaznaki shell (<code>$ ; &amp; | ` \ { }</code>)</li>
+        <li><strong>Montowania</strong> — blokuje path traversal (<code>../</code>), wymaga ścieżek absolutnych, blokuje wrażliwe ścieżki (<code>/proc</code>, <code>/sys</code>, <code>/etc/shadow</code> itd.)</li>
+        <li><strong>Porty</strong> — format <code>host:container[/tcp|udp]</code>, zakres 1–65535</li>
+        <li><strong>Env</strong> — klucz musi pasować do <code>[A-Za-z_][A-Za-z0-9_]*</code></li>
+        <li><strong>Memory limit</strong> — format <code>\d+(B|KB|MB|GB)</code></li>
+        <li><strong>CPU percent</strong> — zakres 1–100</li>
+      </ul>
 
       <h3>Format profilu seccomp (JSON)</h3>
       <div class="pre-label">default-profile.json</div>
@@ -1000,23 +1382,16 @@ container_memory_bytes{id="a3f7...",name="my-nginx"} 1.24e+07</code></pre>
         <table>
           <thead><tr><th>Akcja</th><th>Efekt</th></tr></thead>
           <tbody>
-            <tr><td><code>SCMP_ACT_ALLOW</code></br><td>Przepuść syscall</br></tr>
-            <tr><td><code>SCMP_ACT_ERRNO</code></br><td>Zwróć EPERM (domyślny błąd)</br></tr>
-            <tr><td><code>SCMP_ACT_ERRNO(N)</code></br><td>Zwróć errno o numerze N</br></tr>
-            <tr><td><code>SCMP_ACT_KILL</code></br><td>Zabij wątek</br></tr>
-            <tr><td><code>SCMP_ACT_KILL_PROCESS</code></br><td>Zabij cały proces</br></tr>
-            <tr><td><code>SCMP_ACT_TRAP</code></br><td>Wyślij SIGSYS</br></tr>
-            <tr><td><code>SCMP_ACT_LOG</code></br><td>Loguj (przepuść)</br></tr>
+            <tr><td><code>SCMP_ACT_ALLOW</code></td><td>Przepuść syscall</td></tr>
+            <tr><td><code>SCMP_ACT_ERRNO</code></td><td>Zwróć EPERM (domyślny błąd)</td></tr>
+            <tr><td><code>SCMP_ACT_ERRNO(N)</code></td><td>Zwróć errno o numerze N</td></tr>
+            <tr><td><code>SCMP_ACT_KILL</code></td><td>Zabij wątek</td></tr>
+            <tr><td><code>SCMP_ACT_KILL_PROCESS</code></td><td>Zabij cały proces</td></tr>
+            <tr><td><code>SCMP_ACT_TRAP</code></td><td>Wyślij SIGSYS</td></tr>
+            <tr><td><code>SCMP_ACT_LOG</code></td><td>Loguj (przepuść)</td></tr>
           </tbody>
         </table>
       </div>
-
-      <h3>Użycie profilu w konfiguracji</h3>
-      <div class="pre-label">myapp.hk — sekcja [Security]</div>
-      <pre><code>[Security]
--> seccomp_profile = "/etc/hco/profiles/default.json"
--> rootless = false
--> readonly_root = false</code></pre>
 
       <div class="callout callout-danger">
         <strong>🔒 BEZPIECZEŃSTWO</strong>
@@ -1025,13 +1400,113 @@ container_memory_bytes{id="a3f7...",name="my-nginx"} 1.24e+07</code></pre>
       </div>
     </section>
 
+    <!-- STATE -->
+    <section id="state">
+      <h2><span class="section-num">13</span> Stan — SQLite <span class="status status-new">NOWE</span></h2>
+      <p>
+        Stan kontenerów, podów i alokacji IP jest przechowywany w bazie danych SQLite
+        w trybie WAL (Write-Ahead Logging). Zastępuje poprzednie podejście z plikami JSON
+        w <code>/var/run/hackeros/</code>, eliminując race conditions przy równoległych operacjach.
+      </p>
+
+      <h3>Lokalizacja bazy</h3>
+      <pre><code>/var/lib/hackeros/state.db</code></pre>
+      <p>Można zmienić przez flagę <code>--db &lt;path&gt;</code> przy starcie <code>hco api</code>.</p>
+
+      <h3>Schemat bazy</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Tabela</th><th>Zawartość</th></tr></thead>
+          <tbody>
+            <tr><td><code>containers</code></td><td>Stan kontenera + pełny <code>HkConfig</code> jako JSON w kolumnie <code>config_json</code>. Umożliwia restart po zatrzymaniu.</td></tr>
+            <tr><td><code>pods</code></td><td>Stan poda + spec YAML jako JSON. Lista ID kontenerów w <code>container_ids_json</code>.</td></tr>
+            <tr><td><code>ipam</code></td><td>Pula adresów IP — sufiks (2–254), container_id, subnet_prefix, flaga <code>released</code>.</td></tr>
+            <tr><td><code>schema_version</code></td><td>Wersja schematu (migracje automatyczne).</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pre-label">bash — podgląd stanu przez sqlite3</div>
+      <pre><code>sqlite3 /var/lib/hackeros/state.db \
+  "SELECT id, name, image, status, ip_address FROM containers;"
+
+# Sprawdź alokacje IP
+sqlite3 /var/lib/hackeros/state.db \
+  "SELECT container_id, suffix, released FROM ipam;"</code></pre>
+
+      <div class="callout callout-info">
+        <strong>ℹ IPAM</strong>
+        Każdy kontener dostaje unikalny sufiks IP z puli 2–254 przez funkcję
+        <code>db::ipam_allocate()</code>. Po zatrzymaniu kontenera sufiks jest
+        oznaczany jako <code>released=1</code> i może być ponownie użyty.
+        Eliminuje kolizje IP przy dużej liczbie kontenerów.
+      </div>
+    </section>
+
+    <!-- SYSTEMD -->
+    <section id="systemd">
+      <h2><span class="section-num">14</span> Systemd / Socket Activation <span class="status status-new">NOWE</span></h2>
+      <p>
+        <code>hco</code> dostarcza plik unit systemd (<code>hco-api.service</code>)
+        oraz opcjonalny plik socket (<code>hco-api.socket</code>) dla socket activation.
+      </p>
+
+      <h3>Instalacja</h3>
+      <div class="pre-label">bash</div>
+      <pre><code>sudo cp hco-api.service /etc/systemd/system/
+sudo cp hco-api.socket  /etc/systemd/system/   # opcjonalnie
+
+sudo systemctl daemon-reload
+sudo systemctl enable --now hco-api.service</code></pre>
+
+      <h3>Konfiguracja przez EnvironmentFile</h3>
+      <p>Utwórz plik <code>/etc/hco/hco.env</code> z nadpisaniami:</p>
+      <div class="pre-label">/etc/hco/hco.env</div>
+      <pre><code>HCO_API_ADDR=0.0.0.0:8443
+HCO_API_TOKEN=my-production-secret
+HCO_TLS_CERT=/etc/hco/tls.crt
+HCO_TLS_KEY=/etc/hco/tls.key
+HCO_OTLP=http://otel-collector:4317
+RUST_LOG=hco=info</code></pre>
+
+      <h3>Zarządzanie serwisem</h3>
+      <div class="pre-label">bash</div>
+      <pre><code># Status serwisu
+systemctl status hco-api
+
+# Logi (journald)
+journalctl -u hco-api -f
+
+# Restart
+systemctl restart hco-api</code></pre>
+
+      <h3>Socket Activation</h3>
+      <p>
+        Plik <code>hco-api.socket</code> umożliwia uruchomienie serwisu dopiero
+        przy pierwszym połączeniu na port 8080. Oszczędza zasoby przy starcie systemu.
+      </p>
+      <div class="pre-label">bash</div>
+      <pre><code>sudo systemctl enable --now hco-api.socket
+# hco-api.service uruchomi się automatycznie przy pierwszym połączeniu</code></pre>
+
+      <div class="callout callout-warn">
+        <strong>⚠ UPRAWNIENIA</strong>
+        Serwis uruchamiany jest jako root (wymagane dla namespaces i cgroups).
+        <code>CapabilityBoundingSet</code> ogranicza do niezbędnego minimum:
+        <code>CAP_SYS_ADMIN</code>, <code>CAP_NET_ADMIN</code>, <code>CAP_MKNOD</code>,
+        <code>CAP_SETUID</code>, <code>CAP_SETGID</code>, <code>CAP_CHOWN</code>,
+        <code>CAP_DAC_OVERRIDE</code>, <code>CAP_SYS_CHROOT</code>.
+      </div>
+    </section>
+
     <!-- NETWORK -->
     <section id="network">
-      <h2><span class="section-num">10</span> Sieć / CNI</h2>
+      <h2><span class="section-num">15</span> Sieć / CNI</h2>
       <p>
         Domyślny tryb sieciowy to <code>bridge</code>. Każdy kontener dostaje
         parę interfejsów veth: jeden po stronie hosta (podłączony do mostu <code>hkbr0</code>),
-        drugi wewnątrz kontenera jako <code>eth0</code>.
+        drugi wewnątrz kontenera jako <code>eth0</code>. Adres IP jest przydzielany
+        przez IPAM z gwarancją unikalności.
       </p>
 
       <h3>Tryby sieci</h3>
@@ -1039,9 +1514,9 @@ container_memory_bytes{id="a3f7...",name="my-nginx"} 1.24e+07</code></pre>
         <table>
           <thead><tr><th>Tryb</th><th>Opis</th></tr></thead>
           <tbody>
-            <tr><td><code>bridge</code></br><td>Domyślny. Most <code>hkbr0</code>, veth, iptables NAT/DNAT</br></tr>
-            <tr><td><code>cni</code></br><td>Zewnętrzne wtyczki CNI przez <code>cnitool</code></br></tr>
-            <tr><td><code>none</code></br><td>Brak sieci (używane przez kontenery w podach ze shared_network)</br></tr>
+            <tr><td><code>bridge</code></td><td>Domyślny. Most <code>hkbr0</code>, veth, iptables NAT/DNAT (TCP i UDP)</td></tr>
+            <tr><td><code>cni</code></td><td>Zewnętrzne wtyczki CNI przez <code>cnitool</code></td></tr>
+            <tr><td><code>none</code></td><td>Brak sieci (używane przez kontenery w podach ze <code>shared_network</code>)</td></tr>
           </tbody>
         </table>
       </div>
@@ -1050,23 +1525,34 @@ container_memory_bytes{id="a3f7...",name="my-nginx"} 1.24e+07</code></pre>
       <p>Most jest tworzony automatycznie przy pierwszym uruchomieniu:</p>
       <pre><code>Domyślna podsieć: 10.10.0.0/24
 Gateway:         10.10.0.1  (przypisany do hkbr0)
-IP kontenerów:   10.10.0.2 — 10.10.0.254
-NAT:             iptables MASQUERADE na ruch wychodzący</code></pre>
+IP kontenerów:   10.10.0.2 — 10.10.0.254  (zarządzane przez IPAM)
+NAT:             iptables MASQUERADE na ruch wychodzący
+FORWARD:         reguły ACCEPT dla każdego przekierowanego portu</code></pre>
+
+      <h3>Przekierowanie portów</h3>
+      <p>
+        Reguły iptables DNAT są dodawane dla każdego mapowania portów.
+        Obsługiwane protokoły: <code>tcp</code> i <code>udp</code>.
+        Nieużywany interfejs veth host-side jest usuwany przez <code>ip link del</code>
+        po zatrzymaniu kontenera (nazwa zapisana w SQLite jako <code>veth_host</code>).
+      </p>
+      <div class="pre-label">przykład — port UDP</div>
+      <pre><code>hco run dns -i coredns:latest -p 5353:53/udp -d</code></pre>
 
       <div class="callout callout-info">
-        <strong>ℹ IP DETERMINIZM</strong>
-        Adres IP kontenera jest wyznaczany jako <code>10.10.0.(container_id[0] % 250 + 2)</code>.
-        Nie jest to deterministyczne między restartami — używaj DNS lub serwis discovery
-        dla stabilnych adresów.
+        <strong>ℹ IPAM</strong>
+        Adresy IP są przydzielane z puli przez <code>db::ipam_allocate()</code>.
+        Po zatrzymaniu kontenera adres jest zwalniany (<code>released=1</code>) i może być
+        ponownie użyty. Eliminuje kolizje przy dużej liczbie kontenerów.
       </div>
     </section>
 
     <!-- IMAGES -->
     <section id="images">
-      <h2><span class="section-num">11</span> Obrazy OCI</h2>
+      <h2><span class="section-num">16</span> Obrazy OCI</h2>
       <p>
         <code>hco</code> pobiera obrazy bezpośrednio z rejestrów OCI (Docker Hub, prywatne)
-        bez potrzeby instalowania Dockera.
+        bez potrzeby instalowania Dockera. Warstwy są buforowane lokalnie.
       </p>
 
       <h3>Format referencji obrazu</h3>
@@ -1074,55 +1560,87 @@ NAT:             iptables MASQUERADE na ruch wychodzący</code></pre>
         <table>
           <thead><tr><th>Format</th><th>Przykład</th><th>Rozwinięcie</th></tr></thead>
           <tbody>
-            <tr><td><code>name</code></br><td><code>alpine</code></br><td><code>registry-1.docker.io/library/alpine:latest</code></br></tr>
-            <tr><td><code>name:tag</code></br><td><code>nginx:alpine</code></br><td><code>registry-1.docker.io/library/nginx:alpine</code></br></tr>
-            <tr><td><code>user/repo:tag</code></br><td><code>myuser/myapp:v1</code></br><td><code>registry-1.docker.io/myuser/myapp:v1</code></br></tr>
-            <tr><td><code>registry/repo:tag</code></br><td><code>ghcr.io/org/app:latest</code></br><td>Bezpośrednie użycie rejestru</br></tr>
+            <tr><td><code>name</code></td><td><code>alpine</code></td><td><code>registry-1.docker.io/library/alpine:latest</code></td></tr>
+            <tr><td><code>name:tag</code></td><td><code>nginx:alpine</code></td><td><code>registry-1.docker.io/library/nginx:alpine</code></td></tr>
+            <tr><td><code>user/repo:tag</code></td><td><code>myuser/myapp:v1</code></td><td><code>registry-1.docker.io/myuser/myapp:v1</code></td></tr>
+            <tr><td><code>registry/repo:tag</code></td><td><code>ghcr.io/org/app:latest</code></td><td>Bezpośrednie użycie rejestru</td></tr>
           </tbody>
         </table>
       </div>
 
-      <h3>Cache obrazów</h3>
+      <h3>Cache warstw i timeouty</h3>
       <p>
-        Warstwy obrazów są zapisywane w <code>/var/lib/hackeros/images/</code>
-        i <code>/var/lib/hackeros/layers/</code>. Przy ponownym uruchomieniu
-        tego samego obrazu pobieranie jest pomijane.
+        Warstwy obrazów są zapisywane w <code>/var/lib/hackeros/layers/</code>.
+        Przy ponownym użyciu tej samej warstwy (identyczny digest SHA256) pobieranie
+        jest pomijane. Każda pobrana warstwa jest weryfikowana przez SHA256.
       </p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Operacja</th><th>Timeout</th></tr></thead>
+          <tbody>
+            <tr><td>Pobieranie manifestu / auth token</td><td>30 s</td></tr>
+            <tr><td>Pobieranie warstwy</td><td>300 s</td></tr>
+            <tr><td>Start kontenera (API)</td><td>300 s</td></tr>
+            <tr><td>Start poda (API)</td><td>600 s</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Garbage collect</h3>
+      <div class="pre-label">bash</div>
+      <pre><code># Usuń warstwy nieużywane przez żaden obraz
+hco image gc</code></pre>
 
       <h3>Import z archiwum tar</h3>
-      <div class="pre-label">API</div>
-      <pre><code>// Programatycznie (Rust)
-ImageManager::import_tar(Path::new("/tmp/myimage.tar"), "myimage:local")?;</code></pre>
+      <div class="pre-label">bash</div>
+      <pre><code>hco image import my-image:local -f /tmp/myimage.tar</code></pre>
     </section>
 
     <!-- ERRORS -->
     <section id="errors">
-      <h2><span class="section-num">12</span> Błędy i diagnostyka</h2>
+      <h2><span class="section-num">17</span> Błędy i diagnostyka</h2>
       <p>
         <code>hco</code> używa biblioteki <code>miette</code> do czytelnych komunikatów błędów
-        z kontekstem i wskazówkami.
+        z kontekstem i wskazówkami. Logowanie odbywa się przez <code>tracing</code>
+        z filtrem kontrolowanym przez <code>RUST_LOG</code>.
       </p>
 
       <h3>Logi kontenerów</h3>
-      <p>Stdout kontenera jest przechwytywany do pliku:</p>
+      <p>
+        Stdout kontenera jest przechwytywany do pliku z limitem 100 MB i rotacją
+        3 plików (np. <code>.log.1</code>, <code>.log.2</code>, <code>.log.3</code>):
+      </p>
       <pre><code>/var/log/hackeros/&lt;container-id&gt;.log</code></pre>
       <div class="pre-label">bash — podgląd logów</div>
       <pre><code>tail -f /var/log/hackeros/a3f7c2d1-8b4e-4f2a-b1c3-d5e6f7a8b9c0.log
 
 # Lub przez API:
-curl http://localhost:8080/containers/a3f7c/logs | jq .logs</code></pre>
+curl -H "Authorization: Bearer &lt;token&gt;" \
+     https://localhost:8443/containers/a3f7c/logs | jq .logs</code></pre>
+
+      <h3>Rollback przy błędzie startu</h3>
+      <p>
+        Jeśli start kontenera nie powiedzie się na dowolnym etapie (np. błąd sieci
+        po zamontowaniu OverlayFS), struktura <code>StartResources</code> automatycznie
+        cofa wszystkie operacje: odmontowuje overlayfs, usuwa veth, czyści reguły iptables,
+        usuwa wpis z SQLite i zwalnia IP z IPAM.
+      </p>
 
       <h3>Typowe błędy</h3>
       <div class="table-wrap">
         <table>
           <thead><tr><th>Błąd</th><th>Przyczyna</th><th>Rozwiązanie</th></tr></thead>
           <tbody>
-            <tr><td><code>Failed to clone container process</code></br><td>Brak uprawnień root lub brak obsługi namespace</br><td>Uruchom jako root lub włącz user namespaces w kernelu</br></tr>
-            <tr><td><code>Failed to bind to addr</code></br><td>Port zajęty lub brak uprawnień</br><td>Sprawdź <code>ss -tlnp</code>, zmień port API</br></tr>
-            <tr><td><code>Failed to get manifest</code></br><td>Brak dostępu do rejestru lub zły tag obrazu</br><td>Sprawdź połączenie i nazwę obrazu</br></tr>
-            <tr><td><code>Digest mismatch</code></br><td>Uszkodzona warstwa podczas pobierania</br><td>Usuń cache: <code>rm -rf /var/lib/hackeros/images/&lt;img&gt;</code></br></tr>
-            <tr><td><code>Container not found</code></br><td>Podany ID/nazwa nie istnieje w <code>/var/run/hackeros/</code></br><td>Sprawdź <code>hco list</code></br></tr>
-            <tr><td><code>Failed to create seccomp filter</code></br><td>Kernel nie obsługuje seccomp lub brak <code>libseccomp</code></br><td>Sprawdź <code>CONFIG_SECCOMP</code> i zainstaluj libseccomp-dev</br></tr>
+            <tr><td><code>Failed to clone container process</code></td><td>Brak uprawnień root lub brak obsługi namespace</td><td>Uruchom jako root lub włącz user namespaces w kernelu</td></tr>
+            <tr><td><code>Cannot bind addr</code></td><td>Port zajęty lub brak uprawnień</td><td>Sprawdź <code>ss -tlnp</code>, zmień port API</td></tr>
+            <tr><td><code>Failed to get manifest</code></td><td>Brak dostępu do rejestru lub zły tag obrazu</td><td>Sprawdź połączenie i nazwę obrazu</td></tr>
+            <tr><td><code>Digest mismatch</code></td><td>Uszkodzona warstwa podczas pobierania</td><td>Usuń cache: <code>rm -rf /var/lib/hackeros/images/&lt;img&gt;</code></td></tr>
+            <tr><td><code>Container not found</code></td><td>Podany ID/nazwa nie istnieje w SQLite</td><td>Sprawdź <code>hco list</code></td></tr>
+            <tr><td><code>IPAM pool exhausted</code></td><td>Brak wolnych adresów IP (wszystkie 253 zajęte)</td><td>Zatrzymaj nieużywane kontenery</td></tr>
+            <tr><td><code>Invalid mount spec</code></td><td>Ścieżka relatywna, traversal lub wrażliwa ścieżka</td><td>Użyj bezwzględnej ścieżki poza <code>/proc</code>, <code>/sys</code></td></tr>
+            <tr><td><code>Cannot open TLS cert/key</code></td><td>Plik nie istnieje lub brak uprawnień odczytu</td><td>Sprawdź ścieżki i <code>chmod 600 /etc/hco/tls.key</code></td></tr>
+            <tr><td><code>Failed to create seccomp filter</code></td><td>Kernel nie obsługuje seccomp lub brak <code>libseccomp</code></td><td>Sprawdź <code>CONFIG_SECCOMP</code> i zainstaluj libseccomp-dev</td></tr>
+            <tr><td><code>Unauthorized</code></td><td>Brakujący lub nieprawidłowy Bearer token</td><td>Dodaj nagłówek <code>Authorization: Bearer &lt;token&gt;</code></td></tr>
           </tbody>
         </table>
       </div>
@@ -1130,7 +1648,7 @@ curl http://localhost:8080/containers/a3f7c/logs | jq .logs</code></pre>
 
     <!-- LICENSE -->
     <section id="license">
-      <h2><span class="section-num">13</span> Licencja</h2>
+      <h2><span class="section-num">18</span> Licencja</h2>
       <p>
         HackerOS Containers jest udostępniany na licencji <strong>MIT</strong>.
       </p>
