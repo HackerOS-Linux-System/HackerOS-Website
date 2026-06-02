@@ -12,6 +12,20 @@ window.HACKEROS_TRANS_RELEASES = {
         navDocs:      'Documentation',
         releases: [
             {
+                version: 'HackerOS V4.7',
+                desc: 'Nowa edycja z poprawkami oraz aktualizacjami.',
+                dates: [
+                    'HackerOS Official: 1.06.2026',
+                    'HackerOS Cybersecurity: 2.06.2026',
+                    'HackerOS Gaming: 3.06.2026',
+                ],
+                changelog: [
+                    'Naprawiono błędy z autologowaniem.',
+                    'Zaktualizowano narzędzia CLI/GUI.',
+                    'Dodano nową edycję Gaming.',
+                ]
+            },
+            {
                 version: 'HackerOS V4.6',
                 desc: 'Nowa edycja z zaktualizowanymi narzędziami CLI oraz zaktualizowanym motd.',
                 dates: [
@@ -279,6 +293,20 @@ window.HACKEROS_TRANS_RELEASES = {
         navDocs:      'Documentation',
         releases: [
             {
+                version: 'HackerOS V4.7',
+                desc: 'New edition with fixes and updates.',
+                dates: [
+                    'HackerOS Official: 1.06.2026',
+                    'HackerOS Cybersecurity: 2.06.2026',
+                    'HackerOS Gaming: 3.06.2026',
+                ],
+                changelog: [
+                    'Fixed autologin bugs.',
+                    'Updated CLI/GUI tools.',
+                    'Added new Gaming edition.',
+                ]
+            },
+            {
                 version: 'HackerOS V4.6',
                 desc: 'New edition with updated CLI tools and updated MOTD.',
                 dates: [
@@ -291,7 +319,6 @@ window.HACKEROS_TRANS_RELEASES = {
                     'Updated MOTD',
                 ]
             },
-            
             {
                 version: 'HackerOS V4.5',
                 desc: 'New edition mainly with tool improvements.',
