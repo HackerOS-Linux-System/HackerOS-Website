@@ -1,7 +1,19 @@
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background-color:#0c0f14;font-family:'Inter','Segoe UI',system-ui,-apple-system,'Roboto',sans-serif;line-height:1.55;min-height:100vh;display:flex;flex-direction:column;color:#eef2f8;}
-.top-bar{background-color:#05070a;width:100%;box-shadow:0 8px 20px rgba(0,0,0,.6);position:relative;z-index:100;border-bottom:1px solid #20262e;}
-.navbar-container{display:flex;align-items:center;justify-content:flex-start;max-width:1600px;margin:0 auto;padding:0 28px;min-height:74px;gap:2rem;}
+
+/* ── Górny pasek wyszukiwania ── */
+.search-top{background-color:#05070a;border-bottom:1px solid #1e262f;padding:14px 0;}
+.search-top-inner{max-width:600px;margin:0 auto;padding:0 20px;}
+.search-wrapper{position:relative;}
+.search-icon{position:absolute;left:18px;top:50%;transform:translateY(-50%);color:#7a8a9e;font-size:1rem;transition:color .2s;}
+.search-top-inner input{width:100%;background:#141b24;border:2px solid #2f3845;border-radius:60px;padding:12px 24px 12px 50px;color:#eef2f8;font-size:1.05rem;outline:none;transition:all .25s;box-shadow:0 0 0 transparent;}
+.search-top-inner input::placeholder{color:#7a8a9e;font-weight:300;}
+.search-top-inner input:focus{border-color:#5f7f9e;background:#1e2834;box-shadow:0 0 0 4px rgba(95,127,158,0.2);}
+.search-top-inner input:focus + .search-icon,
+.search-top-inner input:focus ~ .search-icon{color:#8ab0d6;}
+
+.top-bar{background-color:#05070a;width:100%;box-shadow:0 4px 16px rgba(0,0,0,.5);position:relative;z-index:100;border-bottom:1px solid #20262e;}
+.navbar-container{display:flex;align-items:center;justify-content:flex-start;max-width:1600px;margin:0 auto;padding:0 28px;min-height:74px;gap:2rem;flex-wrap:wrap;}
 .logo-area{flex-shrink:0;line-height:0;transition:filter .2s;}.logo-area:hover{filter:brightness(.92);}
 .logo-area a{display:inline-block;text-decoration:none;}
 .logo-area img{display:block;max-height:54px;width:auto;height:auto;filter:drop-shadow(0 2px 5px rgba(0,0,0,.5));border-radius:8px;cursor:pointer;}
@@ -10,8 +22,9 @@ body{background-color:#0c0f14;font-family:'Inter','Segoe UI',system-ui,-apple-sy
 .nav-list li{margin:0;position:relative;}
 .nav-list a{display:inline-block;padding:8px 18px;font-weight:550;font-size:.95rem;letter-spacing:.2px;text-decoration:none;color:#e3e9f2;background-color:transparent;border-radius:60px;transition:all .22s;font-family:inherit;white-space:nowrap;}
 .nav-list a:hover{background-color:#2a313c;color:white;transform:translateY(-1px);box-shadow:0 2px 8px rgba(0,0,0,.4);}
+.nav-list li.hidden-tool{display:none;}
 
-/* ── Lang switcher modal buttons (injected by lang-switcher.js) ────── */
+/* ── Lang switcher modal buttons ── */
 #hl-settings-li{display:flex!important;align-items:center;margin-left:8px;}
 .hl-settings-btn{background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:6px;border-radius:8px;transition:opacity .2s,transform .3s;opacity:.85;}
 .hl-settings-btn:hover{opacity:1;transform:rotate(30deg);}
