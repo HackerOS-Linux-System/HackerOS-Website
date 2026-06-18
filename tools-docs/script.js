@@ -11,9 +11,9 @@ function applyLang(lang) {
         const key = a.dataset.key;
         if (t.navItems && t.navItems[key]) a.textContent = t.navItems[key];
     });
-    const dropLabel = document.getElementById('lang-drop-label');
-    if (dropLabel && t.langDropBtn) dropLabel.textContent = t.langDropBtn;
-    const hsharpLink = document.getElementById('lang-drop-hsharp');
+        const dropLabel = document.getElementById('lang-drop-label');
+        if (dropLabel && t.langDropBtn) dropLabel.textContent = t.langDropBtn;
+        const hsharpLink = document.getElementById('lang-drop-hsharp');
     if (hsharpLink && t.langDropLinks) hsharpLink.textContent = t.langDropLinks.hsharp;
     const hlLink = document.getElementById('lang-drop-hackerlang');
     if (hlLink && t.langDropLinks) hlLink.textContent = t.langDropLinks.hackerLang;
@@ -97,10 +97,36 @@ function initLangDropdown() {
     document.addEventListener('keydown', e => { if (e.key === 'Escape') dd.classList.remove('open'); });
 }
 
+/* ── Wyszukiwanie (tylko górne menu) ── */
+function filterTools(searchTerm) {
+    const term = searchTerm.toLowerCase().trim();
+    function matches(element) {
+        if (!term) return true;
+        const text = element.textContent.toLowerCase();
+        const key = element.dataset.key ? element.dataset.key.toLowerCase() : '';
+        return text.includes(term) || key.includes(term);
+    }
+    document.querySelectorAll('.nav-list > li:not(.dropdown)').forEach(li => {
+        const a = li.querySelector('a');
+        if (!a) return;
+        li.classList.toggle('hidden-tool', !matches(a));
+    });
+}
+
+function initSearch() {
+    const input = document.getElementById('toolsSearch');
+    if (!input) return;
+    input.addEventListener('input', function() {
+        filterTools(this.value);
+    });
+    if (input.value) filterTools(input.value);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const lang = window.HackerLang ? window.HackerLang.getLang() : 'pl';
     applyLang(lang);
     bindControls(); bindHoverEvents(); bindKeyboard();
     isHovering = false; startAutoPlay(); initLangDropdown();
+    initSearch();
 });
 window.addEventListener('resize', () => updateSliderPosition());
