@@ -76,7 +76,7 @@ window.__HL_SECTIONS['podstawy'] = `
 <table class="ref-table">
 <tr><th>Schemat</th><th>Opis</th><th>Przykład</th></tr>
 <tr><td class="td-syntax">std -> mod -> sub</td><td class="td-desc">Biblioteka standardowa</td><td class="td-note">use "std -> io" from "io"</td></tr>
-<tr><td class="td-syntax">vira -> pkg</td><td class="td-desc">Ekosystem Vira</td><td class="td-note">use "vira -> scanner/1.2" from "sc"</td></tr>
+<tr><td class="td-syntax">bytes -> pkg</td><td class="td-desc">Ekosystem Vira</td><td class="td-note">use "bytes -> scanner/1.2" from "sc"</td></tr>
 <tr><td class="td-syntax">bytes -> pkg</td><td class="td-desc">Bytes Repository</td><td class="td-note">use "bytes -> exploit" from "ex"</td></tr>
 <tr><td class="td-syntax">python -> pkg</td><td class="td-desc">Python interop (bytes PM)</td><td class="td-note">use "python -> numpy" from "np"</td></tr>
 <tr><td class="td-syntax">github.com/u/r</td><td class="td-desc">Git repo bezpośrednio</td><td class="td-note">use "github.com/user/lib" from "lib"</td></tr>
@@ -93,7 +93,7 @@ window.__HL_SECTIONS['podstawy'] = `
 <span class="t-kw">use</span> <span class="t-str">"std -> gtk"</span>            <span class="t-kw">from</span> <span class="t-str">"gtk"</span>
 
 <span class="t-comment">;; Vira registry (projekt kompilowany)</span>
-<span class="t-kw">use</span> <span class="t-str">"vira -> scanner/1.2"</span>  <span class="t-kw">from</span> <span class="t-str">"scanner"</span>
+<span class="t-kw">use</span> <span class="t-str">"bytes -> scanner/1.2"</span>  <span class="t-kw">from</span> <span class="t-str">"scanner"</span>
 
 <span class="t-comment">;; Bytes Repository (JIT/interpreter)</span>
 <span class="t-kw">use</span> <span class="t-str">"bytes -> exploit-db"</span>  <span class="t-kw">from</span> <span class="t-str">"edb"</span>
