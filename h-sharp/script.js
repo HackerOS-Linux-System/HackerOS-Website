@@ -12,6 +12,9 @@
         ['sec-zaawansowane', 'zaawansowane'],
         ['sec-przyklady',    'przyklady'],
         ['sec-gramatyka',    'gramatyka'],
+        ['sec-tests',        'tests'],
+        ['sec-modules',      'modules'],
+        ['sec-examples-extra', 'examples-extra'],
     ];
     function injectSections() {
         var reg = window.__HL_SECTIONS || {};
