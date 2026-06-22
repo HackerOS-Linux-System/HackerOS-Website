@@ -57,7 +57,7 @@ window.__HL_SECTIONS['async'] = `
 <span class="t-kw">use</span> <span class="t-str">"std -> yaml"</span>     <span class="t-kw">from</span> <span class="t-str">"yaml"</span>
 
 <span class="t-kw">fn</span> <span class="t-func">main</span>() <span class="t-kw">is</span>
-    <span class="t-kw">let</span> raw: string = <span class="t-str">"{\"host\":\"192.168.1.1\",\"port\":443}"</span>
+    <span class="t-kw">let</span> raw: string = <span class="t-str">"{{\"host\":\"192.168.1.1\",\"port\":443}}"</span>
     <span class="t-kw">let</span> doc = json::parse(raw)
     write(<span class="t-str">"host: "</span> + json::get_str(doc, <span class="t-str">"host"</span>))
     write(<span class="t-str">"port: "</span> + to_string(json::get_int(doc, <span class="t-str">"port"</span>)))
@@ -76,7 +76,7 @@ window.__HL_SECTIONS['async'] = `
     <span class="t-kw">let</span> resp: string = http::get(<span class="t-str">"https://example.com/api"</span>)
     write(resp)
 
-    <span class="t-kw">let</span> body: string = <span class="t-str">"{\"key\":\"value\"}"</span>
+    <span class="t-kw">let</span> body: string = <span class="t-str">"{{\"key\":\"value\"}}"</span>
     <span class="t-kw">let</span> r: string = http::post(<span class="t-str">"https://api.example.com"</span>, body)
     write(r)
 <span class="t-kw">end</span></pre></div></div>
