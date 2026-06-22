@@ -213,7 +213,7 @@ window.__HL_SECTIONS['przyklady'] = `
 <h3>Importy</h3>
 <table class="ref-table">
 <tr><td class="td-syntax">use "std -> io" from "io"</td><td class="td-desc">Std lib</td></tr>
-<tr><td class="td-syntax">use "vira -> pkg" from "p"</td><td class="td-desc">Vira registry</td></tr>
+<tr><td class="td-syntax">use "github.com/user/pkg" from "p"</td><td class="td-desc">bytes registry / GitHub</td></tr>
 <tr><td class="td-syntax">use "bytes -> pkg" from "p"</td><td class="td-desc">Bytes repo</td></tr>
 <tr><td class="td-syntax">use "python -> np" from "np"</td><td class="td-desc">Python interop</td></tr>
 <tr><td class="td-syntax">use "github.com/u/r" from "r"</td><td class="td-desc">Git repo</td></tr>
@@ -244,8 +244,8 @@ window.__HL_SECTIONS['przyklady'] = `
 <tr><td class="td-syntax">hsharp preview f.h#</td><td class="td-desc">Interpreter</td></tr>
 <tr><td class="td-syntax">hsharp build f.h#</td><td class="td-desc">Cranelift compile</td></tr>
 <tr><td class="td-syntax">hsharp check f.h#</td><td class="td-desc">Syntax + types</td></tr>
-<tr><td class="td-syntax">vira build</td><td class="td-desc">Projekt Cranelift</td></tr>
-<tr><td class="td-syntax">vira build --release</td><td class="td-desc">LLVM O3+AVX2</td></tr>
+<tr><td class="td-syntax">bytes run</td><td class="td-desc">JIT w RAM</td></tr>
+<tr><td class="td-syntax">h# compile --release</td><td class="td-desc">LLVM O3+AVX2</td></tr>
 <tr><td class="td-syntax">bytes run</td><td class="td-desc">JIT w RAM</td></tr>
 <tr><td class="td-syntax">bytes python numpy</td><td class="td-desc">Python pkg</td></tr>
 </table>
@@ -262,6 +262,243 @@ window.__HL_SECTIONS['przyklady'] = `
 <tr><td class="td-syntax">use "std -> env"</td><td class="td-desc">get, set, args</td></tr>
 </table>
 </div>
+</div>
+</div>
+
+<div class="divider"></div>
+</div>
+</div>
+</div>
+
+<div class="section" id="examples-extra">
+<div class="sec-header"><span class="sec-num">21b</span><h2>Więcej przykładów</h2></div>
+
+<h3>JSON API Client</h3>
+<div class="code-block">
+<div class="code-header"><span class="code-filename">json_api.h#</span><button class="copy-btn">Copy</button></div>
+<div class="code-body"><div class="code-inner"><pre><span class="t-kw">use</span> <span class="t-str">"std -> net_http"</span> <span class="t-kw">from</span> <span class="t-str">"http"</span>
+<span class="t-kw">use</span> <span class="t-str">"std -> json"</span>     <span class="t-kw">from</span> <span class="t-str">"json"</span>
+<span class="t-kw">use</span> <span class="t-str">"std -> fmt"</span>      <span class="t-kw">from</span> <span class="t-str">"fmt"</span>
+
+struct User <span class="t-kw">is</span>
+    <span class="t-kw">pub</span> id:    int
+    <span class="t-kw">pub</span> name:  string
+    <span class="t-kw">pub</span> email: string
+<span class="t-kw">end</span>
+
+<span class="t-kw">fn</span> <span class="t-fn">fetch_user</span>(id: int) -> User? <span class="t-kw">is</span>
+    <span class="t-kw">let</span> url  = <span class="t-str">"https://api.example.com/users/{id}"</span>
+    <span class="t-kw">let</span> resp = http::get(url)
+    <span class="t-kw">if</span> resp.status != <span class="t-num">200</span> <span class="t-kw">is</span> return nil <span class="t-kw">end</span>
+    <span class="t-kw">let</span> obj = json::parse(resp.body)<span class="t-op">?</span>
+    return User {
+        id:    json::get_int(obj, <span class="t-str">"id"</span>),
+        name:  json::get_str(obj, <span class="t-str">"name"</span>),
+        email: json::get_str(obj, <span class="t-str">"email"</span>)
+    }
+<span class="t-kw">end</span>
+
+<span class="t-kw">fn</span> <span class="t-fn">main</span>() <span class="t-kw">is</span>
+    <span class="t-kw">let</span> user = fetch_user(<span class="t-num">1</span>)
+    <span class="t-kw">if</span> user == nil <span class="t-kw">is</span>
+        write(fmt::red(<span class="t-str">"User not found"</span>))
+    <span class="t-kw">else</span> <span class="t-kw">is</span>
+        write(fmt::bold(<span class="t-str">"User #{user.id}: {user.name}"</span>))
+        write(<span class="t-str">"Email: {user.email}"</span>)
+    <span class="t-kw">end</span>
+<span class="t-kw">end</span></pre></div></div>
+</div>
+
+<h3>XOR Cipher + Hex</h3>
+<div class="code-block">
+<div class="code-header"><span class="code-filename">xor_cipher.h#</span><button class="copy-btn">Copy</button></div>
+<div class="code-body"><div class="code-inner"><pre><span class="t-kw">use</span> <span class="t-str">"std -> sec"</span> <span class="t-kw">from</span> <span class="t-str">"sec"</span>
+<span class="t-kw">use</span> <span class="t-str">"std -> hex"</span> <span class="t-kw">from</span> <span class="t-str">"hex"</span>
+<span class="t-kw">use</span> <span class="t-str">"std -> cli"</span> <span class="t-kw">from</span> <span class="t-str">"cli"</span>
+
+<span class="t-kw">fn</span> <span class="t-fn">main</span>() <span class="t-kw">is</span>
+    <span class="t-kw">let</span> plain  = cli::prompt(<span class="t-str">"Message: "</span>)
+    <span class="t-kw">let</span> key    = cli::prompt(<span class="t-str">"Key:     "</span>)
+
+    <span class="t-kw">let</span> enc    = sec::xor(plain, key)
+    <span class="t-kw">let</span> enc_hex = hex::encode(enc)
+    write(<span class="t-str">"Encrypted (hex): {enc_hex}"</span>)
+
+    <span class="t-kw">let</span> dec    = sec::xor(enc, key)
+    write(<span class="t-str">"Decrypted:       {dec}"</span>)
+
+    <span class="t-comment">;; Verify roundtrip</span>
+    <span class="t-kw">if</span> dec == plain <span class="t-kw">is</span>
+        write(<span class="t-str">"✓ Roundtrip OK"</span>)
+    <span class="t-kw">else</span> <span class="t-kw">is</span>
+        write(<span class="t-str">"✗ Roundtrip FAILED"</span>)
+    <span class="t-kw">end</span>
+<span class="t-kw">end</span></pre></div></div>
+</div>
+
+<h3>Async HTTP Scraper</h3>
+<div class="code-block">
+<div class="code-header"><span class="code-filename">scraper.h#</span><button class="copy-btn">Copy</button></div>
+<div class="code-body"><div class="code-inner"><pre><span class="t-kw">use</span> <span class="t-str">"std -> net_http"</span> <span class="t-kw">from</span> <span class="t-str">"http"</span>
+<span class="t-kw">use</span> <span class="t-str">"std -> async_"</span>   <span class="t-kw">from</span> <span class="t-str">"async"</span>
+<span class="t-kw">use</span> <span class="t-str">"std -> regex"</span>    <span class="t-kw">from</span> <span class="t-str">"re"</span>
+<span class="t-kw">use</span> <span class="t-str">"std -> fmt"</span>      <span class="t-kw">from</span> <span class="t-str">"fmt"</span>
+
+async <span class="t-kw">fn</span> <span class="t-fn">fetch_title</span>(url: string) -> string <span class="t-kw">is</span>
+    <span class="t-kw">let</span> resp = http::get(url)
+    <span class="t-kw">if</span> resp.status != <span class="t-num">200</span> <span class="t-kw">is</span>
+        return <span class="t-str">"[{resp.status}] {url}"</span>
+    <span class="t-kw">end</span>
+    <span class="t-kw">let</span> title = re::find(resp.body, <span class="t-str">"&lt;title&gt;([^&lt;]+)&lt;/title&gt;"</span>)
+    <span class="t-kw">if</span> title == <span class="t-str">""</span> <span class="t-kw">is</span> return <span class="t-str">"(no title)"</span> <span class="t-kw">end</span>
+    return title
+<span class="t-kw">end</span>
+
+async <span class="t-kw">fn</span> <span class="t-fn">main</span>() <span class="t-kw">is</span>
+    <span class="t-kw">let</span> urls = [
+        <span class="t-str">"https://hackeros.dev"</span>,
+        <span class="t-str">"https://example.com"</span>,
+        <span class="t-str">"https://httpbin.org"</span>
+    ]
+
+    <span class="t-kw">let mut</span> tasks: [any] = []
+    <span class="t-kw">for</span> url <span class="t-kw">in</span> urls <span class="t-kw">is</span>
+        tasks.push(async::spawn(|| -> string <span class="t-kw">is</span>
+            return await fetch_title(url)
+        <span class="t-kw">end</span>))
+    <span class="t-kw">end</span>
+
+    <span class="t-kw">let mut</span> i: int = <span class="t-num">0</span>
+    <span class="t-kw">for</span> task <span class="t-kw">in</span> tasks <span class="t-kw">is</span>
+        <span class="t-kw">let</span> title = await task
+        write(fmt::green(<span class="t-str">"[{i}]"</span>) + <span class="t-str">" {urls[i]}"</span>)
+        write(<span class="t-str">"     Title: {title}"</span>)
+        i += <span class="t-num">1</span>
+    <span class="t-kw">end</span>
+<span class="t-kw">end</span></pre></div></div>
+</div>
+
+<h3>Iterator pipeline — przetwarzanie danych</h3>
+<div class="code-block">
+<div class="code-header"><span class="code-filename">pipeline.h#</span><button class="copy-btn">Copy</button></div>
+<div class="code-body"><div class="code-inner"><pre><span class="t-kw">use</span> <span class="t-str">"std -> iter"</span> <span class="t-kw">from</span> <span class="t-str">"iter"</span>
+<span class="t-kw">use</span> <span class="t-str">"std -> sort"</span> <span class="t-kw">from</span> <span class="t-str">"sort"</span>
+<span class="t-kw">use</span> <span class="t-str">"std -> fmt"</span>  <span class="t-kw">from</span> <span class="t-str">"fmt"</span>
+
+struct Student <span class="t-kw">is</span>
+    <span class="t-kw">pub</span> name:  string
+    <span class="t-kw">pub</span> score: int
+    <span class="t-kw">pub</span> grade: string
+<span class="t-kw">end</span>
+
+<span class="t-kw">fn</span> <span class="t-fn">letter_grade</span>(score: int) -> string <span class="t-kw">is</span>
+    <span class="t-kw">if</span> score >= <span class="t-num">90</span> <span class="t-kw">is</span> return <span class="t-str">"A"</span> <span class="t-kw">end</span>
+    <span class="t-kw">if</span> score >= <span class="t-num">80</span> <span class="t-kw">is</span> return <span class="t-str">"B"</span> <span class="t-kw">end</span>
+    <span class="t-kw">if</span> score >= <span class="t-num">70</span> <span class="t-kw">is</span> return <span class="t-str">"C"</span> <span class="t-kw">end</span>
+    return <span class="t-str">"F"</span>
+<span class="t-kw">end</span>
+
+<span class="t-kw">fn</span> <span class="t-fn">main</span>() <span class="t-kw">is</span>
+    <span class="t-kw">let</span> scores = [<span class="t-num">88</span>, <span class="t-num">92</span>, <span class="t-num">74</span>, <span class="t-num">65</span>, <span class="t-num">95</span>, <span class="t-num">83</span>, <span class="t-num">71</span>, <span class="t-num">50</span>]
+
+    <span class="t-comment">;; Pipeline: filtruj zdanych → oblicz oceny → stats</span>
+    <span class="t-kw">let</span> passing = iter::filter(scores, |s: int| -> bool <span class="t-kw">is</span> s >= <span class="t-num">60</span> <span class="t-kw">end</span>)
+    <span class="t-kw">let</span> total   = iter::reduce(passing, <span class="t-num">0</span>, |a: int, x: int| -> int <span class="t-kw">is</span> a + x <span class="t-kw">end</span>)
+    <span class="t-kw">let</span> avg     = total / passing.len()
+    <span class="t-kw">let</span> highest = sort::max_int(scores)
+
+    write(fmt::bold(<span class="t-str">"=== Wyniki ==="</span>))
+    write(<span class="t-str">"Zdanych:  {passing.len()}/{scores.len()}"</span>)
+    write(<span class="t-str">"Średnia:  {avg}"</span>)
+    write(<span class="t-str">"Najwyższy: {highest} ({letter_grade(highest)})"</span>)
+
+    write(<span class="t-str">""</span>)
+    write(fmt::bold(<span class="t-str">"Rozkład ocen:"</span>))
+    <span class="t-kw">for</span> s <span class="t-kw">in</span> scores <span class="t-kw">is</span>
+        <span class="t-kw">let</span> g    = letter_grade(s)
+        <span class="t-kw">let</span> bar  = iter::repeat(<span class="t-str">"█"</span>, s / <span class="t-num">10</span>)
+        <span class="t-kw">let</span> line = iter::join(bar, <span class="t-str">""</span>)
+        write(<span class="t-str">"{s} [{g}] {line}"</span>)
+    <span class="t-kw">end</span>
+<span class="t-kw">end</span></pre></div></div>
+</div>
+
+<h3>TCP Port Scanner</h3>
+<div class="code-block">
+<div class="code-header"><span class="code-filename">port_scanner.h#</span><button class="copy-btn">Copy</button></div>
+<div class="code-body"><div class="code-inner"><pre><span class="t-kw">use</span> <span class="t-str">"std -> net_tcp"</span> <span class="t-kw">from</span> <span class="t-str">"tcp"</span>
+<span class="t-kw">use</span> <span class="t-str">"std -> async_"</span>  <span class="t-kw">from</span> <span class="t-str">"async"</span>
+<span class="t-kw">use</span> <span class="t-str">"std -> fmt"</span>     <span class="t-kw">from</span> <span class="t-str">"fmt"</span>
+<span class="t-kw">use</span> <span class="t-str">"std -> time"</span>    <span class="t-kw">from</span> <span class="t-str">"t"</span>
+<span class="t-kw">use</span> <span class="t-str">"std -> cli"</span>     <span class="t-kw">from</span> <span class="t-str">"cli"</span>
+
+<span class="t-kw">let</span> COMMON_PORTS: [int] = [
+    <span class="t-num">21</span>, <span class="t-num">22</span>, <span class="t-num">23</span>, <span class="t-num">25</span>, <span class="t-num">53</span>, <span class="t-num">80</span>, <span class="t-num">110</span>, <span class="t-num">143</span>,
+    <span class="t-num">443</span>, <span class="t-num">445</span>, <span class="t-num">3306</span>, <span class="t-num">5432</span>, <span class="t-num">6379</span>, <span class="t-num">8080</span>, <span class="t-num">8443</span>
+]
+
+<span class="t-kw">let</span> PORT_NAMES: any = {
+    <span class="t-num">21</span>: <span class="t-str">"FTP"</span>, <span class="t-num">22</span>: <span class="t-str">"SSH"</span>, <span class="t-num">23</span>: <span class="t-str">"Telnet"</span>,
+    <span class="t-num">25</span>: <span class="t-str">"SMTP"</span>, <span class="t-num">80</span>: <span class="t-str">"HTTP"</span>, <span class="t-num">443</span>: <span class="t-str">"HTTPS"</span>,
+    <span class="t-num">3306</span>: <span class="t-str">"MySQL"</span>, <span class="t-num">5432</span>: <span class="t-str">"PostgreSQL"</span>,
+    <span class="t-num">6379</span>: <span class="t-str">"Redis"</span>, <span class="t-num">8080</span>: <span class="t-str">"HTTP-Alt"</span>
+}
+
+async <span class="t-kw">fn</span> <span class="t-fn">main</span>() <span class="t-kw">is</span>
+    <span class="t-kw">let</span> target = cli::prompt(<span class="t-str">"Target host: "</span>)
+    write(fmt::bold(<span class="t-str">"Scanning {target}..."</span>))
+    write(fmt::dim(<span class="t-str">"─────────────────────────"</span>))
+
+    <span class="t-kw">let</span> start  = t::now_unix()
+    <span class="t-kw">let mut</span> found: int = <span class="t-num">0</span>
+
+    <span class="t-kw">for</span> port <span class="t-kw">in</span> COMMON_PORTS <span class="t-kw">is</span>
+        <span class="t-kw">let</span> open = await tcp::is_open_async(target, port, <span class="t-num">500</span>)
+        <span class="t-kw">if</span> open <span class="t-kw">is</span>
+            <span class="t-kw">let</span> svc = PORT_NAMES[port]
+            write(fmt::green(<span class="t-str">" OPEN"</span>) + <span class="t-str">" {port}/tcp  {svc}"</span>)
+            found += <span class="t-num">1</span>
+        <span class="t-kw">end</span>
+    <span class="t-kw">end</span>
+
+    <span class="t-kw">let</span> elapsed = t::now_unix() - start
+    write(fmt::dim(<span class="t-str">"─────────────────────────"</span>))
+    write(<span class="t-str">"Found {found} open port(s) in {elapsed}ms"</span>)
+<span class="t-kw">end</span></pre></div></div>
+</div>
+
+<h3>SHA-256 File Hasher</h3>
+<div class="code-block">
+<div class="code-header"><span class="code-filename">hasher.h#</span><button class="copy-btn">Copy</button></div>
+<div class="code-body"><div class="code-inner"><pre><span class="t-kw">use</span> <span class="t-str">"std -> fs"</span>     <span class="t-kw">from</span> <span class="t-str">"fs"</span>
+<span class="t-kw">use</span> <span class="t-str">"std -> crypto"</span> <span class="t-kw">from</span> <span class="t-str">"crypto"</span>
+<span class="t-kw">use</span> <span class="t-str">"std -> env"</span>    <span class="t-kw">from</span> <span class="t-str">"env"</span>
+<span class="t-kw">use</span> <span class="t-str">"std -> fmt"</span>    <span class="t-kw">from</span> <span class="t-str">"fmt"</span>
+
+<span class="t-kw">fn</span> <span class="t-fn">hash_file</span>(path: string) -> string? <span class="t-kw">is</span>
+    <span class="t-kw">if</span> !fs::exists(path) <span class="t-kw">is</span>
+        return nil
+    <span class="t-kw">end</span>
+    <span class="t-kw">let</span> data = fs::read_bytes(path)
+    return crypto::sha256_bytes(data)
+<span class="t-kw">end</span>
+
+<span class="t-kw">fn</span> <span class="t-fn">main</span>() <span class="t-kw">is</span>
+    <span class="t-kw">let</span> args = env::args()
+    <span class="t-kw">if</span> args.len() < <span class="t-num">2</span> <span class="t-kw">is</span>
+        write(fmt::red(<span class="t-str">"Usage: hasher &lt;file&gt; [file2 ...]"</span>))
+        return
+    <span class="t-kw">end</span>
+
+    <span class="t-kw">for</span> path <span class="t-kw">in</span> args[<span class="t-num">1</span>..] <span class="t-kw">is</span>
+        <span class="t-kw">let</span> hash = hash_file(path)
+        <span class="t-kw">if</span> hash == nil <span class="t-kw">is</span>
+            write(fmt::red(<span class="t-str">"NOT FOUND: {path}"</span>))
+        <span class="t-kw">else</span> <span class="t-kw">is</span>
+            write(<span class="t-str">"{hash}  {path}"</span>)
+        <span class="t-kw">end</span>
+    <span class="t-kw">end</span>
+<span class="t-kw">end</span></pre></div></div>
 </div>
 </div>
 `;
