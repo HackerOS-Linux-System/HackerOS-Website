@@ -78,9 +78,6 @@ function buildToolsHTML(lang) {
         ['<code>hdev</code>',
             en ? 'TUI code editor.' : 'TUI edytor kodu.',
             en ? 'built-in all editions' : 'wbudowane we wszystkich edycjach'],
-        ['<code>hbuild</code>',
-            en ? 'Build tool inspired by cmake/meson, written in Rust.' : 'Narzędzie inspirowane cmake/meson, napisane w Rust.',
-            en ? 'built-in all editions' : 'wbudowane we wszystkich edycjach'],
         ['<code>hacker</code>',
             en ? 'Main HackerOS tool: install, remove, repair, quick update.' : 'Główne narzędzie HackerOS: instaluj, usuwaj, napraw, szybka aktualizacja.',
             en ? 'built-in all editions' : 'wbudowane we wszystkich edycjach'],
@@ -94,7 +91,7 @@ function buildToolsHTML(lang) {
             en ? 'Own programming language H# for general use in HackerOS.' : 'Własny język programowania H# do ogólnego zastosowania w HackerOS.',
             '<code>hacker unpack h#</code>'],
         ['<code>bytes</code>',
-            en ? 'Package manager for H# (two modes: JIT interpretation, or: compilation to binary via hhc + llvm O3).' : 'Manager pakietów dla H# (dwie możliwości: interpretacja JIT, albo: kompilacja do binarki (za pomocą hhc + llvm O3)).',
+            en ? 'Package manager for H#.' : 'Manager pakietów dla H#.',
             '<code>hacker unpack h#-utils</code>'],
         ['<code>hl</code>',
             en ? 'Hacker Lang – shell alternative / successor.' : 'Hacker Lang – następca shella (lub alternatywa).',
@@ -103,8 +100,11 @@ function buildToolsHTML(lang) {
             en ? 'AI for HackerOS – local assistant based on language models.' : 'AI dla HackerOS – lokalny asystent oparty na modelach językowych.',
             '<code>hacker unpack hexai</code>'],
         ['<code>hammer</code>',
-            en ? 'Atomic package manager (Atomic edition only).' : 'Atomowy manager pakietów (dla edycji Atomic).',
-            en ? 'Atomic edition only' : 'Tylko edycja Atomic'],
+            en ? 'Atomic package manager and successor to apt, used in the Atomic edition.' : 'Atomowy manager pakietów oraz następca apt, używany w edycji Atomic.',
+            en ? 'Built-in – Atomic edition' : 'Wbudowany w edycji Atomic'],
+        ['<code>deb-ostree</code>',
+            en ? 'Atomic package manager with ostree system, used in the Cybersecurity edition.' : 'Atomowy manager pakietów z systemem ostree, używany w edycji Cybersecurity.',
+            en ? 'Built-in – Cybersecurity edition' : 'Wbudowany w edycji Cybersecurity'],
         ['<code>anvil</code>',
             en ? 'Read-only system management tool (Atomic edition only).' : 'Narzędzie do zarządzania systemem readonly (dla edycji Atomic).',
             en ? 'Atomic edition only' : 'Tylko edycja Atomic'],
@@ -144,11 +144,8 @@ function buildToolsHTML(lang) {
         ['<code>chker</code>',
             en ? 'CLI tool to change the system kernel (Debian → XanMod or Liquorix).' : 'Narzędzie CLI do zmiany jądra systemowego (Debian → XanMod lub Liquorix).',
             en ? 'built-in all editions' : 'wbudowane we wszystkich edycjach'],
-        ['<code>eiq</code>',
-            en ? 'Cybersecurity tool (background encryption).' : 'Narzędzie do cyberbezpieczeństwa (szyfrowanie w tle).',
-            en ? 'Cybersecurity edition only' : 'Tylko edycja Cybersecurity'],
         ['<code>Cybersecurity Mode</code>',
-            en ? 'Session/app overlay for cybersecurity tools (runs in container).' : 'Sesja/aplikacja nakładka dla narzędzi cyberbezpieczeństwa (działa w kontenerze).',
+            en ? 'Session/app overlay for cybersecurity tools (runs in container). Also serves as the graphical environment for the Cybersecurity edition.' : 'Sesja/aplikacja nakładka dla narzędzi cyberbezpieczeństwa (działa w kontenerze). Jest to również środowisko graficzne edycji Cybersecurity.',
             en ? 'Cybersecurity edition only' : 'Tylko edycja Cybersecurity'],
         ['<code>Penetration Mode</code>',
             en ? 'App with custom penetration testing tools (educational only).' : 'Aplikacja z własnymi narzędziami do testów penetracyjnych (tylko do celów edukacyjnych).',
@@ -165,9 +162,6 @@ function buildToolsHTML(lang) {
         ['<code>.hk</code>',
             en ? 'Configuration format used mainly in HackerOS, supported in H#/Hacker Lang and Rust.' : 'Format konfiguracyjny stosowany głównie w HackerOS – dostępny w H#/Hacker Lang i bibliotekach Rust.',
             en ? 'H#/Hacker Lang/Rust libs' : 'H#/Hacker Lang/biblioteki Rust'],
-        ['Blue Environment',
-            en ? 'Used in HackerOS Blue Edition with a custom graphical environment called Blue Environment.' : 'Używane w edycji HackerOS Blue Edition z autorskim środowiskiem graficznym o nazwie Blue Environment.',
-            en ? 'Built-in natively in Blue Edition' : 'Wbudowane natywnie w Blue Edition'],
         ['<code>a</code>',
             en ? 'Simple CLI tool for quick system updates, written in Hacker Lang.' : 'Proste narzędzie CLI do prostych aktualizacji systemu napisane w Hacker Lang.',
             en ? 'built-in all editions' : 'wbudowane we wszystkich edycjach'],
@@ -225,8 +219,7 @@ ${en ? 'official Hacker Lang documentation' : 'oficjalnej dokumentacji Hacker La
 <p><strong>${en ? 'H# CLI tools' : 'Narzędzia CLI H#'}:</strong></p>
 <ul>
 <li><code>bytes</code> – ${en ? 'package manager for H#.' : 'manager pakietów dla H#.'}</li>
-<li><code>hhc</code> – ${en ? 'LLVM compiler.' : 'kompilator LLVM.'}</li>
-<li><code>h#</code> – ${en ? 'quick compilation / quick preview.' : 'szybka kompilacja / szybki podgląd.'}</li>
+<li><code>h#</code> – ${en ? 'LLVM compilation / fast compilation / efficient JIT preview / quick preview.' : 'kompilacja LLVM / szybka kompilacja / wydajny podgląd JIT / szybki podgląd.'}</li>
 </ul>
 <p>${en ? 'More info in the' : 'Więcej informacji znajdziesz w'}
 <a href="https://hackeros-linux-system.github.io/HackerOS-Website/h-sharp/docs.html" target="_blank" style="color:#4a9eff">
@@ -347,9 +340,9 @@ function buildEditionsPane(c, lang) {
         ['GNOME',          'gnome',      'gnome-edition.png', null],
         ['XFCE',           'xfce',       'xfce-edition.png', null],
         ['Blue',           'blue',       'blue-edition.png',
-            'https://hackeros-linux-system.github.io/HackerOS-Website/Blue-Environment/docs.html'],
+            'https://legendaryos-linux-system.github.io/website/'],
         ['Gaming',         'gaming',     'gaming-edition.png', null],
-        ['Cybersecurity',  'cybersec',   null, null],
+        ['Cybersecurity',  'cybersec',   'cybersecurity-edition.png', null],
         ['LTS',            'lts',        null, null],
         ['Atomic',         'atomic',     null, null],
         ['NVIDIA',         'nvidia',     null, null],
@@ -370,7 +363,7 @@ function buildEditionsPane(c, lang) {
             const en = (lang === 'en');
             const linkP = document.createElement('p');
             linkP.style.marginTop = '-8px';
-            linkP.innerHTML = `${en ? 'Full documentation:' : 'Pełna dokumentacja:'} <a href="${docsUrl}" target="_blank" style="color:#4a9eff">${en ? 'here' : 'tutaj'}</a>`;
+            linkP.innerHTML = `${en ? 'More details:' : 'Więcej szczegółów:'} <a href="${docsUrl}" target="_blank" style="color:#4a9eff">${en ? 'here' : 'tutaj'}</a>`;
             div.appendChild(linkP);
         }
     });
