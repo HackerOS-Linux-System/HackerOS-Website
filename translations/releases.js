@@ -12,6 +12,19 @@ window.HACKEROS_TRANS_RELEASES = {
         navDocs:      'Documentation',
         releases: [
             {
+                version: 'HackerOS V4.8',
+                desc: 'Nowa edycja z zaktualizowanymi narzędziami.',
+                dates: [
+                    'HackerOS Official: 30.06.2026',
+                    'HackerOS Cybersecurity: 19.06.2026',
+                ],
+                changelog: [
+                    'Zaktualizowano i rozbudowano HackerOS Games.',
+                    'Rozbudowano narzędzie CLI hacker.',
+                    'Aktualizacja konfiguracji.',
+                ]
+            },
+            {
                 version: 'HackerOS V4.7',
                 desc: 'Nowa edycja z poprawkami oraz aktualizacjami.',
                 dates: [
@@ -292,6 +305,19 @@ window.HACKEROS_TRANS_RELEASES = {
         navTeam:      'HackerOS Team',
         navDocs:      'Documentation',
         releases: [
+            {
+                version: 'HackerOS V4.8',
+                desc: 'New edition with updated tools.',
+                dates: [
+                    'HackerOS Official: 30.06.2026',
+                    'HackerOS Cybersecurity: 19.06.2026',
+                ],
+                changelog: [
+                    'Updated and expanded HackerOS Games.',
+                    'Expanded the hacker CLI tool.',
+                    'Configuration update.',
+                ]
+            },
             {
                 version: 'HackerOS V4.7',
                 desc: 'New edition with fixes and updates.',
