@@ -11,7 +11,6 @@ window.HACKEROS_TRANS_TOOLS = {
             'hackeros-builder':    'HackerOS Builder',
             'hammer':              'hammer',
             'hacker':              'hacker',
-            'hbuild':              'hbuild',
             // 'ulb' – usunięte
             'hk':                  '.hk',
             'hsh':                 'hsh',
@@ -32,7 +31,6 @@ window.HACKEROS_TRANS_TOOLS = {
             'hackeros-games':      'HackerOS Games',
             'deb-ostree':          'deb-ostree',
             'hackeros-kernel':     'HackerOS Kernel',
-            'hwde':                'HWDE',
             'hacker-launcher':     'Hacker Launcher'
         },
         langDropLinks: {
@@ -46,7 +44,6 @@ window.HACKEROS_TRANS_TOOLS = {
             { title: "HackerOS Builder", desc: "Narzędzie do budowania obrazów OCI inspirowane bootc. Może działać jako nakładka dla live-build, jako samodzielny niezależny builder lub jako narzędzie do tworzenia w pełni konfigurowalnych środowisk live i obrazów wdrożeniowych." },
             { title: "hammer", desc: "Narzędzie do atomowej instalacji oraz aktualizacji pakietów. Wykorzystywane wyłącznie w edycji Atomic HackerOS – gwarantuje nieuszkadzalne aktualizacje i możliwość przywracania poprzednich stanów systemu." },
             { title: "hacker", desc: "hacker – serce systemu. Zaawansowane narzędzie do monitorowania, zarządzania procesami i konfiguracją w czasie rzeczywistym. Stanowi fundament interakcji z jądrem oraz usprawnia diagnostykę." },
-            { title: "hbuild", desc: "Własna, autorska alternatywa dla Meson, CMake, Make oraz Ninja. Upraszcza proces kompilacji oprogramowania dzięki deklaratywnym skryptom, inteligentnemu cache'owaniu i modułowej architekturze." },
             { title: ".hk", desc: "Format plików .hk używany do konfiguracji systemu oraz aplikacji. Zapewnia czytelną, hierarchiczną składnię, natywne wsparcie w narzędziach HackerOS oraz możliwość rozszerzeń poprzez wbudowane schematy." },
             { title: "hsh", desc: "hsh – nowoczesna powłoka systemowa, zaawansowana alternatywa dla ZSH i Bash. Oferuje rozszerzone możliwości skryptowe, lepszą autokompletację, wbudowane wsparcie dla kontenerów i natywne integracje z .hk." },
             { title: "HexAI", desc: "HexAI – Zintegrowany asystent AI dla HackerOS, wymagający wydajnego komputera. Oferuje lokalne wnioskowanie, analizę kodu źródłowego, generowanie skryptów oraz inteligentne wsparcie administracji z zachowaniem pełnej prywatności." },
@@ -67,7 +64,6 @@ window.HACKEROS_TRANS_TOOLS = {
             { title: "HackerOS Games", desc: "HackerOS Games to platforma do uruchamiania i zarządzania grami, zintegrowana z systemem. Umożliwia łatwy dostęp do bibliotek gier natywnych oraz emulowanych, oferując wygodny interfejs i optymalizację pod kątem wydajności." },
             { title: "deb-ostree", desc: "deb‑ostree to odpowiednik rpm‑ostree dla Debiana – umożliwia atomowe aktualizacje całego systemu, zapewniając niezawodność, możliwość wycofania zmian oraz sprawne zarządzanie wersjami obrazów systemowych." },
             { title: "HackerOS Kernel", desc: "HackerOS domyślnie wykorzystuje autorskie jądro HackerOS Kernel w edycji cybersecurity, które jest specjalnie dostosowane do wymogów tej edycji. Planowane jest również wprowadzenie HackerOS Kernel jako domyślnego jądra w wersji official, zastępując standardowe jądro Debiana." },
-            { title: "HWDE", desc: "HWDE (HackerOS Wayland Desktop Environment) to dedykowane środowisko graficzne dla HackerOS, zbudowane na bazie Wayland. Stanowi nowoczesną, lekką i wydajną alternatywę dla KDE czy GNOME, zoptymalizowaną pod kątem bezpieczeństwa i pracy w systemach cybersecurity." },
             { title: "Hacker Launcher", desc: "Hacker Launcher to aplikacja umożliwiająca uruchamianie natywnych gier Linuxa oraz gier z Windowsa (przy użyciu Protona). Zapewnia wygodny dostęp do bibliotek gier, zarządzanie konfiguracjami i optymalizację ustawień dla różnych tytułów." }
         ]
     },
@@ -83,7 +79,6 @@ window.HACKEROS_TRANS_TOOLS = {
             'hackeros-builder':    'HackerOS Builder',
             'hammer':              'hammer',
             'hacker':              'hacker',
-            'hbuild':              'hbuild',
             // 'ulb' removed
             'hk':                  '.hk',
             'hsh':                 'hsh',
@@ -104,7 +99,6 @@ window.HACKEROS_TRANS_TOOLS = {
             'hackeros-games':      'HackerOS Games',
             'deb-ostree':          'deb-ostree',
             'hackeros-kernel':     'HackerOS Kernel',
-            'hwde':                'HWDE',
             'hacker-launcher':     'Hacker Launcher'
         },
         langDropLinks: {
@@ -118,7 +112,6 @@ window.HACKEROS_TRANS_TOOLS = {
             { title: "HackerOS Builder", desc: "A tool for building OCI images inspired by bootc. Can be used as an overlay for live-build, as a fully independent standalone builder, or as a tool for creating configurable live environments and deployment images." },
             { title: "hammer", desc: "Tool for atomic package installation and updates. Used exclusively in the HackerOS Atomic edition – guarantees non-destructive updates and the ability to restore previous system states." },
             { title: "hacker", desc: "hacker – the heart of the system. Advanced tool for real-time monitoring, process and configuration management. It forms the foundation of kernel interaction and improves diagnostics." },
-            { title: "hbuild", desc: "Custom alternative to Meson, CMake, Make and Ninja. Simplifies the software compilation process through declarative scripts, intelligent caching and modular architecture." },
             { title: ".hk", desc: "The .hk file format used for system and application configuration. Provides a readable, hierarchical syntax, native support in HackerOS tools and extensibility through built-in schemas." },
             { title: "hsh", desc: "hsh – modern system shell, advanced alternative to ZSH and Bash. Offers extended scripting capabilities, better autocomplete, built-in container support and native .hk integrations." },
             { title: "HexAI", desc: "HexAI – Integrated AI assistant for HackerOS, requiring a powerful computer. Offers local inference, source code analysis, script generation and intelligent administration support with full privacy." },
@@ -139,7 +132,6 @@ window.HACKEROS_TRANS_TOOLS = {
             { title: "HackerOS Games", desc: "HackerOS Games is a platform for launching and managing games, fully integrated with the system. It provides easy access to native and emulated game libraries, offering a user-friendly interface and performance optimization." },
             { title: "deb-ostree", desc: "deb‑ostree is the Debian counterpart of rpm‑ostree – enabling atomic system updates, ensuring reliability, rollback capabilities and efficient version management of system images." },
             { title: "HackerOS Kernel", desc: "HackerOS by default uses the custom HackerOS Kernel in the cybersecurity edition, which is specially tailored for that edition's requirements. There are also plans to adopt HackerOS Kernel as the default kernel in the official version, replacing the standard Debian kernel." },
-            { title: "HWDE", desc: "HWDE (HackerOS Wayland Desktop Environment) is a dedicated graphical environment for HackerOS, built on Wayland. It serves as a modern, lightweight and performant alternative to KDE or GNOME, optimized for security and cybersecurity workflows." },
             { title: "Hacker Launcher", desc: "Hacker Launcher is an application that allows you to run native Linux games as well as Windows games (using Proton). It provides convenient access to game libraries, configuration management and optimised settings for various titles." }
         ]
     }
