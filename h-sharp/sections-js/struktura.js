@@ -3,62 +3,46 @@ window.__HL_SECTIONS['struktura'] = `
 <div class="section" id="struktura">
 <div class="sec-header"><span class="sec-num">02</span><h2>Struktura projektu</h2></div>
 <div class="grid2">
-<div class="card"><div class="card-title">bytes — projekt kompilowany</div><div class="card-body">Używa <code>bytes.hcl</code>. Build przez Cranelift (debug) lub LLVM (--release). Cache w <code>.cache/</code> obok <code>bytes.hcl</code>.</div></div>
-<div class="card"><div class="card-title">bytes — projekt JIT</div><div class="card-body">Używa <code>bytes.toml</code>. Cache w <code>~/.hackeros/H#/libs/session-PID/</code> (tmpfs, RAM). Znika przy restarcie.</div></div>
+<div class="card"><div class="card-title">bytes — package manager H#</div><div class="card-body">Używa jednego pliku <code>bytes.hk</code> (własny prosty format sekcyjny, nie HCL ani TOML). Napisany w H# (zobacz <code>bytes_final</code>), buduje przez <code>hsharp compile</code>/<code>build</code> (LLVM).</div></div>
+<div class="card"><div class="card-title">Python interop</div><div class="card-body">Sekcja <code>[python]</code> w <code>bytes.hk</code>. Pakiety instalowane do <code>~/.hackeros/H#/libs/session-PID/pyenv/</code> (tmpfs, RAM) — znikają przy restarcie.</div></div>
 </div>
 
 <h3>Struktura projektu bytes</h3>
 <div class="code-block">
 <div class="code-header"><span class="code-filename">bytes projekt</span><button class="copy-btn">Copy</button></div>
 <div class="code-body"><div class="code-inner"><pre>moj-projekt/
-├── bytes.hcl          ← konfiguracja (HCL)
-├── h#.json           ← metadane (opcjonalne)
+├── bytes.hk           ← konfiguracja
 ├── .gitignore
 ├── src/              ← lub lib/ lub cmd/
 │   ├── main.h#
 │   └── utils.h#
-├── .cache/           ← zależności (obok bytes.hcl)
+├── .cache/           ← zależności (obok bytes.hk)
 └── build/            ← skompilowana binarka</pre></div></div>
 </div>
 
-<h3>bytes.hcl</h3>
+<h3>bytes.hk</h3>
 <div class="code-block">
-<div class="code-header"><span class="code-filename">bytes.hcl</span><button class="copy-btn">Copy</button></div>
-<div class="code-body"><div class="code-inner"><pre>project "myapp" {
-  version     = "0.1.0"
-  description = "H# app for HackerOS"
-  h_sharp     = "0.1"
-  src_dir     = "src"
-}
-
-output {
-  type = "binary"   <span class="t-comment">;; binary | so | a | hsl</span>
-}
-
-dependencies {
-  scanner        = "1.2"
-  github.com/user/repo = "latest"
-}</pre></div></div>
-</div>
-
-<h3>bytes.toml</h3>
-<div class="code-block">
-<div class="code-header"><span class="code-filename">bytes.toml</span><button class="copy-btn">Copy</button></div>
+<div class="code-header"><span class="code-filename">bytes.hk</span><button class="copy-btn">Copy</button></div>
 <div class="code-body"><div class="code-inner"><pre>[package]
-name    = "myapp"
-version = "0.1.0"
-entry   = "src/main.h#"
+-> name        => myapp
+-> version     => 0.1.0
+-> description => H# app for HackerOS
+-> entry       => src/main.h#
 
-[jit]
-tier       = "jit"   <span class="t-comment">;; interpreter | bytecode | jit</span>
-hot_thresh = 100     <span class="t-comment">;; JIT after 100 calls</span>
+[build]
+-> emit        => bin        <span class="t-comment">;; bin | so | a</span>
+-> flags       =>
+;; Domyślny @tryb pamięci dla całego projektu (patrz sekcja "@ Adnotacje
+;; trybu pamięci") — silniejsze niż to jest tylko własna @adnotacja
+;; funkcji albo @: tryb na początku konkretnego pliku.
+-> mem-mode    => safety     <span class="t-comment">;; default | safety | arc | arena | pointers</span>
 
 [dependencies]
-scanner = "1.2"
+-> scanner => 1.2
+-> github.com/user/repo => latest
 
 [python]
-version  = "3.13"
-packages = ["numpy", "cryptography"]</pre></div></div>
+-> packages => numpy,cryptography</pre></div></div>
 </div>
 
 <h3>Struktura pliku .h#</h3>
