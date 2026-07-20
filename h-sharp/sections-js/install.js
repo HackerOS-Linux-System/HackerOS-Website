@@ -2,11 +2,11 @@ window.__HL_SECTIONS = window.__HL_SECTIONS || {};
 window.__HL_SECTIONS['install'] = `
 <div class="section" id="install">
 <div class="sec-header"><span class="sec-num">01</span><h2>Instalacja &amp; narzędzia</h2></div>
-<p>Ekosystem H# składa się z dwóch narzędzi: <strong>h#</strong> (kompilator + interpreter CLI) i <strong>bytes</strong> (JIT package manager z własnym build systemem).</p>
+<p>Ekosystem H# składa się z dwóch narzędzi: <strong>h#</strong> (kompilator + interpreter CLI) i <strong>bytes</strong> (package manager i build system, napisany w H#).</p>
 
 <div class="grid2">
 <div class="card"><div class="card-title">h#</div><div class="card-body">Główne CLI. Kompiluje przez <strong>LLVM 21 O3+AVX2</strong> (produkcja), uruchamia interpreter (preview), sprawdza składnię i typy, tworzy projekty z szablonami (<code>app</code>, <code>web</code>, <code>tui</code>, <code>wasm</code>, <code>lib</code>, <code>cybersec</code>).</div></div>
-<div class="card"><div class="card-title">bytes</div><div class="card-body">RAM-JIT package manager z własnym systemem buildowania. Konfiguracja: <code>bytes.toml</code> lub <code>bytes.hk</code>. Tryby: interpreter / bytecode / JIT. Workspace, Python interop, test runner, formatter, doc gen.</div></div>
+<div class="card"><div class="card-title">bytes</div><div class="card-body">Package manager napisany w H#. Konfiguracja: <code>bytes.hk</code> (jeden plik, prosty format sekcyjny). Workspace, Python interop, test runner, formatter, doc gen.</div></div>
 </div>
 
 <h3>Instalacja na HackerOS</h3>
@@ -45,23 +45,22 @@ h# new myapp --template lib
 h# targets</pre></div></div>
 </div>
 
-<h3>bytes — JIT Package Manager &amp; Build System</h3>
-<p><strong>bytes</strong> to nie tylko package manager — to kompletny system budowania projektów H# z trójpoziomowym JIT, workspace dla projektów wielojęzykowych i pełnym pipeline'em CI.</p>
+<h3>bytes — Package Manager &amp; Build System</h3>
+<p><strong>bytes</strong> to package manager i build system dla projektów H# — napisany w samym H# (nie w Rust), buduje przez <code>hsharp compile</code>/<code>build</code> (LLVM). Workspace dla projektów wielojęzykowych, Python interop, test runner, formatter, doc gen.</p>
 <div class="code-block">
 <div class="code-header"><span class="code-filename">terminal — bytes</span><button class="copy-btn">Copy</button></div>
 <div class="code-body"><div class="code-inner"><pre><span class="t-comment">;; Nowy projekt</span>
 bytes new myapp && cd myapp
 
-<span class="t-comment">;; ── Uruchomienie ──────────────────────────────────────</span>
-bytes run                        <span class="t-comment">;; JIT (domyślny)</span>
-bytes run --tier interpreter     <span class="t-comment">;; czysty interpreter</span>
-bytes run --tier bytecode        <span class="t-comment">;; bytecode VM (pośredni)</span>
-bytes run --tier jit             <span class="t-comment">;; Cranelift JIT (RAM, brak artefaktów)</span>
+<span class="t-comment">;; ── Budowanie / uruchomienie ──────────────────────────</span>
+bytes build                      <span class="t-comment">;; kompiluje przez hsharp build (LLVM)</span>
+bytes build --release
+bytes run                        <span class="t-comment">;; build + uruchom</span>
 
 <span class="t-comment">;; ── Pakiety H# ────────────────────────────────────────</span>
 bytes add scanner                <span class="t-comment">;; z bytes registry</span>
 bytes add github.com/user/repo   <span class="t-comment">;; z GitHub</span>
-bytes install                    <span class="t-comment">;; zainstaluj wszystkie z bytes.toml</span>
+bytes install                    <span class="t-comment">;; zainstaluj wszystkie z bytes.hk</span>
 bytes update                     <span class="t-comment">;; aktualizuj do latest</span>
 bytes remove scanner
 
@@ -76,9 +75,7 @@ bytes fmt                        <span class="t-comment">;; formatter (in-place)
 bytes doc                        <span class="t-comment">;; generuj HTML docs do docs/</span>
 
 <span class="t-comment">;; ── Cache / środowisko ────────────────────────────────</span>
-bytes clean                      <span class="t-comment">;; czyść ~/.hackeros/H#/libs/</span>
-bytes cache                      <span class="t-comment">;; info o cache JIT</span>
-bytes settings                   <span class="t-comment">;; TUI ustawień (motyw progress bara)</span>
+bytes clean                      <span class="t-comment">;; czyść .cache/ i build/</span>
 
 <span class="t-comment">;; ── Workspace (multi-projekt) ─────────────────────────</span>
 bytes workspace new monorepo --members "backend:h# frontend:rust tools:h#"
@@ -86,43 +83,7 @@ bytes workspace build            <span class="t-comment">;; zbuduj wszystkich cz
 bytes workspace run backend      <span class="t-comment">;; uruchom konkretny member</span></pre></div></div>
 </div>
 
-<h3>Tryby JIT — jak działa trójpoziomowy executor</h3>
-<table class="ref-table">
-<tr><th>Tryb</th><th>Jak działa</th><th>Cache</th><th>Wydajność</th></tr>
-<tr><td class="td-syntax">interpreter</td><td class="td-desc">Drzewo AST ewaluowane bezpośrednio. Zero kompilacji, maksymalna elastyczność.</td><td class="td-note">Brak</td><td class="td-desc">~5-15% C</td></tr>
-<tr><td class="td-syntax">bytecode</td><td class="td-desc">AST → bajtkod VM. Szybszy start niż JIT przy małych plikach.</td><td class="td-note">Sesja</td><td class="td-desc">~20-30% C</td></tr>
-<tr><td class="td-syntax">jit <em>(domyślny)</em></td><td class="td-desc">Hot functions (po <code>hot_thresh</code> wywołań) kompilowane Cranetliftem do natywnego kodu w RAM. Artefakty w <code>~/.hackeros/H#/libs/session-PID/</code> (tmpfs) — znikają po zakończeniu.</td><td class="td-note">tmpfs RAM</td><td class="td-desc">~40-60% C</td></tr>
-</table>
-
-<h3>bytes.toml</h3>
-<div class="code-block">
-<div class="code-header"><span class="code-filename">bytes.toml</span><button class="copy-btn">Copy</button></div>
-<div class="code-body"><div class="code-inner"><pre>[package]
-name    = "myapp"
-version = "0.1.0"
-entry   = "src/main.h#"
-
-[jit]
-tier       = "jit"   <span class="t-comment">;; interpreter | bytecode | jit</span>
-hot_thresh = 100     <span class="t-comment">;; JIT po 100 wywołaniach funkcji</span>
-
-[run]
-<span class="t-comment"># args    = ["--verbose"]</span>
-<span class="t-comment"># timeout = 30</span>
-
-[dependencies]
-<span class="t-comment"># scanner = "latest"</span>
-
-[python]
-version  = "3.13"
-packages = ["numpy", "cryptography"]
-
-[workspace]
-members = []
-mode    = "standard"</pre></div></div>
-</div>
-
-<h3>bytes.hk (format HK — alternatywny)</h3>
+<h3>bytes.hk</h3>
 <div class="code-block">
 <div class="code-header"><span class="code-filename">bytes.hk</span><button class="copy-btn">Copy</button></div>
 <div class="code-body"><div class="code-inner"><pre><span class="t-comment">! H# project — bytes.hk</span>
@@ -133,9 +94,9 @@ mode    = "standard"</pre></div></div>
 -> description => H# script project
 -> entry       => src/main.h#
 
-[jit]
--> tier       => jit
--> hot_thresh => 100
+[build]
+-> emit     => bin
+-> mem-mode => safety    <span class="t-comment">! default | safety | arc | arena | pointers</span>
 
 [dependencies]
 <span class="t-comment">! scanner => latest</span>
@@ -168,7 +129,7 @@ mode    = "standard"</pre></div></div>
 <div class="code-block">
 <div class="code-header"><span class="code-filename">struktura</span><button class="copy-btn">Copy</button></div>
 <div class="code-body"><div class="code-inner"><pre>myapp/
-├── bytes.toml          <span class="t-comment">← konfiguracja (lub bytes.hk)</span>
+├── bytes.hk            <span class="t-comment">← konfiguracja</span>
 ├── src/
 │   ├── main.h#         <span class="t-comment">← punkt wejścia (entry)</span>
 │   └── utils.h#
@@ -177,12 +138,10 @@ mode    = "standard"</pre></div></div>
 └── docs/               <span class="t-comment">← generowane przez bytes doc</span></pre></div></div>
 </div>
 
-<h3>Pliki konfiguracyjne</h3>
+<h3>Plik konfiguracyjny</h3>
 <table class="ref-table">
 <tr><th>Narzędzie</th><th>Plik</th><th>Format</th><th>Opis</th></tr>
-<tr><td class="td-syntax">h#</td><td class="td-note">h#.json</td><td class="td-desc">JSON</td><td class="td-desc">Metadane projektu</td></tr>
-<tr><td class="td-syntax">bytes</td><td class="td-note">bytes.toml</td><td class="td-desc">TOML</td><td class="td-desc">Projekt + JIT config + workspace + Python deps</td></tr>
-<tr><td class="td-syntax">bytes</td><td class="td-note">bytes.hk</td><td class="td-desc">HK</td><td class="td-desc">Alternatywny format (HackerOS native, <code>-> key => val</code>)</td></tr>
+<tr><td class="td-syntax">bytes</td><td class="td-note">bytes.hk</td><td class="td-desc">HK (własny)</td><td class="td-desc">Projekt + build + dependencies + workspace + Python deps (<code>-> key => val</code>)</td></tr>
 </table>
 
 <h3>Rozszerzenia plików</h3>
