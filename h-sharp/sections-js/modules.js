@@ -108,7 +108,7 @@ window.__HL_SECTIONS['modules'] = `
 <div class="code-block">
 <div class="code-header"><span class="code-filename">struktura</span><button class="copy-btn">Copy</button></div>
 <div class="code-body"><div class="code-inner"><pre>myapp/
-  bytes.toml
+  bytes.hk
   src/
     main.h#           <span class="t-comment">;; use "local -> utils" from "utils"</span>
     utils.h#          <span class="t-comment">;; moduł utils</span>
