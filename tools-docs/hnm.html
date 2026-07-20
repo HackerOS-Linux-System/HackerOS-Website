@@ -343,6 +343,33 @@
     .term-demo .yel  { color: #f0c040; }
     .term-demo .red  { color: #ff4d4d; }
 
+    /* ── CHANGELOG ───────────────────────────────────────────────────────────── */
+    .changelog-entry {
+      border-left: 2px solid var(--border);
+      padding: 2px 0 2px 20px;
+      margin: 0 0 22px 6px;
+      position: relative;
+    }
+    .changelog-entry::before {
+      content: "";
+      position: absolute;
+      left: -5px;
+      top: 6px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--primary);
+    }
+    .changelog-entry h4 {
+      color: var(--text-bright);
+      font-size: .98rem;
+      margin-bottom: 6px;
+    }
+    .changelog-entry h4 .ver { color: var(--primary); font-family: monospace; }
+    .changelog-entry ul { margin: 0 0 4px 18px; padding: 0; }
+    .changelog-entry li { color: var(--text-dim); font-size: .87rem; margin-bottom: 4px; }
+    .changelog-entry li code { font-size: .85em; }
+
     /* ── FOOTER ──────────────────────────────────────────────────────────────── */
     footer {
       background: var(--bg2);
@@ -410,10 +437,11 @@
     <a href="#clean">Clean Cache</a>
 
     <div class="section-label">Reference</div>
-    <a href="#config">Configuration</a>
-    <a href="#state">State File</a>
+    <a href="#config">Configuration (.hk)</a>
+    <a href="#state">State File &amp; Drift</a>
     <a href="#auto-nix">Auto Nix Bootstrap</a>
     <a href="#compare">HNM vs Flox</a>
+    <a href="#changelog">Changelog</a>
   </aside>
 
   <!-- ── MAIN CONTENT ─────────────────────────────────────────────────────── -->
@@ -421,7 +449,7 @@
 
     <!-- ── HERO ─────────────────────────────────────────────────────────── -->
     <div class="hero">
-      <div class="badge">v0.1.0 · HackerOS Linux · Built-in</div>
+      <div class="badge">v0.2.0 · HackerOS Linux · Built-in</div>
       <h1><span>hnm</span> — HackerOS Nix Manager</h1>
       <p>
         Install Nix packages without the heavy NixOS setup.
@@ -441,6 +469,17 @@
       </div>
     </div>
 
+    <div class="callout success">
+      <span class="icon">✓</span>
+      <div class="body">
+        <strong>v0.2.0</strong> — configuration moved from TOML to HackerOS's own
+        <code>.hk</code> format, and several flags that used to be accepted but
+        silently ignored (<code>--no-env</code>, <code>--force</code>,
+        <code>-i</code>, and a new <code>--yes</code> on <code>hnm env</code>)
+        now do real work. See <a href="#changelog" style="color:var(--green)">Changelog</a> for the full list.
+      </div>
+    </div>
+
     <!-- ── OVERVIEW ─────────────────────────────────────────────────────── -->
     <h2 id="overview">Overview <a class="anchor" href="#overview">#</a></h2>
 
@@ -457,7 +496,7 @@
       <div class="feature-card">
         <div class="icon">📦</div>
         <h4>nixpkgs access</h4>
-        <p>All ~100 000 packages from nixpkgs-unstable, searchable instantly.</p>
+        <p>All ~100 000 packages from nixpkgs-unstable, searchable instantly, descriptions included.</p>
       </div>
       <div class="feature-card">
         <div class="icon">⚡</div>
@@ -467,22 +506,32 @@
       <div class="feature-card">
         <div class="icon">🔄</div>
         <h4>Generations</h4>
-        <p>Every change creates a new generation. Roll back with one command.</p>
+        <p>Every change creates a new generation. Roll back with one command; state resyncs automatically.</p>
       </div>
       <div class="feature-card">
         <div class="icon">📌</div>
         <h4>Version pinning</h4>
-        <p>Pin packages to specific versions, preventing unwanted upgrades.</p>
+        <p>Pin packages to prevent unwanted upgrades — enforced by both <code>update</code> and <code>remove</code>.</p>
       </div>
       <div class="feature-card">
         <div class="icon">🩺</div>
         <h4>Doctor</h4>
-        <p>Built-in diagnostics to verify your Nix install and HNM health.</p>
+        <p>Built-in diagnostics, including state-vs-profile drift detection.</p>
       </div>
       <div class="feature-card">
         <div class="icon">🚀</div>
         <h4>Auto-bootstrap</h4>
         <p>HNM installs Nix automatically if it's missing — just run any command.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🗒️</div>
+        <h4><code>.hk</code> config</h4>
+        <p>Settings live in <code>config.hk</code>, parsed with the <code>hk-parser</code> crate.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🧹</div>
+        <h4>Auto-GC / pruning</h4>
+        <p><code>auto_gc</code> and <code>max_generations</code> in config.hk are enforced automatically.</p>
       </div>
     </div>
 
@@ -498,13 +547,16 @@
 <span class="d"># Show information about a package</span>
 <span class="c">$ hnm info</span> ripgrep
 
-<span class="d"># List installed packages</span>
+<span class="d"># List packages installed via hnm</span>
+<span class="c">$ hnm list</span> -i
+
+<span class="d"># Browse the full local package catalog</span>
 <span class="c">$ hnm list</span>
 
 <span class="d"># Update everything</span>
 <span class="c">$ hnm update</span>
 
-<span class="d"># Remove a package</span>
+<span class="d"># Remove a package (asks to confirm unless --force)</span>
 <span class="c">$ hnm remove</span> htop
 
 <span class="d"># Check Nix installation</span>
@@ -520,17 +572,17 @@
     <table>
       <thead><tr><th>Command</th><th>Description</th></tr></thead>
       <tbody>
-        <tr><td>hnm search &lt;query&gt; [--json]</td><td>Search nixpkgs for packages matching the query</td></tr>
-        <tr><td>hnm install &lt;pkg...&gt; [--no-env]</td><td>Install one or more packages into the HNM profile</td></tr>
-        <tr><td>hnm remove &lt;pkg...&gt; [-f]</td><td>Remove one or more installed packages</td></tr>
-        <tr><td>hnm update [pkg...]</td><td>Refresh the nixpkgs channel and upgrade packages</td></tr>
-        <tr><td>hnm upgrade</td><td>Upgrade HNM itself <em>(placeholder — updated via system)</em></td></tr>
-        <tr><td>hnm info &lt;pkg&gt;</td><td>Show detailed information about a package</td></tr>
-        <tr><td>hnm list [-i] [--json]</td><td>List all installed packages</td></tr>
+        <tr><td>hnm search &lt;query&gt; [--json]</td><td>Search the local nixpkgs index, including descriptions</td></tr>
+        <tr><td>hnm install &lt;pkg...&gt; [--no-env]</td><td>Install one or more packages. <code>--no-env</code> skips the PATH activation hint printed at the end</td></tr>
+        <tr><td>hnm remove &lt;pkg...&gt; [-f]</td><td>Remove one or more installed packages. Without <code>-f</code>/<code>--force</code>: pinned packages are skipped and you get a confirmation prompt</td></tr>
+        <tr><td>hnm update [pkg...]</td><td>Refresh the nixpkgs channel, rebuild the local index, and upgrade non-pinned packages</td></tr>
+        <tr><td>hnm upgrade</td><td>Self-update HNM from GitHub releases</td></tr>
+        <tr><td>hnm info &lt;pkg&gt;</td><td>Show detailed information about a package (live query)</td></tr>
+        <tr><td>hnm list [-i] [--json]</td><td>Without <code>-i</code>: browse the full local package catalog. With <code>-i</code>/<code>--installed</code>: only packages tracked by hnm</td></tr>
         <tr><td>hnm which &lt;pkg&gt;</td><td>Show the binary path of an installed package</td></tr>
-        <tr><td>hnm pin &lt;pkg&gt; [version]</td><td>Pin a package to prevent it from being upgraded</td></tr>
+        <tr><td>hnm pin &lt;pkg&gt; [version]</td><td>Pin a package to prevent it from being upgraded or casually removed</td></tr>
         <tr><td>hnm unpin &lt;pkg&gt;</td><td>Remove pin from a package</td></tr>
-        <tr><td>hnm rollback [gen]</td><td>Roll back to a previous generation</td></tr>
+        <tr><td>hnm rollback [gen]</td><td>Roll back to a previous generation; resyncs tracked state automatically</td></tr>
         <tr><td>hnm gc</td><td>Run Nix garbage collection to free store space</td></tr>
       </tbody>
     </table>
@@ -539,12 +591,12 @@
     <table>
       <thead><tr><th>Command</th><th>Description</th></tr></thead>
       <tbody>
-        <tr><td>hnm unpack</td><td>Bootstrap Nix: install, source profile, add nixpkgs-unstable channel</td></tr>
+        <tr><td>hnm unpack</td><td>Bootstrap Nix: install, source profile, add nixpkgs-unstable channel, patch shell rc files</td></tr>
         <tr><td>hnm check</td><td>Verify Nix installation — prints versions of nix and nix-env</td></tr>
-        <tr><td>hnm doctor</td><td>Full system diagnostics — Nix binaries, channels, profile, PATH</td></tr>
-        <tr><td>hnm env activate</td><td>Print shell snippet to add HNM profile to PATH</td></tr>
-        <tr><td>hnm env deactivate</td><td>Print instructions to remove HNM profile from PATH</td></tr>
-        <tr><td>hnm env status</td><td>Show current environment status</td></tr>
+        <tr><td>hnm doctor</td><td>Full system diagnostics — Nix binaries, channels, profile, PATH, and state-vs-profile drift</td></tr>
+        <tr><td>hnm env activate [-y]</td><td>Print (default) or automatically apply (<code>--yes</code>) the shell PATH changes</td></tr>
+        <tr><td>hnm env deactivate [-y]</td><td>Print (default) or automatically remove (<code>--yes</code>) that same block</td></tr>
+        <tr><td>hnm env status</td><td>Show current environment status, including which rc files are already patched</td></tr>
         <tr><td>hnm clean</td><td>Remove HNM download cache and temporary files</td></tr>
         <tr><td>hnm version</td><td>Show HNM and Nix version information</td></tr>
         <tr><td>hnm help</td><td>Show command reference</td></tr>
@@ -568,16 +620,16 @@
 
     <h3>Searching</h3>
     <p>
-      <code>hnm search</code> runs <code>nix search nixpkgs &lt;query&gt;</code> and displays
-      results in a formatted table. Installed packages are marked with a <code>✓</code>.
+      <code>hnm search</code> looks up the local index (<code>pkgdb.tsv</code>, built by
+      <code>hnm update</code>) and displays results in a formatted table, including
+      descriptions. Installed packages are marked with a <code>✓</code>.
     </p>
     <div class="term-demo">
       <div class="term-bar">
         <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
       </div>
       <div class="term-body">
-<span class="dim">  │</span> running: nix search nixpkgs ripgrep<br>
-<span class="dim">  │</span> parsing results...<br>
+<span class="dim">  │</span> searching local index (pkgdb.tsv)...<br>
 <span class="cy">  /  [████████████████████████████████████████]  100%  done</span><br>
 <br>
 <span class="bcy">  ▸ Search 'ripgrep'   (3 results)</span><br>
@@ -599,11 +651,22 @@
 <span class="d"># JSON output (useful for scripting)</span>
 <span class="c">$ hnm search</span> ripgrep <span class="d">--json</span></pre>
 
+    <div class="callout info">
+      <span class="icon">ℹ</span>
+      <div class="body">
+        <strong>Since v0.2:</strong> the local index carries a description column
+        (built with <code>nix-env -qaP --description</code>), so <code>hnm search</code>
+        no longer shows a permanently blank description field. <code>hnm info &lt;pkg&gt;</code>
+        still does a separate live query for homepage/license, which the bulk index doesn't store.
+      </div>
+    </div>
+
     <h3>Installing</h3>
     <p>
       <code>hnm install</code> resolves the package in nixpkgs, installs it into
-      <code>~/.hnm/profile</code> via <code>nix-env</code>, and records it in the HNM
-      state file. Multiple packages can be installed in one command.
+      <code>~/.hnm/profile</code> via <code>nix-env</code>, and records it — including
+      its description — in the HNM state file. Multiple packages can be installed in
+      one command.
     </p>
 
     <div class="term-demo">
@@ -636,16 +699,23 @@
 <span class="d"># Install multiple packages at once</span>
 <span class="c">$ hnm install</span> ripgrep bat htop neovim fd
 
-<span class="d"># Install without activating profile (advanced)</span>
+<span class="d"># Install without the PATH-activation hint at the end</span>
 <span class="c">$ hnm install</span> ripgrep <span class="d">--no-env</span></pre>
+
+    <p>
+      <code>--no-env</code> is meant for scripted or non-interactive installs where the
+      caller already manages <code>PATH</code> itself. It only suppresses the printed
+      hint — the package is still installed into the HNM profile exactly the same way.
+    </p>
 
     <!-- ── UPDATE ────────────────────────────────────────────────────────── -->
     <h2 id="update">Updating Packages <a class="anchor" href="#update">#</a></h2>
 
     <p>
-      <code>hnm update</code> runs two steps: first it refreshes the nixpkgs channel
-      (<code>nix-channel --update</code>), then upgrades all installed packages
-      (<code>nix-env --upgrade</code>).
+      <code>hnm update</code> runs three steps: refresh the nixpkgs channel
+      (<code>nix-channel --update</code>), rebuild the local search index
+      (<code>nix-env -qaP --description</code>), then upgrade installed, non-pinned
+      packages one at a time (<code>nix-env -uA</code>).
     </p>
 
     <pre><span class="d"># Update everything</span>
@@ -654,22 +724,20 @@
 <span class="d"># Update specific packages only</span>
 <span class="c">$ hnm update</span> ripgrep bat</pre>
 
-    <div class="callout warn">
-      <span class="icon">⚠</span>
-      <div class="body">
-        <strong>Pinned packages</strong> are shown in the list with a <code>[pinned: x.x.x]</code>
-        marker. However, because HNM delegates the actual upgrade to
-        <code>nix-env --upgrade</code>, pinning currently prevents tracking but does not
-        block the underlying nix-env upgrade. Full pin enforcement is planned for a future release.
-      </div>
-    </div>
+    <p>
+      After a successful update, if <code>config.hk</code> has <code>max_generations</code>
+      set (default <code>10</code>), older generations beyond that count are pruned with
+      <code>nix-env --delete-generations</code>. If <code>auto_gc</code> is enabled,
+      <code>hnm gc</code> runs automatically afterwards. See
+      <a href="#config">Configuration</a>.
+    </p>
 
     <!-- ── PINS ──────────────────────────────────────────────────────────── -->
     <h2 id="pins">Pinning <a class="anchor" href="#pins">#</a></h2>
 
     <p>
       Pinning records a specific version in the HNM state file and marks the package
-      so you know it should not be changed automatically.
+      so it's protected from both accidental upgrades and accidental removal.
     </p>
 
     <pre><span class="d"># Pin at the currently installed version</span>
@@ -681,14 +749,27 @@
 <span class="d"># Remove the pin</span>
 <span class="c">$ hnm unpin</span> ripgrep</pre>
 
-    <p>Pinned packages appear in <code>hnm list</code> with a <code>[pinned: x.x.x]</code> annotation.</p>
+    <p>Pinned packages appear in <code>hnm list -i</code> with a <code>[pinned: x.x.x]</code> annotation.</p>
+
+    <div class="callout success">
+      <span class="icon">✓</span>
+      <div class="body">
+        <strong>Pin enforcement</strong> — <code>hnm update</code> partitions the
+        installed set before upgrading and skips pinned packages entirely (they
+        never reach <code>nix-env -uA</code>). <code>hnm remove</code> skips pinned
+        packages too, unless you pass <code>--force</code>. A pin is a real guard on
+        both operations, not just a tracking label.
+      </div>
+    </div>
 
     <!-- ── GENERATIONS ───────────────────────────────────────────────────── -->
     <h2 id="generations">Generations &amp; Rollback <a class="anchor" href="#generations">#</a></h2>
 
     <p>
       Every install, remove, or upgrade in <code>nix-env</code> creates a new generation —
-      a snapshot of the profile state. HNM exposes this through <code>hnm rollback</code>.
+      a snapshot of the profile state. HNM exposes this through <code>hnm rollback</code>,
+      tracks the current generation number in <code>state.json</code>, and (if
+      <code>max_generations</code> is configured) prunes old ones automatically.
     </p>
 
     <pre><span class="d"># Roll back to the previous generation</span>
@@ -701,6 +782,18 @@
 <span class="s">  gen    1   2024-12-01
   gen    2   2025-01-15
   gen    3   2025-03-22  ← current</span></pre>
+
+    <div class="callout info">
+      <span class="icon">ℹ</span>
+      <div class="body">
+        <strong>State resync on rollback</strong> — switching generations changes which
+        packages are actually installed without touching <code>state.json</code> on its
+        own. <code>hnm rollback</code> now calls the same reconciliation
+        <code>hnm list -i</code> uses right after switching, so the tracked package list
+        (and the recorded generation number) doesn't go stale. See
+        <a href="#state">State File &amp; Drift</a>.
+      </div>
+    </div>
 
     <!-- ── PROGRESS ──────────────────────────────────────────────────────── -->
     <h2 id="progress">Progress &amp; Logs <a class="anchor" href="#progress">#</a></h2>
@@ -766,6 +859,12 @@
           <td>Normal / Dimmed</td>
           <td><span style="color:#00c8ff">· resolving package...</span></td>
         </tr>
+        <tr>
+          <td>Confirmation prompt</td>
+          <td>Yellow</td>
+          <td>Bold</td>
+          <td><span style="color:#f0c040;font-weight:700">? Proceed?</span> <span style="color:#6e7681">[y/N]</span></td>
+        </tr>
       </tbody>
     </table>
 
@@ -775,7 +874,9 @@
     <p>
       <code>hnm doctor</code> runs a full health check of your HNM and Nix setup.
       It checks for required binaries, Nix channels, the HNM profile directory,
-      the Nix store, state and config files, and PATH configuration.
+      the Nix store, state and config files, PATH configuration, and — since v0.2 —
+      whether <code>state.json</code> has drifted from what <code>nix-env</code>
+      actually has installed.
     </p>
 
     <pre><span class="c">$ hnm doctor</span>
@@ -798,27 +899,47 @@
 
   ✓ all checks passed — HNM is healthy</span></pre>
 
+    <p>If state and the real profile disagree (e.g. after a manual <code>nix-env</code> call, or before <code>hnm list -i</code> has had a chance to resync), doctor reports it instead of silently passing:</p>
+
+    <pre><span class="w">  ⚠ state drift: 1 untracked in profile, 0 stale in state.json  →  run `hnm list -i`</span></pre>
+
     <!-- ── ENV ───────────────────────────────────────────────────────────── -->
     <h2 id="env">Environment <a class="anchor" href="#env">#</a></h2>
 
     <p>
       HNM packages are installed into <code>~/.hnm/profile/bin</code>. To use them
-      in your shell, add the profile to your PATH.
+      in your shell, add the profile to your PATH — either manually, or let
+      <code>hnm env</code> do it for you.
     </p>
 
-    <pre><span class="d"># Print the snippet to add to your shell rc</span>
+    <pre><span class="d"># Print the snippet to add to your shell rc (default, non-destructive)</span>
 <span class="c">$ hnm env activate</span>
 
-<span class="d"># Check current status</span>
+<span class="d"># Actually patch ~/.bashrc, ~/.zshrc, ~/.profile automatically</span>
+<span class="c">$ hnm env activate</span> <span class="d">--yes</span>
+
+<span class="d"># Check current status, including which rc files are already patched</span>
 <span class="c">$ hnm env status</span>
 
-<span class="d"># Print removal instructions</span>
-<span class="c">$ hnm env deactivate</span></pre>
+<span class="d"># Print removal instructions (default), or apply them automatically</span>
+<span class="c">$ hnm env deactivate</span>
+<span class="c">$ hnm env deactivate</span> <span class="d">--yes</span></pre>
 
-    <p>Add to your <code>~/.bashrc</code> or <code>~/.zshrc</code>:</p>
+    <div class="callout success">
+      <span class="icon">✓</span>
+      <div class="body">
+        <strong>Since v0.2:</strong> <code>hnm env activate/deactivate --yes</code>
+        edits your shell rc files the same way <code>hnm unpack</code> always has
+        (same underlying logic, shared in one place). Without <code>--yes</code>,
+        both subcommands still just print instructions, exactly as before — nothing
+        changes unless you opt in.
+      </div>
+    </div>
 
-    <pre><span class="d"># HNM profile</span>
-export PATH="$HOME/.hnm/profile/bin:$PATH"
+    <p>What gets added, if you don't use <code>--yes</code> and prefer to paste it yourself:</p>
+
+    <pre><span class="d"># HNM — HackerOS Nix Manager</span>
+export PATH="$HOME/.hnm/profile/bin:$HOME/.nix-profile/bin:$PATH"
 [ -f ~/.nix-profile/etc/profile.d/nix.sh ] && \
     . ~/.nix-profile/etc/profile.d/nix.sh</pre>
 
@@ -827,7 +948,9 @@ export PATH="$HOME/.hnm/profile/bin:$PATH"
 
     <p>
       Nix keeps every version of every package in <code>/nix/store</code>. Over time this
-      can grow large. Run <code>hnm gc</code> to collect unreachable store paths.
+      can grow large. Run <code>hnm gc</code> to collect unreachable store paths, or set
+      <code>auto_gc = true</code> in <code>config.hk</code> to have <code>hnm remove</code>
+      and <code>hnm update</code> do it for you automatically.
     </p>
 
     <pre><span class="c">$ hnm gc</span>
@@ -877,7 +1000,8 @@ export PATH="$HOME/.hnm/profile/bin:$PATH"
       <div class="body">
         You can also trigger the bootstrap manually at any time with <code>hnm unpack</code>.
         This is equivalent to running the official Nix single-user installer, sourcing
-        the profile, and registering nixpkgs-unstable as the default channel.
+        the profile, registering nixpkgs-unstable as the default channel, and patching
+        your shell rc files (the same logic <code>hnm env activate --yes</code> uses).
       </div>
     </div>
 
@@ -888,38 +1012,59 @@ export PATH="$HOME/.hnm/profile/bin:$PATH"
 <span class="d">#   sh &lt;(curl -L https://nixos.org/nix/install) --no-daemon</span>
 <span class="d">#   . ~/.nix-profile/etc/profile.d/nix.sh</span>
 <span class="d">#   nix-channel --add https://nixos.org/channels/nixpkgs-unstable nixpkgs</span>
-<span class="d">#   nix-channel --update</span></pre>
+<span class="d">#   nix-channel --update</span>
+<span class="d">#   (patch ~/.bashrc, ~/.zshrc, ~/.profile)</span></pre>
 
     <!-- ── CONFIG ───────────────────────────────────────────────────────── -->
     <h2 id="config">Configuration <a class="anchor" href="#config">#</a></h2>
 
-    <p>HNM stores its configuration in <code>~/.config/hnm/config.toml</code>. The file is
-    created automatically on first run with sensible defaults.</p>
+    <p>
+      As of <strong>v0.2</strong>, HNM stores its configuration as
+      <strong><code>.hk</code></strong> — HackerOS's own configuration format —
+      instead of TOML: <code>~/.config/hnm/config.hk</code>. Parsing and serialization
+      are handled by the
+      <a href="https://crates.io/crates/hk-parser" style="color:var(--primary-dim)">hk-parser</a>
+      crate. The full format spec lives at
+      <a href="hk.html" style="color:var(--primary-dim)">tools-docs/hk.html</a>.
+      The file is created automatically on first run with sensible defaults.
+    </p>
 
-    <pre><span class="d"># ~/.config/hnm/config.toml</span>
+    <pre><span class="d"># ~/.config/hnm/config.hk</span>
+<span class="d">! HNM configuration — HackerOS Nix Manager</span>
+<span class="d">! format: https://hackeros-linux-system.github.io/HackerOS-Website/tools-docs/hk.html</span>
 
-<span class="c">nix_channel</span>      = <span class="s">"https://nixos.org/channels/nixpkgs-unstable"</span>
-<span class="c">profile_dir</span>      = <span class="s">"/home/user/.hnm/profile"</span>
-<span class="c">auto_gc</span>          = <span class="s">false</span>
-<span class="c">max_generations</span>  = <span class="s">10</span></pre>
+<span class="h">[hnm]</span>
+<span class="c">-> nix_channel</span>     => <span class="s">"https://nixos.org/channels/nixpkgs-unstable"</span>
+<span class="c">-> profile_dir</span>     => <span class="s">"/home/user/.hnm/profile"</span>
+<span class="c">-> auto_gc</span>         => <span class="s">false</span>
+<span class="c">-> max_generations</span> => <span class="s">10</span></pre>
 
     <table>
       <thead><tr><th>Key</th><th>Default</th><th>Description</th></tr></thead>
       <tbody>
         <tr><td>nix_channel</td><td>nixpkgs-unstable URL</td><td>Nix channel to use for package resolution</td></tr>
         <tr><td>profile_dir</td><td>~/.hnm/profile</td><td>Path to the HNM nix-env profile</td></tr>
-        <tr><td>auto_gc</td><td>false</td><td>Run GC automatically after remove operations</td></tr>
-        <tr><td>max_generations</td><td>10</td><td>Number of generations to keep before pruning</td></tr>
+        <tr><td>auto_gc</td><td>false</td><td>Run <code>nix-store --gc</code> automatically after <code>hnm remove</code> / <code>hnm update</code></td></tr>
+        <tr><td>max_generations</td><td>10</td><td>Generations to keep after install/remove/update; older ones are pruned via <code>nix-env --delete-generations</code>. <code>0</code> disables pruning</td></tr>
       </tbody>
     </table>
 
+    <div class="callout info">
+      <span class="icon">ℹ</span>
+      <div class="body">
+        <strong>Upgrading from v0.1?</strong> If <code>~/.config/hnm/config.toml</code>
+        exists and <code>config.hk</code> doesn't yet, HNM migrates your settings to
+        the new format automatically the first time it runs — no manual steps needed.
+      </div>
+    </div>
+
     <!-- ── STATE FILE ────────────────────────────────────────────────────── -->
-    <h2 id="state">State File <a class="anchor" href="#state">#</a></h2>
+    <h2 id="state">State File &amp; Drift <a class="anchor" href="#state">#</a></h2>
 
     <p>
       HNM tracks installed packages in <code>~/.local/share/hnm/state.json</code>.
       This is separate from the Nix profile itself and records HNM-specific metadata
-      such as install timestamps, descriptions, and pins.
+      such as install timestamps, descriptions, pins, and the current generation number.
     </p>
 
     <pre>{
@@ -927,7 +1072,7 @@ export PATH="$HOME/.hnm/profile/bin:$PATH"
     <span class="c">"ripgrep"</span>: {
       <span class="c">"name"</span>:         <span class="s">"ripgrep"</span>,
       <span class="c">"version"</span>:      <span class="s">"14.1.1"</span>,
-      <span class="c">"attr_path"</span>:    <span class="s">"nixpkgs#ripgrep"</span>,
+      <span class="c">"attr_path"</span>:    <span class="s">"nixpkgs.ripgrep"</span>,
       <span class="c">"installed_at"</span>: <span class="s">"2025-04-17T10:32:00Z"</span>,
       <span class="c">"pinned"</span>:       <span class="s">null</span>,
       <span class="c">"description"</span>: <span class="s">"Fast grep alternative written in Rust"</span>
@@ -936,6 +1081,20 @@ export PATH="$HOME/.hnm/profile/bin:$PATH"
   <span class="c">"generation"</span>:   <span class="s">4</span>,
   <span class="c">"last_update"</span>:  <span class="s">"2025-04-17T10:35:00Z"</span>
 }</pre>
+
+    <h3>Why state can drift, and how HNM handles it</h3>
+    <p>
+      Because <code>state.json</code> is separate bookkeeping from <code>nix-env</code>'s
+      own profile, the two can disagree — for example if a package is installed or
+      removed by hand with <code>nix-env</code> directly, or after <code>hnm rollback</code>
+      switches which generation is active (that changes what's actually installed
+      without touching <code>state.json</code> on its own).
+    </p>
+    <ul style="margin:0 0 20px 20px; color:var(--text-dim); font-size:.9rem;">
+      <li style="margin-bottom:6px"><code>hnm list -i</code> reconciles state against the live profile before printing, adding anything untracked and dropping anything stale.</li>
+      <li style="margin-bottom:6px"><code>hnm rollback</code> runs the same reconciliation immediately after switching generations, and updates the tracked generation number.</li>
+      <li><code>hnm doctor</code> reports drift as a warning (without silently fixing it), so you know reconciliation happened, or is needed.</li>
+    </ul>
 
     <!-- ── COMPARE ──────────────────────────────────────────────────────── -->
     <h2 id="compare">HNM vs Flox <a class="anchor" href="#compare">#</a></h2>
@@ -948,12 +1107,39 @@ export PATH="$HOME/.hnm/profile/bin:$PATH"
         <tr><td>Environments / manifests</td><td>None — direct install</td><td>Per-environment manifest</td></tr>
         <tr><td>Profile location</td><td>~/.hnm/profile</td><td>~/.local/share/flox/environments</td></tr>
         <tr><td>Flakes</td><td>No</td><td>Yes (internally)</td></tr>
-        <tr><td>Version pinning</td><td>Yes (tracked in state.json)</td><td>Yes (in manifest)</td></tr>
-        <tr><td>Rollback</td><td>nix-env generations</td><td>Flox generations</td></tr>
+        <tr><td>Config format</td><td>.hk</td><td>TOML manifest</td></tr>
+        <tr><td>Version pinning</td><td>Yes — enforced on update &amp; remove</td><td>Yes (in manifest)</td></tr>
+        <tr><td>Rollback</td><td>nix-env generations, auto state resync</td><td>Flox generations</td></tr>
         <tr><td>HackerOS integration</td><td>Built-in ✓</td><td>No</td></tr>
         <tr><td>Written in</td><td>Rust</td><td>Rust</td></tr>
       </tbody>
     </table>
+
+    <!-- ── CHANGELOG ─────────────────────────────────────────────────────── -->
+    <h2 id="changelog">Changelog <a class="anchor" href="#changelog">#</a></h2>
+
+    <div class="changelog-entry">
+      <h4><span class="ver">v0.2.0</span> — config migration &amp; dead-code cleanup</h4>
+      <p style="margin-bottom:10px">A maintenance release following an internal review. No breaking CLI changes — flags that were previously accepted and silently ignored now do real work.</p>
+      <ul>
+        <li>Config moved from <code>config.toml</code> to <code>config.hk</code> (via <a href="https://crates.io/crates/hk-parser" style="color:var(--primary-dim)">hk-parser</a>), with automatic migration of existing installs. Raises the effective minimum Rust toolchain to 1.85 (edition-2024 support needed transitively).</li>
+        <li><code>hnm install --no-env</code> now actually suppresses the PATH-activation hint.</li>
+        <li><code>hnm remove --force</code>/<code>-f</code> now actually skips a new confirmation prompt and allows removing pinned packages; without it, pinned packages are protected and you're asked to confirm.</li>
+        <li><code>hnm list</code> without <code>-i</code> now browses the full local package catalog instead of behaving identically to <code>-i</code>.</li>
+        <li><code>hnm env activate</code>/<code>deactivate</code> gained <code>-y</code>/<code>--yes</code> to patch/unpatch shell rc files automatically, matching what <code>hnm unpack</code> already did.</li>
+        <li>The local search index now stores descriptions (<code>nix-env -qaP --description</code>), so <code>hnm search</code> and catalog-mode <code>hnm list</code> no longer show a blank description column.</li>
+        <li><code>auto_gc</code> and <code>max_generations</code> in <code>config.hk</code> are now enforced (previously parsed and never read).</li>
+        <li><code>state.json</code>'s <code>generation</code> field is now actually kept up to date.</li>
+        <li>New state-vs-profile reconciliation (<code>hnm list -i</code>, <code>hnm rollback</code>) fixes tracked packages going stale after a rollback; <code>hnm doctor</code> reports drift.</li>
+        <li>Removed the unused <code>reqwest</code> dependency; de-duplicated <code>split_name_version</code> and shell-rc-patching logic that previously existed in two places each.</li>
+        <li>Fixed the help text still labeling <code>upgrade</code> as <code>[placeholder]</code> despite being fully implemented.</li>
+      </ul>
+    </div>
+
+    <div class="changelog-entry">
+      <h4><span class="ver">v0.1.0</span> — initial release</h4>
+      <p>First public release: install/search/remove/update/pin/rollback/gc, TOML config, generations via nix-env, auto Nix bootstrap.</p>
+    </div>
 
   </main>
 </div>
@@ -961,10 +1147,10 @@ export PATH="$HOME/.hnm/profile/bin:$PATH"
 <!-- ── FOOTER ────────────────────────────────────────────────────────────── -->
 <footer>
   <p>
-    hnm v0.0.1 · HackerOS Nix Manager ·
+    hnm v0.2.0 · HackerOS Nix Manager ·
     <a href="https://github.com/HackerOS-Linux-System">GitHub</a> ·
     <a href="https://discord.com/invite/8yHNcBaEKy">Discord</a> ·
-    MIT License
+    Apache-2.0 License
   </p>
   <p style="margin-top:6px">
     HackerOS · © 2026 HackerOS. Wszelkie prawa zastrzeżone. |
