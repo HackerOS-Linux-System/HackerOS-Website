@@ -180,7 +180,7 @@ window.__HL_SECTIONS['przyklady'] = `
 <div class="code-block">
 <div class="code-header"><span class="code-filename">python_interop.h#  (bytes run)</span><button class="copy-btn">Copy</button></div>
 <div class="code-body"><div class="code-inner"><pre><span class="t-comment">;; H# + Python interop — tylko bytes PM</span>
-<span class="t-comment">;; bytes.toml: [python] packages = ["numpy","cryptography"]</span>
+<span class="t-comment">;; bytes.hk: [python] -> packages = numpy,cryptography</span>
 <span class="t-kw">use</span> <span class="t-str">"python -> numpy"</span>        <span class="t-kw">from</span> <span class="t-str">"np"</span>
 <span class="t-kw">use</span> <span class="t-str">"python -> cryptography"</span>  <span class="t-kw">from</span> <span class="t-str">"crypto"</span>
 
@@ -193,6 +193,373 @@ window.__HL_SECTIONS['przyklady'] = `
 
     <span class="t-comment">;; Python venv jest w ~/.hackeros/H#/libs/session-PID/pyenv/</span>
     write(<span class="t-str">"Pakiety Python instalowane do RAM (tmpfs)"</span>)
+<span class="t-kw">end</span></pre></div></div>
+</div>
+</div>
+
+<div class="section" id="ex7">
+<div class="sec-header"><span class="sec-num">EX-7</span><h2>Odczyt configu JSON</h2><span class="sec-badge">fs · json · Optional</span></div>
+<div class="code-block">
+<div class="code-header"><span class="code-filename">config_reader.h#</span><button class="copy-btn">Copy</button></div>
+<div class="code-body"><div class="code-inner"><pre><span class="t-kw">use</span> <span class="t-str">"std -> fs"</span>   <span class="t-kw">from</span> <span class="t-str">"fs"</span>
+<span class="t-kw">use</span> <span class="t-str">"std -> json"</span> <span class="t-kw">from</span> <span class="t-str">"json"</span>
+
+<span class="t-kw">fn</span> <span class="t-func">read_port</span>(path: string) -> int? <span class="t-kw">is</span>
+    <span class="t-kw">let</span> raw: string? = fs::read_to_string(path)?
+    <span class="t-kw">let</span> parsed: any?  = json::parse(raw)?
+    <span class="t-kw">return</span> parsed[<span class="t-str">"server"</span>][<span class="t-str">"port"</span>]?
+<span class="t-kw">end</span>
+
+<span class="t-kw">fn</span> <span class="t-func">main</span>() <span class="t-kw">is</span>
+    <span class="t-kw">let</span> port = read_port(<span class="t-str">"config.json"</span>)
+    <span class="t-kw">if</span> port == nil <span class="t-kw">is</span>
+        write(<span class="t-str">"nie udało się wczytać portu"</span>)
+    <span class="t-kw">else</span> <span class="t-kw">is</span>
+        write(<span class="t-str">"port: "</span> + to_string(port))
+    <span class="t-kw">end</span>
+<span class="t-kw">end</span></pre></div></div>
+</div>
+</div>
+
+<div class="section" id="ex8">
+<div class="sec-header"><span class="sec-num">EX-8</span><h2>Fibonacci z memoizacją</h2><span class="sec-badge">HashMap · rekurencja</span></div>
+<div class="code-block">
+<div class="code-header"><span class="code-filename">fib_memo.h#</span><button class="copy-btn">Copy</button></div>
+<div class="code-body"><div class="code-inner"><pre><span class="t-kw">use</span> <span class="t-str">"std -> collections"</span> <span class="t-kw">from</span> <span class="t-str">"col"</span>
+
+<span class="t-kw">fn</span> <span class="t-func">fib</span>(n: int, cache: col::HashMap&lt;int, int&gt;) -> int <span class="t-kw">is</span>
+    <span class="t-kw">if</span> n &lt;= <span class="t-num">1</span> <span class="t-kw">is</span> <span class="t-kw">return</span> n <span class="t-kw">end</span>
+    <span class="t-kw">let</span> hit: int? = cache.get(n)
+    <span class="t-kw">if</span> hit != nil <span class="t-kw">is</span> <span class="t-kw">return</span> hit <span class="t-kw">end</span>
+
+    <span class="t-kw">let</span> result: int = fib(n - <span class="t-num">1</span>, cache) + fib(n - <span class="t-num">2</span>, cache)
+    cache.insert(n, result)
+    <span class="t-kw">return</span> result
+<span class="t-kw">end</span>
+
+<span class="t-kw">fn</span> <span class="t-func">main</span>() <span class="t-kw">is</span>
+    <span class="t-kw">let mut</span> cache: col::HashMap&lt;int, int&gt; = col::HashMap::new()
+    <span class="t-kw">for</span> i <span class="t-kw">in</span> <span class="t-num">0</span>..=<span class="t-num">30</span> <span class="t-kw">is</span>
+        write(<span class="t-str">"fib("</span> + to_string(i) + <span class="t-str">") = "</span> + to_string(fib(i, cache)))
+    <span class="t-kw">end</span>
+<span class="t-kw">end</span></pre></div></div>
+</div>
+</div>
+
+<div class="section" id="ex9">
+<div class="sec-header"><span class="sec-num">EX-9</span><h2>Prosty klient HTTP</h2><span class="sec-badge">http · async</span></div>
+<div class="code-block">
+<div class="code-header"><span class="code-filename">http_get.h#</span><button class="copy-btn">Copy</button></div>
+<div class="code-body"><div class="code-inner"><pre><span class="t-kw">use</span> <span class="t-str">"std -> http"</span> <span class="t-kw">from</span> <span class="t-str">"http"</span>
+
+<span class="t-kw">async fn</span> <span class="t-func">fetch_status</span>(url: string) -> int <span class="t-kw">is</span>
+    <span class="t-kw">let</span> resp = <span class="t-kw">await</span> http::get(url)
+    <span class="t-kw">return</span> resp.status
+<span class="t-kw">end</span>
+
+<span class="t-kw">async fn</span> <span class="t-func">main</span>() <span class="t-kw">is</span>
+    <span class="t-kw">let</span> urls: [string] = [<span class="t-str">"https://example.com"</span>, <span class="t-str">"https://hackeros.dev"</span>]
+    <span class="t-kw">for</span> u <span class="t-kw">in</span> urls <span class="t-kw">is</span>
+        <span class="t-kw">let</span> code: int = <span class="t-kw">await</span> fetch_status(u)
+        write(u + <span class="t-str">" -> "</span> + to_string(code))
+    <span class="t-kw">end</span>
+<span class="t-kw">end</span></pre></div></div>
+</div>
+</div>
+
+<div class="section" id="ex10">
+<div class="sec-header"><span class="sec-num">EX-10</span><h2>Producer / Consumer</h2><span class="sec-badge">async · task</span></div>
+<div class="code-block">
+<div class="code-header"><span class="code-filename">producer_consumer.h#</span><button class="copy-btn">Copy</button></div>
+<div class="code-body"><div class="code-inner"><pre><span class="t-kw">async fn</span> <span class="t-func">produce</span>(n: int) -> [int] <span class="t-kw">is</span>
+    <span class="t-kw">let mut</span> items: [int] = []
+    <span class="t-kw">for</span> i <span class="t-kw">in</span> <span class="t-num">0</span>..n <span class="t-kw">is</span>
+        items = array_push(items, i * i)
+    <span class="t-kw">end</span>
+    <span class="t-kw">return</span> items
+<span class="t-kw">end</span>
+
+<span class="t-kw">async fn</span> <span class="t-func">consume</span>(items: [int]) -> int <span class="t-kw">is</span>
+    <span class="t-kw">let mut</span> total: int = <span class="t-num">0</span>
+    <span class="t-kw">for</span> it <span class="t-kw">in</span> items <span class="t-kw">is</span> total += it <span class="t-kw">end</span>
+    <span class="t-kw">return</span> total
+<span class="t-kw">end</span>
+
+<span class="t-kw">async fn</span> <span class="t-func">main</span>() <span class="t-kw">is</span>
+    <span class="t-kw">let</span> items = <span class="t-kw">await</span> produce(<span class="t-num">10</span>)
+    <span class="t-kw">let</span> total = <span class="t-kw">await</span> consume(items)
+    write(<span class="t-str">"suma kwadratów: "</span> + to_string(total))
+<span class="t-kw">end</span></pre></div></div>
+</div>
+</div>
+
+<div class="section" id="ex11">
+<div class="sec-header"><span class="sec-num">EX-11</span><h2>Binary Search</h2><span class="sec-badge">algorytmy · tablice</span></div>
+<div class="code-block">
+<div class="code-header"><span class="code-filename">binary_search.h#</span><button class="copy-btn">Copy</button></div>
+<div class="code-body"><div class="code-inner"><pre><span class="t-kw">fn</span> <span class="t-func">binary_search</span>(arr: [int], target: int) -> int <span class="t-kw">is</span>
+    <span class="t-kw">let mut</span> lo: int = <span class="t-num">0</span>
+    <span class="t-kw">let mut</span> hi: int = array_len(arr) - <span class="t-num">1</span>
+    <span class="t-kw">while</span> lo &lt;= hi <span class="t-kw">is</span>
+        <span class="t-kw">let</span> mid: int = (lo + hi) / <span class="t-num">2</span>
+        <span class="t-kw">if</span> arr[mid] == target <span class="t-kw">is</span> <span class="t-kw">return</span> mid
+        <span class="t-kw">elsif</span> arr[mid] &lt; target <span class="t-kw">is</span> lo = mid + <span class="t-num">1</span>
+        <span class="t-kw">else</span> <span class="t-kw">is</span> hi = mid - <span class="t-num">1</span>
+        <span class="t-kw">end</span>
+    <span class="t-kw">end</span>
+    <span class="t-kw">return</span> -<span class="t-num">1</span>
+<span class="t-kw">end</span>
+
+<span class="t-kw">fn</span> <span class="t-func">main</span>() <span class="t-kw">is</span>
+    <span class="t-kw">let</span> sorted: [int] = [<span class="t-num">1</span>, <span class="t-num">3</span>, <span class="t-num">5</span>, <span class="t-num">7</span>, <span class="t-num">9</span>, <span class="t-num">11</span>, <span class="t-num">13</span>]
+    write(<span class="t-str">"index(7) = "</span> + to_string(binary_search(sorted, <span class="t-num">7</span>)))
+    write(<span class="t-str">"index(4) = "</span> + to_string(binary_search(sorted, <span class="t-num">4</span>)))
+<span class="t-kw">end</span></pre></div></div>
+</div>
+</div>
+
+<div class="section" id="ex12">
+<div class="sec-header"><span class="sec-num">EX-12</span><h2>Parser argumentów CLI</h2><span class="sec-badge">env · string</span></div>
+<div class="code-block">
+<div class="code-header"><span class="code-filename">arg_parser.h#</span><button class="copy-btn">Copy</button></div>
+<div class="code-body"><div class="code-inner"><pre><span class="t-kw">use</span> <span class="t-str">"std -> env"</span> <span class="t-kw">from</span> <span class="t-str">"env"</span>
+
+<span class="t-kw">struct</span> Flags <span class="t-kw">is</span>
+    <span class="t-kw">pub</span> verbose: bool
+    <span class="t-kw">pub</span> output:  string
+<span class="t-kw">end</span>
+
+<span class="t-kw">fn</span> <span class="t-func">parse_flags</span>(args: [string]) -> Flags <span class="t-kw">is</span>
+    <span class="t-kw">let mut</span> f: Flags = Flags { verbose: false, output: <span class="t-str">"a.out"</span> }
+    <span class="t-kw">let mut</span> i: int = <span class="t-num">1</span>
+    <span class="t-kw">while</span> i &lt; array_len(args) <span class="t-kw">is</span>
+        <span class="t-kw">if</span> args[i] == <span class="t-str">"-v"</span> <span class="t-kw">is</span> f.verbose = true
+        <span class="t-kw">elsif</span> args[i] == <span class="t-str">"-o"</span> && i + <span class="t-num">1</span> &lt; array_len(args) <span class="t-kw">is</span>
+            i += <span class="t-num">1</span>
+            f.output = args[i]
+        <span class="t-kw">end</span>
+        i += <span class="t-num">1</span>
+    <span class="t-kw">end</span>
+    <span class="t-kw">return</span> f
+<span class="t-kw">end</span>
+
+<span class="t-kw">fn</span> <span class="t-func">main</span>() <span class="t-kw">is</span>
+    <span class="t-kw">let</span> flags = parse_flags(env::args())
+    write(<span class="t-str">"verbose="</span> + to_string(flags.verbose) + <span class="t-str">" output="</span> + flags.output)
+<span class="t-kw">end</span></pre></div></div>
+</div>
+</div>
+
+<div class="section" id="ex13">
+<div class="sec-header"><span class="sec-num">EX-13</span><h2>Key-Value Store z zapisem</h2><span class="sec-badge">fs · HashMap · json</span></div>
+<div class="code-block">
+<div class="code-header"><span class="code-filename">kv_store.h#</span><button class="copy-btn">Copy</button></div>
+<div class="code-body"><div class="code-inner"><pre><span class="t-kw">use</span> <span class="t-str">"std -> fs"</span>         <span class="t-kw">from</span> <span class="t-str">"fs"</span>
+<span class="t-kw">use</span> <span class="t-str">"std -> collections"</span> <span class="t-kw">from</span> <span class="t-str">"col"</span>
+
+<span class="t-kw">fn</span> <span class="t-func">save</span>(store: col::HashMap&lt;string, string&gt;, path: string) <span class="t-kw">is</span>
+    <span class="t-kw">let mut</span> lines: string = <span class="t-str">""</span>
+    <span class="t-kw">for</span> key <span class="t-kw">in</span> store.keys() <span class="t-kw">is</span>
+        lines = lines + key + <span class="t-str">"="</span> + store.get(key) + <span class="t-str">"\n"</span>
+    <span class="t-kw">end</span>
+    fs::write_string(path, lines)
+<span class="t-kw">end</span>
+
+<span class="t-kw">fn</span> <span class="t-func">main</span>() <span class="t-kw">is</span>
+    <span class="t-kw">let mut</span> store: col::HashMap&lt;string, string&gt; = col::HashMap::new()
+    store.insert(<span class="t-str">"host"</span>, <span class="t-str">"127.0.0.1"</span>)
+    store.insert(<span class="t-str">"port"</span>, <span class="t-str">"8080"</span>)
+    save(store, <span class="t-str">"store.db"</span>)
+    write(<span class="t-str">"zapisano "</span> + to_string(store.len()) + <span class="t-str">" kluczy"</span>)
+<span class="t-kw">end</span></pre></div></div>
+</div>
+</div>
+
+<div class="section" id="ex14">
+<div class="sec-header"><span class="sec-num">EX-14</span><h2>Operacje na macierzach</h2><span class="sec-badge">tablice 2D</span></div>
+<div class="code-block">
+<div class="code-header"><span class="code-filename">matrix.h#</span><button class="copy-btn">Copy</button></div>
+<div class="code-body"><div class="code-inner"><pre><span class="t-kw">fn</span> <span class="t-func">mat_mul</span>(a: [[int]], b: [[int]]) -> [[int]] <span class="t-kw">is</span>
+    <span class="t-kw">let</span> n: int = array_len(a)
+    <span class="t-kw">let</span> m: int = array_len(b[<span class="t-num">0</span>])
+    <span class="t-kw">let</span> k: int = array_len(b)
+    <span class="t-kw">let mut</span> result: [[int]] = []
+    <span class="t-kw">for</span> i <span class="t-kw">in</span> <span class="t-num">0</span>..n <span class="t-kw">is</span>
+        <span class="t-kw">let mut</span> row: [int] = []
+        <span class="t-kw">for</span> j <span class="t-kw">in</span> <span class="t-num">0</span>..m <span class="t-kw">is</span>
+            <span class="t-kw">let mut</span> sum: int = <span class="t-num">0</span>
+            <span class="t-kw">for</span> x <span class="t-kw">in</span> <span class="t-num">0</span>..k <span class="t-kw">is</span> sum += a[i][x] * b[x][j] <span class="t-kw">end</span>
+            row = array_push(row, sum)
+        <span class="t-kw">end</span>
+        result = array_push(result, row)
+    <span class="t-kw">end</span>
+    <span class="t-kw">return</span> result
+<span class="t-kw">end</span>
+
+<span class="t-kw">fn</span> <span class="t-func">main</span>() <span class="t-kw">is</span>
+    <span class="t-kw">let</span> a: [[int]] = [[<span class="t-num">1</span>, <span class="t-num">2</span>], [<span class="t-num">3</span>, <span class="t-num">4</span>]]
+    <span class="t-kw">let</span> b: [[int]] = [[<span class="t-num">5</span>, <span class="t-num">6</span>], [<span class="t-num">7</span>, <span class="t-num">8</span>]]
+    <span class="t-kw">let</span> c = mat_mul(a, b)
+    write(<span class="t-str">"c[0][0] = "</span> + to_string(c[<span class="t-num">0</span>][<span class="t-num">0</span>]))
+<span class="t-kw">end</span></pre></div></div>
+</div>
+</div>
+
+<div class="section" id="ex15">
+<div class="sec-header"><span class="sec-num">EX-15</span><h2>Parser logów (regex)</h2><span class="sec-badge">regex · fs</span></div>
+<div class="code-block">
+<div class="code-header"><span class="code-filename">log_parser.h#</span><button class="copy-btn">Copy</button></div>
+<div class="code-body"><div class="code-inner"><pre><span class="t-kw">use</span> <span class="t-str">"std -> regex"</span> <span class="t-kw">from</span> <span class="t-str">"re"</span>
+<span class="t-kw">use</span> <span class="t-str">"std -> fs"</span>    <span class="t-kw">from</span> <span class="t-str">"fs"</span>
+
+<span class="t-kw">fn</span> <span class="t-func">count_errors</span>(path: string) -> int <span class="t-kw">is</span>
+    <span class="t-kw">let</span> content: string = fs::read_to_string(path) ?? <span class="t-str">""</span>
+    <span class="t-kw">let</span> pattern = re::compile(<span class="t-str">"ERROR \\[(\\d+)\\]"</span>)
+    <span class="t-kw">let</span> matches = pattern.find_all(content)
+    <span class="t-kw">return</span> array_len(matches)
+<span class="t-kw">end</span>
+
+<span class="t-kw">fn</span> <span class="t-func">main</span>() <span class="t-kw">is</span>
+    <span class="t-kw">let</span> n: int = count_errors(<span class="t-str">"server.log"</span>)
+    write(to_string(n) + <span class="t-str">" błędów znalezionych w logu"</span>)
+<span class="t-kw">end</span></pre></div></div>
+</div>
+</div>
+
+<div class="section" id="ex16">
+<div class="sec-header"><span class="sec-num">EX-16</span><h2>Maszyna stanów</h2><span class="sec-badge">enum · match</span></div>
+<div class="code-block">
+<div class="code-header"><span class="code-filename">state_machine.h#</span><button class="copy-btn">Copy</button></div>
+<div class="code-body"><div class="code-inner"><pre><span class="t-kw">enum</span> Light <span class="t-kw">is</span> Red, Yellow, Green <span class="t-kw">end</span>
+
+<span class="t-kw">fn</span> <span class="t-func">next</span>(l: Light) -> Light <span class="t-kw">is</span>
+    <span class="t-kw">match</span> l <span class="t-kw">is</span>
+        Light::Red    => Light::Green
+        Light::Green  => Light::Yellow
+        Light::Yellow => Light::Red
+    <span class="t-kw">end</span>
+<span class="t-kw">end</span>
+
+<span class="t-kw">fn</span> <span class="t-func">name</span>(l: Light) -> string <span class="t-kw">is</span>
+    <span class="t-kw">match</span> l <span class="t-kw">is</span>
+        Light::Red    => <span class="t-str">"czerwone"</span>
+        Light::Yellow => <span class="t-str">"żółte"</span>
+        Light::Green  => <span class="t-str">"zielone"</span>
+    <span class="t-kw">end</span>
+<span class="t-kw">end</span>
+
+<span class="t-kw">fn</span> <span class="t-func">main</span>() <span class="t-kw">is</span>
+    <span class="t-kw">let mut</span> l: Light = Light::Red
+    <span class="t-kw">for</span> _ <span class="t-kw">in</span> <span class="t-num">0</span>..<span class="t-num">5</span> <span class="t-kw">is</span>
+        write(name(l))
+        l = next(l)
+    <span class="t-kw">end</span>
+<span class="t-kw">end</span></pre></div></div>
+</div>
+</div>
+
+<div class="section" id="ex17">
+<div class="sec-header"><span class="sec-num">EX-17</span><h2>Result-podobna obsługa błędów</h2><span class="sec-badge">enum · pattern matching</span></div>
+<div class="code-block">
+<div class="code-header"><span class="code-filename">result_enum.h#</span><button class="copy-btn">Copy</button></div>
+<div class="code-body"><div class="code-inner"><pre><span class="t-kw">enum</span> DivResult <span class="t-kw">is</span>
+    Ok(int)
+    Err(string)
+<span class="t-kw">end</span>
+
+<span class="t-kw">fn</span> <span class="t-func">safe_div</span>(a: int, b: int) -> DivResult <span class="t-kw">is</span>
+    <span class="t-kw">if</span> b == <span class="t-num">0</span> <span class="t-kw">is</span>
+        <span class="t-kw">return</span> DivResult::Err(<span class="t-str">"division by zero"</span>)
+    <span class="t-kw">end</span>
+    <span class="t-kw">return</span> DivResult::Ok(a / b)
+<span class="t-kw">end</span>
+
+<span class="t-kw">fn</span> <span class="t-func">main</span>() <span class="t-kw">is</span>
+    <span class="t-kw">for</span> pair <span class="t-kw">in</span> [[<span class="t-num">10</span>, <span class="t-num">2</span>], [<span class="t-num">5</span>, <span class="t-num">0</span>]] <span class="t-kw">is</span>
+        <span class="t-kw">match</span> safe_div(pair[<span class="t-num">0</span>], pair[<span class="t-num">1</span>]) <span class="t-kw">is</span>
+            DivResult::Ok(v)  => write(<span class="t-str">"wynik: "</span> + to_string(v))
+            DivResult::Err(m) => write(<span class="t-str">"błąd: "</span> + m)
+        <span class="t-kw">end</span>
+    <span class="t-kw">end</span>
+<span class="t-kw">end</span></pre></div></div>
+</div>
+</div>
+
+<div class="section" id="ex18">
+<div class="sec-header"><span class="sec-num">EX-18</span><h2>Kolejka zadań (async)</h2><span class="sec-badge">async · closures</span></div>
+<div class="code-block">
+<div class="code-header"><span class="code-filename">task_queue.h#</span><button class="copy-btn">Copy</button></div>
+<div class="code-body"><div class="code-inner"><pre><span class="t-kw">struct</span> Task <span class="t-kw">is</span>
+    <span class="t-kw">pub</span> name:     string
+    <span class="t-kw">pub</span> priority: int
+<span class="t-kw">end</span>
+
+<span class="t-kw">async fn</span> <span class="t-func">run_task</span>(t: Task) -> string <span class="t-kw">is</span>
+    write(<span class="t-str">"uruchamiam: "</span> + t.name)
+    <span class="t-kw">return</span> t.name + <span class="t-str">" done"</span>
+<span class="t-kw">end</span>
+
+<span class="t-kw">async fn</span> <span class="t-func">main</span>() <span class="t-kw">is</span>
+    <span class="t-kw">let mut</span> tasks: [Task] = [
+        Task { name: <span class="t-str">"build"</span>,  priority: <span class="t-num">1</span> },
+        Task { name: <span class="t-str">"test"</span>,   priority: <span class="t-num">2</span> },
+        Task { name: <span class="t-str">"deploy"</span>, priority: <span class="t-num">3</span> },
+    ]
+    <span class="t-kw">for</span> t <span class="t-kw">in</span> tasks <span class="t-kw">is</span>
+        <span class="t-kw">let</span> result = <span class="t-kw">await</span> run_task(t)
+        write(result)
+    <span class="t-kw">end</span>
+<span class="t-kw">end</span></pre></div></div>
+</div>
+</div>
+
+<div class="section" id="ex19">
+<div class="sec-header"><span class="sec-num">EX-19</span><h2>Silnik szablonów</h2><span class="sec-badge">@arena · string</span></div>
+<div class="code-block">
+<div class="code-header"><span class="code-filename">template_engine.h#</span><button class="copy-btn">Copy</button></div>
+<div class="code-body"><div class="code-inner"><pre><span class="t-comment">;; Renderowanie robi mnóstwo tymczasowych stringów — @arena zwalnia</span>
+<span class="t-comment">;; je wszystkie naraz przy wyjściu zamiast po jednym za każdym razem.</span>
+<span class="t-kw">@arena</span>
+<span class="t-kw">fn</span> <span class="t-func">render</span>(template: string, name: string, count: int) -> string <span class="t-kw">is</span>
+    <span class="t-kw">let mut</span> out: string = string_replace(template, <span class="t-str">"{{name}}"</span>, name)
+    out = string_replace(out, <span class="t-str">"{{count}}"</span>, to_string(count))
+    <span class="t-kw">return</span> out
+<span class="t-kw">end</span>
+
+<span class="t-kw">fn</span> <span class="t-func">main</span>() <span class="t-kw">is</span>
+    <span class="t-kw">let</span> tpl: string = <span class="t-str">"Cześć {{name}}, masz {{count}} nowych wiadomości."</span>
+    write(render(tpl, <span class="t-str">"Michał"</span>, <span class="t-num">7</span>))
+<span class="t-kw">end</span></pre></div></div>
+</div>
+</div>
+
+<div class="section" id="ex20">
+<div class="sec-header"><span class="sec-num">EX-20</span><h2>Parser binarnego nagłówka</h2><span class="sec-badge">@pointers · struct</span></div>
+<div class="code-block">
+<div class="code-header"><span class="code-filename">binary_header.h#</span><button class="copy-btn">Copy</button></div>
+<div class="code-body"><div class="code-inner"><pre><span class="t-kw">struct</span> Header <span class="t-kw">is</span>
+    <span class="t-kw">pub</span> magic:   int
+    <span class="t-kw">pub</span> version: int
+<span class="t-kw">end</span>
+
+<span class="t-comment">;; ptr_field_offset liczy przesunięcie pola za Ciebie — bez ręcznego</span>
+<span class="t-comment">;; liczenia bajtów jak w poprzednich wersjach @pointers.</span>
+<span class="t-kw">@pointers</span>
+<span class="t-kw">fn</span> <span class="t-func">read_header</span>(buf: any) -> bool <span class="t-kw">is</span>
+    <span class="t-kw">let</span> magic_off: int   = ptr_field_offset(Header, <span class="t-str">"magic"</span>)
+    <span class="t-kw">let</span> version_off: int = ptr_field_offset(Header, <span class="t-str">"version"</span>)
+    <span class="t-kw">let</span> magic: int   = ptr_read_i32(buf, magic_off)
+    <span class="t-kw">let</span> version: int = ptr_read_i32(buf, version_off)
+    <span class="t-kw">return</span> magic == <span class="t-num">0x48534821</span> && version &gt;= <span class="t-num">1</span>
+<span class="t-kw">end</span>
+
+<span class="t-kw">@arc</span>
+<span class="t-kw">fn</span> <span class="t-func">main</span>() <span class="t-kw">is</span>
+    <span class="t-kw">let</span> buf = arc_alloc(<span class="t-num">8</span>)
+    ptr_write_i32(buf, <span class="t-num">0</span>, <span class="t-num">0x48534821</span>)
+    ptr_write_i32(buf, <span class="t-num">4</span>, <span class="t-num">2</span>)
+    write(<span class="t-str">"valid header: "</span> + to_string(read_header(buf)))
+    arc_release(buf)
 <span class="t-kw">end</span></pre></div></div>
 </div>
 </div>
@@ -242,11 +609,10 @@ window.__HL_SECTIONS['przyklady'] = `
 <h3>Narzędzia</h3>
 <table class="ref-table">
 <tr><td class="td-syntax">hsharp preview f.h#</td><td class="td-desc">Interpreter</td></tr>
-<tr><td class="td-syntax">hsharp build f.h#</td><td class="td-desc">Cranelift compile</td></tr>
+<tr><td class="td-syntax">hsharp build f.h#</td><td class="td-desc">LLVM O3+AVX2</td></tr>
 <tr><td class="td-syntax">hsharp check f.h#</td><td class="td-desc">Syntax + types</td></tr>
-<tr><td class="td-syntax">bytes run</td><td class="td-desc">JIT w RAM</td></tr>
-<tr><td class="td-syntax">h# compile --release</td><td class="td-desc">LLVM O3+AVX2</td></tr>
-<tr><td class="td-syntax">bytes run</td><td class="td-desc">JIT w RAM</td></tr>
+<tr><td class="td-syntax">bytes build</td><td class="td-desc">Build z bytes.hk (LLVM)</td></tr>
+<tr><td class="td-syntax">bytes run</td><td class="td-desc">Build + uruchom</td></tr>
 <tr><td class="td-syntax">bytes python numpy</td><td class="td-desc">Python pkg</td></tr>
 </table>
 <h3>Std</h3>
@@ -498,6 +864,124 @@ async <span class="t-kw">fn</span> <span class="t-fn">main</span>() <span class=
             write(<span class="t-str">"{hash}  {path}"</span>)
         <span class="t-kw">end</span>
     <span class="t-kw">end</span>
+<span class="t-kw">end</span></pre></div></div>
+</div>
+
+<h3>Generyczny stos + trait bound</h3>
+<div class="code-block">
+<div class="code-header"><span class="code-filename">generic_stack.h#</span><button class="copy-btn">Copy</button></div>
+<div class="code-body"><div class="code-inner"><pre><span class="t-comment">;; Generyczna struktura + funkcja z ograniczeniem T: Debug, żeby móc</span>
+<span class="t-comment">;; wypisać zawartość niezależnie od typu elementów.</span>
+<span class="t-kw">trait</span> Debug <span class="t-kw">is</span>
+    <span class="t-kw">fn</span> debug(<span class="t-kw">self</span>) -> <span class="t-type">string</span>
+<span class="t-kw">end</span>
+
+<span class="t-kw">struct</span> Stack&lt;T&gt; <span class="t-kw">is</span>
+    <span class="t-kw">pub</span> items: [T]
+<span class="t-kw">end</span>
+
+<span class="t-kw">impl</span>&lt;T&gt; Stack&lt;T&gt; <span class="t-kw">is</span>
+    <span class="t-kw">fn</span> <span class="t-fn">new</span>() -> Stack&lt;T&gt; <span class="t-kw">is</span>
+        return Stack { items: [] }
+    <span class="t-kw">end</span>
+    <span class="t-kw">fn</span> <span class="t-fn">push</span>(<span class="t-kw">mut self</span>, item: T) <span class="t-kw">is</span>
+        <span class="t-kw">self</span>.items = array_push(<span class="t-kw">self</span>.items, item)
+    <span class="t-kw">end</span>
+    <span class="t-kw">fn</span> <span class="t-fn">pop</span>(<span class="t-kw">mut self</span>) -> T? <span class="t-kw">is</span>
+        <span class="t-kw">if</span> <span class="t-kw">self</span>.items.len() == <span class="t-num">0</span> <span class="t-kw">is</span> return nil <span class="t-kw">end</span>
+        <span class="t-kw">let</span> last = <span class="t-kw">self</span>.items[<span class="t-kw">self</span>.items.len() - <span class="t-num">1</span>]
+        <span class="t-kw">self</span>.items = array_remove(<span class="t-kw">self</span>.items, <span class="t-kw">self</span>.items.len() - <span class="t-num">1</span>)
+        return last
+    <span class="t-kw">end</span>
+<span class="t-kw">end</span>
+
+<span class="t-kw">fn</span> <span class="t-fn">dump</span>&lt;T: Debug&gt;(stack: Stack&lt;T&gt;) <span class="t-kw">is</span>
+    <span class="t-kw">for</span> item <span class="t-kw">in</span> stack.items <span class="t-kw">is</span>
+        write(<span class="t-str">"  - "</span> + item.debug())
+    <span class="t-kw">end</span>
+<span class="t-kw">end</span>
+
+<span class="t-kw">#[derive(Debug)]</span>
+<span class="t-kw">struct</span> Job <span class="t-kw">is</span>
+    <span class="t-kw">pub</span> name: <span class="t-type">string</span>
+<span class="t-kw">end</span>
+
+<span class="t-kw">fn</span> <span class="t-fn">main</span>() <span class="t-kw">is</span>
+    <span class="t-kw">let mut</span> jobs: Stack&lt;Job&gt; = Stack::new()
+    jobs.push(Job { name: <span class="t-str">"build"</span> })
+    jobs.push(Job { name: <span class="t-str">"test"</span> })
+    jobs.push(Job { name: <span class="t-str">"deploy"</span> })
+
+    dump(jobs)
+    write(<span class="t-str">"---"</span>)
+    <span class="t-kw">let</span> next = jobs.pop()
+    <span class="t-kw">if</span> next != nil <span class="t-kw">is</span>
+        write(<span class="t-str">"next up: "</span> + next.debug())
+    <span class="t-kw">end</span>
+<span class="t-kw">end</span></pre></div></div>
+</div>
+
+<h3>Optional &amp; łańcuchowanie <code>?</code> — wczytywanie configu</h3>
+<div class="code-block">
+<div class="code-header"><span class="code-filename">config_chain.h#</span><button class="copy-btn">Copy</button></div>
+<div class="code-body"><div class="code-inner"><pre><span class="t-kw">use</span> <span class="t-str">"std -> fs"</span>   <span class="t-kw">from</span> <span class="t-str">"fs"</span>
+<span class="t-kw">use</span> <span class="t-str">"std -> json"</span> <span class="t-kw">from</span> <span class="t-str">"json"</span>
+<span class="t-kw">use</span> <span class="t-str">"std -> env"</span>  <span class="t-kw">from</span> <span class="t-str">"env"</span>
+
+<span class="t-comment">;; Każde ? przerywa całą funkcję i zwraca nil w miejscu wywołania,</span>
+<span class="t-comment">;; jeśli krok po lewej dał nil — nie trzeba ręcznie sprawdzać każdego</span>
+<span class="t-comment">;; kroku osobno.</span>
+<span class="t-kw">fn</span> <span class="t-fn">read_port</span>(path: <span class="t-type">string</span>) -> <span class="t-type">int</span>? <span class="t-kw">is</span>
+    <span class="t-kw">let</span> raw: <span class="t-type">string</span>? = fs::read_to_string(path)?
+    <span class="t-kw">let</span> parsed: any? = json::parse(raw)?
+    <span class="t-kw">let</span> port: <span class="t-type">int</span>? = parsed[<span class="t-str">"server"</span>][<span class="t-str">"port"</span>]?
+    return port
+<span class="t-kw">end</span>
+
+<span class="t-kw">fn</span> <span class="t-fn">main</span>() <span class="t-kw">is</span>
+    <span class="t-kw">let</span> path = env::args()[<span class="t-num">1</span>]
+    <span class="t-kw">let</span> port = read_port(path)
+    <span class="t-kw">if</span> port == nil <span class="t-kw">is</span>
+        write(<span class="t-str">"could not read a valid port from "</span> + path)
+        return
+    <span class="t-kw">end</span>
+    write(<span class="t-str">"server port: {port}"</span>)
+<span class="t-kw">end</span></pre></div></div>
+</div>
+
+<h3>@arena + @arc razem — pula buforów</h3>
+<div class="code-block">
+<div class="code-header"><span class="code-filename">buffer_pool.h#</span><button class="copy-btn">Copy</button></div>
+<div class="code-body"><div class="code-inner"><pre><span class="t-comment">;; parse_chunk robi dużo tymczasowych alokacji (string, array) które</span>
+<span class="t-comment">;; są potrzebne tylko wewnątrz tej jednej funkcji — @arena zwalnia je</span>
+<span class="t-comment">;; wszystkie naraz na wyjściu. shared z kolei musi przeżyć dłużej niż</span>
+<span class="t-comment">;; jedno wywołanie, więc jest ręcznie zarządzany przez @arc.</span>
+<span class="t-kw">@arena</span>
+<span class="t-kw">fn</span> <span class="t-fn">parse_chunk</span>(raw: <span class="t-type">string</span>) -> <span class="t-type">int</span> <span class="t-kw">is</span>
+    <span class="t-kw">let</span> parts: [<span class="t-type">string</span>] = string_split(raw, <span class="t-str">","</span>)
+    <span class="t-kw">let mut</span> total: <span class="t-type">int</span> = <span class="t-num">0</span>
+    <span class="t-kw">for</span> p <span class="t-kw">in</span> parts <span class="t-kw">is</span>
+        total = total + string_to_int(string_trim(p))
+    <span class="t-kw">end</span>
+    return total
+<span class="t-kw">end</span>
+
+<span class="t-kw">@arc</span>
+<span class="t-kw">fn</span> <span class="t-fn">shared_running_total</span>(existing: <span class="t-type">int</span>, delta: <span class="t-type">int</span>) -> <span class="t-type">int</span> <span class="t-kw">is</span>
+    <span class="t-kw">let</span> buf = arc_alloc(<span class="t-num">8</span>)
+    ptr_write_i64(buf, <span class="t-num">0</span>, existing + delta)
+    <span class="t-kw">let</span> result: <span class="t-type">int</span> = ptr_read_i64(buf, <span class="t-num">0</span>)
+    arc_release(buf)
+    return result
+<span class="t-kw">end</span>
+
+<span class="t-kw">fn</span> <span class="t-fn">main</span>() <span class="t-kw">is</span>
+    <span class="t-kw">let</span> chunks: [<span class="t-type">string</span>] = [<span class="t-str">"1, 2, 3"</span>, <span class="t-str">"10, 20"</span>, <span class="t-str">"100"</span>]
+    <span class="t-kw">let mut</span> running: <span class="t-type">int</span> = <span class="t-num">0</span>
+    <span class="t-kw">for</span> chunk <span class="t-kw">in</span> chunks <span class="t-kw">is</span>
+        running = shared_running_total(running, parse_chunk(chunk))
+    <span class="t-kw">end</span>
+    write(<span class="t-str">"total: {running}"</span>)
 <span class="t-kw">end</span></pre></div></div>
 </div>
 </div>
