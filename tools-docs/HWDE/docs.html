@@ -1,1 +1,1276 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>HWDE — dokumentacja</title>
+<meta name="description" content="Dokumentacja HWDE (HackerOS Wayland Desktop Environment) — instalacja, architektura, skróty klawiszowe, protokół IPC i konfiguracja." />
+<link rel="icon" href="../images/logo/hwde-mark.svg" type="image/svg+xml" />
+<link rel="alternate icon" href="../images/logo/favicon.ico" />
+<link rel="apple-touch-icon" href="../images/logo/png/icon-256.png" />
+<style>
+/* =========================================================================
+   HWDE Documentation — styles.css
+   No external fonts/CDNs on purpose: this page ships inside HackerOS and
+   has to render correctly with zero network access.
+   ========================================================================= */
 
+:root {
+  --bg: #0b0e14;
+  --bg-raised: #10141d;
+  --bg-panel: #131826;
+  --line: rgba(148, 163, 184, 0.14);
+  --line-strong: rgba(148, 163, 184, 0.28);
+  --ink: #e6e9f0;
+  --ink-dim: #99a2b5;
+  --ink-faint: #626b80;
+  --accent: #4f8cff;
+  --accent-soft: rgba(79, 140, 255, 0.14);
+  --accent-line: rgba(79, 140, 255, 0.4);
+  --accent-2: #59d9b3;
+  --warn: #ffb454;
+  --danger: #ff6b6b;
+  --mono: ui-monospace, "JetBrains Mono", "Fira Code", "Cascadia Code", "Source Code Pro", Consolas, monospace;
+  --sans: "Inter", "Segoe UI", system-ui, -apple-system, "Noto Sans", Roboto, sans-serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+  --shell-w: 1180px;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Faint grid + vignette backdrop so the dark bg isn't flat */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 64px 64px;
+  opacity: 0.35;
+  mask-image: radial-gradient(ellipse 90% 60% at 50% 0%, #000 10%, transparent 75%);
+}
+
+a { color: inherit; }
+
+code, pre, kbd, .mono { font-family: var(--mono); }
+
+kbd {
+  display: inline-block;
+  padding: 0.12em 0.5em;
+  font-size: 0.82em;
+  background: var(--bg-panel);
+  border: 1px solid var(--line-strong);
+  border-bottom-width: 2px;
+  border-radius: 6px;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.container {
+  max-width: var(--shell-w);
+  margin: 0 auto;
+  padding: 0 28px;
+}
+
+/* ---------- Top nav ---------- */
+.topnav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  backdrop-filter: blur(10px);
+  background: rgba(11, 14, 20, 0.78);
+  border-bottom: 1px solid var(--line);
+}
+
+.topnav-inner {
+  max-width: var(--shell-w);
+  margin: 0 auto;
+  padding: 0 28px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  font-size: 15px;
+  text-decoration: none;
+  color: var(--ink);
+  flex-shrink: 0;
+}
+
+.brand .dot { color: var(--accent); }
+
+.brand-badge {
+  font-size: 10.5px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  border: 1px solid var(--accent-line);
+  color: var(--accent);
+  background: var(--accent-soft);
+  font-family: var(--mono);
+  letter-spacing: 0.03em;
+}
+
+.nav-links {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.nav-links::-webkit-scrollbar { display: none; }
+
+.nav-links a {
+  white-space: nowrap;
+  text-decoration: none;
+  color: var(--ink-dim);
+  font-size: 13.5px;
+  padding: 8px 11px;
+  border-radius: 7px;
+  transition: color 0.15s, background 0.15s;
+}
+
+.nav-links a:hover { color: var(--ink); background: rgba(255,255,255,0.04); }
+.nav-links a.active { color: var(--accent); background: var(--accent-soft); }
+
+.nav-actions { display: flex; gap: 8px; flex-shrink: 0; }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-family: var(--sans);
+  padding: 8px 13px;
+  border-radius: 8px;
+  border: 1px solid var(--line-strong);
+  background: var(--bg-panel);
+  color: var(--ink);
+  cursor: pointer;
+  text-decoration: none;
+  transition: border-color 0.15s, transform 0.1s, background 0.15s;
+}
+.btn:hover { border-color: var(--accent-line); background: rgba(79,140,255,0.08); }
+.btn:active { transform: translateY(1px); }
+.btn-primary { background: var(--accent); border-color: var(--accent); color: #071022; font-weight: 600; }
+.btn-primary:hover { background: #6ba0ff; border-color: #6ba0ff; }
+
+/* ---------- Hero ---------- */
+.hero {
+  padding: 96px 0 72px;
+  position: relative;
+}
+
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent-2);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+
+.eyebrow::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-2);
+  box-shadow: 0 0 0 3px rgba(89, 217, 179, 0.18);
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 48px;
+  align-items: center;
+}
+
+.hero h1 {
+  font-size: clamp(2.3rem, 4.2vw, 3.4rem);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  margin: 0 0 20px;
+  font-weight: 700;
+}
+
+.hero h1 .accent { color: var(--accent); }
+
+.hero p.lead {
+  font-size: 17.5px;
+  color: var(--ink-dim);
+  max-width: 46ch;
+  margin: 0 0 30px;
+}
+
+.hero-cta { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 34px; }
+
+.stat-row {
+  display: flex;
+  gap: 28px;
+  flex-wrap: wrap;
+  padding-top: 26px;
+  border-top: 1px solid var(--line);
+}
+
+.stat b {
+  display: block;
+  font-family: var(--mono);
+  font-size: 20px;
+  color: var(--ink);
+}
+.stat span {
+  font-size: 12.5px;
+  color: var(--ink-faint);
+}
+
+/* Signature element: live IPC terminal */
+.term {
+  background: var(--bg-raised);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 30px 60px -20px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.02);
+}
+
+.term-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 14px;
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--line);
+}
+
+.term-dot { width: 10px; height: 10px; border-radius: 50%; }
+.term-dot.r { background: #ff5f56; }
+.term-dot.y { background: #ffbd2e; }
+.term-dot.g { background: #27c93f; }
+
+.term-title {
+  margin-left: 8px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink-faint);
+}
+
+.term-body {
+  padding: 18px 18px 22px;
+  font-family: var(--mono);
+  font-size: 13px;
+  line-height: 1.75;
+  min-height: 230px;
+}
+
+.term-line { white-space: pre-wrap; word-break: break-word; }
+.term-prompt { color: var(--accent-2); }
+.term-req { color: var(--ink-dim); }
+.term-key { color: var(--accent); }
+.term-str { color: var(--warn); }
+.term-ok { color: var(--accent-2); }
+.term-cursor {
+  display: inline-block;
+  width: 7px;
+  height: 14px;
+  background: var(--accent);
+  vertical-align: -2px;
+  animation: blink 1s steps(1) infinite;
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+/* ---------- Sections ---------- */
+section { padding: 74px 0; border-top: 1px solid var(--line); }
+section:first-of-type { border-top: none; }
+
+.section-head { max-width: 62ch; margin-bottom: 40px; }
+
+.section-head .eyebrow { margin-bottom: 14px; }
+
+.section-head h2 {
+  font-size: clamp(1.6rem, 2.6vw, 2.1rem);
+  letter-spacing: -0.01em;
+  margin: 0 0 12px;
+}
+
+.section-head p { color: var(--ink-dim); margin: 0; font-size: 15.5px; }
+
+/* ---------- Cards / grid ---------- */
+.grid { display: grid; gap: 18px; }
+.grid-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-2 { grid-template-columns: repeat(2, 1fr); }
+
+.card {
+  background: var(--bg-panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 22px;
+  transition: border-color 0.15s, transform 0.15s;
+}
+.card:hover { border-color: var(--accent-line); }
+
+.card .icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+  font-family: var(--mono);
+  font-weight: 700;
+}
+
+.card h3 { font-size: 15.5px; margin: 0 0 8px; }
+.card p { font-size: 13.8px; color: var(--ink-dim); margin: 0; }
+
+/* ---------- Code blocks ---------- */
+.code-block {
+  position: relative;
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin: 18px 0;
+}
+
+.code-block .code-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--line);
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--ink-faint);
+}
+
+.copy-btn {
+  font-family: var(--sans);
+  font-size: 11.5px;
+  background: transparent;
+  border: 1px solid var(--line-strong);
+  color: var(--ink-dim);
+  padding: 3px 9px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.copy-btn:hover { color: var(--ink); border-color: var(--accent-line); }
+.copy-btn.copied { color: var(--accent-2); border-color: var(--accent-2); }
+
+.code-block pre {
+  margin: 0;
+  padding: 16px 18px;
+  overflow-x: auto;
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+/* ---------- Tables ---------- */
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+th { color: var(--ink-faint); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
+tr:last-child td { border-bottom: none; }
+td.mono, th.mono { font-family: var(--mono); }
+.badge {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  color: var(--ink-dim);
+}
+.badge.new { border-color: var(--accent-line); color: var(--accent); background: var(--accent-soft); }
+
+.table-wrap {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--bg-panel);
+}
+.table-wrap table { margin: 0; }
+.table-wrap th { background: rgba(255,255,255,0.02); }
+
+/* ---------- Architecture diagram ---------- */
+.arch {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 18px;
+  padding: 34px 20px;
+}
+
+.arch-box {
+  background: var(--bg-panel);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  padding: 20px;
+  text-align: center;
+}
+.arch-box.accent { border-color: var(--accent-line); background: var(--accent-soft); }
+.arch-box h4 { margin: 0 0 6px; font-family: var(--mono); font-size: 14px; }
+.arch-box p { margin: 0; font-size: 12.5px; color: var(--ink-dim); }
+
+.arch-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-faint);
+}
+.arch-arrow { font-size: 20px; color: var(--accent); }
+
+@media (max-width: 720px) {
+  .arch { grid-template-columns: 1fr; }
+  .arch-link { flex-direction: row; }
+}
+
+/* ---------- Tabs (config examples) ---------- */
+.tabs { display: flex; gap: 4px; margin-bottom: -1px; }
+.tab-btn {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  background: transparent;
+  border: 1px solid var(--line);
+  border-bottom: none;
+  color: var(--ink-faint);
+  padding: 8px 14px;
+  border-radius: 8px 8px 0 0;
+  cursor: pointer;
+}
+.tab-btn.active { color: var(--accent); background: var(--bg-raised); border-color: var(--line); }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* ---------- FAQ ---------- */
+.faq-item {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg-panel);
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+.faq-q {
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  color: var(--ink);
+  padding: 16px 18px;
+  font-size: 14.5px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--sans);
+}
+.faq-q .plus {
+  font-family: var(--mono);
+  color: var(--accent);
+  flex-shrink: 0;
+  transition: transform 0.2s;
+}
+.faq-item.open .faq-q .plus { transform: rotate(45deg); }
+.faq-a {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.25s ease, padding 0.25s ease;
+  padding: 0 18px;
+  color: var(--ink-dim);
+  font-size: 13.8px;
+}
+.faq-item.open .faq-a { padding: 0 18px 18px; }
+
+/* ---------- Changelog ---------- */
+.changelog-entry {
+  display: grid;
+  grid-template-columns: 90px 1fr;
+  gap: 22px;
+  padding: 22px 0;
+  border-bottom: 1px solid var(--line);
+}
+.changelog-entry:last-child { border-bottom: none; }
+.changelog-ver {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--accent);
+  padding-top: 2px;
+}
+.changelog-entry h4 { margin: 0 0 8px; font-size: 15px; }
+.changelog-entry ul { margin: 0; padding-left: 18px; color: var(--ink-dim); font-size: 13.8px; }
+.changelog-entry li { margin-bottom: 4px; }
+
+@media (max-width: 620px) {
+  .changelog-entry { grid-template-columns: 1fr; gap: 6px; }
+}
+
+/* ---------- Footer ---------- */
+footer {
+  border-top: 1px solid var(--line);
+  padding: 40px 0 60px;
+  color: var(--ink-faint);
+  font-size: 13px;
+}
+footer .foot-row {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: center;
+}
+footer a { color: var(--ink-dim); text-decoration: none; }
+footer a:hover { color: var(--accent); }
+
+/* ---------- Back to top ---------- */
+.to-top {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--bg-panel);
+  border: 1px solid var(--line-strong);
+  color: var(--ink-dim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s, border-color 0.2s;
+  z-index: 40;
+}
+.to-top.visible { opacity: 1; pointer-events: auto; }
+.to-top:hover { border-color: var(--accent-line); color: var(--accent); }
+
+/* ---------- Mobile nav ---------- */
+.nav-toggle { display: none; background: none; border: 1px solid var(--line-strong); border-radius: 7px; color: var(--ink); width: 36px; height: 36px; cursor: pointer; }
+
+@media (max-width: 860px) {
+  .nav-toggle { display: block; }
+  .nav-links {
+    position: fixed;
+    top: 60px; left: 0; right: 0;
+    background: var(--bg-raised);
+    border-bottom: 1px solid var(--line);
+    flex-direction: column;
+    padding: 8px;
+    display: none;
+    max-height: calc(100vh - 60px);
+    overflow-y: auto;
+  }
+  .nav-links.open { display: flex; }
+  .nav-links a { padding: 12px; }
+  .hero-grid { grid-template-columns: 1fr; }
+  .grid-3, .grid-2 { grid-template-columns: 1fr; }
+  .nav-actions .btn span.label { display: none; }
+}
+
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="#top">
+      <span class="dot">&gt;</span>HWDE<span class="dot">_</span>
+      <span class="brand-badge">v0.2</span>
+    </a>
+    <button class="nav-toggle" aria-label="Menu">☰</button>
+    <div class="nav-links">
+      <a href="#overview">Przegląd</a>
+      <a href="#install">Instalacja</a>
+      <a href="#architecture">Architektura</a>
+      <a href="#keybindings">Skróty</a>
+      <a href="#ipc">Protokół IPC</a>
+      <a href="#config">Konfiguracja</a>
+      <a href="#icon-store">Sklep z ikonami</a>
+      <a href="#faq">FAQ</a>
+      <a href="#changelog">Historia zmian</a>
+    </div>
+    <div class="nav-actions">
+      <a class="btn" href="https://github.com/HackerOS-Linux-System/HWDE/" target="_blank" rel="noopener">
+        <span class="label">GitHub</span> ↗
+      </a>
+    </div>
+  </div>
+</nav>
+
+<main id="top">
+  <!-- ============================= HERO ============================= -->
+  <header class="hero container" id="overview">
+    <div class="hero-grid">
+      <div>
+        <div class="eyebrow">HackerOS Wayland Desktop Environment</div>
+        <h1>Powłoka i kompozytor <span class="accent">jednego</span> systemu.</h1>
+        <p class="lead">
+          HWDE to natywne środowisko graficzne HackerOS: powłoka
+          <code>starthwde</code> (SolidJS + Rust/Tauri v2) i kompozytor
+          Wayland/XWayland <code>comphwde</code> (Smithay 0.7), połączone
+          własnym, minimalnym protokołem IPC po gnieździe uniksowym —
+          bez zbędnych zależności, bez telemetrii, gotowe do pracy
+          offline.
+        </p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="#install">Zainstaluj HWDE</a>
+          <a class="btn" href="#architecture">Zobacz architekturę</a>
+        </div>
+        <div class="stat-row">
+          <div class="stat"><b>2</b><span>binaria: starthwde + comphwde</span></div>
+          <div class="stat"><b>21</b><span>domyślnych skrótów klawiszowych</span></div>
+          <div class="stat"><b>4</b><span>języki interfejsu</span></div>
+          <div class="stat"><b>0</b><span>zależności od CDN w tej stronie</span></div>
+        </div>
+      </div>
+      <div class="term" aria-hidden="false">
+        <div class="term-bar">
+          <span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span>
+          <span class="term-title">hwde-ipc — comphwde.sock</span>
+        </div>
+        <div class="term-body" id="term-body"></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============================= INSTALL ============================= -->
+  <section id="install">
+    <div class="container">
+      <div class="section-head">
+        <div class="eyebrow">Pierwsze kroki</div>
+        <h2>Instalacja i budowanie</h2>
+        <p>Wymagania: Rust ≥ 1.80 (rustup), Node.js ≥ 20, standardowe
+        zależności Tauri v2 dla Linuksa oraz biblioteki Wayland/wejścia.</p>
+      </div>
+
+      <div class="grid grid-3">
+        <div class="card">
+          <div class="icon">1</div>
+          <h3>Zbuduj wszystko</h3>
+          <p>Kompiluje <code>starthwde</code> i <code>comphwde</code> w
+          trybie release oraz builduje frontend Vite.</p>
+        </div>
+        <div class="card">
+          <div class="icon">2</div>
+          <h3>Zainstaluj</h3>
+          <p>Kopiuje binaria do <code>/usr/bin</code>, plik sesji oraz
+          domyślną tapetę.</p>
+        </div>
+        <div class="card">
+          <div class="icon">3</div>
+          <h3>Uruchom sesję</h3>
+          <p>Wybierz „HWDE” na ekranie logowania (SDDM) albo uruchom z TTY.</p>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-head">
+          <span>bash</span>
+          <button class="copy-btn">Kopiuj</button>
+        </div>
+        <pre><code>make build          # wszystko, tryb release
+make shell           # tylko starthwde (frontend + backend Tauri)
+make compositor       # tylko comphwde
+make dev              # powłoka w oknie, bez kompozytora (najszybsza pętla developerska)
+sudo ./install.hl     # instalacja do /usr/bin, plik sesji, domyślna tapeta</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-head">
+          <span>starthwde — tryby uruchomienia</span>
+          <button class="copy-btn">Kopiuj</button>
+        </div>
+        <pre><code>starthwde              pełna sesja graficzna (spawnuje i nadzoruje comphwde)
+starthwde dev           powłoka jako zwykłe okno, bez kompozytora
+starthwde app &lt;nazwa&gt;   pojedyncza aplikacja HWDE bez chrome powłoki
+                        (np. settings, clipboard, about, emoji)</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================= ARCHITECTURE ============================= -->
+  <section id="architecture">
+    <div class="container">
+      <div class="section-head">
+        <div class="eyebrow">Jak to jest zbudowane</div>
+        <h2>Powłoka, kompozytor i most między nimi</h2>
+        <p>Zamiast <code>wlr-foreign-toplevel-management</code> HWDE używa
+        własnego, prostego protokołu NDJSON po gnieździe uniksowym — mniej
+        zależności po stronie powłoki, kosztem braku wsparcia dla
+        zewnętrznych pasków zadań.</p>
+      </div>
+
+      <div class="arch">
+        <div class="arch-box">
+          <h4>starthwde</h4>
+          <p>SolidJS + Rust/Tauri v2. Powłoka, launcher, ustawienia,
+          panel Wi-Fi/Bluetooth/audio, sklep z ikonami.</p>
+        </div>
+        <div class="arch-link">
+          <span class="arch-arrow">⇄</span>
+          hwde-ipc (NDJSON / unix socket)
+        </div>
+        <div class="arch-box accent">
+          <h4>comphwde</h4>
+          <p>Smithay 0.7. Wayland/XWayland, kafelkowanie, wieloprzestrzenność,
+          warstwy wlr-layer-shell, dekoracje.</p>
+        </div>
+      </div>
+
+      <div class="grid grid-2" style="margin-top: 8px;">
+        <div class="card">
+          <div class="icon">◆</div>
+          <h3>Bezpieczeństwo gniazda</h3>
+          <p>Katalog <code>0700</code>, gniazdo <code>0600</code>, a każde
+          połączenie jest dodatkowo weryfikowane przez <code>SO_PEERCRED</code>
+          — odrzucane, jeśli UID rozmówcy nie zgadza się z UID sesji.</p>
+        </div>
+        <div class="card">
+          <div class="icon">◆</div>
+          <h3>Bezpiecznik awaryjny</h3>
+          <p><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>Esc</kbd>
+          zaszyty na sztywno w kompozytorze — działa nawet gdy wtyczka
+          „zamiennika powłoki” przechwyci cały interfejs.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================= KEYBINDINGS ============================= -->
+  <section id="keybindings">
+    <div class="container">
+      <div class="section-head">
+        <div class="eyebrow">Domyślna konfiguracja</div>
+        <h2>Skróty klawiszowe</h2>
+        <p>Edytowalne na żywo w Ustawienia → Skróty klawiszowe, plik
+        <code>~/.config/HWDE/compositor.toml</code>. Poniższe dwa wiersze
+        oznaczone <span class="badge new">nowe w v0.2</span> to
+        <code>focus_prev</code> i <code>toggle_floating</code>.</p>
+      </div>
+
+      <input id="kb-filter" class="copy-btn" style="width:100%; max-width:320px; margin-bottom:14px; text-align:left; padding:9px 12px;"
+             type="text" placeholder="Filtruj skróty…" />
+
+      <div class="table-wrap">
+        <table id="kb-table">
+          <thead>
+            <tr><th>Skrót</th><th>Akcja</th><th>Opis</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="mono"><kbd>Super</kbd>+<kbd>Enter</kbd></td><td class="mono">spawn:kitty</td><td>Otwórz terminal</td></tr>
+            <tr><td class="mono"><kbd>Super</kbd>+<kbd>D</kbd></td><td class="mono">spawn:hwde-launcher</td><td>Otwórz launcher aplikacji</td></tr>
+            <tr><td class="mono"><kbd>Super</kbd>+<kbd>Q</kbd></td><td class="mono">close_window</td><td>Zamknij aktywne okno</td></tr>
+            <tr><td class="mono"><kbd>Super</kbd>+<kbd>F</kbd></td><td class="mono">toggle_maximize</td><td>Maksymalizuj / przywróć okno</td></tr>
+            <tr><td class="mono"><kbd>Super</kbd>+<kbd>T</kbd></td><td class="mono">toggle_tiling</td><td>Włącz / wyłącz kafelkowanie na przestrzeni</td></tr>
+            <tr><td class="mono"><kbd>Super</kbd>+<kbd>M</kbd></td><td class="mono">swap_master</td><td>Zamień okno główne z aktywnym</td></tr>
+            <tr><td class="mono"><kbd>Super</kbd>+<kbd>L</kbd></td><td class="mono">increase_master</td><td>Powiększ kolumnę główną</td></tr>
+            <tr><td class="mono"><kbd>Super</kbd>+<kbd>H</kbd></td><td class="mono">decrease_master</td><td>Zmniejsz kolumnę główną</td></tr>
+            <tr><td class="mono"><kbd>Super</kbd>+<kbd>Tab</kbd></td><td class="mono">focus_next</td><td>Następne okno</td></tr>
+            <tr><td class="mono"><kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>Tab</kbd></td><td class="mono">focus_prev <span class="badge new">v0.2</span></td><td>Poprzednie okno</td></tr>
+            <tr><td class="mono"><kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>F</kbd></td><td class="mono">toggle_floating <span class="badge new">v0.2</span></td><td>Odepnij / przypnij okno od kafelkowania</td></tr>
+            <tr><td class="mono"><kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>Q</kbd></td><td class="mono">quit</td><td>Zakończ sesję comphwde</td></tr>
+            <tr><td class="mono"><kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd></td><td class="mono">reload_config</td><td>Przeładuj compositor.toml</td></tr>
+            <tr><td class="mono"><kbd>Super</kbd>+<kbd>1..9</kbd></td><td class="mono">workspace_&lt;n&gt;</td><td>Przejdź do przestrzeni roboczej</td></tr>
+            <tr><td class="mono"><kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>1..9</kbd></td><td class="mono">move_to_workspace_&lt;n&gt;</td><td>Przenieś okno do przestrzeni</td></tr>
+            <tr><td class="mono"><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>Esc</kbd></td><td class="mono">— (zaszyty na sztywno)</td><td>Bezpiecznik: wyłącz aktywną wtyczkę zamiennika powłoki</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================= IPC ============================= -->
+  <section id="ipc">
+    <div class="container">
+      <div class="section-head">
+        <div class="eyebrow">hwde-ipc</div>
+        <h2>Protokół IPC starthwde ⇄ comphwde</h2>
+        <p>Jedna linia JSON na żądanie/odpowiedź, format
+        <code>{"type": "...", "data": {...}}</code>, gniazdo
+        <code>$XDG_RUNTIME_DIR/hwde/comphwde.sock</code>.</p>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>IpcRequest</th><th>Odpowiedź</th><th>Opis</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">Ping</td><td class="mono">Pong</td><td>Sprawdzenie żywotności</td></tr>
+            <tr><td class="mono">LaunchApp</td><td class="mono">Ok</td><td>Uruchom aplikację jako klienta Wayland/XWayland</td></tr>
+            <tr><td class="mono">SetWallpaper</td><td class="mono">Ok</td><td>Zmień tapetę na żywo</td></tr>
+            <tr><td class="mono">ListWindows</td><td class="mono">Windows</td><td>Lista okien (id, tytuł, app_id, stany)</td></tr>
+            <tr><td class="mono">FocusWindow</td><td class="mono">Ok</td><td>Fokus + podniesienie okna</td></tr>
+            <tr><td class="mono">CloseWindow</td><td class="mono">Ok</td><td>Poproś klienta o zamknięcie</td></tr>
+            <tr><td class="mono">MinimizeWindow</td><td class="mono">Ok</td><td>Ukryj bez zamykania</td></tr>
+            <tr><td class="mono">UnminimizeWindow</td><td class="mono">Ok</td><td>Przywróć zminimalizowane okno</td></tr>
+            <tr><td class="mono">MaximizeWindow</td><td class="mono">Ok</td><td>Ustaw / zdejmij maksymalizację</td></tr>
+            <tr><td class="mono">ToggleFloatingWindow <span class="badge new">v0.2</span></td><td class="mono">Ok</td><td>Wyklucz / włącz okno w kafelkowaniu przestrzeni</td></tr>
+            <tr><td class="mono">ListWorkspaces</td><td class="mono">Workspaces</td><td>Lista przestrzeni roboczych</td></tr>
+            <tr><td class="mono">SwitchWorkspace</td><td class="mono">Ok</td><td>Przełącz aktywną przestrzeń</td></tr>
+            <tr><td class="mono">MoveWindowToWorkspace</td><td class="mono">Ok</td><td>Przenieś okno między przestrzeniami</td></tr>
+            <tr><td class="mono">SetTiling</td><td class="mono">Ok</td><td>Ustaw kafelkowanie dla konkretnej przestrzeni</td></tr>
+            <tr><td class="mono">ReloadConfig</td><td class="mono">Ok</td><td>Przeładuj compositor.toml bez restartu</td></tr>
+            <tr><td class="mono">ListOutputs <span class="badge new">v0.2</span></td><td class="mono">Outputs</td><td>Lista wyjść: nazwa, pozycja, rozmiar, skala, odświeżanie</td></tr>
+            <tr><td class="mono">Shutdown</td><td class="mono">Ok</td><td>Zakończ sesję kompozytora</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================= CONFIG ============================= -->
+  <section id="config">
+    <div class="container">
+      <div class="section-head">
+        <div class="eyebrow">Pliki konfiguracyjne</div>
+        <h2>compositor.toml i settings.hk</h2>
+        <p>Oba pliki żyją pod <code>~/.config/HWDE/</code> i są zapisywane
+        z sensownymi wartościami domyślnymi przy pierwszym uruchomieniu.</p>
+      </div>
+
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="toml">compositor.toml</button>
+        <button class="tab-btn" data-tab="hk">settings.hk</button>
+      </div>
+      <div>
+        <div class="tab-panel active" data-tab="toml">
+          <div class="code-block" style="margin-top:0;">
+            <div class="code-head"><span>~/.config/HWDE/compositor.toml</span><button class="copy-btn">Kopiuj</button></div>
+            <pre><code>workspace_count = 4
+gaps = 8
+border_width = 2
+master_ratio = 0.55
+
+[[keybindings]]
+mods = ["super"]
+key = "Return"
+action = "spawn:kitty"
+
+[[keybindings]]
+mods = ["super", "shift"]
+key = "f"
+action = "toggle_floating"   # nowość v0.2</code></pre>
+          </div>
+        </div>
+        <div class="tab-panel" data-tab="hk">
+          <div class="code-block" style="margin-top:0;">
+            <div class="code-head"><span>~/.config/HWDE/settings.hk</span><button class="copy-btn">Kopiuj</button></div>
+            <pre><code>theme = dark
+wallpaper = /usr/share/wallpapers/HackerOS-Wallpapers/Wallpaper23.png
+icon_theme = Breeze
+launcher_icon = /usr/share/HackerOS/ICONS/HackerOS.png
+language = pl</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================= ICON STORE ============================= -->
+  <section id="icon-store">
+    <div class="container">
+      <div class="section-head">
+        <div class="eyebrow">Ustawienia → Ikony → Sklep</div>
+        <h2>Sklep z ikonami (KDE Store / GNOME-Look)</h2>
+        <p>Przeszukuje kategorię „Full Icon Themes” na obu serwisach
+        (wspólny backend Pling/OCS) i instaluje wybrany motyw do
+        <code>~/.local/share/icons/</code>.</p>
+      </div>
+
+      <div class="grid grid-2">
+        <div class="card">
+          <div class="icon">✓</div>
+          <h3>Naprawione w v0.2</h3>
+          <p>Panel zawsze pokazywał „Brak wyników” — przyczyną było
+          dynamiczne rozpoznawanie kategorii, które trafiało na
+          niewłaściwą, prawie pustą kategorię przed właściwą „Full Icon
+          Themes”. Teraz wyszukiwanie używa od razu zweryfikowanego id
+          (<code>132</code>, to samo na obu serwisach), a dynamiczne
+          rozpoznawanie działa wyłącznie jako plan B.</p>
+        </div>
+        <div class="card">
+          <div class="icon">i</div>
+          <h3>Jeśli nadal widzisz pusty wynik</h3>
+          <p>To już nie „cichy” błąd — prawdziwy problem sieciowy (brak
+          połączenia, TLS, API offline) zwróci teraz czytelny komunikat
+          błędu w panelu zamiast pustej listy. Sprawdź połączenie
+          internetowe lub spróbuj drugiego źródła (KDE Store / GNOME-Look).</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================= FAQ ============================= -->
+  <section id="faq">
+    <div class="container">
+      <div class="section-head">
+        <div class="eyebrow">Pytania i odpowiedzi</div>
+        <h2>FAQ</h2>
+      </div>
+
+      <div class="faq-list">
+        <div class="faq-item">
+          <button class="faq-q">Dlaczego HWDE nie używa wlr-foreign-toplevel-management?<span class="plus">+</span></button>
+          <div class="faq-a"><p>Bo powłoka i kompozytor są tym samym projektem — własny protokół IPC daje ten sam praktyczny efekt (wspólna lista okien w tasku) przy znacznie mniejszej powierzchni zależności, kosztem niekompatybilności z zewnętrznymi paskami zadań.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q">Czym różni się „minimalizacja” od przełączenia przestrzeni roboczej?<span class="plus">+</span></button>
+          <div class="faq-a"><p>Z punktu widzenia <code>Space</code> obie operacje wyglądają identycznie (odmapowanie okna), ale są śledzone osobno — żeby zminimalizowane okno na przestrzeni w tle nie „ożyło” przypadkiem przy przełączeniu z powrotem.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q">Czy comphwde działa spoza sesji Wayland (TTY/DRM)?<span class="plus">+</span></button>
+          <div class="faq-a"><p>Backend <code>backend_drm.rs</code> istnieje za flagą <code>drm-experimental</code>, ale wciąż nie jest podpięty do <code>main</code> — wymaga dopracowania na prawdziwym sprzęcie (atomic KMS + pętla renderowania). Domyślnie działa backend <code>winit</code>.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q">Jak działa „pływające” okno wprowadzone w v0.2?<span class="plus">+</span></button>
+          <div class="faq-a"><p><kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>F</kbd> wyklucza pojedyncze okno z kafelkowania master-stack na jego przestrzeni, bez wyłączania kafelkowania dla pozostałych okien — przydatne dla dialogów czy odtwarzaczy picture-in-picture.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q">Gdzie zgłosić błąd lub zaproponować funkcję?<span class="plus">+</span></button>
+          <div class="faq-a"><p>W repozytorium na GitHubie (link w prawym górnym rogu tej strony) — sekcja Issues.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================= CHANGELOG ============================= -->
+  <section id="changelog">
+    <div class="container">
+      <div class="section-head">
+        <div class="eyebrow">Co nowego</div>
+        <h2>Historia zmian</h2>
+      </div>
+
+      <div class="changelog-entry">
+        <div class="changelog-ver">v0.2</div>
+        <div>
+          <h4>Naprawa sklepu z ikonami i rozbudowa kompozytora</h4>
+          <ul>
+            <li>Naprawiono błąd, przez który Sklep z ikonami zawsze pokazywał „Brak wyników”.</li>
+            <li>Nowość: pojedyncze pływające okna (<code>toggle_floating</code>, <kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>F</kbd>).</li>
+            <li>Nowość: cykliczne przełączanie okien wstecz (<code>focus_prev</code>, <kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>Tab</kbd>).</li>
+            <li>Nowość: <code>IpcRequest::ListOutputs</code> — lista wyjść (monitorów) przez IPC.</li>
+            <li>Nowa strona dokumentacji (ta, którą właśnie czytasz) i nowe logotypy w <code>images/logo/</code>.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="changelog-entry">
+        <div class="changelog-ver">v0.1 — runda 2</div>
+        <div>
+          <h4>Wtyczki, zamiennik powłoki, poprawki kompilacji</h4>
+          <ul>
+            <li>Realne wywoływanie wtyczek <code>.so</code> przez <code>libloading</code>.</li>
+            <li>System „zamiennika powłoki” z bezpiecznikiem <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>Esc</kbd>.</li>
+            <li>Poprawki błędów kompilacji E0308 / E0502 / E0506.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="changelog-entry">
+        <div class="changelog-ver">v0.1</div>
+        <div>
+          <h4>Pierwsze wydanie</h4>
+          <ul>
+            <li>Powłoka <code>starthwde</code> (SolidJS + Tauri v2) i kompozytor <code>comphwde</code> (Smithay 0.7).</li>
+            <li>Kafelkowanie master-stack, przestrzenie robocze, integracja XWayland.</li>
+            <li>Protokół <code>hwde-ipc</code> między powłoką a kompozytorem.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="container foot-row">
+    <span>HWDE — HackerOS Wayland Desktop Environment · <span id="current-year">2026</span></span>
+    <span>
+      <a href="https://github.com/HackerOS-Linux-System/HWDE/" target="_blank" rel="noopener">GitHub</a>
+      &nbsp;·&nbsp;
+      <a href="#top">Do góry</a>
+    </span>
+  </div>
+</footer>
+
+<button class="to-top" aria-label="Przewiń do góry">↑</button>
+
+<script>
+/* =========================================================================
+   HWDE Documentation — script.js
+   Vanilla JS, no dependencies, no network calls. Everything here degrades
+   gracefully if a piece of markup isn't present.
+   ========================================================================= */
+(function () {
+  "use strict";
+
+  /* ---------- Mobile nav toggle ---------- */
+  var navToggle = document.querySelector(".nav-toggle");
+  var navLinks = document.querySelector(".nav-links");
+  if (navToggle && navLinks) {
+    navToggle.addEventListener("click", function () {
+      navLinks.classList.toggle("open");
+    });
+    navLinks.querySelectorAll("a").forEach(function (a) {
+      a.addEventListener("click", function () {
+        navLinks.classList.remove("open");
+      });
+    });
+  }
+
+  /* ---------- Active section highlighting ---------- */
+  var sections = Array.prototype.slice.call(document.querySelectorAll("section[id]"));
+  var navAnchors = Array.prototype.slice.call(document.querySelectorAll(".nav-links a"));
+
+  function setActiveLink(id) {
+    navAnchors.forEach(function (a) {
+      var match = a.getAttribute("href") === "#" + id;
+      a.classList.toggle("active", match);
+    });
+  }
+
+  if (sections.length && "IntersectionObserver" in window) {
+    var observer = new IntersectionObserver(
+      function (entries) {
+        var visible = entries
+          .filter(function (e) { return e.isIntersecting; })
+          .sort(function (a, b) { return b.intersectionRatio - a.intersectionRatio; });
+        if (visible.length) {
+          setActiveLink(visible[0].target.id);
+        }
+      },
+      { rootMargin: "-30% 0px -55% 0px", threshold: [0, 0.25, 0.5, 0.75, 1] }
+    );
+    sections.forEach(function (s) { observer.observe(s); });
+  }
+
+  /* ---------- Back-to-top button ---------- */
+  var toTop = document.querySelector(".to-top");
+  if (toTop) {
+    window.addEventListener(
+      "scroll",
+      function () {
+        toTop.classList.toggle("visible", window.scrollY > 640);
+      },
+      { passive: true }
+    );
+    toTop.addEventListener("click", function () {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  }
+
+  /* ---------- Copy-to-clipboard on code blocks ---------- */
+  document.querySelectorAll(".code-block").forEach(function (block) {
+    var btn = block.querySelector(".copy-btn");
+    var pre = block.querySelector("pre");
+    if (!btn || !pre) return;
+    btn.addEventListener("click", function () {
+      var text = pre.innerText;
+      var done = function () {
+        var original = btn.textContent;
+        btn.textContent = "Skopiowano";
+        btn.classList.add("copied");
+        setTimeout(function () {
+          btn.textContent = original;
+          btn.classList.remove("copied");
+        }, 1400);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done).catch(function () {
+          fallbackCopy(text, done);
+        });
+      } else {
+        fallbackCopy(text, done);
+      }
+    });
+  });
+
+  function fallbackCopy(text, done) {
+    var ta = document.createElement("textarea");
+    ta.value = text;
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand("copy"); } catch (e) { /* ignore */ }
+    document.body.removeChild(ta);
+    done();
+  }
+
+  /* ---------- Config tabs ---------- */
+  document.querySelectorAll(".tabs").forEach(function (tabs) {
+    var buttons = Array.prototype.slice.call(tabs.querySelectorAll(".tab-btn"));
+    var panelWrap = tabs.parentElement;
+    buttons.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var target = btn.getAttribute("data-tab");
+        buttons.forEach(function (b) { b.classList.toggle("active", b === btn); });
+        panelWrap.querySelectorAll(".tab-panel").forEach(function (panel) {
+          panel.classList.toggle("active", panel.getAttribute("data-tab") === target);
+        });
+      });
+    });
+  });
+
+  /* ---------- FAQ accordion ---------- */
+  document.querySelectorAll(".faq-item").forEach(function (item) {
+    var q = item.querySelector(".faq-q");
+    var a = item.querySelector(".faq-a");
+    if (!q || !a) return;
+    q.addEventListener("click", function () {
+      var isOpen = item.classList.contains("open");
+      // Close siblings within the same FAQ list for a tidier accordion.
+      var list = item.parentElement;
+      if (list) {
+        list.querySelectorAll(".faq-item.open").forEach(function (openItem) {
+          if (openItem !== item) {
+            openItem.classList.remove("open");
+            var openA = openItem.querySelector(".faq-a");
+            if (openA) openA.style.maxHeight = "";
+          }
+        });
+      }
+      item.classList.toggle("open", !isOpen);
+      a.style.maxHeight = !isOpen ? a.scrollHeight + "px" : "";
+    });
+  });
+
+  /* ---------- Keybinding table filter ---------- */
+  var kbFilter = document.querySelector("#kb-filter");
+  var kbRows = Array.prototype.slice.call(document.querySelectorAll("#kb-table tbody tr"));
+  if (kbFilter && kbRows.length) {
+    kbFilter.addEventListener("input", function () {
+      var q = kbFilter.value.trim().toLowerCase();
+      kbRows.forEach(function (row) {
+        var text = row.innerText.toLowerCase();
+        row.style.display = text.indexOf(q) === -1 ? "none" : "";
+      });
+    });
+  }
+
+  /* ---------- Hero terminal: typed IPC exchange ---------- */
+  var termBody = document.querySelector("#term-body");
+  if (termBody) {
+    var script = [
+      { cls: "term-prompt", text: "$ ", noBreak: true },
+      { cls: "term-req", text: "hwde-ipc send SwitchWorkspace" },
+      { cls: "term-key", text: "\n{\"type\":\"SwitchWorkspace\",\"data\":{\"id\":2}}" },
+      { cls: "term-ok", text: "\n← {\"type\":\"Ok\"}" },
+      { cls: "", text: "\n\n" },
+      { cls: "term-prompt", text: "$ ", noBreak: true },
+      { cls: "term-req", text: "hwde-ipc send ListOutputs" },
+      { cls: "term-str", text: "\n← [{\"name\":\"WL-1\",\"width\":1920,\"height\":1080,\"scale\":1.0,\"is_primary\":true}]" },
+      { cls: "", text: "\n\n" },
+      { cls: "term-prompt", text: "$ ", noBreak: true },
+      { cls: "term-req", text: "hwde-ipc send ToggleFloatingWindow" },
+      { cls: "term-key", text: "\n{\"type\":\"ToggleFloatingWindow\",\"data\":{\"id\":42}}" },
+      { cls: "term-ok", text: "\n← {\"type\":\"Ok\"}   " },
+      { cls: "term-ok", text: "# v0.2", tag: "span", faint: true }
+    ];
+
+    var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (reduceMotion) {
+      renderTermInstant();
+    } else {
+      typeTerminal();
+    }
+
+    function renderTermInstant() {
+      var html = script.map(function (part) {
+        var cls = part.cls ? ' class="' + part.cls + '"' : "";
+        return "<span" + cls + ">" + escapeHtml(part.text) + "</span>";
+      }).join("");
+      termBody.innerHTML = html;
+    }
+
+    function typeTerminal() {
+      termBody.innerHTML = "";
+      var line = document.createElement("div");
+      line.className = "term-line";
+      termBody.appendChild(line);
+
+      var partIndex = 0;
+      var charIndex = 0;
+      var speed = 14; // ms per character - fast enough not to feel gimmicky
+
+      function step() {
+        if (partIndex >= script.length) {
+          var cursor = document.createElement("span");
+          cursor.className = "term-cursor";
+          line.appendChild(cursor);
+          return;
+        }
+        var part = script[partIndex];
+        if (charIndex === 0) {
+          var span = document.createElement("span");
+          if (part.cls) span.className = part.cls;
+          span.dataset.buffer = "";
+          line.appendChild(span);
+        }
+        var currentSpan = line.lastChild;
+        if (charIndex < part.text.length) {
+          currentSpan.textContent += part.text[charIndex];
+          charIndex++;
+          setTimeout(step, part.text[charIndex - 1] === "\n" ? 60 : speed);
+        } else {
+          partIndex++;
+          charIndex = 0;
+          setTimeout(step, 30);
+        }
+      }
+      step();
+    }
+
+    function escapeHtml(str) {
+      return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    }
+  }
+
+  /* ---------- Footer year ---------- */
+  var yearEl = document.querySelector("#current-year");
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
+})();
+
+</script>
+</body>
+</html>
