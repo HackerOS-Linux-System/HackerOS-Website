@@ -45,10 +45,25 @@ window.__HL_SECTIONS['struktura'] = `
 -> packages => numpy,cryptography</pre></div></div>
 </div>
 
+<h3>using — deklaracja edycji <span class="nav-new">v0.8</span></h3>
+<p><code>using "edycja"</code> to opcjonalna dyrektywa na samej pierwszej linii pliku (przed jakimikolwiek <code>use</code>), deklarująca którą <strong>edycję języka</strong> ten plik zakłada — dokładny odpowiednik <code>edition = "2021"</code> w <code>Cargo.toml</code> Rusta.</p>
+
+<div class="code-block">
+<div class="code-header"><span class="code-filename">składnia</span><button class="copy-btn">Copy</button></div>
+<div class="code-body"><div class="code-inner"><pre><span class="t-kw">using</span> <span class="t-str">"2026"</span>
+
+<span class="t-comment">;; reszta pliku — importy, typy, funkcje...</span></pre></div></div>
+</div>
+
+<div class="callout c-info"><div class="ci">ℹ</div><div class="cb"><strong>Stan dzisiaj:</strong> <code>using</code> jest parsowane i zapisywane w metadanych modułu, ale kompilator jeszcze niczego na tej podstawie nie zmienia — żadna wersja edycji nie włącza ani nie wyłącza żadnego zachowania. To zarezerwowana składnia pod przyszłe, potencjalnie łamiące zmiany języka (patrz plan rozwoju: edycje 2026, 2027...), analogicznie do tego jak nowe edycje Rusta pozwalają wprowadzać breaking changes bez psucia starego kodu. Dziś to czysta, nieszkodliwa metadana — możesz jej używać już teraz (nic nie popsuje), ale nie zmieni jeszcze zachowania Twojego programu.</div></div>
+
 <h3>Struktura pliku .h#</h3>
 <div class="code-block">
 <div class="code-header"><span class="code-filename">szablon.h#</span><button class="copy-btn">Copy</button></div>
-<div class="code-body"><div class="code-inner"><pre><span class="t-comment">;; 1. Importy</span>
+<div class="code-body"><div class="code-inner"><pre><span class="t-comment">;; 0. using — opcjonalna deklaracja edycji (zawsze pierwsza linia)</span>
+<span class="t-kw">using</span> <span class="t-str">"2026"</span>
+
+<span class="t-comment">;; 1. Importy</span>
 <span class="t-kw">use</span> <span class="t-str">"std -> io"</span>       <span class="t-kw">from</span> <span class="t-str">"io"</span>
 <span class="t-kw">use</span> <span class="t-str">"std -> sec"</span>      <span class="t-kw">from</span> <span class="t-str">"sec"</span>
 <span class="t-kw">use</span> <span class="t-str">"bytes -> scanner"</span> <span class="t-kw">from</span> <span class="t-str">"sc"</span>
