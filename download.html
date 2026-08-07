@@ -1,61 +1,219 @@
-<!DOCTYPE html><html lang="pl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>HackerOS - Download</title><link rel="icon" type="image/png" href="HackerOS.png"><style>*{margin:0;padding:0;box-sizing:border-box;font-family:'Arial',sans-serif;}body{background-color:#1C2526;color:#FFF;line-height:1.6;}header{background-color:#121212;padding:20px 0;position:fixed;width:100%;top:0;z-index:1000;box-shadow:0 4px 10px rgba(0,0,0,.7);transition:background-color .3s;}header:hover{background-color:#1A1A1A;}nav{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;padding:0 20px;}nav .logo img{height:40px;width:auto;}nav ul{list-style:none;display:flex;gap:25px;align-items:center;}nav ul li a{color:#FFF;text-decoration:none;font-size:17px;transition:color .3s,transform .3s;position:relative;}nav ul li a::after{content:'';position:absolute;width:0;height:2px;bottom:-5px;left:0;background-color:#B0B0B0;transition:width .3s;}nav ul li a:hover::after{width:100%;}nav ul li a:hover{color:#B0B0B0;transform:translateY(-2px);}.download-section{max-width:1200px;margin:120px auto 50px;padding:20px;text-align:center;}.download-section h1{font-size:36px;margin-bottom:20px;text-shadow:2px 2px 4px rgba(0,0,0,.5);}.download-option{margin:20px 0;padding:20px;background-color:#2F3A44;border-radius:10px;box-shadow:0 4px 10px rgba(0,0,0,.3);transition:transform .3s,box-shadow .3s;}.download-option:hover{transform:translateY(-5px);box-shadow:0 6px 15px rgba(0,0,0,.4);}.download-option h2{font-size:24px;margin-bottom:15px;}.download-option p{font-size:16px;margin-bottom:15px;}.btn{display:inline-block;padding:12px 24px;background-color:#B0B0B0;color:#121212;text-decoration:none;border-radius:5px;font-weight:bold;margin:10px;transition:background-color .3s,transform .3s,box-shadow .3s;}.btn:hover{background-color:#FFF;transform:scale(1.05);box-shadow:0 4px 10px rgba(255,255,255,.2);}.quick-download{background-color:#3A4A55;border:2px solid #B0B0B0;padding:30px;margin-bottom:40px;border-radius:15px;box-shadow:0 6px 12px rgba(0,0,0,.4);}.quick-download h2{font-size:28px;margin-bottom:20px;}.quick-download p.description{font-size:18px;margin-bottom:25px;color:#D0D0D0;}.quick-download label{display:block;font-size:18px;font-weight:bold;margin-bottom:10px;color:#E0E0E0;}.quick-download .select-wrapper{position:relative;max-width:400px;margin:0 auto 20px;}.quick-download select{width:100%;background-color:#121212;color:#FFF;border:1px solid #B0B0B0;padding:12px 40px 12px 15px;border-radius:5px;font-size:16px;appearance:none;cursor:pointer;transition:border-color .3s,box-shadow .3s;}.quick-download select:hover,.quick-download select:focus{border-color:#FFF;box-shadow:0 0 8px rgba(255,255,255,.2);outline:none;}.quick-download .select-wrapper::after{content:'▼';position:absolute;right:15px;top:50%;transform:translateY(-50%);color:#B0B0B0;font-size:16px;pointer-events:none;}.quick-download .btn{margin-top:20px;padding:14px 28px;font-size:18px;}footer{background-color:#121212;padding:20px;text-align:center;color:#B0B0B0;width:100%;box-shadow:0 -2px 5px rgba(0,0,0,.5);}</style></head>
+<!DOCTYPE html><html lang="pl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>HackerOS - Download</title><link rel="icon" type="image/png" href="HackerOS.png"><style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Arial',sans-serif;}
+body{background-color:#1C2526;color:#FFF;line-height:1.6;}
+header{background-color:#121212;padding:20px 0;position:fixed;width:100%;top:0;z-index:1000;box-shadow:0 4px 10px rgba(0,0,0,.7);transition:background-color .3s;}
+header:hover{background-color:#1A1A1A;}
+nav{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;padding:0 20px;}
+nav .logo img{height:40px;width:auto;}
+nav ul{list-style:none;display:flex;gap:25px;align-items:center;}
+nav ul li a{color:#FFF;text-decoration:none;font-size:17px;transition:color .3s,transform .3s;position:relative;}
+nav ul li a::after{content:'';position:absolute;width:0;height:2px;bottom:-5px;left:0;background-color:#B0B0B0;transition:width .3s;}
+nav ul li a:hover::after{width:100%;}
+nav ul li a:hover{color:#B0B0B0;transform:translateY(-2px);}
+.download-section{max-width:1200px;margin:120px auto 50px;padding:20px;text-align:center;}
+.download-section h1{font-size:36px;margin-bottom:20px;text-shadow:2px 2px 4px rgba(0,0,0,.5);}
+.quick-download{background-color:#3A4A55;border:2px solid #B0B0B0;padding:30px;margin-bottom:50px;border-radius:15px;box-shadow:0 6px 12px rgba(0,0,0,.4);}
+.quick-download h2{font-size:28px;margin-bottom:20px;}
+.quick-download p.description{font-size:18px;margin-bottom:25px;color:#D0D0D0;}
+.quick-download label{display:block;font-size:18px;font-weight:bold;margin-bottom:10px;color:#E0E0E0;}
+.quick-download .select-wrapper{position:relative;max-width:400px;margin:0 auto 20px;}
+.quick-download select{width:100%;background-color:#121212;color:#FFF;border:1px solid #B0B0B0;padding:12px 40px 12px 15px;border-radius:5px;font-size:16px;appearance:none;cursor:pointer;transition:border-color .3s,box-shadow .3s;}
+.quick-download select:hover,.quick-download select:focus{border-color:#FFF;box-shadow:0 0 8px rgba(255,255,255,.2);outline:none;}
+.quick-download .select-wrapper::after{content:'▼';position:absolute;right:15px;top:50%;transform:translateY(-50%);color:#B0B0B0;font-size:16px;pointer-events:none;}
+.btn{display:inline-block;padding:12px 24px;background-color:#B0B0B0;color:#121212;text-decoration:none;border-radius:5px;font-weight:bold;margin:10px;transition:background-color .3s,transform .3s,box-shadow .3s;border:none;cursor:pointer;font-size:16px;font-family:inherit;}
+.btn:hover{background-color:#FFF;transform:scale(1.05);box-shadow:0 4px 10px rgba(255,255,255,.2);}
+.quick-download .btn{margin-top:20px;padding:14px 28px;font-size:18px;}
+
+.editions-heading{font-size:28px;margin:0 0 8px;text-align:left;}
+.editions-sub{color:#B0B0B0;font-size:15px;text-align:left;margin-bottom:28px;}
+.edition-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;text-align:left;}
+.edition-card{background-color:#2F3A44;border-radius:12px;overflow:hidden;box-shadow:0 4px 10px rgba(0,0,0,.3);transition:transform .3s,box-shadow .3s;display:flex;flex-direction:column;position:relative;}
+.edition-card:hover{transform:translateY(-5px);box-shadow:0 6px 18px rgba(0,0,0,.45);}
+.edition-thumb{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:#121212;border-bottom:1px solid #1c2530;}
+.edition-thumb-fallback{width:100%;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1a232b,#0f151a);border-bottom:1px solid #1c2530;color:#3a4558;font-size:42px;font-weight:bold;letter-spacing:2px;}
+.edition-body{padding:18px 20px 22px;display:flex;flex-direction:column;flex:1;}
+.edition-body h2{font-size:20px;margin-bottom:6px;}
+.edition-new-badge{display:inline-block;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#00d4ff;background:rgba(0,212,255,.12);border:1px solid rgba(0,212,255,.35);padding:2px 8px;border-radius:3px;margin-bottom:10px;align-self:flex-start;}
+.edition-actions{margin-top:auto;position:relative;}
+.dl-trigger{width:100%;text-align:center;background-color:#B0B0B0;color:#121212;padding:12px 20px;border-radius:6px;font-weight:bold;border:none;cursor:pointer;font-size:15px;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;transition:background-color .2s,transform .2s;}
+.dl-trigger:hover{background-color:#FFF;}
+.dl-trigger .caret{font-size:11px;transition:transform .2s;}
+.dl-trigger.open .caret{transform:rotate(180deg);}
+.dl-menu{position:absolute;left:0;right:0;bottom:calc(100% + 8px);background:#121212;border:1px solid #3a4558;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.5);overflow:hidden;z-index:50;opacity:0;visibility:hidden;transform:translateY(6px);transition:opacity .18s,transform .18s,visibility .18s;}
+.dl-menu.open{opacity:1;visibility:visible;transform:translateY(0);}
+.dl-menu-title{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#6b7f99;padding:10px 14px 8px;border-bottom:1px solid #1f2733;}
+.dl-menu a,.dl-menu span.dl-disabled{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 14px;color:#E0E0E0;text-decoration:none;font-size:14px;border-bottom:1px solid #1c2430;transition:background-color .15s;}
+.dl-menu a:last-child,.dl-menu span.dl-disabled:last-child{border-bottom:none;}
+.dl-menu a:hover{background-color:#1e2833;color:#FFF;}
+.dl-menu span.dl-disabled{color:#3a4558;cursor:not-allowed;}
+.dl-menu .soon-tag{font-size:9px;letter-spacing:1px;text-transform:uppercase;background:rgba(255,208,0,.1);border:1px solid rgba(255,208,0,.3);color:#ffd000;padding:2px 6px;border-radius:3px;}
+.dl-menu .src-icon{width:16px;text-align:center;opacity:.85;}
+
+footer{background-color:#121212;padding:20px;text-align:center;color:#B0B0B0;width:100%;box-shadow:0 -2px 5px rgba(0,0,0,.5);margin-top:60px;}
+@media(max-width:600px){.edition-grid{grid-template-columns:1fr;}}
+</style></head>
 <body>
 <header><nav><div class="logo"><img src="HackerOS.png" alt="HackerOS Logo"></div><ul><li><a id="nav-home" href="Home-page.html">Home</a></li><li><a id="nav-download" href="download.html">Download</a></li><li><a id="nav-releases" href="releases.html">Releases</a></li><li><a id="nav-team" href="hackeros-team.html">HackerOS Team</a></li><li><a id="nav-docs" href="hackeros-documentation.html">Documentation</a></li></ul></nav></header>
+
 <section class="download-section">
 <h1 id="section-h1">Pobierz HackerOS</h1>
-<div class="download-option quick-download">
+
+<div class="quick-download">
 <h2 id="quick-title">Szybkie pobieranie systemu</h2>
 <p class="description" id="quick-desc">Wybierz edycję HackerOS i pobierz bezpośrednio z SourceForge.</p>
 <label id="select-label" for="edition-select">Wybierz edycję:</label>
 <div class="select-wrapper"><select id="edition-select">
 <option id="select-default" value="">-- Wybierz edycję --</option>
-<option value="https://sourceforge.net/projects/hackeros/files/OFFICIAL/HackerOS-V4.8.iso/download">HackerOS Official</option>
-<option value="https://sourceforge.net/projects/hackeros/files/NVIDIA/HackerOS-V4.6-NVIDIA.iso/download">HackerOS NVIDIA</option>
+<option value="https://sourceforge.net/projects/hackeros/files/OFFICIAL/HackerOS-V4.9.iso/download">HackerOS Official</option>
+<option value="https://sourceforge.net/projects/hackeros/files/NVIDIA/HackerOS-V4.9-NVIDIA.iso/download">HackerOS NVIDIA</option>
+<option value="https://sourceforge.net/projects/hackeros/files/CYBERSECURITY/HackerOS-V4.9-Cybersecurity.iso/download">HackerOS Cybersecurity</option>
 <option value="https://sourceforge.net/projects/hackeros/files/OFFICIAL/GNOME/HackerOS-V4.5-Gnome.iso/download">HackerOS Official: Gnome</option>
 <option value="https://sourceforge.net/projects/hackeros/files/OFFICIAL/XFCE/HackerOS-V4.5-Xfce.iso/download">HackerOS Official: Xfce</option>
 <option value="https://sourceforge.net/projects/hackeros/files/OFFICIAL/HYDRA/HackerOS-V4.5-Hydra.iso/download">HackerOS Official: Hydra</option>
-  <option value="https://sourceforge.net/projects/hackeros/files/GAMING/HackerOS-V4.7-Gaming.iso/download">HackerOS Gaming</option>
-<option value="https://sourceforge.net/projects/hackeros/files/CYBERSECURITY/HackerOS-V4.8-Cybersecurity.iso/download">HackerOS Cybersecurity</option>
+<option value="https://sourceforge.net/projects/hackeros/files/GAMING/HackerOS-V4.7-Gaming.iso/download">HackerOS Gaming</option>
 <option value="https://sourceforge.net/projects/hackeros/files/LTS/HackerOS-V4.1-LTS.iso/download">HackerOS LTS</option>
-<option value="https://sourceforge.net/projects/hackeros/files/ATOMIC/HackerOS-Atomic-PreRelease-DEV-V4.2.iso/download">HackerOS Atomic PreRelease</option>
+<option value="https://sourceforge.net/projects/hackeros/files/ATOMIC/HackerOS-Atomic-Testing-DEV-V4.9.iso/download">HackerOS Atomic</option>
 </select></div>
 <a id="download-link" class="btn" href="#" style="display:none;">Pobierz</a>
 </div>
-<div class="download-option" style="margin-top:40px"><h2>HackerOS Official</h2><a class="btn dl-sf" href="https://sourceforge.net/projects/hackeros/files/OFFICIAL/HackerOS-V4.8.iso/download">Pobierz z SourceForge</a><a class="btn dl-mega" href="https://mega.nz/file/QDV1WAgA#BJEI90N3SCCjfnCTZ1SgrVOdKOjsC-UsqU8hBBAR0Oo">Pobierz z Mega.nz</a><a class="btn dl-drive" href="https://drive.google.com/file/d/1GeWj_HHQ6mESAPWJZv9zcnuk8UHFMzGQ/view?usp=sharing">Pobierz z Google Drive</a><a class="btn dl-transfer" href="https://transfer.it/t/nyvjgbt3RZpL">Pobierz z Transfer.it</a></div>
-<div class="download-option"><h2>HackerOS Cybersecurity</h2><a class="btn dl-sf" href="https://sourceforge.net/projects/hackeros/files/CYBERSECURITY/HackerOS-V4.8-Cybersecurity.iso/download">Pobierz z SourceForge</a><a class="btn dl-mega" href="https://mega.nz/file/BTdzELKA#BavsJz3oIjVAmDRxCCnoUAYbtsQT4IVIaHaBq4f8ib0">Pobierz z Mega.nz</a><a class="btn dl-drive" href="https://drive.google.com/file/d/10XbqQQ39pFXQD_OkLlLnMQH-_6VNMhd5/view?usp=sharing">Pobierz z Google Drive</a><a class="btn dl-transfer" href="https://transfer.it/t/A3MQAflzWRya">Pobierz z Transfer.it</a></div>
-<div class="download-option" style="margin-top:40px"><h2>HackerOS NVIDIA</h2><a class="btn dl-sf" href="https://sourceforge.net/projects/hackeros/files/NVIDIA/HackerOS-V4.6-NVIDIA.iso/download">Pobierz z SourceForge</a><a class="btn dl-mega" href="https://mega.nz/file/hOVgEDTA#JK5RgRxRSzc479ECXdcnPEfoF4hGHjVCr6zMG95WEhc">Pobierz z Mega.nz</a><a class="btn dl-drive" href="https://drive.google.com/file/d/1r8yqOl6hVVME38LwZ8EeedmPqCSY1YlW/view?usp=sharing">Pobierz z Google Drive</a><a class="btn dl-transfer" href="https://transfer.it/t/2H0tAf0jhTaI">Pobierz z Transfer.it</a></div>
-<div class="download-option"><h2>HackerOS Official: Gnome</h2><a class="btn dl-sf" href="https://sourceforge.net/projects/hackeros/files/OFFICIAL/GNOME/HackerOS-V4.5-Gnome.iso/download">Pobierz z SourceForge</a><a class="btn dl-mega" href="https://mega.nz/file/dbVhHA4b#XX_gWHN4leztjswMtl68xYZ9m4R4tYbwd0atSqQ-mDE">Pobierz z Mega.nz</a><a class="btn dl-drive" href="https://drive.google.com/file/d/1_oz4vywV-L5FuGE_t-b-PcFTcmtpeKd3/view?usp=sharing">Pobierz z Google Drive</a><a class="btn dl-transfer" href="https://transfer.it/t/ZjwA5f1lzbjS">Pobierz z Transfer.it</a></div>
-<div class="download-option"><h2>HackerOS Official: Hydra</h2><a class="btn dl-sf" href="https://sourceforge.net/projects/hackeros/files/OFFICIAL/HYDRA/HackerOS-V4.5-Hydra.iso/download">Pobierz z SourceForge</a><a class="btn dl-mega" href="https://mega.nz/file/ITUQQL5Z#t5vDdYxOiOqgU1bS3BJboKlnX7N1OwKFV3-LE6Srg9s">Pobierz z Mega.nz</a><a class="btn dl-drive" href="https://drive.google.com/file/d/1jxQLxomUzD8t9jHjnoB3pU2XnpTrdqOG/view?usp=sharing">Pobierz z Google Drive</a><a class="btn dl-transfer" href="https://transfer.it/t/LEeOtbsFmRIT">Pobierz z Transfer.it</a></div>
-<div class="download-option"><h2>HackerOS Official: Xfce</h2><a class="btn dl-sf" href="https://sourceforge.net/projects/hackeros/files/OFFICIAL/XFCE/HackerOS-V4.5-Xfce.iso/download">Pobierz z SourceForge</a><a class="btn dl-drive" href="https://drive.google.com/file/d/1g3mYZIVHZ7L_see5aR29mgjLOQBhgoaq/view?usp=sharing">Pobierz z Google Drive</a></div>
-<div class="download-option"><h2>HackerOS Gaming</h2><a class="btn dl-sf" href="https://sourceforge.net/projects/hackeros/files/GAMING/HackerOS-V4.7-Gaming.iso/download">Pobierz z SourceForge</a><a class="btn dl-drive" href="">Pobierz z Google Drive</a></div>
-<div class="download-option"><h2>HackerOS Atomic</h2><a class="btn dl-sf" href="#">Pobierz z SourceForge</a><a class="btn dl-drive" href="#">Pobierz z Google Drive</a></div>
-<div class="download-option"><h2>HackerOS LTS</h2><a class="btn dl-sf" href="https://sourceforge.net/projects/hackeros/files/LTS/HackerOS-V4.1-LTS.iso/download">Pobierz z SourceForge</a><a class="btn dl-drive" href="https://drive.google.com/file/d/1Kc-L3gFuXP7Vw-r-kVWgSscxDm5GW0QX/view?usp=sharing">Pobierz z Google Drive</a></div>
+
+<h2 class="editions-heading" id="editions-heading">Wszystkie edycje</h2>
+<p class="editions-sub" id="editions-sub">Kliknij „Pobierz” przy wybranej edycji, aby wybrać źródło pobierania.</p>
+<div class="edition-grid" id="edition-grid"></div>
+
 </section>
 <footer><p id="footer-copy">© 2026 HackerOS. Wszelkie prawa zastrzeżone.</p></footer>
-<script src="translations/lang-core.js"></script><script src="translations/download.js"></script><script src="translations/lang-switcher.js"></script>
+
+<script src="translations/lang-core.js"></script>
+<script src="translations/download.js"></script>
+<script src="translations/lang-switcher.js"></script>
+<script src="translations/download-editions.js"></script>
 <script>
+const SOURCE_ORDER = [
+    { key:'sf',       icon:'☁',  labelKey:'btnSourceForge' },
+    { key:'mega',     icon:'▤',  labelKey:'btnMega' },
+    { key:'drive',    icon:'▢',  labelKey:'btnDrive' },
+    { key:'transfer', icon:'→',  labelKey:'btnTransfer' },
+    { key:'actions',  icon:'⚙',  labelKey:'btnGithubActions' }
+];
+
+function renderEditions(t){
+    const grid = document.getElementById('edition-grid');
+    grid.innerHTML = '';
+    window.HACKEROS_DOWNLOAD_EDITIONS.forEach(function(ed){
+        const card = document.createElement('div');
+        card.className = 'edition-card';
+
+        if(ed.img){
+            const img = document.createElement('img');
+            img.className = 'edition-thumb';
+            img.src = ed.img;
+            img.alt = ed.name;
+            img.loading = 'lazy';
+            card.appendChild(img);
+        } else {
+            const fb = document.createElement('div');
+            fb.className = 'edition-thumb-fallback';
+            fb.textContent = ed.name.replace('HackerOS','').trim().slice(0,2).toUpperCase() || 'OS';
+            card.appendChild(fb);
+        }
+
+        const body = document.createElement('div');
+        body.className = 'edition-body';
+
+        if(ed.isNew){
+            const badge = document.createElement('span');
+            badge.className = 'edition-new-badge';
+            badge.textContent = t.newEditionNote || 'NEW';
+            body.appendChild(badge);
+        }
+
+        const h2 = document.createElement('h2');
+        h2.textContent = ed.name;
+        body.appendChild(h2);
+
+        const actions = document.createElement('div');
+        actions.className = 'edition-actions';
+
+        const trigger = document.createElement('button');
+        trigger.type = 'button';
+        trigger.className = 'dl-trigger';
+        trigger.innerHTML = '<span class="label">'+(t.downloadBtn||'Pobierz')+'</span><span class="caret">▾</span>';
+
+        const menu = document.createElement('div');
+        menu.className = 'dl-menu';
+
+        const title = document.createElement('div');
+        title.className = 'dl-menu-title';
+        title.textContent = t.chooseSource || 'Wybierz źródło';
+        menu.appendChild(title);
+
+        SOURCE_ORDER.forEach(function(src){
+            const url = ed.links ? ed.links[src.key] : null;
+            if(url){
+                const a = document.createElement('a');
+                a.href = url;
+                a.target = '_blank';
+                a.rel = 'noopener noreferrer';
+                a.innerHTML = '<span><span class="src-icon">'+src.icon+'</span> '+(t[src.labelKey]||src.key)+'</span>';
+                menu.appendChild(a);
+            } else {
+                const span = document.createElement('span');
+                span.className = 'dl-disabled';
+                span.innerHTML = '<span><span class="src-icon">'+src.icon+'</span> '+(t[src.labelKey]||src.key)+'</span><span class="soon-tag">'+(t.comingSoon||'Soon')+'</span>';
+                menu.appendChild(span);
+            }
+        });
+
+        trigger.addEventListener('click', function(e){
+            e.stopPropagation();
+            const isOpen = menu.classList.contains('open');
+            document.querySelectorAll('.dl-menu.open').forEach(m=>m.classList.remove('open'));
+            document.querySelectorAll('.dl-trigger.open').forEach(b=>b.classList.remove('open'));
+            if(!isOpen){
+                menu.classList.add('open');
+                trigger.classList.add('open');
+            }
+        });
+
+        actions.appendChild(trigger);
+        actions.appendChild(menu);
+        body.appendChild(actions);
+        card.appendChild(body);
+        grid.appendChild(card);
+    });
+}
+
+document.addEventListener('click', function(){
+    document.querySelectorAll('.dl-menu.open').forEach(m=>m.classList.remove('open'));
+    document.querySelectorAll('.dl-trigger.open').forEach(b=>b.classList.remove('open'));
+});
+
 function applyLang(lang){
-const t=window.HACKEROS_TRANS_DOWNLOAD[lang];if(!t)return;
-document.documentElement.lang=lang;document.title=t.pageTitle;
-document.getElementById('section-h1').textContent=t.sectionH1;
-document.getElementById('quick-title').textContent=t.quickTitle;
-document.getElementById('quick-desc').textContent=t.quickDesc;
-document.getElementById('select-label').textContent=t.selectLabel;
-document.getElementById('select-default').textContent=t.selectDefault;
-document.getElementById('footer-copy').textContent=t.footerCopy;
-['home','download','releases','team','docs'].forEach(k=>{const a=document.getElementById('nav-'+k);if(a)a.textContent=t['nav'+k.charAt(0).toUpperCase()+k.slice(1)];});
-const dlLink=document.getElementById('download-link');
-if(dlLink&&dlLink.style.display!=='none')dlLink.textContent=t.downloadBtn;
-document.querySelectorAll('.dl-sf').forEach(e=>e.textContent=t.btnSourceForge);
-document.querySelectorAll('.dl-mega').forEach(e=>e.textContent=t.btnMega);
-document.querySelectorAll('.dl-drive').forEach(e=>e.textContent=t.btnDrive);
-document.querySelectorAll('.dl-transfer').forEach(e=>e.textContent=t.btnTransfer);}
+    const t=window.HACKEROS_TRANS_DOWNLOAD[lang];if(!t)return;
+    document.documentElement.lang=lang;document.title=t.pageTitle;
+    document.getElementById('section-h1').textContent=t.sectionH1;
+    document.getElementById('quick-title').textContent=t.quickTitle;
+    document.getElementById('quick-desc').textContent=t.quickDesc;
+    document.getElementById('select-label').textContent=t.selectLabel;
+    document.getElementById('select-default').textContent=t.selectDefault;
+    document.getElementById('footer-copy').textContent=t.footerCopy;
+    document.getElementById('editions-heading').textContent=t.allEditionsTitle || (lang==='pl' ? 'Wszystkie edycje' : 'All editions');
+    document.getElementById('editions-sub').textContent=t.allEditionsSub || t.chooseSource || '';
+    ['home','download','releases','team','docs'].forEach(k=>{const a=document.getElementById('nav-'+k);if(a)a.textContent=t['nav'+k.charAt(0).toUpperCase()+k.slice(1)];});
+    const dlLink=document.getElementById('download-link');
+    if(dlLink&&dlLink.style.display!=='none')dlLink.textContent=t.downloadBtn;
+    renderEditions(t);
+}
 window.__hackeros_applyLang=applyLang;
 document.addEventListener('DOMContentLoaded',()=>{
-applyLang(window.HackerLang.getLang());
-document.getElementById('edition-select').addEventListener('change',function(){
-const link=document.getElementById('download-link');
-const t=window.HACKEROS_TRANS_DOWNLOAD[window.HackerLang.getLang()];
-link.href=this.value;link.textContent=(t?t.downloadBtn:'Pobierz');
-link.style.display=this.value?'inline-block':'none';});});
-</script></body></html>
+    applyLang(window.HackerLang.getLang());
+    document.getElementById('edition-select').addEventListener('change',function(){
+        const link=document.getElementById('download-link');
+        const t=window.HACKEROS_TRANS_DOWNLOAD[window.HackerLang.getLang()];
+        link.href=this.value;link.textContent=(t?t.downloadBtn:'Pobierz');
+        link.style.display=this.value?'inline-block':'none';
+    });
+});
+</script>
+</body></html>
