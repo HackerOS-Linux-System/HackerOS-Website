@@ -171,9 +171,9 @@ function buildToolsHTML(lang) {
         ['<code>HackerOS Cockpit</code>',
             en ? 'System control panel in the browser.' : 'Panel sterowania systemu w przeglądarce.',
             en ? 'built-in all editions' : 'wbudowane we wszystkich edycjach'],
-        ['<code>vira</code>',
-            en ? 'Vira programming language – translated to Rust (designed mainly for GUI applications).' : 'Język programowania vira – tłumaczony do rust (przeznaczony głównie dla aplikacji GUI).',
-            '<code>hacker unpack vira-lang</code>'],
+        ['<code>HackerScript</code>',
+            en ? 'Experimental, hobby programming language (not only for HackerOS) transpiled to Rust and Python in a single file, supporting a wide range of ecosystems.' : 'Eksperymentalny, hobbystyczny język programowania (nie tylko dla HackerOS) transpilowany do Rust i Python w jednym pliku, obsługujący masę ekosystemów.',
+            '<code>hacker unpack hackerscript</code>'],
         ['<code>gaming-cli</code> / <code>gaming</code> / <code>gamescope-manager</code>',
             en ? 'Suite of CLI tools exclusive to HackerOS Gaming Edition. Manages Game Mode and handles seamless switching between KDE Plasma and gamescope-based Game Mode.' : 'Zestaw narzędzi CLI dostępny wyłącznie w edycji HackerOS Gaming Edition. Zarządza trybem Game Mode oraz obsługuje przełączanie pomiędzy środowiskiem KDE Plasma a trybem Game Mode opartym na Gamescope.',
             en ? 'Built-in – HackerOS Gaming Edition only' : 'Wbudowane w edycji HackerOS Gaming Edition'],
@@ -225,11 +225,50 @@ ${en ? 'official Hacker Lang documentation' : 'oficjalnej dokumentacji Hacker La
 <a href="https://hackeros-linux-system.github.io/HackerOS-Website/h-sharp/docs.html" target="_blank" style="color:#4a9eff">
 ${en ? 'official H# documentation' : 'oficjalnej dokumentacji H#'}</a>.</p>
 
-<h3>vira</h3>
+<h3>HackerScript</h3>
 <p>${en
-    ? 'vira is a programming language translated to Rust, designed mainly for GUI applications.'
-    : 'vira to język programowania tłumaczony do Rust, przeznaczony głównie dla aplikacji GUI.'}</p>
-<pre><span>hacker unpack vira-lang</span><button class="copy-button" data-command="hacker unpack vira-lang">${copyLabel}</button></pre>`;
+    ? 'HackerScript is an experimental, hobby programming language (not only for HackerOS), transpiled to Rust and Python in a single file, with support for a wide range of ecosystems.'
+    : 'HackerScript to eksperymentalny, hobbystyczny język programowania (nie tylko dla HackerOS), transpilowany do Rust i Python w jednym pliku, obsługujący masę ekosystemów.'}</p>
+<p><strong>${en ? 'Example usage' : 'Przykład użycia'}:</strong></p>
+<pre><code>using &lt;1.2&gt;
+
+!! ${en ? 'Returns the sum of two integers.' : 'Zwraca sumę dwóch liczb całkowitych.'}
+fun add(a: Int, b: Int) -&gt; Int [
+    end a + b
+]
+
+fun fib(n: Int) -&gt; Int [
+    if n &lt;= 1 [
+        end n
+    ]
+    end fib(n - 1) + fib(n - 2)
+]
+
+fun main() [
+    let name = "HackerScript"
+    log("Hello,", name, "!")
+
+    let suma = add(2, 3)
+    log("2 + 3 =", suma)
+
+    let i = 0
+    while i &lt; 5 [
+        log("fib(", i, ") =", fib(i))
+        i = i + 1
+    ]
+
+    for jezyk in ["Python", "Rust", "HackerScript"] [
+        if jezyk == "HackerScript" [
+            log(jezyk, "- to my!")
+        ] else [
+            log(jezyk, "- inspiracja")
+        ]
+    ]
+    end
+]</code></pre>
+<p>${en ? 'More information can be found in the' : 'Więcej informacji znajdziesz w'}
+<a href="https://hackeros-linux-system.github.io/HackerOS-Website/tools-docs/HackerScript/docs.html" target="_blank" style="color:#4a9eff">
+${en ? 'official HackerScript documentation' : 'oficjalnej dokumentacji HackerScript'}</a>.</p>`;
 }
 
 /* ── Gallery tab ─────────────────────────────────────────────────────── */
