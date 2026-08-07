@@ -29,9 +29,12 @@ window.HACKEROS_TRANS_TOOLS = {
             'hackeros-steam':      'HackerOS Steam',
             // Nowe pozycje (na przyszłość, gdybyś chciał użyć data-key)
             'hackeros-games':      'HackerOS Games',
-            'deb-ostree':          'deb-ostree',
             'hackeros-kernel':     'HackerOS Kernel',
-            'hacker-launcher':     'Hacker Launcher'
+            'hacker-launcher':     'Hacker Launcher',
+            'hackeros-store':      'HackerOS Store',
+            'hackerscript':        'HackerScript',
+            'hwde':                'HWDE',
+            'blue-environment':    'Blue Environment'
         },
         langDropLinks: {
             hsharp:     'H# – dokumentacja',
@@ -59,12 +62,14 @@ window.HACKEROS_TRANS_TOOLS = {
             { title: "Hacker Mode", desc: "Sesja do gier inspirowana GameHub / Steam GamePadUI. Uruchamia specjalne środowisko zoptymalizowane dla kontrolerów, dużego ekranu i łatwego dostępu do bibliotek gier. Idealne do Steam, emulatorów i natywnych tytułów." },
             { title: "Isolator", desc: "Nakładka dla podmana z własną listą pakietów. Określa, w którym kontenerze każdy pakiet ma być instalowany. Dzięki temu łatwo zarządzasz aplikacjami w izolowanych środowiskach, zapewniając separację i bezpieczeństwo." },
             { title: "HackerOS Steam", desc: "Uruchom Steam w kontenerze Arch Linux. Dzięki izolacji i pełnej kompatybilności z bibliotekami Steam, możesz grać w swoje ulubione tytuły na HackerOS, zachowując czystość systemu głównego." },
-            { title: "vira", desc: "Język programowania vira – tłumaczony do Rust, przeznaczony głównie dla aplikacji GUI. Instalacja: hacker unpack vira-lang." },
             // Nowe slajdy dla dodanych narzędzi
             { title: "HackerOS Games", desc: "HackerOS Games to platforma do uruchamiania i zarządzania grami, zintegrowana z systemem. Umożliwia łatwy dostęp do bibliotek gier natywnych oraz emulowanych, oferując wygodny interfejs i optymalizację pod kątem wydajności." },
-            { title: "deb-ostree", desc: "deb‑ostree to odpowiednik rpm‑ostree dla Debiana – umożliwia atomowe aktualizacje całego systemu, zapewniając niezawodność, możliwość wycofania zmian oraz sprawne zarządzanie wersjami obrazów systemowych." },
             { title: "HackerOS Kernel", desc: "HackerOS domyślnie wykorzystuje autorskie jądro HackerOS Kernel w edycji cybersecurity, które jest specjalnie dostosowane do wymogów tej edycji. Planowane jest również wprowadzenie HackerOS Kernel jako domyślnego jądra w wersji official, zastępując standardowe jądro Debiana." },
-            { title: "Hacker Launcher", desc: "Hacker Launcher to aplikacja umożliwiająca uruchamianie natywnych gier Linuxa oraz gier z Windowsa (przy użyciu Protona). Zapewnia wygodny dostęp do bibliotek gier, zarządzanie konfiguracjami i optymalizację ustawień dla różnych tytułów." }
+            { title: "Hacker Launcher", desc: "Hacker Launcher to aplikacja umożliwiająca uruchamianie natywnych gier Linuxa oraz gier z Windowsa (przy użyciu Protona) w jednej aplikacji. Zapewnia wygodny dostęp do bibliotek gier, zarządzanie konfiguracjami i optymalizację ustawień dla różnych tytułów." },
+            { title: "HackerOS Store", desc: "HackerOS Store to sklep wszystkich dostępnych programów w HackerOS – wygodne, scentralizowane miejsce do przeglądania, instalowania i aktualizowania aplikacji oraz dodatków w systemie." },
+            { title: "HackerScript", desc: "HackerScript – eksperymentalny, hobbystyczny język programowania (nie tylko dla HackerOS), transpilowany do Rust i Python w jednym pliku, obsługujący masę ekosystemów." },
+            { title: "HWDE", desc: "HWDE (HackerOS Wayland Desktop Environment) – natywne środowisko graficzne HackerOS: powłoka starthwde oraz kompozytor Wayland/XWayland comphwde." },
+            { title: "Blue Environment", desc: "Blue Environment – środowisko graficzne rozwijane przez LegendaryOS, dostępne w ekosystemie narzędzi HackerOS." }
         ]
     },
     en: {
@@ -97,9 +102,12 @@ window.HACKEROS_TRANS_TOOLS = {
             'hackeros-steam':      'HackerOS Steam',
             // New entries
             'hackeros-games':      'HackerOS Games',
-            'deb-ostree':          'deb-ostree',
             'hackeros-kernel':     'HackerOS Kernel',
-            'hacker-launcher':     'Hacker Launcher'
+            'hacker-launcher':     'Hacker Launcher',
+            'hackeros-store':      'HackerOS Store',
+            'hackerscript':        'HackerScript',
+            'hwde':                'HWDE',
+            'blue-environment':    'Blue Environment'
         },
         langDropLinks: {
             hsharp:     'H# – documentation',
@@ -127,12 +135,14 @@ window.HACKEROS_TRANS_TOOLS = {
             { title: "Hacker Mode", desc: "Gaming session inspired by GameHub / Steam GamePadUI. Launches a special environment optimized for controllers, large screens and easy access to game libraries. Perfect for Steam, emulators and native titles." },
             { title: "Isolator", desc: "Podman overlay with its own package list. Specifies which container each package should be installed in. This makes it easy to manage applications in isolated environments, ensuring separation and security." },
             { title: "HackerOS Steam", desc: "Run Steam in an Arch Linux container. Thanks to isolation and full compatibility with Steam libraries, you can play your favorite titles on HackerOS while keeping the main system clean." },
-            { title: "vira", desc: "vira programming language – translated to Rust, designed mainly for GUI applications. Install: hacker unpack vira-lang." },
             // New slides for added tools
             { title: "HackerOS Games", desc: "HackerOS Games is a platform for launching and managing games, fully integrated with the system. It provides easy access to native and emulated game libraries, offering a user-friendly interface and performance optimization." },
-            { title: "deb-ostree", desc: "deb‑ostree is the Debian counterpart of rpm‑ostree – enabling atomic system updates, ensuring reliability, rollback capabilities and efficient version management of system images." },
             { title: "HackerOS Kernel", desc: "HackerOS by default uses the custom HackerOS Kernel in the cybersecurity edition, which is specially tailored for that edition's requirements. There are also plans to adopt HackerOS Kernel as the default kernel in the official version, replacing the standard Debian kernel." },
-            { title: "Hacker Launcher", desc: "Hacker Launcher is an application that allows you to run native Linux games as well as Windows games (using Proton). It provides convenient access to game libraries, configuration management and optimised settings for various titles." }
+            { title: "Hacker Launcher", desc: "Hacker Launcher is an application that allows you to run native Linux games as well as Windows games (using Proton) in a single application. It provides convenient access to game libraries, configuration management and optimised settings for various titles." },
+            { title: "HackerOS Store", desc: "HackerOS Store is a store of all available programs in HackerOS – a convenient, centralized place to browse, install and update applications and add-ons on the system." },
+            { title: "HackerScript", desc: "HackerScript – an experimental and hobby programming language (not only for HackerOS), transpiled to Rust and Python in a single file, supporting a wide range of ecosystems." },
+            { title: "HWDE", desc: "HWDE (HackerOS Wayland Desktop Environment) – HackerOS's native graphical environment: the starthwde shell and the comphwde Wayland/XWayland compositor." },
+            { title: "Blue Environment", desc: "Blue Environment – a graphical environment developed by LegendaryOS, available as part of the HackerOS tools ecosystem." }
         ]
     }
 };
