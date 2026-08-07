@@ -12,6 +12,23 @@ window.HACKEROS_TRANS_RELEASES = {
         navDocs:      'Documentation',
         releases: [
             {
+                version: 'HackerOS V4.9',
+                desc: 'Nowa edycja z wieloma usprawnieniami.',
+                dates: [
+                    'HackerOS Official: 7.08.2026',
+                    'HackerOS Cybersecurity: 7.08.2026',
+                    'HackerOS NVIDIA: 7.08.2026',
+                ],
+                changelog: [
+                    'Zaktualizowano i rozbudowano tło bootloadera w trybie live.',
+                    'Dodano własny motyw Plymouth.',
+                    'Zaktualizowano Hacker Lang.',
+                    'Zaktualizowano Hacker Launcher.',
+                    'Zaktualizowano i rozbudowano HackerOS Store.',
+                    'Całkowite przeniesienie budowania obrazów ISO z lokalnego na GitHub Actions – obrazy ISO są od teraz budowane w GitHub Actions.',
+                ]
+            },
+            {
                 version: 'HackerOS V4.8',
                 desc: 'Nowa edycja z zaktualizowanymi narzędziami.',
                 dates: [
@@ -305,6 +322,23 @@ window.HACKEROS_TRANS_RELEASES = {
         navTeam:      'HackerOS Team',
         navDocs:      'Documentation',
         releases: [
+            {
+                version: 'HackerOS V4.9',
+                desc: 'New edition with numerous improvements.',
+                dates: [
+                    'HackerOS Official: 7.08.2026',
+                    'HackerOS Cybersecurity: 7.08.2026',
+                    'HackerOS NVIDIA: 7.08.2026',
+                ],
+                changelog: [
+                    'Updated and expanded the live-mode bootloader background.',
+                    'Added a custom Plymouth theme.',
+                    'Updated Hacker Lang.',
+                    'Updated Hacker Launcher.',
+                    'Updated and expanded HackerOS Store.',
+                    'Fully migrated ISO image building from local builds to GitHub Actions — ISO images are now built on GitHub Actions.',
+                ]
+            },
             {
                 version: 'HackerOS V4.8',
                 desc: 'New edition with updated tools.',
