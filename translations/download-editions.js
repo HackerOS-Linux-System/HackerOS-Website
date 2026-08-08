@@ -1,6 +1,7 @@
 window.HACKEROS_DOWNLOAD_EDITIONS = [
     {
         id: 'official',
+        docsKey: 'official',
         name: 'HackerOS Official',
         img: 'official-edition.png',
         links: {
@@ -13,6 +14,7 @@ window.HACKEROS_DOWNLOAD_EDITIONS = [
     },
     {
         id: 'nvidia',
+        docsKey: 'nvidia',
         name: 'HackerOS NVIDIA',
         links: {
             sf:       'https://sourceforge.net/projects/hackeros/files/NVIDIA/HackerOS-V4.9-NVIDIA.iso/download',
@@ -24,6 +26,7 @@ window.HACKEROS_DOWNLOAD_EDITIONS = [
     },
     {
         id: 'cybersecurity',
+        docsKey: 'cybersec',
         name: 'HackerOS Cybersecurity',
         links: {
             sf:       'https://sourceforge.net/projects/hackeros/files/CYBERSECURITY/HackerOS-V4.9-Cybersecurity.iso/download',
@@ -34,7 +37,21 @@ window.HACKEROS_DOWNLOAD_EDITIONS = [
         }
     },
     {
+        id: 'cybersecurity-default',
+        docsKey: 'cybersecdefault',
+        name: 'HackerOS Cybersecurity Default',
+        img: 'cybersecurity-default-edition.png',
+        links: {
+            sf:       null,
+            mega:     null,
+            drive:    null,
+            transfer: null,
+            actions:  null
+        }
+    },
+    {
         id: 'gnome',
+        docsKey: 'gnome',
         name: 'HackerOS Official: Gnome',
         img: 'gnome-edition.png',
         links: {
@@ -47,6 +64,7 @@ window.HACKEROS_DOWNLOAD_EDITIONS = [
     },
     {
         id: 'hydra',
+        docsKey: 'hydra',
         name: 'HackerOS Official: Hydra',
         img: 'hydra-edition.png',
         links: {
@@ -59,6 +77,7 @@ window.HACKEROS_DOWNLOAD_EDITIONS = [
     },
     {
         id: 'xfce',
+        docsKey: 'xfce',
         name: 'HackerOS Official: Xfce',
         img: 'xfce-edition.png',
         links: {
@@ -71,9 +90,22 @@ window.HACKEROS_DOWNLOAD_EDITIONS = [
     },
     {
         id: 'blue',
+        docsKey: 'blue',
         name: 'HackerOS Blue',
         img: 'blue-edition.png',
-        isNew: true,
+        links: {
+            sf:       null,
+            mega:     null,
+            drive:    null,
+            transfer: null,
+            actions:  null
+        }
+    },
+    {
+        id: 'hwde',
+        docsKey: 'hwde',
+        name: 'HackerOS HWDE',
+        img: 'hwde-edition.png',
         links: {
             sf:       null,
             mega:     null,
@@ -84,7 +116,9 @@ window.HACKEROS_DOWNLOAD_EDITIONS = [
     },
     {
         id: 'gaming',
+        docsKey: 'gaming',
         name: 'HackerOS Gaming',
+        img: 'gaming-edition.png',
         links: {
             sf:       'https://sourceforge.net/projects/hackeros/files/GAMING/HackerOS-V4.7-Gaming.iso/download',
             mega:     null,
@@ -95,6 +129,7 @@ window.HACKEROS_DOWNLOAD_EDITIONS = [
     },
     {
         id: 'lts',
+        docsKey: 'lts',
         name: 'HackerOS LTS',
         links: {
             sf:       'https://sourceforge.net/projects/hackeros/files/LTS/HackerOS-V4.1-LTS.iso/download',
@@ -106,6 +141,7 @@ window.HACKEROS_DOWNLOAD_EDITIONS = [
     },
     {
         id: 'atomic',
+        docsKey: 'atomic',
         name: 'HackerOS Atomic',
         links: {
             sf:       'https://sourceforge.net/projects/hackeros/files/ATOMIC/HackerOS-Atomic-Testing-DEV-V4.9.iso/download',
