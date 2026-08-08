@@ -380,8 +380,11 @@ function buildEditionsPane(c, lang) {
         ['XFCE',           'xfce',       'xfce-edition.png', null],
         ['Blue',           'blue',       'blue-edition.png',
             'https://legendaryos-linux-system.github.io/website/'],
+        ['HWDE',           'hwde',       'hwde-edition.png',
+            'https://hackeros-linux-system.github.io/HackerOS-Website/tools-docs/HWDE/docs.html'],
         ['Gaming',         'gaming',     'gaming-edition.png', null],
-        ['Cybersecurity',  'cybersec',   'cybersecurity-edition.png', null],
+        ['Cybersecurity',  'cybersec',   null, null],
+        ['Cybersecurity Default', 'cybersecdefault', 'cybersecurity-default-edition.png', null],
         ['LTS',            'lts',        null, null],
         ['Atomic',         'atomic',     null, null],
         ['NVIDIA',         'nvidia',     null, null],
@@ -539,6 +542,8 @@ function buildPane(key, c, t, lang) {
             div.appendChild(el('h2', c.h2));
             div.appendChild(el('p', c.p1, true));
             div.appendChild(el('p', c.p2, true));
+            if (c.hContrib) div.appendChild(el('h3', c.hContrib));
+            if (c.p3) div.appendChild(el('p', c.p3, true));
             break;
     }
 
