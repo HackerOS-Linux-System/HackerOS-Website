@@ -1,0 +1,18 @@
+(function () {
+    const VERSION = "HackerOS V3.2";
+    const DATA = {
+        pl: { version: VERSION, desc: "Dodano nową edycję Hydra Edition oraz zaktualizowano tapety.", dates: ["HackerOS Official: 29.09.2025", "HackerOS Hydra: 29.09.2025", "HackerOS Cybersecurity: 30.09.2025"], changelog: ["Zaktualizowana baza do najnowszego Debian Testing.", "Zaktualizowano tapety.", "Zaktualizowano skrypty.", "Naprawiono kilka błędów."] },
+        en: { version: VERSION, desc: "Added new Hydra Edition and updated wallpapers.", dates: ["HackerOS Official: 29.09.2025", "HackerOS Hydra: 29.09.2025", "HackerOS Cybersecurity: 30.09.2025"], changelog: ["Updated base to the latest Debian Testing.", "Updated wallpapers.", "Updated scripts.", "Fixed several bugs."] },
+        de: { version: VERSION, desc: "Neue Hydra-Edition hinzugefügt und Hintergrundbilder aktualisiert.", dates: ["HackerOS Official: 29.09.2025", "HackerOS Hydra: 29.09.2025", "HackerOS Cybersecurity: 30.09.2025"], changelog: ["Basis auf das neueste Debian Testing aktualisiert.", "Hintergrundbilder aktualisiert.", "Skripte aktualisiert.", "Mehrere Fehler behoben."] },
+        fr: { version: VERSION, desc: "Ajout de la nouvelle édition Hydra et mise à jour des fonds d'écran.", dates: ["HackerOS Official: 29.09.2025", "HackerOS Hydra: 29.09.2025", "HackerOS Cybersecurity: 30.09.2025"], changelog: ["Mise à jour de la base vers la dernière version de Debian Testing.", "Mise à jour des fonds d'écran.", "Mise à jour des scripts.", "Correction de plusieurs bogues."] },
+        es: { version: VERSION, desc: "Añadida la nueva edición Hydra y fondos de pantalla actualizados.", dates: ["HackerOS Official: 29.09.2025", "HackerOS Hydra: 29.09.2025", "HackerOS Cybersecurity: 30.09.2025"], changelog: ["Actualizada la base a la última versión de Debian Testing.", "Actualizados los fondos de pantalla.", "Actualizados los scripts.", "Corregidos varios errores."] },
+        it: { version: VERSION, desc: "Aggiunta la nuova edizione Hydra e sfondi aggiornati.", dates: ["HackerOS Official: 29.09.2025", "HackerOS Hydra: 29.09.2025", "HackerOS Cybersecurity: 30.09.2025"], changelog: ["Aggiornata la base all'ultima versione di Debian Testing.", "Aggiornati gli sfondi.", "Aggiornati gli script.", "Corretti diversi bug."] },
+        ru: { version: VERSION, desc: "Добавлена новая редакция Hydra и обновлены обои.", dates: ["HackerOS Official: 29.09.2025", "HackerOS Hydra: 29.09.2025", "HackerOS Cybersecurity: 30.09.2025"], changelog: ["База обновлена до последней версии Debian Testing.", "Обновлены обои.", "Обновлены скрипты.", "Исправлено несколько ошибок."] },
+        uk: { version: VERSION, desc: "Додано нове видання Hydra та оновлено шпалери.", dates: ["HackerOS Official: 29.09.2025", "HackerOS Hydra: 29.09.2025", "HackerOS Cybersecurity: 30.09.2025"], changelog: ["Базу оновлено до найновішої версії Debian Testing.", "Оновлено шпалери.", "Оновлено скрипти.", "Виправлено кілька помилок."] },
+        zh: { version: VERSION, desc: "新增了 Hydra 版本并更新了壁纸。", dates: ["HackerOS Official: 29.09.2025", "HackerOS Hydra: 29.09.2025", "HackerOS Cybersecurity: 30.09.2025"], changelog: ["将基础系统更新为最新的 Debian Testing。", "更新了壁纸。", "更新了脚本。", "修复了多个错误。"] },
+        ja: { version: VERSION, desc: "新しい Hydra エディションを追加し、壁紙を更新しました。", dates: ["HackerOS Official: 29.09.2025", "HackerOS Hydra: 29.09.2025", "HackerOS Cybersecurity: 30.09.2025"], changelog: ["ベースを最新の Debian Testing に更新しました。", "壁紙を更新しました。", "スクリプトを更新しました。", "複数の不具合を修正しました。"] },
+    };
+
+    window.HACKEROS_RELEASES_REGISTRY = window.HACKEROS_RELEASES_REGISTRY || [];
+    window.HACKEROS_RELEASES_REGISTRY.push({ version: VERSION, data: DATA });
+})();
