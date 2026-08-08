@@ -47,12 +47,32 @@ nav ul li a:hover{color:#B0B0B0;transform:translateY(-2px);}
 .dl-menu a:hover{background-color:#1e2833;color:#FFF;}
 .dl-menu span.dl-disabled{color:#3a4558;cursor:not-allowed;}
 .dl-menu .soon-tag{font-size:9px;letter-spacing:1px;text-transform:uppercase;background:rgba(255,208,0,.1);border:1px solid rgba(255,208,0,.3);color:#ffd000;padding:2px 6px;border-radius:3px;}
-.dl-menu .src-icon{width:16px;text-align:center;opacity:.85;}
 
 footer{background-color:#121212;padding:20px;text-align:center;color:#B0B0B0;width:100%;box-shadow:0 -2px 5px rgba(0,0,0,.5);margin-top:60px;}
 @media(max-width:600px){.edition-grid{grid-template-columns:1fr;}}
+
+.edition-thumb,.edition-thumb-fallback,.edition-body h2{cursor:pointer;}
+.edition-thumb:hover,.edition-thumb-fallback:hover{filter:brightness(1.12);}
+.edition-body h2:hover{color:#FFF;text-decoration:underline;}
+
+.info-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);display:none;align-items:center;justify-content:center;z-index:2000;padding:20px;}
+.info-modal-overlay.open{display:flex;}
+.info-modal{background:#1C2526;border:1px solid #3a4558;border-radius:12px;max-width:640px;width:100%;max-height:80vh;overflow-y:auto;padding:28px 30px;box-shadow:0 12px 40px rgba(0,0,0,.6);position:relative;}
+.info-modal h3{font-size:24px;margin-bottom:16px;padding-right:30px;}
+.info-modal .info-modal-body{font-size:15px;line-height:1.75;color:#D8D8D8;}
+.info-modal .info-modal-body a{color:#4a9eff;}
+.info-modal .info-modal-body strong{color:#FFF;}
+.info-modal-close{position:absolute;top:18px;right:20px;background:none;border:none;color:#B0B0B0;font-size:22px;cursor:pointer;line-height:1;padding:4px;}
+.info-modal-close:hover{color:#FFF;}
 </style></head>
 <body>
+<div class="info-modal-overlay" id="info-modal-overlay">
+  <div class="info-modal">
+    <button class="info-modal-close" id="info-modal-close" aria-label="Close">&times;</button>
+    <h3 id="info-modal-title"></h3>
+    <div class="info-modal-body" id="info-modal-body"></div>
+  </div>
+</div>
 <header><nav><div class="logo"><img src="HackerOS.png" alt="HackerOS Logo"></div><ul><li><a id="nav-home" href="Home-page.html">Home</a></li><li><a id="nav-download" href="download.html">Download</a></li><li><a id="nav-releases" href="releases.html">Releases</a></li><li><a id="nav-team" href="hackeros-team.html">HackerOS Team</a></li><li><a id="nav-docs" href="hackeros-documentation.html">Documentation</a></li></ul></nav></header>
 
 <section class="download-section">
@@ -88,14 +108,50 @@ footer{background-color:#121212;padding:20px;text-align:center;color:#B0B0B0;wid
 <script src="translations/download.js"></script>
 <script src="translations/lang-switcher.js"></script>
 <script src="translations/download-editions.js"></script>
+<script src="translations/hackeros-documentation.js"></script>
 <script>
 const SOURCE_ORDER = [
-    { key:'sf',       icon:'☁',  labelKey:'btnSourceForge' },
-    { key:'mega',     icon:'▤',  labelKey:'btnMega' },
-    { key:'drive',    icon:'▢',  labelKey:'btnDrive' },
-    { key:'transfer', icon:'→',  labelKey:'btnTransfer' },
-    { key:'actions',  icon:'⚙',  labelKey:'btnGithubActions' }
+    { key:'sf',       labelKey:'btnSourceForge' },
+    { key:'mega',     labelKey:'btnMega' },
+    { key:'drive',    labelKey:'btnDrive' },
+    { key:'transfer', labelKey:'btnTransfer' },
+    { key:'actions',  labelKey:'btnGithubActions' }
 ];
+
+// docsKey -> extra "more details" URL, mirroring translations/doc-engine.js editionDefs
+const EXTRA_DOCS_URL = {
+    blue: 'https://legendaryos-linux-system.github.io/website/',
+    hwde: 'https://hackeros-linux-system.github.io/HackerOS-Website/tools-docs/HWDE/docs.html'
+};
+
+function getEditionDescriptionHTML(docsKey, lang){
+    if(!docsKey || !window.HACKEROS_TRANS_DOCS) return null;
+    const langData = window.HACKEROS_TRANS_DOCS[lang];
+    const enData = window.HACKEROS_TRANS_DOCS.en;
+    const c = (langData && langData.content && langData.content.editions)
+        || (enData && enData.content && enData.content.editions);
+    if(!c || !c[docsKey]) return null;
+    let html = c[docsKey];
+    const extraUrl = EXTRA_DOCS_URL[docsKey];
+    if(extraUrl){
+        const en = (lang === 'en');
+        html += `<p style="margin-top:14px">${en ? 'More details:' : 'Więcej szczegółów:'} <a href="${extraUrl}" target="_blank">${en ? 'here' : 'tutaj'}</a></p>`;
+    }
+    return html;
+}
+
+function openEditionInfo(ed, t){
+    const lang = window.HackerLang.getLang();
+    const html = getEditionDescriptionHTML(ed.docsKey, lang);
+    if(!html) return;
+    document.getElementById('info-modal-title').textContent = ed.name;
+    document.getElementById('info-modal-body').innerHTML = html;
+    document.getElementById('info-modal-overlay').classList.add('open');
+}
+
+function closeEditionInfo(){
+    document.getElementById('info-modal-overlay').classList.remove('open');
+}
 
 function renderEditions(t){
     const grid = document.getElementById('edition-grid');
@@ -110,26 +166,22 @@ function renderEditions(t){
             img.src = ed.img;
             img.alt = ed.name;
             img.loading = 'lazy';
+            img.addEventListener('click', function(){ openEditionInfo(ed, t); });
             card.appendChild(img);
         } else {
             const fb = document.createElement('div');
             fb.className = 'edition-thumb-fallback';
             fb.textContent = ed.name.replace('HackerOS','').trim().slice(0,2).toUpperCase() || 'OS';
+            fb.addEventListener('click', function(){ openEditionInfo(ed, t); });
             card.appendChild(fb);
         }
 
         const body = document.createElement('div');
         body.className = 'edition-body';
 
-        if(ed.isNew){
-            const badge = document.createElement('span');
-            badge.className = 'edition-new-badge';
-            badge.textContent = t.newEditionNote || 'NEW';
-            body.appendChild(badge);
-        }
-
         const h2 = document.createElement('h2');
         h2.textContent = ed.name;
+        h2.addEventListener('click', function(){ openEditionInfo(ed, t); });
         body.appendChild(h2);
 
         const actions = document.createElement('div');
@@ -155,12 +207,12 @@ function renderEditions(t){
                 a.href = url;
                 a.target = '_blank';
                 a.rel = 'noopener noreferrer';
-                a.innerHTML = '<span><span class="src-icon">'+src.icon+'</span> '+(t[src.labelKey]||src.key)+'</span>';
+                a.innerHTML = '<span>'+(t[src.labelKey]||src.key)+'</span>';
                 menu.appendChild(a);
             } else {
                 const span = document.createElement('span');
                 span.className = 'dl-disabled';
-                span.innerHTML = '<span><span class="src-icon">'+src.icon+'</span> '+(t[src.labelKey]||src.key)+'</span><span class="soon-tag">'+(t.comingSoon||'Soon')+'</span>';
+                span.innerHTML = '<span>'+(t[src.labelKey]||src.key)+'</span><span class="soon-tag">'+(t.comingSoon||'Soon')+'</span>';
                 menu.appendChild(span);
             }
         });
@@ -187,6 +239,14 @@ function renderEditions(t){
 document.addEventListener('click', function(){
     document.querySelectorAll('.dl-menu.open').forEach(m=>m.classList.remove('open'));
     document.querySelectorAll('.dl-trigger.open').forEach(b=>b.classList.remove('open'));
+});
+
+document.getElementById('info-modal-close').addEventListener('click', closeEditionInfo);
+document.getElementById('info-modal-overlay').addEventListener('click', function(e){
+    if(e.target === this) closeEditionInfo();
+});
+document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape') closeEditionInfo();
 });
 
 function applyLang(lang){
