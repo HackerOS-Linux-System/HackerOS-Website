@@ -456,3 +456,22 @@ code {
 @media (max-width: 500px) {
     .feature-grid { grid-template-columns: 1fr; }
 }
+
+/* ══ PLAYGROUND (added) ══ */
+.pg-wrap { border: 1px solid var(--border); border-radius: 6px; overflow: hidden; margin: 14px 0; box-shadow: 0 4px 24px rgba(0,0,0,0.4); }
+.pg-panes { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+@media (max-width: 860px) { .pg-panes { grid-template-columns: 1fr; } }
+.pg-pane { display: flex; flex-direction: column; min-height: 320px; }
+.pg-pane + .pg-pane { border-left: 1px solid var(--border); }
+@media (max-width: 860px) { .pg-pane + .pg-pane { border-left: none; border-top: 1px solid var(--border); } }
+.pg-pane-header { display: flex; align-items: center; justify-content: space-between; padding: 8px 14px; background: var(--panel); border-bottom: 1px solid var(--border); }
+.pg-pane-title { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text3); letter-spacing: 0.05em; }
+#pg-source { flex: 1; background: var(--code-bg); color: var(--text); border: none; outline: none; resize: none; padding: 16px 18px; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.8; tab-size: 4; }
+#pg-output { flex: 1; background: var(--code-bg); color: var(--text); margin: 0; padding: 16px 18px; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.8; white-space: pre-wrap; word-break: break-word; overflow-y: auto; }
+.pg-run-btn { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--white); background: rgba(255,51,85,0.14); border: 1px solid rgba(255,51,85,0.4); padding: 4px 12px; cursor: pointer; border-radius: 3px; transition: all 0.15s; letter-spacing: 0.05em; }
+.pg-run-btn:hover:not(:disabled) { background: rgba(255,51,85,0.24); }
+.pg-run-btn:disabled { opacity: 0.5; cursor: default; }
+.pg-status { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text3); }
+.pg-status-ok { color: var(--green); }
+.pg-status-err { color: var(--red); }
+.pg-note { font-size: 12.5px; color: var(--text2); padding: 12px 14px; border-top: 1px solid var(--border); background: var(--panel); }
