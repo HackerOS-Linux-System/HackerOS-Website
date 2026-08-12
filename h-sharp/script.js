@@ -15,6 +15,7 @@
         ['sec-tests',        'tests'],
         ['sec-modules',      'modules'],
         ['sec-examples-extra', 'examples-extra'],
+        ['sec-playground',   'playground'],
     ];
     function injectSections() {
         var reg = window.__HL_SECTIONS || {};
