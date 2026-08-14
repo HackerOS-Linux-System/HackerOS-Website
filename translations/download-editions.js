@@ -41,6 +41,7 @@ window.HACKEROS_DOWNLOAD_EDITIONS = [
         docsKey: 'cybersecdefault',
         name: 'HackerOS Cybersecurity Default',
         img: 'cybersecurity-default-edition.png',
+        excluded: ['mega', 'transfer'],
         links: {
             sf:       null,
             mega:     null,
@@ -80,6 +81,7 @@ window.HACKEROS_DOWNLOAD_EDITIONS = [
         docsKey: 'xfce',
         name: 'HackerOS Official: Xfce',
         img: 'xfce-edition.png',
+        excluded: ['mega', 'transfer'],
         links: {
             sf:       'https://sourceforge.net/projects/hackeros/files/OFFICIAL/XFCE/HackerOS-V4.5-Xfce.iso/download',
             mega:     null,
@@ -93,6 +95,7 @@ window.HACKEROS_DOWNLOAD_EDITIONS = [
         docsKey: 'blue',
         name: 'HackerOS Blue',
         img: 'blue-edition.png',
+        excluded: ['drive', 'mega', 'transfer'],
         links: {
             sf:       null,
             mega:     null,
@@ -106,6 +109,7 @@ window.HACKEROS_DOWNLOAD_EDITIONS = [
         docsKey: 'hwde',
         name: 'HackerOS HWDE',
         img: 'hwde-edition.png',
+        excluded: ['mega', 'transfer', 'drive'],
         links: {
             sf:       null,
             mega:     null,
@@ -119,6 +123,7 @@ window.HACKEROS_DOWNLOAD_EDITIONS = [
         docsKey: 'gaming',
         name: 'HackerOS Gaming',
         img: 'gaming-edition.png',
+        excluded: ['mega', 'transfer', 'drive'],
         links: {
             sf:       'https://sourceforge.net/projects/hackeros/files/GAMING/HackerOS-V4.7-Gaming.iso/download',
             mega:     null,
@@ -131,6 +136,7 @@ window.HACKEROS_DOWNLOAD_EDITIONS = [
         id: 'lts',
         docsKey: 'lts',
         name: 'HackerOS LTS',
+        excluded: ['mega', 'transfer'],
         links: {
             sf:       'https://sourceforge.net/projects/hackeros/files/LTS/HackerOS-V4.1-LTS.iso/download',
             mega:     null,
@@ -143,6 +149,7 @@ window.HACKEROS_DOWNLOAD_EDITIONS = [
         id: 'atomic',
         docsKey: 'atomic',
         name: 'HackerOS Atomic',
+        excluded: ['mega', 'transfer'],
         links: {
             sf:       'https://sourceforge.net/projects/hackeros/files/ATOMIC/HackerOS-Atomic-Testing-DEV-V4.9.iso/download',
             mega:     null,
