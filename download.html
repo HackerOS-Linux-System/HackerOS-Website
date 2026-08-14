@@ -201,6 +201,7 @@ function renderEditions(t){
         menu.appendChild(title);
 
         SOURCE_ORDER.forEach(function(src){
+            if(ed.excluded && ed.excluded.indexOf(src.key) !== -1) return;
             const url = ed.links ? ed.links[src.key] : null;
             if(url){
                 const a = document.createElement('a');
