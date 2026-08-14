@@ -33,6 +33,48 @@ footer{background-color:#121212;padding:20px;text-align:center;color:#B0B0B0;wid
 .footer-buttons{display:flex;justify-content:center;gap:20px;margin-bottom:10px;flex-wrap:wrap;}
 .cursor{animation:blink .7s infinite;}
 @keyframes blink{0%{opacity:1}50%{opacity:0}100%{opacity:1}}
+
+/* ── Highlights carousel ─────────────────────────────────────────── */
+.highlights{max-width:1200px;margin:0 auto 60px;padding:50px 20px 0;}
+.highlights h2{font-size:26px;margin-bottom:6px;text-align:center;}
+.highlights .highlights-sub{text-align:center;color:#B0B0B0;font-size:14.5px;margin-bottom:26px;}
+.highlights-viewport{overflow-x:auto;scroll-behavior:smooth;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:#3A4A55 transparent;padding-bottom:6px;}
+.highlights-viewport::-webkit-scrollbar{height:8px;}
+.highlights-viewport::-webkit-scrollbar-thumb{background:#3A4A55;border-radius:8px;}
+.highlights-track{display:flex;gap:22px;padding:6px 4px 10px;}
+.highlight-card{flex:0 0 300px;background:#2F3A44;border-radius:12px;padding:24px;box-shadow:0 4px 10px rgba(0,0,0,.3);display:flex;flex-direction:column;transition:transform .3s,box-shadow .3s;scroll-snap-align:start;}
+.highlight-card:hover{transform:translateY(-4px);box-shadow:0 6px 16px rgba(0,0,0,.45);}
+.highlight-card .tag{display:inline-block;font-size:10.5px;letter-spacing:1.5px;text-transform:uppercase;color:#00d4ff;background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.3);padding:3px 8px;border-radius:3px;margin-bottom:12px;align-self:flex-start;}
+.highlight-card h3{font-size:19px;margin-bottom:10px;}
+.highlight-card p{font-size:14.5px;color:#C6C6C6;margin-bottom:18px;flex:1;}
+.highlight-card a.card-link{align-self:flex-start;color:#4a9eff;text-decoration:none;font-weight:bold;font-size:14px;transition:color .2s;}
+.highlight-card a.card-link:hover{color:#7fb8ff;text-decoration:underline;}
+@media(max-width:600px){.highlight-card{flex:0 0 260px;}}
+
+/* ── Special day: HackerOS anniversary (March 3rd) ──────────────────── */
+.anniv-badge,.birthday-badge{display:none;}
+body.day-anniversary .hero{background:linear-gradient(135deg,#2b1d3d,#3a2450,#1C2526,#20303a);background-size:300% 300%;animation:annivGradient 12s ease infinite;}
+@keyframes annivGradient{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+body.day-anniversary .hero::before{background:radial-gradient(circle,rgba(255,208,110,.22) 0%,rgba(0,0,0,.5) 100%);}
+body.day-anniversary .anniv-badge{display:inline-block;margin-bottom:14px;padding:6px 16px;border-radius:20px;background:rgba(255,208,110,.12);border:1px solid rgba(255,208,110,.4);color:#ffd06e;font-size:14px;font-weight:bold;letter-spacing:.5px;}
+.confetti-piece{position:absolute;top:-12px;width:8px;height:14px;opacity:.9;border-radius:2px;pointer-events:none;animation-name:confettiFall;animation-timing-function:linear;animation-iteration-count:infinite;}
+@keyframes confettiFall{0%{transform:translateY(-10px) rotate(0deg);opacity:.9}100%{transform:translateY(110vh) rotate(360deg);opacity:0}}
+
+/* ── Special day: creator's birthday (September 24th) ────────────────── */
+body.day-creator-birthday .birthday-badge{display:inline-block;margin-bottom:14px;padding:6px 16px;border-radius:20px;background:rgba(0,150,255,.12);border:1px solid rgba(0,150,255,.4);color:#5fc2ff;font-size:14px;font-weight:bold;letter-spacing:.5px;}
+body.day-creator-birthday .btn{background:linear-gradient(270deg,#0057ff,#00c3ff,#3aa0ff,#0057ff);background-size:600% 600%;color:#FFF;animation:btnGradientMove 4s ease infinite,btnPulse 2.2s ease-in-out infinite;box-shadow:0 0 14px rgba(0,150,255,.55);}
+body.day-creator-birthday .btn:hover{transform:scale(1.08);box-shadow:0 0 26px rgba(0,180,255,.85);}
+@keyframes btnGradientMove{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes btnPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.045)}}
+
+/* ── Special day bottom banner ───────────────────────────────────────── */
+.special-day-section{display:none;max-width:800px;margin:0 auto 55px;padding:32px 26px;text-align:center;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);}
+.special-day-section h2{font-size:25px;margin-bottom:14px;}
+.special-day-section p{color:#C6C6C6;font-size:15.5px;}
+body.day-anniversary .special-day-section{border-color:rgba(255,208,110,.4);background:rgba(255,208,110,.06);}
+body.day-anniversary .special-day-section h2{color:#ffd06e;}
+body.day-creator-birthday .special-day-section{border-color:rgba(0,150,255,.4);background:rgba(0,150,255,.06);}
+body.day-creator-birthday .special-day-section h2{color:#5fc2ff;}
 </style>
 </head>
 <body>
@@ -60,6 +102,8 @@ footer{background-color:#121212;padding:20px;text-align:center;color:#B0B0B0;wid
 </header>
 <section class="hero">
 <div class="hero-content">
+<span class="anniv-badge" id="anniv-badge">🎉 Rocznica HackerOS</span>
+<span class="birthday-badge" id="birthday-badge">🎂 Urodziny twórcy HackerOS</span>
 <h1 id="title">Witaj w HackerOS.</h1>
 <p><span id="prefix">Dystrybucja Linuksa dla: </span><span id="typing"></span><span class="cursor">|</span></p>
 <div class="hero-buttons">
@@ -68,6 +112,39 @@ footer{background-color:#121212;padding:20px;text-align:center;color:#B0B0B0;wid
 </div>
 </div>
 </section>
+
+<section class="highlights">
+<h2 id="highlights-heading">Co słychać w HackerOS</h2>
+<p class="highlights-sub" id="highlights-sub">Przewiń w prawo lub poczekaj — sekcja przewija się sama.</p>
+<div class="highlights-viewport" id="highlights-viewport">
+<div class="highlights-track" id="highlights-track">
+<div class="highlight-card">
+<span class="tag" id="hl1-tag">Recenzja</span>
+<h3 id="hl1-title">HackerOS okiem The New Stack</h3>
+<p id="hl1-text">Dziennikarz portalu The New Stack, Jack Wallen, przetestował HackerOS i opisał go jako debianopochodną dystrybucję dla zwykłych użytkowników, graczy oraz specjalistów od cyberbezpieczeństwa, chwaląc m.in. powłokę zsh i autorskie komendy „hacker”.</p>
+<a class="card-link" id="hl1-link" href="https://thenewstack.io/hackeros-is-what-a-linux-enthusiasts-os-should-be/" target="_blank" rel="noopener noreferrer">Czytaj recenzję →</a>
+</div>
+<div class="highlight-card">
+<span class="tag" id="hl2-tag">Najnowsze wydanie</span>
+<h3 id="hl2-title">HackerOS V4.9</h3>
+<p id="hl2-text">Sprawdź co nowego pojawiło się w najświeższej wersji HackerOS i przejrzyj pełną listę zmian oraz historię wcześniejszych wydań.</p>
+<a class="card-link" id="hl2-link" href="releases.html">Zobacz changelog →</a>
+</div>
+<div class="highlight-card">
+<span class="tag" id="hl3-tag">Społeczność</span>
+<h3 id="hl3-title">Dołącz do społeczności</h3>
+<p id="hl3-text">Masz pytania, pomysły albo chcesz po prostu pogadać o HackerOS? Dołącz do naszego serwera Discord i bądź na bieżąco.</p>
+<a class="card-link" id="hl3-link" href="https://discord.com/invite/8yHNcBaEKy" target="_blank" rel="noopener noreferrer">Dołącz na Discordzie →</a>
+</div>
+</div>
+</div>
+</section>
+
+<section class="special-day-section" id="special-day-section">
+<h2 id="special-day-title"></h2>
+<p id="special-day-text"></p>
+</section>
+
 <footer>
 <div class="footer-buttons">
 <a id="footer-forum" href="https://github.com/HackerOS-Linux-System/HackerOS/discussions" class="btn">Forum Dyskusyjne</a>
@@ -102,7 +179,127 @@ document.getElementById('nav-team').textContent=t.navTeam;
 document.getElementById('nav-docs').textContent=t.navDocs;
 if(typingTimer)clearInterval(typingTimer);typingEl.textContent='';
 typingWords=t.words;typingIdx=0;typeWord(typingWords[0]);}
-window.__hackeros_applyLang=applyLang;
-document.addEventListener('DOMContentLoaded',()=>{applyLang(window.HackerLang.getLang());});
+/* ── Highlights i18n (falls back to English for languages not listed) ── */
+const HIGHLIGHTS_I18N={
+pl:{heading:'Co słychać w HackerOS',sub:'Przewiń w prawo lub poczekaj — sekcja przewija się sama.',
+hl1Tag:'Recenzja',hl1Title:'HackerOS okiem The New Stack',
+hl1Text:'Dziennikarz portalu The New Stack, Jack Wallen, przetestował HackerOS i opisał go jako debianopochodną dystrybucję dla zwykłych użytkowników, graczy oraz specjalistów od cyberbezpieczeństwa, chwaląc m.in. powłokę zsh i autorskie komendy „hacker”.',
+hl1Link:'Czytaj recenzję →',
+hl2Tag:'Najnowsze wydanie',hl2Title:'HackerOS V4.9',
+hl2Text:'Sprawdź co nowego pojawiło się w najświeższej wersji HackerOS i przejrzyj pełną listę zmian oraz historię wcześniejszych wydań.',
+hl2Link:'Zobacz changelog →',
+hl3Tag:'Społeczność',hl3Title:'Dołącz do społeczności',
+hl3Text:'Masz pytania, pomysły albo chcesz po prostu pogadać o HackerOS? Dołącz do naszego serwera Discord i bądź na bieżąco.',
+hl3Link:'Dołącz na Discordzie →'},
+en:{heading:'What\'s new in HackerOS',sub:'Scroll right, or just wait — this section scrolls itself.',
+hl1Tag:'Review',hl1Title:'HackerOS, reviewed by The New Stack',
+hl1Text:'The New Stack writer Jack Wallen tested HackerOS and described it as a Debian-based distro aimed at everyday users, gamers, and cybersecurity enthusiasts, praising its zsh shell and custom "hacker" commands.',
+hl1Link:'Read the review →',
+hl2Tag:'Latest release',hl2Title:'HackerOS V4.9',
+hl2Text:'See what\'s new in the latest HackerOS release and browse the full changelog along with the history of previous versions.',
+hl2Link:'View changelog →',
+hl3Tag:'Community',hl3Title:'Join the community',
+hl3Text:'Got questions, ideas, or just want to talk about HackerOS? Join our Discord server and stay up to date.',
+hl3Link:'Join Discord →'}};
+
+function applyHighlightsLang(lang){
+const t=HIGHLIGHTS_I18N[lang]||HIGHLIGHTS_I18N.en;
+document.getElementById('highlights-heading').textContent=t.heading;
+document.getElementById('highlights-sub').textContent=t.sub;
+document.getElementById('hl1-tag').textContent=t.hl1Tag;
+document.getElementById('hl1-title').textContent=t.hl1Title;
+document.getElementById('hl1-text').textContent=t.hl1Text;
+document.getElementById('hl1-link').textContent=t.hl1Link;
+document.getElementById('hl2-tag').textContent=t.hl2Tag;
+document.getElementById('hl2-title').textContent=t.hl2Title;
+document.getElementById('hl2-text').textContent=t.hl2Text;
+document.getElementById('hl2-link').textContent=t.hl2Link;
+document.getElementById('hl3-tag').textContent=t.hl3Tag;
+document.getElementById('hl3-title').textContent=t.hl3Title;
+document.getElementById('hl3-text').textContent=t.hl3Text;
+document.getElementById('hl3-link').textContent=t.hl3Link;
+}
+
+/* ── Auto-scrolling carousel: scrolls right every 30s, loops, manual scroll still works ── */
+function initHighlightsCarousel(){
+const viewport=document.getElementById('highlights-viewport');
+const track=document.getElementById('highlights-track');
+if(!viewport||!track)return;
+setInterval(()=>{
+if(!track.children.length)return;
+const gap=22;
+const cardWidth=track.children[0].getBoundingClientRect().width+gap;
+const maxScroll=viewport.scrollWidth-viewport.clientWidth;
+if(viewport.scrollLeft>=maxScroll-5){
+viewport.scrollTo({left:0,behavior:'smooth'});
+}else{
+viewport.scrollBy({left:cardWidth,behavior:'smooth'});
+}
+},30000);
+}
+
+/* ── Special days: HackerOS anniversary (Mar 3) & creator's birthday (Sep 24), any year ── */
+const SPECIAL_DAY_I18N={
+anniversary:{
+pl:{title:'Dlaczego: Kolejny rok z HackerOS :D',text:'3 marca to dzień, w którym wystartował projekt HackerOS. Każdego roku tego dnia świętujemy kolejną rocznicę rozwoju systemu razem z całą społecznością. Dziękujemy, że jesteście z nami!'},
+en:{title:'Why: Another year with HackerOS :D',text:'March 3rd marks the day the HackerOS project started. Every year on this date we celebrate another anniversary of the system\'s development together with the whole community. Thank you for being with us!'}},
+birthday:{
+pl:{title:'Dlaczego: Urodziny twórcy systemu',text:'24 września to urodziny twórcy HackerOS. Z tej okazji strona na jeden dzień zmienia swój wygląd — przyciski świecą na niebiesko z dynamiczną animacją. Wszystkiego najlepszego!'},
+en:{title:'Why: The system creator\'s birthday',text:'September 24th is the birthday of HackerOS\'s creator. To mark the occasion, the site changes its look for one day — buttons glow blue with a dynamic animation. Happy birthday!'}}
+};
+
+function spawnConfetti(){
+const hero=document.querySelector('.hero');
+if(!hero)return;
+const colors=['#ffd06e','#ff8fd6','#8ea9ff','#7fffb0'];
+for(let i=0;i<26;i++){
+const c=document.createElement('span');
+c.className='confetti-piece';
+c.style.left=Math.random()*100+'%';
+c.style.animationDelay=(Math.random()*8)+'s';
+c.style.animationDuration=(5+Math.random()*4)+'s';
+c.style.background=colors[i%colors.length];
+hero.appendChild(c);
+}
+}
+
+function applySpecialDay(lang){
+const now=new Date();
+const day=now.getDate();
+const month=now.getMonth(); /* 0-indexed: March=2, September=8 */
+const body=document.body;
+const section=document.getElementById('special-day-section');
+const titleEl=document.getElementById('special-day-title');
+const textEl=document.getElementById('special-day-text');
+
+if(month===2&&day===3){
+body.classList.add('day-anniversary');
+const t=SPECIAL_DAY_I18N.anniversary[lang]||SPECIAL_DAY_I18N.anniversary.en;
+titleEl.textContent=t.title;textEl.textContent=t.text;
+section.style.display='block';
+spawnConfetti();
+}else if(month===8&&day===24){
+body.classList.add('day-creator-birthday');
+const t=SPECIAL_DAY_I18N.birthday[lang]||SPECIAL_DAY_I18N.birthday.en;
+titleEl.textContent=t.title;textEl.textContent=t.text;
+section.style.display='block';
+}else{
+body.classList.remove('day-anniversary','day-creator-birthday');
+section.style.display='none';
+}
+}
+
+function applyAllLang(lang){
+applyLang(lang);
+applyHighlightsLang(lang);
+applySpecialDay(lang);
+}
+window.__hackeros_applyLang=applyAllLang;
+
+document.addEventListener('DOMContentLoaded',()=>{
+const lang=window.HackerLang.getLang();
+applyAllLang(lang);
+initHighlightsCarousel();
+});
 </script>
 </body></html>
