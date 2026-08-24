@@ -415,3 +415,48 @@ code {
 .hl-forin    { color: #f97316; font-weight: 700; }         /* @ item in */
 .hl-while    { color: #a855f7; font-weight: 700; }         /* ?~ while */
 .hl-hackeros { color: #ec4899; font-weight: 700; }         /* || HackerOS API */
+
+/* Dodatkowe operatory (uzupełnienie brakujących sekcji składni) */
+.hl-builtin   { color: #38bdf8; font-weight: 700; }        /* /> builtin coreutils */
+.hl-dirimport { color: #67e8f9; font-weight: 700; }        /* <* import katalogu */
+.hl-arena     { color: #f472b6; font-weight: 700; }        /* :: nazwa <rozmiar> def */
+.hl-extern    { color: #fb7185; font-weight: 700; }        /* _> extern runtime */
+
+/* ─── PLAYGROUND ─── */
+.playground-wrap {
+  border: 1px solid var(--border); border-radius: 6px;
+  background: var(--code-bg); overflow: hidden; margin: 20px 0;
+}
+.playground-bar {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 16px; background: var(--bg3); border-bottom: 1px solid var(--border);
+}
+.playground-status {
+  font-size: 11px; color: var(--text-dim); font-family: 'Space Mono', monospace;
+  letter-spacing: 1px; text-transform: uppercase;
+}
+.playground-status.status-ready { color: #34d399; }
+.playground-status.status-error { color: var(--pink); }
+.playground-run {
+  margin-left: auto; background: rgba(168,85,247,0.15);
+  border: 1px solid rgba(168,85,247,0.35); color: var(--purple2);
+  font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 1.5px;
+  padding: 6px 16px; border-radius: 3px; cursor: pointer; text-transform: uppercase;
+  transition: all 0.15s;
+}
+.playground-run:hover:not(:disabled) { background: rgba(168,85,247,0.28); }
+.playground-run:disabled { opacity: 0.4; cursor: not-allowed; }
+.playground-editor {
+  width: 100%; min-height: 220px; resize: vertical; border: none; outline: none;
+  background: var(--code-bg); color: var(--text);
+  font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.6;
+  padding: 16px 18px; tab-size: 4;
+}
+.playground-output {
+  border-top: 1px solid var(--border); background: #060510;
+  padding: 14px 18px; font-family: 'JetBrains Mono', monospace; font-size: 12.5px;
+  white-space: pre-wrap; word-break: break-word; min-height: 40px; max-height: 320px;
+  overflow-y: auto; color: var(--text-dim);
+}
+.playground-output .out-error { color: var(--pink); }
+.playground-output .out-exit  { color: var(--text-dim); font-style: italic; display: block; margin-top: 8px; }
