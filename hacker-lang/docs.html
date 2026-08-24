@@ -18,6 +18,9 @@
     <div class="logo-ver">// gen 2 — dokumentacja</div>
   </div>
 
+  <div class="sidebar-section">// playground</div>
+  <a href="#playground"><span class="op">▶</span>Uruchom online</a>
+
   <div class="sidebar-section">// wstęp</div>
   <a href="#intro"><span class="op">01</span>Czym jest HL?</a>
   <a href="#install"><span class="op">02</span>Dostępność</a>
@@ -31,6 +34,7 @@
   <a href="#output"><span class="op">~></span>Print</a>
   <a href="#quick"><span class="op">::</span>Quick-funkcje</a>
   <a href="#commands"><span class="op">></span>Komendy</a>
+  <a href="#builtin"><span class="op">/></span>Builtin coreutils</a>
   <a href="#background"><span class="op">&amp;</span>Tło &amp;</a>
   <a href="#hsh"><span class="op">*></span>Hsh</a>
   <a href="#repeatn"><span class="op">_N</span>Pętla _N</a>
@@ -45,6 +49,9 @@
   <a href="#while"><span class="op">?~</span>While</a>
   <a href="#switch"><span class="op">?sw</span>Switch</a>
   <a href="#hackeros"><span class="op">||</span>HackerOS API</a>
+  <a href="#dirimport"><span class="op">&lt;*</span>Import katalogu</a>
+  <a href="#arena"><span class="op">::&lt;n&gt;</span>Arena functions</a>
+  <a href="#extern"><span class="op">_></span>Extern runtime</a>
 
   <div class="sidebar-section">// wspólne</div>
   <a href="#variables"><span class="op">%@</span>Zmienne</a>
@@ -89,6 +96,29 @@
       <span class="tag tag-pk">gen 2 (domyślny)</span>
     </div>
   </div>
+
+  <!-- PLAYGROUND -->
+  <section id="playground">
+    <div class="section-header"><span class="section-num">00</span><h2>Uruchom online — playground</h2></div>
+    <div class="callout info"><span class="callout-icon">ℹ️</span><div class="callout-body"><strong>Prawdziwy interpreter, nie symulacja.</strong> To dokładnie ten sam kod (parser + kompilator + interpreter bytecode), skompilowany do WASM i uruchomiony lokalnie w Twojej przeglądarce — bez żadnego serwera. Dwie rzeczy nie działają tu z przyczyn fundamentalnych, nie z lenistwa: natywny JIT (wymaga wykonywalnej pamięci, niedostępnej w sandboksie przeglądarki) i wykonywanie komend systemowych (<code>&gt;</code>, <code>^&gt;</code>, <code>||</code>, ... — przeglądarka nie ma dostępu do powłoki). Reszta języka — arytmetyka, zmienne, pętle, funkcje, warunki, stringi — działa identycznie jak w natywnym <code>hl</code>.</div></div>
+    <div class="playground-wrap">
+      <div class="playground-bar">
+        <span class="playground-status" id="pg-status">ładowanie WASM…</span>
+        <button class="playground-run" id="pg-run" disabled>▶ Uruchom</button>
+      </div>
+      <textarea class="playground-editor" id="pg-editor" spellcheck="false">using &lt;gen 2&gt;
+
+% name: str = "swiat"
+~> Witaj, @name!
+
+% i: int = 0
+?~ @i &lt; 5
+    $( @i + 1 ) -> @i
+    ~> licznik: @i
+done</textarea>
+      <div class="playground-output" id="pg-output">Wynik pojawi się tutaj po kliknięciu „Uruchom”.</div>
+    </div>
+  </section>
 
   <!-- INTRO -->
   <section id="intro">
@@ -227,9 +257,34 @@ hl repl                  <span class="hl-comment"># REPL interaktywny</span></pr
     </div>
   </section>
 
+  <!-- BUILTIN -->
+  <section id="builtin">
+    <div class="section-header"><span class="section-num">09</span><h2>Builtin coreutils — <code>/&gt;</code></h2></div>
+    <p>Operator <code>/&gt;</code> wywołuje wbudowaną, natywną implementację popularnych narzędzi coreutils — bez spawnowania zewnętrznego procesu. Szybsze niż <code>&gt;</code> i działa nawet tam, gdzie danego binarnego narzędzia brakuje w systemie.</p>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>/&gt;</div>
+      <pre><span class="hl-builtin">/></span> cat plik.txt
+<span class="hl-builtin">/></span> ls -la /tmp
+<span class="hl-builtin">/></span> grep TODO src/main.rs
+<span class="hl-builtin">/></span> wc -l plik.txt <span class="hl-pipe">|></span> <span class="hl-var-ref">@liczba_linii</span></pre>
+    </div>
+    <div class="quick-grid">
+      <div class="quick-item"><span class="fn">cat / ls / grep</span><span class="desc">odczyt / listowanie / szukanie</span></div>
+      <div class="quick-item"><span class="fn">head / tail / wc</span><span class="desc">fragmenty / liczenie</span></div>
+      <div class="quick-item"><span class="fn">find / sort / uniq</span><span class="desc">wyszukiwanie / sortowanie</span></div>
+      <div class="quick-item"><span class="fn">cut / tr / rev</span><span class="desc">przetwarzanie tekstu</span></div>
+      <div class="quick-item"><span class="fn">cp / mv / rm</span><span class="desc">operacje na plikach</span></div>
+      <div class="quick-item"><span class="fn">mkdir / touch / stat</span><span class="desc">tworzenie / metadane</span></div>
+      <div class="quick-item"><span class="fn">chmod / du / pwd</span><span class="desc">uprawnienia / rozmiar / cwd</span></div>
+      <div class="quick-item"><span class="fn">which / env / date</span><span class="desc">system</span></div>
+      <div class="quick-item"><span class="fn">basename / dirname</span><span class="desc">ścieżki</span></div>
+    </div>
+    <div class="callout note"><span class="callout-icon">📝</span><div class="callout-body"><strong>Przechwytywanie wyniku</strong> działa tak samo jak przy zwykłych komendach: <code>/&gt; komenda |&gt; @zmienna</code>.</div></div>
+  </section>
+
   <!-- BACKGROUND -->
   <section id="background">
-    <div class="section-header"><span class="section-num">09</span><h2>Tło — <code>&amp;</code></h2></div>
+    <div class="section-header"><span class="section-num">10</span><h2>Tło — <code>&amp;</code></h2></div>
     <div class="code-block">
       <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>TŁO &amp;</div>
       <pre><span class="hl-bg">&amp;</span> python3 -m http.server 8080
@@ -244,7 +299,7 @@ hl repl                  <span class="hl-comment"># REPL interaktywny</span></pr
 
   <!-- HSH -->
   <section id="hsh">
-    <div class="section-header"><span class="section-num">10</span><h2>Hsh — <code>*&gt;</code></h2></div>
+    <div class="section-header"><span class="section-num">11</span><h2>Hsh — <code>*&gt;</code></h2></div>
     <p>Operator <code>*&gt;</code> uruchamia komendę przez <code>hsh -c</code> — autorską powłokę HackerOS. <code>echo</code> jest dozwolone wewnątrz <code>*&gt;</code>.</p>
     <div class="code-block">
       <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>*></div>
@@ -256,7 +311,7 @@ hl repl                  <span class="hl-comment"># REPL interaktywny</span></pr
 
   <!-- REPEAT N -->
   <section id="repeatn">
-    <div class="section-header"><span class="section-num">11</span><h2>Pętla _N</h2></div>
+    <div class="section-header"><span class="section-num">12</span><h2>Pętla _N</h2></div>
     <div class="code-block">
       <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>_N</div>
       <pre><span class="hl-repeat">_10</span> <span class="hl-cmd">></span> hacker update
@@ -267,7 +322,7 @@ hl repl                  <span class="hl-comment"># REPL interaktywny</span></pr
 
   <!-- GOROUTINES -->
   <section id="goroutines">
-    <div class="section-header"><span class="section-num">12</span><h2>Goroutines — <code>:*</code></h2></div>
+    <div class="section-header"><span class="section-num">13</span><h2>Goroutines — <code>:*</code></h2></div>
     <div class="code-block">
       <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>GOROUTINES I CHANNELS</div>
       <pre><span class="hl-channel">:**</span> wyniki          <span class="hl-comment">;; zadeklaruj kanał</span>
@@ -287,7 +342,7 @@ hl repl                  <span class="hl-comment"># REPL interaktywny</span></pr
 
   <!-- FILE IMPORT -->
   <section id="fileimport">
-    <div class="section-header"><span class="section-num">13</span><h2>Import pliku — <code>&lt;&lt;</code></h2></div>
+    <div class="section-header"><span class="section-num">14</span><h2>Import pliku — <code>&lt;&lt;</code></h2></div>
     <div class="code-block">
       <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>&lt;&lt;</div>
       <pre><span class="hl-import">&lt;&lt;</span> utils.hl
@@ -295,9 +350,25 @@ hl repl                  <span class="hl-comment"># REPL interaktywny</span></pr
     </div>
   </section>
 
+  <!-- DIR IMPORT -->
+  <section id="dirimport">
+    <div class="section-header"><span class="section-num">15</span><h2>Import katalogu — <code>&lt;*</code> (gen 2)</h2></div>
+    <p><code>&lt;*</code> ładuje CAŁY katalog jako moduł — odpowiednik <code>mod.rs</code> w Rust. Wewnątrz katalogu musi istnieć plik <code>imports.hl</code>, zawierający listę <code>&lt;&lt;</code> dla każdego pliku wchodzącego w skład modułu.</p>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>&lt;*</div>
+      <pre><span class="hl-dirimport">&lt;*</span> narzedzia         <span class="hl-comment">;; ładuje narzedzia/imports.hl</span>
+<span class="hl-dirimport">&lt;*</span> lib/siec          <span class="hl-comment">;; zagnieżdżona ścieżka też działa</span>
+
+<span class="hl-comment">;; narzedzia/imports.hl:</span>
+<span class="hl-import">&lt;&lt;</span> string_utils.hl
+<span class="hl-import">&lt;&lt;</span> math_utils.hl
+<span class="hl-import">&lt;&lt;</span> validators.hl</pre>
+    </div>
+  </section>
+
   <!-- TYPED VARS -->
   <section id="typedvars">
-    <div class="section-header"><span class="section-num">14</span><h2>Typowane zmienne — <code>%: typ</code> (gen 2)</h2></div>
+    <div class="section-header"><span class="section-num">16</span><h2>Typowane zmienne — <code>%: typ</code> (gen 2)</h2></div>
     <div class="code-block">
       <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>TYPY</div>
       <pre><span class="hl-var-decl">% count: int</span>   = 42
@@ -311,7 +382,7 @@ hl repl                  <span class="hl-comment"># REPL interaktywny</span></pr
 
   <!-- ARITHMETIC -->
   <section id="arithmetic">
-    <div class="section-header"><span class="section-num">15</span><h2>Arytmetyka — <code>$( )</code> (gen 2)</h2></div>
+    <div class="section-header"><span class="section-num">17</span><h2>Arytmetyka — <code>$( )</code> (gen 2)</h2></div>
     <div class="code-block">
       <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>$( expr ) -> @var</div>
       <pre><span class="hl-arith">$( 2 + 2 )</span>              -> <span class="hl-var-ref">@res</span>
@@ -326,7 +397,7 @@ hl repl                  <span class="hl-comment"># REPL interaktywny</span></pr
 
   <!-- PIPE TO VAR -->
   <section id="pipevar">
-    <div class="section-header"><span class="section-num">16</span><h2>Pipe do zmiennej — <code>|&gt;</code> (gen 2)</h2></div>
+    <div class="section-header"><span class="section-num">18</span><h2>Pipe do zmiennej — <code>|&gt;</code> (gen 2)</h2></div>
     <div class="code-block">
       <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>> cmd |> @var</div>
       <pre><span class="hl-cmd">></span> hostname           <span class="hl-pipe">|></span> <span class="hl-var-ref">@host</span>
@@ -341,7 +412,7 @@ hl repl                  <span class="hl-comment"># REPL interaktywny</span></pr
 
   <!-- FOR IN -->
   <section id="forin">
-    <div class="section-header"><span class="section-num">17</span><h2>For-in — <code>@ item in</code> (gen 2)</h2></div>
+    <div class="section-header"><span class="section-num">19</span><h2>For-in — <code>@ item in</code> (gen 2)</h2></div>
     <div class="code-block">
       <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>@ item in lista</div>
       <pre><span class="hl-forin">@ tool</span> in curl git python3
@@ -362,7 +433,7 @@ hl repl                  <span class="hl-comment"># REPL interaktywny</span></pr
 
   <!-- WHILE -->
   <section id="while">
-    <div class="section-header"><span class="section-num">18</span><h2>While — <code>?~</code> (gen 2)</h2></div>
+    <div class="section-header"><span class="section-num">20</span><h2>While — <code>?~</code> (gen 2)</h2></div>
     <div class="code-block">
       <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>?~ warunek</div>
       <pre><span class="hl-var-decl">% i: int</span> = 0
@@ -381,7 +452,7 @@ hl repl                  <span class="hl-comment"># REPL interaktywny</span></pr
 
   <!-- SWITCH -->
   <section id="switch">
-    <div class="section-header"><span class="section-num">19</span><h2>Switch — <code>? switch</code> (gen 2)</h2></div>
+    <div class="section-header"><span class="section-num">21</span><h2>Switch — <code>? switch</code> (gen 2)</h2></div>
     <div class="code-block">
       <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>? switch</div>
       <pre><span class="hl-logic">? switch</span> <span class="hl-var-ref">@os</span>
@@ -406,7 +477,7 @@ hl repl                  <span class="hl-comment"># REPL interaktywny</span></pr
 
   <!-- HACKEROS API -->
   <section id="hackeros">
-    <div class="section-header"><span class="section-num">20</span><h2>HackerOS API — <code>||</code> (gen 2)</h2></div>
+    <div class="section-header"><span class="section-num">22</span><h2>HackerOS API — <code>||</code> (gen 2)</h2></div>
     <p>Operator <code>||</code> wywołuje natywne narzędzia HackerOS bezpośrednio.</p>
     <div class="code-block">
       <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>|| narzedzie [args]</div>
@@ -421,9 +492,39 @@ hl repl                  <span class="hl-comment"># REPL interaktywny</span></pr
     <p>Dostępne: <code>H# hco hacker hsh hpkg Blue-Environment hnm hpm hedit ngt eiq getit hdev anvil a hbuild lpm chker isolator hackeros-steam ulb gameframe hup hackeros-builder</code></p>
   </section>
 
+  <!-- EXTERN -->
+  <section id="extern">
+    <div class="section-header"><span class="section-num">23</span><h2>Extern runtime — <code>_&gt;</code> (gen 2+)</h2></div>
+    <p>Uruchamia zewnętrzny plik/binarkę we WŁAŚCIWYM dla niego runtime — shell, Python, Java, bezpośrednia binarka (ELF) lub biblioteka dzielona (<code>.so</code>, przez <code>dlopen</code>). Runtime dobierany jest jawnie w nawiasach kwadratowych albo zgadywany z rozszerzenia pliku.</p>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>_&gt;</div>
+      <pre><span class="hl-extern">_></span> deploy.sh <span class="hl-kw">[shell]</span> <span class="hl-kw">def</span>
+    <span class="hl-print">~></span> Uruchamiam deploy...
+<span class="hl-done">done</span>
+
+<span class="hl-extern">_></span> analiza.py <span class="hl-kw">[python]</span> <span class="hl-kw">def</span>
+    <span class="hl-print">~></span> Analiza danych...
+<span class="hl-done">done</span>
+
+<span class="hl-comment">;; Runtime zgadywany automatycznie z rozszerzenia — [] można pominąć</span>
+<span class="hl-extern">_></span> narzedzie.sh <span class="hl-kw">def</span>     <span class="hl-comment">;; .sh/.bash → shell</span>
+<span class="hl-done">done</span>
+<span class="hl-extern">_></span> /usr/bin/mytool <span class="hl-kw">def</span>  <span class="hl-comment">;; brak rozszerzenia → elf</span>
+<span class="hl-done">done</span></pre>
+    </div>
+    <table class="ref-table">
+      <tr><th>Runtime</th><th>Rozszerzenie (auto)</th><th>Co uruchamia</th></tr>
+      <tr><td><code>[shell]</code></td><td><code>.sh</code>, <code>.bash</code></td><td>bash/sh</td></tr>
+      <tr><td><code>[python]</code></td><td><code>.py</code></td><td>python3</td></tr>
+      <tr><td><code>[java]</code></td><td><code>.jar</code></td><td>java -jar</td></tr>
+      <tr><td><code>[elf]</code></td><td>(domyślny)</td><td>bezpośrednie wykonanie binarki</td></tr>
+      <tr><td><code>[so]</code></td><td><code>.so</code></td><td>biblioteka dzielona (dlopen)</td></tr>
+    </table>
+  </section>
+
   <!-- VARIABLES -->
   <section id="variables">
-    <div class="section-header"><span class="section-num">21</span><h2>Zmienne — <code>%</code> i <code>@</code></h2></div>
+    <div class="section-header"><span class="section-num">24</span><h2>Zmienne — <code>%</code> i <code>@</code></h2></div>
     <table class="ref-table">
       <tr><th>Zmienna</th><th>Wartość</th></tr>
       <tr><td>@HL_VERSION</td><td>gen 2</td></tr>
@@ -438,7 +539,7 @@ hl repl                  <span class="hl-comment"># REPL interaktywny</span></pr
 
   <!-- EXPORT -->
   <section id="export">
-    <div class="section-header"><span class="section-num">22</span><h2>Export — <code>=></code></h2></div>
+    <div class="section-header"><span class="section-num">25</span><h2>Export — <code>=></code></h2></div>
     <div class="code-block">
       <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>EXPORT</div>
       <pre><span class="hl-export">=></span> EDITOR  = nvim
@@ -454,7 +555,7 @@ hl repl                  <span class="hl-comment"># REPL interaktywny</span></pr
 
   <!-- FUNCTIONS -->
   <section id="functions">
-    <div class="section-header"><span class="section-num">23</span><h2>Funkcje — <code>:</code> i <code>--</code></h2></div>
+    <div class="section-header"><span class="section-num">26</span><h2>Funkcje — <code>:</code> i <code>--</code></h2></div>
     <div class="code-block">
       <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>FUNKCJE</div>
       <pre><span class="hl-func">:</span> audit <span class="hl-kw">def</span>
@@ -469,9 +570,37 @@ hl repl                  <span class="hl-comment"># REPL interaktywny</span></pr
     </div>
   </section>
 
+  <!-- ARENA FUNCTIONS -->
+  <section id="arena">
+    <div class="section-header"><span class="section-num">27</span><h2>Arena functions — <code>:: nazwa &lt;rozmiar&gt; def</code> (gen 2)</h2></div>
+    <p>Szybszy wariant funkcji: przed wejściem alokowana jest arena (bump-pointer) o zadanym rozmiarze — wszystkie zmienne lokalne trafiają do niej, a po wyjściu następuje JEDEN dealokacja zamiast osobnego zwalniania każdej zmiennej. Zero presji na GC, zero fragmentacji sterty. Najlepsze dla: przetwarzania stringów, pętli matematycznych, parsowania, transformacji danych.</p>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>ARENA FUNCTIONS</div>
+      <pre><span class="hl-arena">::</span> przetworz <span class="hl-arena">&lt;4k&gt;</span> <span class="hl-kw">def</span>
+    <span class="hl-var-decl">% buf: str</span> = <span class="hl-var-ref">@wejscie</span>
+    <span class="hl-print">~></span> Przetworzono: <span class="hl-var-ref">@buf</span>
+<span class="hl-done">done</span>
+
+<span class="hl-comment">;; Wywołanie — tak samo jak zwykłej funkcji przez ::</span>
+<span class="hl-quick">::</span>przetworz dane_wejsciowe
+
+<span class="hl-comment">;; Rozmiar domyślny (4096 B), gdy pominięty</span>
+<span class="hl-arena">::</span> szybka <span class="hl-kw">def</span>
+    <span class="hl-print">~></span> Bez jawnego rozmiaru — domyślnie 4k
+<span class="hl-done">done</span></pre>
+    </div>
+    <table class="ref-table">
+      <tr><th>Zapis rozmiaru</th><th>Bajtów</th><th>Uwagi</th></tr>
+      <tr><td><code>&lt;256&gt;</code></td><td>256 B</td><td>liczba = bajty wprost</td></tr>
+      <tr><td><code>&lt;4k&gt;</code></td><td>4096 B</td><td>sufiks <code>k</code> = ×1024</td></tr>
+      <tr><td><code>&lt;1m&gt;</code></td><td>1 048 576 B</td><td>sufiks <code>m</code> = ×1024×1024</td></tr>
+      <tr><td>(pominięty)</td><td>4096 B</td><td>domyślny rozmiar areny</td></tr>
+    </table>
+  </section>
+
   <!-- LOGIC -->
   <section id="logic">
-    <div class="section-header"><span class="section-num">24</span><h2>Warunki — <code>? ok / ? err</code></h2></div>
+    <div class="section-header"><span class="section-num">28</span><h2>Warunki — <code>? ok / ? err</code></h2></div>
     <div class="code-block">
       <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>WARUNKI</div>
       <pre><span class="hl-cmd">></span> ping -c 1 192.168.1.1
@@ -488,7 +617,7 @@ hl repl                  <span class="hl-comment"># REPL interaktywny</span></pr
 
   <!-- COMMENTS -->
   <section id="comments">
-    <div class="section-header"><span class="section-num">25</span><h2>Komentarze</h2></div>
+    <div class="section-header"><span class="section-num">29</span><h2>Komentarze</h2></div>
     <div class="code-block">
       <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>KOMENTARZE</div>
       <pre><span class="hl-comment">;; komentarz liniowy</span>
@@ -499,7 +628,7 @@ hl repl                  <span class="hl-comment"># REPL interaktywny</span></pr
 
   <!-- DEPS -->
   <section id="deps">
-    <div class="section-header"><span class="section-num">26</span><h2>Zależności — <code>//</code></h2></div>
+    <div class="section-header"><span class="section-num">30</span><h2>Zależności — <code>//</code></h2></div>
     <div class="code-block">
       <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>DEKLARACJA</div>
       <pre><span class="hl-dep">// nmap</span>
@@ -510,7 +639,7 @@ hl repl                  <span class="hl-comment"># REPL interaktywny</span></pr
 
   <!-- IMPORTS -->
   <section id="imports">
-    <div class="section-header"><span class="section-num">27</span><h2>Biblioteki — <code>#</code></h2></div>
+    <div class="section-header"><span class="section-num">31</span><h2>Biblioteki — <code>#</code></h2></div>
     <div class="code-block">
       <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>IMPORTY — gen 2</div>
       <pre><span class="hl-import">#</span> <span class="hl-string">&lt;main/net&gt;</span>           <span class="hl-comment">;; NET_LOCALHOST, NET_MYIP, porty...</span>
@@ -535,7 +664,7 @@ hl repl                  <span class="hl-comment"># REPL interaktywny</span></pr
 
   <!-- BIT -->
   <section id="bit">
-    <div class="section-header"><span class="section-num">28</span><h2>Manager pakietów — <code>bit</code></h2></div>
+    <div class="section-header"><span class="section-num">32</span><h2>Manager pakietów — <code>bit</code></h2></div>
     <div class="code-block">
       <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>KOMENDY bit</div>
       <pre>bit                     <span class="hl-comment"># auto: uruchom/skompiluj projekt</span>
@@ -557,7 +686,7 @@ bit help                <span class="hl-comment"># pomoc</span></pre>
 
   <!-- BIT PROJECT -->
   <section id="bit-project">
-    <div class="section-header"><span class="section-num">29</span><h2>Projekt mode — <code>bit</code></h2></div>
+    <div class="section-header"><span class="section-num">33</span><h2>Projekt mode — <code>bit</code></h2></div>
     <div class="cmd-grid">
       <div class="cmd-card">
         <span class="op">run.hl + kod</span>
@@ -584,7 +713,7 @@ bit help                <span class="hl-comment"># pomoc</span></pre>
 
   <!-- CLI -->
   <section id="cli">
-    <div class="section-header"><span class="section-num">30</span><h2>CLI — <code>hl</code></h2></div>
+    <div class="section-header"><span class="section-num">34</span><h2>CLI — <code>hl</code></h2></div>
     <div class="code-block">
       <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>WSZYSTKIE KOMENDY</div>
       <pre>hl plik.hl               <span class="hl-comment"># uruchom skrypt</span>
@@ -609,7 +738,7 @@ hl -c "~> Hej!"          <span class="hl-comment"># kod inline</span></pre>
 
   <!-- COMPILE -->
   <section id="compile">
-    <div class="section-header"><span class="section-num">31</span><h2>Kompilacja — <code>.hl → .bc → ELF</code></h2></div>
+    <div class="section-header"><span class="section-num">35</span><h2>Kompilacja — <code>.hl → .bc → ELF</code></h2></div>
     <div class="cmd-grid">
       <div class="cmd-card"><span class="op">.hl → .bc</span><p>Parsuj, serializuj AST do JSON bytecode. Plik <code>.bc</code> ma shebang i jest wykonywalny.</p></div>
       <div class="cmd-card"><span class="op">.bc → ELF</span><p>Wczytaj <code>.bc</code>, lower → Cranelift → C runtime → binarka ELF x86_64.</p></div>
@@ -625,7 +754,7 @@ hl compile skrypt.bc   <span class="hl-comment"># → skrypt (ELF)</span>
 
   <!-- EXEC -->
   <section id="exec">
-    <div class="section-header"><span class="section-num">32</span><h2><code>hl exec</code> i <code>hl search</code></h2></div>
+    <div class="section-header"><span class="section-num">36</span><h2><code>hl exec</code> i <code>hl search</code></h2></div>
     <div class="code-block">
       <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>SKRYPTY SYSTEMOWE</div>
       <pre>hl search all            <span class="hl-comment"># wszystkie skrypty</span>
@@ -636,7 +765,7 @@ hl exec update-system    <span class="hl-comment"># uruchom</span></pre>
 
   <!-- SHELL -->
   <section id="shell">
-    <div class="section-header"><span class="section-num">33</span><h2>Powłoka</h2></div>
+    <div class="section-header"><span class="section-num">37</span><h2>Powłoka</h2></div>
     <div class="code-block">
       <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>~/.hlrc</div>
       <pre><span class="hl-gen">using &lt;gen 2&gt;</span>
@@ -656,7 +785,7 @@ hl exec update-system    <span class="hl-comment"># uruchom</span></pre>
 
   <!-- DIAG -->
   <section id="diag">
-    <div class="section-header"><span class="section-num">34</span><h2>Diagnostyka i linter</h2></div>
+    <div class="section-header"><span class="section-num">38</span><h2>Diagnostyka i linter</h2></div>
     <div class="code-block">
       <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>PRZYKŁAD</div>
       <pre><span class="hl-comment">error: `echo` jest zabronione w blokach komend HL</span>
@@ -673,7 +802,7 @@ hl exec update-system    <span class="hl-comment"># uruchom</span></pre>
 
   <!-- EXAMPLES GEN 1 -->
   <section id="ex-basic">
-    <div class="section-header"><span class="section-num">35</span><h2>Przykłady — Gen 1 podstawy</h2></div>
+    <div class="section-header"><span class="section-num">39</span><h2>Przykłady — Gen 1 podstawy</h2></div>
     <div class="code-block">
       <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>update.hl</div>
       <pre><span class="hl-shebang">#!/usr/bin/env hl</span>
@@ -697,7 +826,7 @@ hl exec update-system    <span class="hl-comment"># uruchom</span></pre>
 
   <!-- EXAMPLES GEN 2 -->
   <section id="ex-gen2">
-    <div class="section-header"><span class="section-num">36</span><h2>Przykłady — Gen 2</h2></div>
+    <div class="section-header"><span class="section-num">40</span><h2>Przykłady — Gen 2</h2></div>
     <div class="code-block">
       <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>gen2_demo.hl</div>
       <pre><span class="hl-shebang">#!/usr/bin/env hl</span>
@@ -742,7 +871,7 @@ hl exec update-system    <span class="hl-comment"># uruchom</span></pre>
 
   <!-- EXAMPLES ASYNC -->
   <section id="ex-async">
-    <div class="section-header"><span class="section-num">37</span><h2>Przykłady — Async</h2></div>
+    <div class="section-header"><span class="section-num">41</span><h2>Przykłady — Async</h2></div>
     <div class="code-block">
       <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>parallel.hl</div>
       <pre><span class="hl-doc">/// Równoległy skan sieci</span>
@@ -770,7 +899,7 @@ hl exec update-system    <span class="hl-comment"># uruchom</span></pre>
 
   <!-- EXAMPLES SYSTEM -->
   <section id="ex-system">
-    <div class="section-header"><span class="section-num">38</span><h2>Przykłady — Systemowe</h2></div>
+    <div class="section-header"><span class="section-num">42</span><h2>Przykłady — Systemowe</h2></div>
     <div class="code-block">
       <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>sysinfo.hl</div>
       <pre><span class="hl-doc">/// Raport systemowy — gen 2</span>
