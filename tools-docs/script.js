@@ -17,6 +17,8 @@ function applyLang(lang) {
     if (hsharpLink && t.langDropLinks) hsharpLink.textContent = t.langDropLinks.hsharp;
     const hlLink = document.getElementById('lang-drop-hackerlang');
     if (hlLink && t.langDropLinks) hlLink.textContent = t.langDropLinks.hackerLang;
+    const hscriptLink = document.getElementById('lang-drop-hackerscript');
+    if (hscriptLink && t.langDropLinks && t.langDropLinks.hackerScript) hscriptLink.textContent = t.langDropLinks.hackerScript;
     slidesData = t.slides || [];
     currentIndex = 0;
     renderSlides();
