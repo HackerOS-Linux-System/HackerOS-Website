@@ -84,14 +84,14 @@ footer{background-color:#121212;padding:20px;text-align:center;color:#B0B0B0;wid
 <label id="select-label" for="edition-select">Wybierz edycję:</label>
 <div class="select-wrapper"><select id="edition-select">
 <option id="select-default" value="">-- Wybierz edycję --</option>
-<option value="https://sourceforge.net/projects/hackeros/files/OFFICIAL/HackerOS-V4.9.iso/download">HackerOS Official</option>
+<option value="https://sourceforge.net/projects/hackeros/files/OFFICIAL/HackerOS-V5.0.iso/download">HackerOS Official</option>
 <option value="https://sourceforge.net/projects/hackeros/files/NVIDIA/HackerOS-V4.9-NVIDIA.iso/download">HackerOS NVIDIA</option>
 <option value="https://sourceforge.net/projects/hackeros/files/CYBERSECURITY/HackerOS-V4.9-Cybersecurity.iso/download">HackerOS Cybersecurity</option>
-<option value="https://sourceforge.net/projects/hackeros/files/OFFICIAL/GNOME/HackerOS-V4.5-Gnome.iso/download">HackerOS Official: Gnome</option>
-<option value="https://sourceforge.net/projects/hackeros/files/OFFICIAL/XFCE/HackerOS-V4.5-Xfce.iso/download">HackerOS Official: Xfce</option>
-<option value="https://sourceforge.net/projects/hackeros/files/OFFICIAL/HYDRA/HackerOS-V4.5-Hydra.iso/download">HackerOS Official: Hydra</option>
+<option value="https://sourceforge.net/projects/hackeros/files/OFFICIAL/GNOME/HackerOS-V5.0-Gnome.iso/download">HackerOS Official: Gnome</option>
+<option value="https://sourceforge.net/projects/hackeros/files/OFFICIAL/XFCE/HackerOS-V5.0-Xfce.iso/download">HackerOS Official: Xfce</option>
+<option value="https://sourceforge.net/projects/hackeros/files/OFFICIAL/HYDRA/HackerOS-V5.0-Hydra.iso/download">HackerOS Official: Hydra</option>
 <option value="https://sourceforge.net/projects/hackeros/files/GAMING/HackerOS-V4.7-Gaming.iso/download">HackerOS Gaming</option>
-<option value="https://sourceforge.net/projects/hackeros/files/LTS/HackerOS-V4.1-LTS.iso/download">HackerOS LTS</option>
+<option value="https://sourceforge.net/projects/hackeros/files/LTS/HackerOS-V5.0-LTS.iso/download">HackerOS LTS</option>
 <option value="https://sourceforge.net/projects/hackeros/files/ATOMIC/HackerOS-Atomic-Testing-DEV-V4.9.iso/download">HackerOS Atomic</option>
 </select></div>
 <a id="download-link" class="btn" href="#" style="display:none;">Pobierz</a>
@@ -114,14 +114,12 @@ const SOURCE_ORDER = [
     { key:'sf',       labelKey:'btnSourceForge' },
     { key:'mega',     labelKey:'btnMega' },
     { key:'drive',    labelKey:'btnDrive' },
-    { key:'transfer', labelKey:'btnTransfer' },
-    { key:'actions',  labelKey:'btnGithubActions' }
+    { key:'transfer', labelKey:'btnTransfer' }
 ];
 
 // docsKey -> extra "more details" URL, mirroring translations/doc-engine.js editionDefs
 const EXTRA_DOCS_URL = {
-    blue: 'https://legendaryos-linux-system.github.io/website/',
-    hwde: 'https://hackeros-linux-system.github.io/HackerOS-Website/tools-docs/HWDE/docs.html'
+    blue: 'https://legendaryos-linux-system.github.io/website/'
 };
 
 function getEditionDescriptionHTML(docsKey, lang){
