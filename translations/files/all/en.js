@@ -1,6 +1,12 @@
 window.HACKEROS_RELEASES_ALL = window.HACKEROS_RELEASES_ALL || {};
 window.HACKEROS_RELEASES_ALL.en = [
     {
+        version: "HackerOS V5.0",
+        desc: "New edition with minor changes.",
+        dates: ["HackerOS Official: 5.09.2026", "HackerOS Gnome: 5.09.2026", "HackerOS Hydra: 5.09.2026", "HackerOS Xfce: 5.09.2026", "HackerOS LTS: 5.09.2026"],
+        changelog: ["Updated the default wallpaper (especially in HackerOS Official).", "Updated HackerOS tools.", "Updated the Hydra edition."]
+    },
+    {
         version: "HackerOS V4.9",
         desc: "New edition with numerous improvements.",
         dates: ["HackerOS Official: 7.08.2026", "HackerOS Cybersecurity: 7.08.2026", "HackerOS NVIDIA: 7.08.2026"],
