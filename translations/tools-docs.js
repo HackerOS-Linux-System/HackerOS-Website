@@ -32,13 +32,12 @@ window.HACKEROS_TRANS_TOOLS = {
             'hackeros-kernel':     'HackerOS Kernel',
             'hacker-launcher':     'Hacker Launcher',
             'hackeros-store':      'HackerOS Store',
-            'hackerscript':        'HackerScript',
-            'hwde':                'HWDE',
             'blue-environment':    'Blue Environment'
         },
         langDropLinks: {
-            hsharp:     'H# – dokumentacja',
-            hackerLang: 'Hacker Lang – dokumentacja',
+            hsharp:       'H# – dokumentacja',
+            hackerLang:   'Hacker Lang – dokumentacja',
+            hackerScript: 'HackerScript – dokumentacja',
         },
         slides: [
             { title: "gaming-cli", desc: "Narzędzie CLI dostępne wyłącznie w edycji HackerOS Gaming Edition. Jego kluczową funkcją jest przełączanie środowiska między KDE Plasma a trybem Game Mode. Oferuje również szereg dodatkowych funkcji ułatwiających zarządzanie środowiskiem gamingowym." },
@@ -67,8 +66,6 @@ window.HACKEROS_TRANS_TOOLS = {
             { title: "HackerOS Kernel", desc: "HackerOS domyślnie wykorzystuje autorskie jądro HackerOS Kernel w edycji cybersecurity, które jest specjalnie dostosowane do wymogów tej edycji. Planowane jest również wprowadzenie HackerOS Kernel jako domyślnego jądra w wersji official, zastępując standardowe jądro Debiana." },
             { title: "Hacker Launcher", desc: "Hacker Launcher to aplikacja umożliwiająca uruchamianie natywnych gier Linuxa oraz gier z Windowsa (przy użyciu Protona) w jednej aplikacji. Zapewnia wygodny dostęp do bibliotek gier, zarządzanie konfiguracjami i optymalizację ustawień dla różnych tytułów." },
             { title: "HackerOS Store", desc: "HackerOS Store to sklep wszystkich dostępnych programów w HackerOS – wygodne, scentralizowane miejsce do przeglądania, instalowania i aktualizowania aplikacji oraz dodatków w systemie." },
-            { title: "HackerScript", desc: "HackerScript – eksperymentalny, hobbystyczny język programowania (nie tylko dla HackerOS), transpilowany do Rust i Python w jednym pliku, obsługujący masę ekosystemów." },
-            { title: "HWDE", desc: "HWDE (HackerOS Wayland Desktop Environment) – natywne środowisko graficzne HackerOS: powłoka starthwde oraz kompozytor Wayland/XWayland comphwde." },
             { title: "Blue Environment", desc: "Blue Environment – środowisko graficzne rozwijane przez LegendaryOS, dostępne w ekosystemie narzędzi HackerOS." }
         ]
     },
@@ -105,13 +102,12 @@ window.HACKEROS_TRANS_TOOLS = {
             'hackeros-kernel':     'HackerOS Kernel',
             'hacker-launcher':     'Hacker Launcher',
             'hackeros-store':      'HackerOS Store',
-            'hackerscript':        'HackerScript',
-            'hwde':                'HWDE',
             'blue-environment':    'Blue Environment'
         },
         langDropLinks: {
-            hsharp:     'H# – documentation',
-            hackerLang: 'Hacker Lang – documentation',
+            hsharp:       'H# – documentation',
+            hackerLang:   'Hacker Lang – documentation',
+            hackerScript: 'HackerScript – documentation',
         },
         slides: [
             { title: "gaming-cli", desc: "A CLI tool available exclusively in HackerOS Gaming Edition. Its primary function is seamlessly switching the desktop environment between KDE Plasma and Game Mode. It also provides a range of additional features designed to streamline gaming environment management." },
@@ -140,8 +136,6 @@ window.HACKEROS_TRANS_TOOLS = {
             { title: "HackerOS Kernel", desc: "HackerOS by default uses the custom HackerOS Kernel in the cybersecurity edition, which is specially tailored for that edition's requirements. There are also plans to adopt HackerOS Kernel as the default kernel in the official version, replacing the standard Debian kernel." },
             { title: "Hacker Launcher", desc: "Hacker Launcher is an application that allows you to run native Linux games as well as Windows games (using Proton) in a single application. It provides convenient access to game libraries, configuration management and optimised settings for various titles." },
             { title: "HackerOS Store", desc: "HackerOS Store is a store of all available programs in HackerOS – a convenient, centralized place to browse, install and update applications and add-ons on the system." },
-            { title: "HackerScript", desc: "HackerScript – an experimental and hobby programming language (not only for HackerOS), transpiled to Rust and Python in a single file, supporting a wide range of ecosystems." },
-            { title: "HWDE", desc: "HWDE (HackerOS Wayland Desktop Environment) – HackerOS's native graphical environment: the starthwde shell and the comphwde Wayland/XWayland compositor." },
             { title: "Blue Environment", desc: "Blue Environment – a graphical environment developed by LegendaryOS, available as part of the HackerOS tools ecosystem." }
         ]
     }
@@ -218,6 +212,16 @@ window.HACKEROS_TRANS_TOOLS = {
                                                                   'uk': 'Hacker Lang – документація',
                                                                   'zh': 'Hacker Lang – 文档',
                                                                   'ja': 'Hacker Lang – ドキュメント'
+                                                              }[lang],
+                                                              hackerScript: {
+                                                                  'de': 'HackerScript – Dokumentation',
+                                                                  'fr': 'HackerScript – documentation',
+                                                                  'es': 'HackerScript – documentación',
+                                                                  'it': 'HackerScript – documentazione',
+                                                                  'ru': 'HackerScript – документация',
+                                                                  'uk': 'HackerScript – документація',
+                                                                  'zh': 'HackerScript – 文档',
+                                                                  'ja': 'HackerScript – ドキュメント'
                                                               }[lang]
                                                           }
                                                       }
