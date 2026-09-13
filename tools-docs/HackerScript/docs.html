@@ -1,1 +1,421 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HackerScript — dokumentacja</title>
+<meta name="description" content="Dokumentacja języka HackerScript: fun kompiluje się do prawdziwego Rusta, direct[...] wykonuje czysty Python w locie.">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<a class="skip-link" href="#content">Przejdź do treści</a>
 
+<header class="topbar">
+  <button class="nav-toggle" id="navToggle" aria-label="Otwórz nawigację" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="brand">
+    <span class="mark" aria-hidden="true"></span>
+    HackerScript <span class="ver">v0.1</span>
+  </div>
+  <div class="spacer"></div>
+  <a class="gh-link" href="https://github.com/HackerOS-Linux-System/HackerScript" target="_blank" rel="noopener">Repozytorium ↗</a>
+</header>
+
+<div class="layout">
+  <nav class="sidebar" id="sidebar" aria-label="Nawigacja dokumentacji">
+    <div class="search-wrap">
+      <input type="text" id="docSearch" placeholder="Szukaj w dokumentacji…" aria-label="Szukaj w dokumentacji">
+    </div>
+
+    <h3>Start</h3>
+    <ul>
+      <li><a href="#wprowadzenie">Wprowadzenie</a></li>
+      <li><a href="#instalacja">Instalacja</a></li>
+      <li><a href="#pierwszy-projekt">Pierwszy projekt</a></li>
+    </ul>
+
+    <h3>Składnia</h3>
+    <ul>
+      <li><a href="#zmienne-typy">Zmienne i typy</a></li>
+      <li><a href="#funkcje">Funkcje</a></li>
+      <li><a href="#struct-impl">Struktury i impl</a></li>
+      <li><a href="#enum-match">Enum i match</a></li>
+      <li><a href="#sterowanie">Sterowanie przepływem</a></li>
+      <li><a href="#direct-manual">direct i manual</a></li>
+      <li><a href="#native-js">native {JavaScript}</a></li>
+      <li><a href="#sandbox">$ ... $ Sandbox</a></li>
+      <li><a href="#hot-reload">@hot_reload</a></li>
+    </ul>
+
+    <h3>Moduły i pakiety</h3>
+    <ul>
+      <li><a href="#moduly">System modułów (get)</a></li>
+      <li><a href="#manifest">Virus.hk</a></li>
+    </ul>
+
+    <h3>Narzędzia</h3>
+    <ul>
+      <li><a href="#cli">CLI: hackerc i virus</a></li>
+      <li><a href="#biblioteka">Biblioteka standardowa</a></li>
+    </ul>
+
+    <h3>Projekt</h3>
+    <ul>
+      <li><a href="#roadmap">Roadmap</a></li>
+    </ul>
+  </nav>
+
+  <main id="content">
+
+    <section class="hero">
+      <div class="eyebrow-line"><span class="dot"></span> bootstrap self-hostujący się osiągnięty w 0.1</div>
+      <h1>Zwykła <span class="accent">fun</span> kompiluje się<br>do prawdziwego Rusta.</h1>
+      <p class="lede">HackerScript to język ogólnego przeznaczenia: statyczne typy i bezpieczeństwo pamięci Rusta na co dzień, z <code>direct [ ... ]</code> jako ucieczką do czystego Pythona dla małych fragmentów, które nigdy nie będą wymagały wydajności.</p>
+      <div class="hero-actions">
+        <a class="btn primary" href="#instalacja">Zacznij →</a>
+        <a class="btn" href="#pierwszy-projekt">Pierwszy projekt</a>
+      </div>
+      <div class="term">
+        <div class="term-head"><span></span><span></span><span></span></div>
+        <pre><code><span class="tok-kw">struct</span> Point [
+    x: <span class="tok-type">Int</span>,
+    y: <span class="tok-type">Int</span>
+]
+
+<span class="tok-kw">fun</span> <span class="tok-fn">distance_squared</span>(p: Point) -&gt; <span class="tok-type">Int</span> [
+    <span class="tok-kw">end</span> (p.x * p.x) + (p.y * p.y)
+]
+
+<span class="tok-kw">fun</span> <span class="tok-fn">main</span>() [
+    <span class="tok-kw">let</span> p = Point(3, 4)
+    log(<span class="tok-str">"dist^2 ="</span>, distance_squared(p))
+
+    <span class="tok-kw">direct</span> [
+        print(<span class="tok-str">"To jest czysty Python wewnątrz binarki Rust."</span>)
+    ]
+    <span class="tok-kw">end</span>
+]</code></pre>
+      </div>
+    </section>
+
+    <section class="doc-section" id="wprowadzenie">
+      <span class="kicker">Start</span>
+      <h2>Wprowadzenie</h2>
+      <p><code>fun</code> → <code>hackerc</code> generuje prawdziwy Rust: <code>struct</code> staje się <code>struct</code> + <code>impl new()</code>, <code>manual [...]</code> staje się <code>unsafe { ... }</code>, <code>List&lt;T&gt;</code> staje się <code>Vec&lt;T&gt;</code>. Parametry typu <code>struct</code>/<code>List</code>/<code>Str</code> automatycznie dostają <code>&amp;</code>/<code>&amp;mut</code> zamiast przenoszenia własności.</p>
+      <p><code>direct [ ... ]</code> → surowy Python wykonywany w trakcie działania programu przez <code>Python::with_gil</code> (PyO3, tryb <code>auto-initialize</code>) — Rust jest hostem.</p>
+      <div class="grid-cards">
+        <div class="card"><h4>Statyczne typy</h4><p>Cały front — <code>lexer</code>/<code>parser</code>/<code>typecheck</code>/<code>typeinfer</code> — jest sam napisany w HackerScript.</p></div>
+        <div class="card"><h4>Zero-cost</h4><p>Kompilacja do Rusta oznacza brak własnego runtime'u ponad to, co daje <code>rustc</code>.</p></div>
+        <div class="card"><h4>Self-hosted</h4><p><code>hackerc</code> i <code>virus</code> są dziś w całości napisane w samym HackerScript (<code>.hcs</code>).</p></div>
+      </div>
+    </section>
+
+    <section class="doc-section" id="instalacja">
+      <span class="kicker">Start</span>
+      <h2>Instalacja</h2>
+      <p><code>hackerc</code> i <code>virus</code> to binarki natywne (self-hosted) — najprościej pobrać gotowe wydanie.</p>
+      <div class="code-block">
+        <div class="code-label"><span>bash</span><button class="copy-btn" data-copy-target="install-code">Kopiuj</button></div>
+        <pre id="install-code"><code>curl -L --fail -o hackerc \
+  https://github.com/HackerOS-Linux-System/HackerScript/releases/download/v0.1/hackerc
+chmod +x hackerc
+
+./hackerc check docs/hello-world/Virus.hk
+./hackerc build docs/hello-world/cmd/main.hcs -o /tmp/out
+cd /tmp/out &amp;&amp; cargo run   # wymaga zainstalowanego Rusta</code></pre>
+      </div>
+      <div class="note"><strong>Uwaga:</strong> <code>using &lt;wersja&gt;</code> na początku pliku (lub <code>[package] using</code> w <code>Virus.hk</code>) deklaruje wymaganą wersję <code>hackerc</code> — jeśli nie jest zainstalowana, <code>virus</code> pobiera ją automatycznie z GitHub Releases.</div>
+    </section>
+
+    <section class="doc-section" id="pierwszy-projekt">
+      <span class="kicker">Start</span>
+      <h2>Pierwszy projekt</h2>
+      <p>W projekcie zarządzanym przez <code>virus</code> (patrz <code>Virus.hk</code>):</p>
+      <div class="code-block">
+        <div class="code-label"><span>bash</span><button class="copy-btn" data-copy-target="init-code">Kopiuj</button></div>
+        <pre id="init-code"><code>virus init --name moj-projekt
+cd moj-projekt
+virus build --release   # pobierze właściwy hackerc automatycznie</code></pre>
+      </div>
+    </section>
+
+    <section class="doc-section" id="zmienne-typy">
+      <span class="kicker">Składnia</span>
+      <h2>Zmienne i typy</h2>
+      <div class="code-block">
+        <div class="code-label"><span>hcs</span><button class="copy-btn" data-copy-target="vars-code">Kopiuj</button></div>
+        <pre id="vars-code"><code><span class="tok-kw">let</span> x = 5
+<span class="tok-kw">const</span> PI = 3.14159
+
+<span class="tok-kw">let</span> lista: List&lt;Int&gt; = [1, 2, 3]
+<span class="tok-kw">let</span> wynik: Result&lt;Int, Str&gt; = ok(42)
+<span class="tok-kw">let</span> moze: Option&lt;Int&gt; = some(7)</code></pre>
+      </div>
+      <table class="ref-table">
+        <thead><tr><th>Typ</th><th>Znaczenie</th></tr></thead>
+        <tbody>
+          <tr><td><code>Int / Float / Str / Bool / Void</code></td><td>typy podstawowe</td></tr>
+          <tr><td><code>List&lt;T&gt;</code></td><td>lista, transpilowana do <code>Vec&lt;T&gt;</code></td></tr>
+          <tr><td><code>Dict&lt;K, V&gt;</code></td><td>mapa (dziś: bez iteracji <code>for k, v in ...</code> — patrz Roadmap)</td></tr>
+          <tr><td><code>Option&lt;T&gt;</code></td><td><code>some(x)</code> / <code>none()</code></td></tr>
+          <tr><td><code>Result&lt;T, E&gt;</code></td><td><code>ok(x)</code> / <code>err(e)</code></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="doc-section" id="funkcje">
+      <span class="kicker">Składnia</span>
+      <h2>Funkcje</h2>
+      <p><code>end &lt;wyrażenie&gt;</code> zwraca wartość i kończy funkcję. Ostatnie wyrażenie w bloku nie jest niejawnie zwracane — <code>end</code> jest zawsze wymagane, żeby coś zwrócić.</p>
+      <div class="code-block">
+        <div class="code-label"><span>hcs</span><button class="copy-btn" data-copy-target="fun-code">Kopiuj</button></div>
+        <pre id="fun-code"><code><span class="tok-kw">fun</span> <span class="tok-fn">fib</span>(n: <span class="tok-type">Int</span>) -&gt; <span class="tok-type">Int</span> [
+    <span class="tok-kw">if</span> n &lt;= 1 [
+        <span class="tok-kw">end</span> n
+    ]
+    <span class="tok-kw">end</span> fib(n - 1) + fib(n - 2)
+]</code></pre>
+      </div>
+    </section>
+
+    <section class="doc-section" id="struct-impl">
+      <span class="kicker">Składnia</span>
+      <h2>Struktury i impl</h2>
+      <div class="code-block">
+        <div class="code-label"><span>hcs</span><button class="copy-btn" data-copy-target="struct-code">Kopiuj</button></div>
+        <pre id="struct-code"><code><span class="tok-kw">struct</span> Point [
+    x: <span class="tok-type">Int</span>,
+    y: <span class="tok-type">Int</span>
+]
+
+<span class="tok-kw">impl</span> Point [
+    <span class="tok-kw">fun</span> <span class="tok-fn">sum</span>(<span class="tok-kw">self</span>) -&gt; <span class="tok-type">Int</span> [
+        <span class="tok-kw">end self</span>.x + <span class="tok-kw">self</span>.y
+    ]
+]
+
+<span class="tok-kw">let</span> p = Point(1, 2)
+log(p.sum())</code></pre>
+      </div>
+      <p class="mono" style="font-size:.85rem">Generyczne deklaracje <code>struct Box&lt;T&gt;</code> / <code>fun map&lt;T,U&gt;</code> jeszcze nie istnieją <span class="status-pill planned">planowane</span> — <code>List&lt;T&gt;</code>/<code>Dict&lt;K,V&gt;</code> działają jako <em>użycie</em> generyków, nie deklaracja własnych.</p>
+    </section>
+
+    <section class="doc-section" id="enum-match">
+      <span class="kicker">Składnia</span>
+      <h2>Enum i match</h2>
+      <div class="code-block">
+        <div class="code-label"><span>hcs</span><button class="copy-btn" data-copy-target="enum-code">Kopiuj</button></div>
+        <pre id="enum-code"><code><span class="tok-kw">enum</span> Shape [
+    Circle(<span class="tok-type">Float</span>),
+    Rectangle(<span class="tok-type">Float</span>, <span class="tok-type">Float</span>),
+    Empty
+]
+
+<span class="tok-kw">fun</span> <span class="tok-fn">area</span>(s: Shape) -&gt; <span class="tok-type">Float</span> [
+    <span class="tok-kw">match</span> s [
+        Circle(r) -&gt; [ <span class="tok-kw">end</span> 3.14159 * r * r ]
+        Rectangle(w, h) -&gt; [ <span class="tok-kw">end</span> w * h ]
+        _ -&gt; [ <span class="tok-kw">end</span> 0.0 ]
+    ]
+]</code></pre>
+      </div>
+    </section>
+
+    <section class="doc-section" id="sterowanie">
+      <span class="kicker">Składnia</span>
+      <h2>Sterowanie przepływem</h2>
+      <div class="code-block">
+        <div class="code-label"><span>hcs</span><button class="copy-btn" data-copy-target="flow-code">Kopiuj</button></div>
+        <pre id="flow-code"><code><span class="tok-kw">if</span> n &gt; 0 [
+    log(<span class="tok-str">"dodatnie"</span>)
+] <span class="tok-kw">elif</span> n &lt; 0 [
+    log(<span class="tok-str">"ujemne"</span>)
+] <span class="tok-kw">else</span> [
+    log(<span class="tok-str">"zero"</span>)
+]
+
+<span class="tok-kw">let</span> i = 0
+<span class="tok-kw">while</span> i &lt; 5 [
+    log(i)
+    i = i + 1
+]
+
+<span class="tok-kw">for</span> jezyk <span class="tok-kw">in</span> [<span class="tok-str">"Python"</span>, <span class="tok-str">"Rust"</span>, <span class="tok-str">"HackerScript"</span>] [
+    log(jezyk)
+]</code></pre>
+      </div>
+    </section>
+
+    <section class="doc-section" id="direct-manual">
+      <span class="kicker">Składnia</span>
+      <h2>direct i manual</h2>
+      <p><code>direct [ ... ]</code> uruchamia surowy Python w trakcie działania programu (PyO3). <code>manual [ ... ]</code> transpiluje się do <code>unsafe { ... }</code> w wygenerowanym Ruście — do użycia świadomie.</p>
+    </section>
+
+    <section class="doc-section" id="native-js">
+      <span class="kicker">Składnia</span>
+      <h2>native {JavaScript}</h2>
+      <p>Statycznie linkowany silnik JS — <strong>QuickJS przez <code>rquickjs</code></strong> (kompilowany przez <code>cc</code>, nie zewnętrzny interpreter). <code>console.log(...)</code> jest polyfillem dopisywanym przez kompilator.</p>
+      <div class="code-block">
+        <div class="code-label"><span>hcs</span><button class="copy-btn" data-copy-target="native-code">Kopiuj</button></div>
+        <pre id="native-code"><code><span class="tok-kw">native</span> {JavaScript} [
+    <span class="tok-kw">const</span> dane = { jezyk: <span class="tok-str">"JavaScript"</span>, dziala: <span class="tok-kw">true</span> };
+    console.log(JSON.stringify(dane));
+]
+
+<span class="tok-com">// import zewnetrznego pliku (sciezka wzgledna do .hcs)</span>
+<span class="tok-kw">native</span> {JavaScript} &lt;lib/utils.js&gt; [
+    console.log(funkcjaZUtilsJs());
+]</code></pre>
+      </div>
+      <p class="mono" style="font-size:.85rem">Dziś tylko silnik <code>"JavaScript"</code> — inna nazwa daje komentarz, bez błędu kompilacji.</p>
+    </section>
+
+    <section class="doc-section" id="sandbox">
+      <span class="kicker">Składnia</span>
+      <h2>$ polecenie $ — Zero-Cost Sandbox</h2>
+      <p>Uruchamia polecenie powłoki w izolacji <strong>sieci i systemu plików</strong> przez <code>libc::unshare(CLONE_NEWNET|CLONE_NEWNS)</code> + bind-remount <code>/</code> na read-only — zero zewnętrznych narzędzi (firejail/bwrap). Brak uprawnień → ostrzeżenie na stderr, polecenie i tak działa, ale bez izolacji (nigdy cichy fejl).</p>
+      <div class="code-block">
+        <div class="code-label"><span>hcs</span><button class="copy-btn" data-copy-target="sandbox-code">Kopiuj</button></div>
+        <pre id="sandbox-code"><code>$
+whoami
+echo "brak dostepu do sieci hosta i zapisu do /"
+$</code></pre>
+      </div>
+      <div class="note"><strong>Ograniczenia:</strong> izoluje tylko ten podproces (nie resztę programu); polecenie nie może zawierać dosłownego <code>$</code> (np. <code>$HOME</code>) — zamyka blok na pierwszym napotkanym.</div>
+    </section>
+
+    <section class="doc-section" id="hot-reload">
+      <span class="kicker">Składnia</span>
+      <h2>@hot_reload — podmiana kodu żywego procesu</h2>
+      <p>Funkcja oznaczona <code>@hot_reload</code> trafia do osobnego, dynamicznie ładowanego <code>cdylib</code>. Wątek-obserwator śledzi plik <code>.hcs</code> i przy zmianie sam woła <code>hackerc build</code> + <code>cargo build --release</code>, po czym atomowo podmienia wskaźnik funkcji w <strong>działającym procesie</strong> — bez restartu.</p>
+      <div class="code-block">
+        <div class="code-label"><span>hcs</span><button class="copy-btn" data-copy-target="hot-code">Kopiuj</button></div>
+        <pre id="hot-code"><code><span class="tok-kw">@hot_reload</span>
+<span class="tok-kw">fun</span> <span class="tok-fn">greet</span>() [
+    log(<span class="tok-str">"wersja 1"</span>)
+    <span class="tok-kw">end</span>
+]</code></pre>
+      </div>
+      <div class="note"><strong>v1:</strong> tylko funkcje bez parametrów i bez wartości zwracanej, na najwyższym poziomie. Wymaga zmiennej środowiskowej <code>HKS_HOT_OUT_DIR</code> przy uruchomieniu (jawny błąd, jeśli brak) i ręcznego pierwszego builda <code>hotlib/</code>.</div>
+    </section>
+
+    <section class="doc-section" id="moduly">
+      <span class="kicker">Moduły i pakiety</span>
+      <h2>System modułów (get)</h2>
+      <div class="code-block">
+        <div class="code-label"><span>hcs</span><button class="copy-btn" data-copy-target="mod-code">Kopiuj</button></div>
+        <pre id="mod-code"><code><span class="tok-kw">get</span> &lt;core:memory::arena&gt; <span class="tok-kw">import</span> &lt;arena_new::arena_alloc::arena_get&gt;
+<span class="tok-kw">get</span> &lt;std:path&gt; <span class="tok-kw">import</span> &lt;path_join&gt;
+<span class="tok-kw">get</span> &lt;crates:serde&gt;   <span class="tok-com">! prawdziwa zależność Cargo</span>
+<span class="tok-kw">get</span> &lt;pypi:nazwa&gt;     <span class="tok-com">! pobierane przez virus install</span></code></pre>
+      </div>
+      <table class="ref-table">
+        <thead><tr><th>Prefiks</th><th>Źródło</th></tr></thead>
+        <tbody>
+          <tr><td><code>std:</code> / <code>core:</code></td><td><code>libs/std/lib/</code> / <code>libs/core/lib/</code> w tym repozytorium</td></tr>
+          <tr><td><code>crates:</code></td><td>prawdziwa zależność Cargo</td></tr>
+          <tr><td><code>pypi: / npm: / jsr:</code></td><td>pobierane bezpośrednio przez <code>virus install</code>, bez <code>pip</code>/<code>npm install</code></td></tr>
+          <tr><td><code>vira:</code></td><td>oficjalny rejestr <a href="https://vira.io" target="_blank" rel="noopener">vira.io</a></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="doc-section" id="manifest">
+      <span class="kicker">Moduły i pakiety</span>
+      <h2>Virus.hk</h2>
+      <p>Format <code>.hk</code> manifestu projektu — nie TOML, mimo podobnego wyglądu.</p>
+      <div class="code-block">
+        <div class="code-label"><span>Virus.hk</span><button class="copy-btn" data-copy-target="manifest-code">Kopiuj</button></div>
+        <pre id="manifest-code"><code>[package]
+name = "hello-world"
+version = "0.0.1"
+using = "0.1"
+edition = "2026"
+authors = ["Twoje Imię"]
+
+[dependencies]
+# "pypi:rich" = "*"
+
+[build]
+entry = "cmd/main.hcs"</code></pre>
+      </div>
+    </section>
+
+    <section class="doc-section" id="cli">
+      <span class="kicker">Narzędzia</span>
+      <h2>CLI: hackerc i virus</h2>
+      <table class="ref-table">
+        <thead><tr><th>Komenda</th><th>Co robi</th></tr></thead>
+        <tbody>
+          <tr><td><code>hackerc check plik.hcs</code></td><td>parsuje + typechecking, bez generowania Rusta</td></tr>
+          <tr><td><code>hackerc build plik.hcs -o dir</code></td><td>generuje crate Cargo w <code>dir</code></td></tr>
+          <tr><td><code>virus init --name x</code></td><td>tworzy nowy projekt z <code>Virus.hk</code></td></tr>
+          <tr><td><code>virus build --release</code></td><td>pobiera właściwy <code>hackerc</code> wg <code>using</code>, buduje</td></tr>
+          <tr><td><code>virus install &lt;pakiet&gt;</code></td><td>pobiera zależność z PyPI/crates.io/npm/JSR/Vira</td></tr>
+          <tr><td><code>virus fmt [--check]</code></td><td>formatuje (lub sprawdza formatowanie) plików <code>.hcs</code></td></tr>
+          <tr><td><code>virus lint</code></td><td>uruchamia diagnostyki <code>hackerc</code> na projekcie</td></tr>
+        </tbody>
+      </table>
+      <p>Kolorowe wyjście (zielony = sukces, czerwony = błąd, cyan = nazwy) wyłącza się automatycznie, gdy ustawiona jest zmienna środowiskowa <code>NO_COLOR</code>.</p>
+    </section>
+
+    <section class="doc-section" id="biblioteka">
+      <span class="kicker">Narzędzia</span>
+      <h2>Biblioteka standardowa</h2>
+      <div class="grid-cards">
+        <div class="card"><h4>fs / io / path</h4><p>System plików, wejście-wyjście, operacje na ścieżkach.</p></div>
+        <div class="card"><h4>string / math</h4><p>Operacje tekstowe i matematyczne.</p></div>
+        <div class="card"><h4>json / toml / hk</h4><p>Parsery formatów danych, w tym własnego formatu manifestu.</p></div>
+        <div class="card"><h4>http / process / env</h4><p>Zapytania HTTP, uruchamianie poleceń, zmienne środowiskowe.</p></div>
+        <div class="card"><h4>term</h4><p>Kolorowe CLI i pasek postępu renderowany w miejscu.</p></div>
+        <div class="card"><h4>result</h4><p>Pomocnicze funkcje dla <code>Result&lt;T,E&gt;</code>.</p></div>
+        <div class="card"><h4>cybersecurity</h4><p><code>constant_time_eq</code>, <code>shannon_entropy</code>.</p></div>
+        <div class="card"><h4>core/memory</h4><p>Cztery alokatory: arena, chained_arena, stack_allocator, pool_allocator.</p></div>
+      </div>
+    </section>
+
+    <section class="doc-section" id="roadmap">
+      <span class="kicker">Projekt</span>
+      <h2>Roadmap</h2>
+      <p>Pełna, szczegółowa wersja: <code>docs/ROADMAP.md</code> w repozytorium. Skrót stanu:</p>
+      <table class="ref-table">
+        <thead><tr><th>Funkcja</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td><code>direct [ ... ]</code> (Python przez PyO3)</td><td><span class="status-pill ok">naprawione i zweryfikowane</span></td></tr>
+          <tr><td><code>native {JavaScript} [ ... ]</code> (QuickJS, statyczne linkowanie)</td><td><span class="status-pill ok">nowe, zweryfikowane</span></td></tr>
+          <tr><td><code>native {JavaScript} &lt;plik.js&gt;</code> (import)</td><td><span class="status-pill ok">nowe, zweryfikowane</span></td></tr>
+          <tr><td><code>$ polecenie $</code> (Zero-Cost Sandbox)</td><td><span class="status-pill ok">nowe, zweryfikowane</span></td></tr>
+          <tr><td><code>@hot_reload</code> (podmiana kodu żywego procesu)</td><td><span class="status-pill ok">nowe, zweryfikowane</span></td></tr>
+          <tr><td><code>get &lt;crates:nazwa::wersja&gt;</code></td><td><span class="status-pill ok">działa, zweryfikowane</span></td></tr>
+          <tr><td><code>get &lt;pypi:nazwa&gt;</code> (tylko wewnątrz <code>direct</code>)</td><td><span class="status-pill ok">działa, zweryfikowane</span></td></tr>
+          <tr><td><code>get &lt;npm:...&gt;</code> / <code>get &lt;jsr:...&gt;</code></td><td><span class="status-pill wip">tylko komentarz, bez importu</span></td></tr>
+          <tr><td><code>virus install</code> (realne pobieranie)</td><td><span class="status-pill wip">niezweryfikowane w tym środowisku</span></td></tr>
+          <tr><td>Linia/kolumna w błędach parsera</td><td><span class="status-pill ok">naprawione i zweryfikowane</span></td></tr>
+          <tr><td>Numery linii w węzłach AST (dla <code>typecheck.hcs</code>)</td><td><span class="status-pill planned">planowane</span></td></tr>
+          <tr><td>Iteracja po <code>Dict</code></td><td><span class="status-pill planned">planowane</span></td></tr>
+          <tr><td>Typ <code>Set&lt;T&gt;</code></td><td><span class="status-pill planned">planowane</span></td></tr>
+          <tr><td><code>log()</code> dla struct/enum</td><td><span class="status-pill wip">częściowe</span></td></tr>
+          <tr><td>Generyczne <code>fun&lt;T&gt;</code> / <code>struct&lt;T&gt;</code></td><td><span class="status-pill planned">planowane</span></td></tr>
+          <tr><td>Trait / interface</td><td><span class="status-pill planned">planowane</span></td></tr>
+          <tr><td><code>virus test</code> + <code>#[test]</code></td><td><span class="status-pill planned">planowane</span></td></tr>
+          <tr><td>REPL</td><td><span class="status-pill planned">planowane</span></td></tr>
+          <tr><td>LSP</td><td><span class="status-pill planned">planowane</span></td></tr>
+          <tr><td>Checksumy/lockfile w <code>virus install</code></td><td><span class="status-pill planned">planowane</span></td></tr>
+          <tr><td>Backend Cranelift</td><td><span class="status-pill planned" style="text-decoration:line-through;opacity:.6">zdjęte z planów</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+  </main>
+</div>
+
+<footer class="site-footer">
+  <span>HackerScript © 2026 HackerOS Team — MIT</span>
+  <span>Wygenerowano z <code>hackerc/</code>, <code>virus/</code>, <code>docs/</code> tego repozytorium.</span>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
