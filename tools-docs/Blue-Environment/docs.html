@@ -1,1 +1,440 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blue Environment — dokumentacja</title>
+<meta name="description" content="Dokumentacja Blue Environment — środowiska graficznego edycji Blue HackerOS: pulpit, aplikacje, ustawienia, motywy, kompozytory, bezpieczeństwo i budowanie ze źródeł.">
+<link rel="icon" type="image/png" href="../../HackerOS.png">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<a class="skip-link" href="#content">Przejdź do treści</a>
 
+<header class="topbar">
+  <button class="nav-toggle" id="navToggle" aria-label="Otwórz nawigację" aria-expanded="false"><span></span><span></span><span></span></button>
+  <div class="brand"><span class="mark" aria-hidden="true"></span>Blue Environment <span class="ver">v0.8</span></div>
+  <div class="spacer"></div>
+  <a class="top-link" href="../index.html">← Narzędzia</a>
+  <a class="top-link" href="https://github.com/HackerOS-Linux-System/Blue-Environment" target="_blank" rel="noopener noreferrer">Repozytorium ↗</a>
+</header>
+
+<div class="layout">
+  <nav class="sidebar" id="sidebar" aria-label="Nawigacja dokumentacji">
+    <div class="search-wrap"><input type="text" id="docSearch" placeholder="Szukaj w dokumentacji…  ( / )" aria-label="Szukaj w dokumentacji"></div>
+
+    <h3>Start</h3>
+    <ul>
+      <li><a href="#wprowadzenie">Wprowadzenie</a></li>
+      <li><a href="#architektura">Architektura</a></li>
+      <li><a href="#instalacja">Instalacja i pakiety</a></li>
+      <li><a href="#budowanie">Budowanie ze źródeł</a></li>
+    </ul>
+
+    <h3>Pulpit</h3>
+    <ul>
+      <li><a href="#pulpit">Panel, menu i pulpity</a></li>
+      <li><a href="#skroty">Skróty klawiszowe</a></li>
+      <li><a href="#blokada">Ekran blokady</a></li>
+    </ul>
+
+    <h3>Aplikacje</h3>
+    <ul>
+      <li><a href="#aplikacje">Aplikacje wbudowane</a></li>
+      <li><a href="#blue-ai">Blue AI</a></li>
+    </ul>
+
+    <h3>Personalizacja</h3>
+    <ul>
+      <li><a href="#ustawienia">Ustawienia</a></li>
+      <li><a href="#motywy">Motywy i wygląd</a></li>
+      <li><a href="#jezyki">Języki</a></li>
+      <li><a href="#wtyczki">Wtyczki</a></li>
+    </ul>
+
+    <h3>System</h3>
+    <ul>
+      <li><a href="#kompozytory">Kompozytory (backendy)</a></li>
+      <li><a href="#ctl">Sterowanie: --ctl</a></li>
+      <li><a href="#bezpieczenstwo">Bezpieczeństwo</a></li>
+    </ul>
+
+    <h3>Pomoc</h3>
+    <ul>
+      <li><a href="#problemy">Rozwiązywanie problemów</a></li>
+      <li><a href="#status">Status i ograniczenia</a></li>
+    </ul>
+  </nav>
+
+  <main id="content">
+
+    <section class="hero">
+      <div class="eyebrow"><span class="dot"></span> środowisko graficzne edycji Blue</div>
+      <h1>Blue <span>Environment</span></h1>
+      <p>Nowoczesne środowisko graficzne dla Waylanda, zbudowane na Tauri i Svelte. Panel, menu Start, centrum sterowania, przełącznik okien, pulpity wirtualne i ponad trzydzieści własnych aplikacji — wszystko w spójnym, szklanym stylu.</p>
+      <div class="chips">
+        <span class="chip">Wayland</span><span class="chip">Tauri 2</span><span class="chip">Svelte</span><span class="chip">Rust</span><span class="chip">16 języków interfejsu</span><span class="chip">Edycja Blue</span>
+      </div>
+    </section>
+
+    <section class="doc-section" id="wprowadzenie">
+      <h2>Wprowadzenie <a class="anchor" href="#wprowadzenie">#</a></h2>
+      <p><strong>Blue Environment</strong> to środowisko graficzne znane z edycji <strong>Blue</strong> systemu HackerOS. Działa jako powłoka pulpitu (panel, launcher, przełącznik okien, powiadomienia) i dostarcza zestaw własnych aplikacji: przeglądarkę, klienta poczty, edytor kodu, menedżer plików, terminal, monitor systemu, menedżer partycji i wiele innych.</p>
+      <div class="card-grid">
+        <div class="card"><h4>Powłoka pulpitu</h4><p>Panel, menu Start, centrum sterowania, centrum powiadomień, pulpity wirtualne i przełącznik okien.</p></div>
+        <div class="card"><h4>Własne aplikacje</h4><p>Ponad 35 aplikacji: od Blue Web i Blue Code po Blue Virt i Blue Security.</p></div>
+        <div class="card"><h4>Wybór kompozytora</h4><p>Działa na HackerOS-Comp, labwc, sway i wayfire — wybór w pliku <code>config.hk</code>.</p></div>
+        <div class="card"><h4>Bezpieczeństwo</h4><p>Blokada wzorem lub odciskiem palca, kontrola rodzicielska, limity czasu i sejf haseł.</p></div>
+        <div class="card"><h4>Personalizacja</h4><p>Motywy powłoki, schematy kolorów, własne motywy i wtyczki w piaskownicy.</p></div>
+        <div class="card"><h4>Wiele dystrybucji</h4><p>Pakiety dla Debiana/Ubuntu, Fedory, Arch, Alpine, openSUSE, Gentoo, Void i Nix.</p></div>
+      </div>
+      <div class="callout info"><strong>Wersja</strong><p>Ta dokumentacja opisuje Blue Environment <strong>0.8.0</strong>.</p></div>
+    </section>
+
+    <section class="doc-section" id="architektura">
+      <h2>Architektura <a class="anchor" href="#architektura">#</a></h2>
+      <p>Blue Environment składa się z frontendu w <strong>Svelte + TypeScript</strong> (Vite, Tailwind CSS) osadzonego w powłoce <strong>Tauri 2</strong> oraz backendu w <strong>Rust</strong>. Interfejs komunikuje się z systemem przez mostek IPC Tauri.</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Warstwa</th><th>Zawartość</th></tr></thead>
+        <tbody>
+          <tr><td><code>src/</code></td><td>frontend Svelte: komponenty powłoki (<code>TopBar</code>, <code>StartMenu</code>, <code>ControlCenter</code>, <code>NotificationCenter</code>, <code>WorkspaceSwitcher</code>…), aplikacje, store’y (okna, motywy, język, skróty), tłumaczenia</td></tr>
+          <tr><td><code>src-tauri/</code></td><td>backend Rust: komendy Tauri, skaner plików <code>.desktop</code>, śledzenie okien, pogoda, kontrola rodzicielska, czas przed ekranem, motywy, integracja z kompozytorami (<code>backend/</code>)</td></tr>
+          <tr><td><code>auth/</code></td><td>wspólna biblioteka <code>blue-auth</code>: hashowanie wzoru blokady (Argon2id) i status odcisku palca (fprintd)</td></tr>
+          <tr><td><code>packaging/</code></td><td>szablony pakietów dla wielu dystrybucji</td></tr>
+          <tr><td><code>config/</code></td><td>plik <code>.desktop</code> oraz wersja</td></tr>
+        </tbody>
+      </table></div>
+      <p>Aplikacje ładowane są leniwie (<code>*Lazy.svelte</code>), a ich logika systemowa mieszka w osobnych modułach Rust (m.in. <code>BlueMessagesApp</code>, <code>BlueConnect</code>, <code>BlueAccounts</code>, <code>BlueVirt</code>, <code>BluePartitionManager</code>).</p>
+    </section>
+
+    <section class="doc-section" id="instalacja">
+      <h2>Instalacja i pakiety <a class="anchor" href="#instalacja">#</a></h2>
+      <p>W edycji Blue środowisko jest zainstalowane domyślnie. W innych systemach użyj gotowych szablonów z katalogu <code>packaging/</code>:</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Dystrybucja</th><th>Plik</th></tr></thead>
+        <tbody>
+          <tr><td>Debian / Ubuntu</td><td><code>packaging/blue-environment-debian/</code></td></tr>
+          <tr><td>Fedora</td><td><code>packaging/blue-environment-fedora.spec</code></td></tr>
+          <tr><td>LegendaryOS</td><td><code>packaging/blue-environment-legendaryos.spec</code></td></tr>
+          <tr><td>Arch Linux</td><td><code>packaging/PKGBUILD</code></td></tr>
+          <tr><td>Alpine</td><td><code>packaging/APKBUILD</code></td></tr>
+          <tr><td>openSUSE</td><td><code>packaging/opensuse/blue-environment.spec</code></td></tr>
+          <tr><td>Gentoo, Void, Nix</td><td><code>packaging/gentoo/</code>, <code>packaging/void/</code>, <code>packaging/nix/flake.nix</code></td></tr>
+          <tr><td>Zenit Linux</td><td><code>packaging/zenit/</code></td></tr>
+        </tbody>
+      </table></div>
+      <div class="callout tip"><strong>Wskazówka</strong><p>Środowisko działa też jako zwykła aplikacja Tauri pod dowolnym istniejącym kompozytorem Wayland/X11 (GNOME, KDE, sway…), więc możesz je wypróbować bez zmiany sesji.</p></div>
+    </section>
+
+    <section class="doc-section" id="budowanie">
+      <h2>Budowanie ze źródeł <a class="anchor" href="#budowanie">#</a></h2>
+      <h3>Wymagania</h3>
+      <div class="code-block"><div class="code-head"><span>Debian / Ubuntu / HackerOS</span><button class="copy-btn" type="button">Kopiuj</button></div>
+<pre><code>sudo apt install build-essential curl git \
+    libssl-dev libgbm-dev libseat-dev libinput-dev \
+    libxkbcommon-dev libudev-dev libdrm-dev \
+    libgtk-3-dev libsoup-3.0-dev \
+    libjavascriptcoregtk-4.1-dev libwebkit2gtk-4.1-dev \
+    libayatana-appindicator3-dev librsvg2-dev pkg-config seatd</code></pre></div>
+      <p>Potrzebujesz także <strong>Node.js 18+</strong>, <strong>Rusta</strong> (stable) oraz <strong>Tauri CLI 2</strong>. Do trybu bare-metal (DRM/KMS) włącz <code>seatd</code> i dodaj użytkownika do grupy <code>seat</code>.</p>
+      <div class="code-block"><div class="code-head"><span>seatd</span><button class="copy-btn" type="button">Kopiuj</button></div>
+<pre><code>sudo systemctl enable --now seatd
+sudo usermod -aG seat $USER   # potem wyloguj się i zaloguj</code></pre></div>
+      <h3>Budowanie powłoki</h3>
+      <div class="code-block"><div class="code-head"><span>Terminal</span><button class="copy-btn" type="button">Kopiuj</button></div>
+<pre><code>npm install
+npm run build:tauri</code></pre></div>
+      <p><code>npm run build:tauri</code> woła <code>tauri build</code>, który sam uruchamia <code>npm run build</code> (sprawdzenie typów przez <code>svelte-check</code> i <code>vite build</code>), a potem buduje binarkę Rust <code>blue-environment</code>.</p>
+      <div class="callout warn"><strong>Uwaga</strong><p>Nie uruchamiaj ręcznie <code>npm run build</code> przed <code>npm run build:tauri</code> i używaj <code>build:tauri</code>, a nie <code>npm run tauri</code> — inaczej zobaczysz błąd „Unable to find your web assets”.</p></div>
+      <h3>Tryb deweloperski</h3>
+      <div class="code-block"><div class="code-head"><span>Terminal</span><button class="copy-btn" type="button">Kopiuj</button></div>
+<pre><code>npm run dev          # serwer Vite na :1420
+cargo tauri dev      # albo: npm run tauri -- dev</code></pre></div>
+      <h3>Przydatne skrypty npm</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Skrypt</th><th>Działanie</th></tr></thead>
+        <tbody>
+          <tr><td><code>npm run lint</code></td><td><code>svelte-check</code> — typy i diagnostyka Svelte</td></tr>
+          <tr><td><code>npm test</code></td><td>testy jednostkowe (Vitest)</td></tr>
+          <tr><td><code>npm run gen:allowlist</code></td><td>generuje listę uprawnień komend Tauri (<code>--check</code> weryfikuje)</td></tr>
+          <tr><td><code>npm run gen:i18n-report</code></td><td>raport brakujących kluczy tłumaczeń</td></tr>
+        </tbody>
+      </table></div>
+      <p>W repozytorium jest też skrypt <code>build.hl</code> w Hacker Lang, który automatyzuje budowanie i pakowanie.</p>
+    </section>
+
+    <section class="doc-section" id="pulpit">
+      <h2>Panel, menu i pulpity <a class="anchor" href="#pulpit">#</a></h2>
+      <div class="card-grid">
+        <div class="card"><h4>Panel (TopBar)</h4><p>Zegar, wskaźniki systemowe, lista okien i dostęp do paneli.</p></div>
+        <div class="card"><h4>Menu Start</h4><p>Wyszukiwanie i uruchamianie aplikacji (wbudowanych oraz z plików <code>.desktop</code>).</p></div>
+        <div class="card"><h4>Centrum sterowania</h4><p>Szybkie ustawienia: sieć, dźwięk, jasność, zasilanie.</p></div>
+        <div class="card"><h4>Centrum powiadomień</h4><p>Historia powiadomień, toasty i osobna aplikacja Blue Notifications.</p></div>
+        <div class="card"><h4>Pulpity wirtualne</h4><p>Przełącznik pulpitów (<kbd>Super</kbd>+<kbd>1</kbd>…) oraz widok pełnoekranowy.</p></div>
+        <div class="card"><h4>Przełącznik okien</h4><p><kbd>Alt</kbd>+<kbd>Tab</kbd> obejmuje okna Blue i okna natywnych aplikacji.</p></div>
+        <div class="card"><h4>Historia schowka</h4><p>Panel historii kopiowania (<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>V</kbd>), także dla kopii z zewnętrznych aplikacji.</p></div>
+        <div class="card"><h4>Klawiatura ekranowa</h4><p>Wbudowana klawiatura ekranowa dla ekranów dotykowych.</p></div>
+      </div>
+      <p>Okna aplikacji Blue żyją w warstwie powłoki, a okna natywne (w tym XWayland) są śledzone przez kompozytor. Gdy otwierasz nakładkę (menu Start, centrum sterowania, przełącznik), okna natywne są chwilowo minimalizowane i przywracane po jej zamknięciu.</p>
+    </section>
+
+    <section class="doc-section" id="skroty">
+      <h2>Skróty klawiszowe <a class="anchor" href="#skroty">#</a></h2>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Skrót</th><th>Działanie</th></tr></thead>
+        <tbody>
+          <tr><td><kbd>Super</kbd> (samodzielnie) lub <kbd>Alt</kbd>+<kbd>F1</kbd></td><td>menu Start</td></tr>
+          <tr><td><kbd>Super</kbd>+<kbd>Tab</kbd></td><td>pełnoekranowy wybór aplikacji</td></tr>
+          <tr><td><kbd>Super</kbd>+<kbd>1</kbd>…<kbd>9</kbd></td><td>przełącz pulpit (do liczby pulpitów)</td></tr>
+          <tr><td><kbd>Super</kbd>+<kbd>←</kbd> / <kbd>→</kbd></td><td>poprzedni / następny pulpit</td></tr>
+          <tr><td><kbd>Super</kbd>+<kbd>↑</kbd> / <kbd>↓</kbd></td><td>maksymalizuj / minimalizuj aktywne okno</td></tr>
+          <tr><td><kbd>Super</kbd>+<kbd>D</kbd></td><td>pokaż pulpit</td></tr>
+          <tr><td><kbd>Super</kbd>+<kbd>L</kbd></td><td>zablokuj ekran</td></tr>
+          <tr><td><kbd>Alt</kbd>+<kbd>Tab</kbd> / <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>Tab</kbd></td><td>przełącznik okien (w przód / w tył); puszczenie <kbd>Alt</kbd> zatwierdza</td></tr>
+          <tr><td><kbd>Alt</kbd>+<kbd>F4</kbd></td><td>zamknij aktywne okno</td></tr>
+          <tr><td><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>T</kbd></td><td>otwórz terminal</td></tr>
+          <tr><td><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>C</kbd></td><td>centrum sterowania</td></tr>
+          <tr><td><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>V</kbd></td><td>historia schowka</td></tr>
+          <tr><td><kbd>PrintScreen</kbd></td><td>zrzut ekranu</td></tr>
+          <tr><td><kbd>Esc</kbd></td><td>zamknij panele / anuluj</td></tr>
+        </tbody>
+      </table></div>
+      <div class="callout info"><strong>Dobrze wiedzieć</strong><p>Gdy otwarte jest okno dialogowe (np. „Nowy folder”), skróty globalne są wstrzymane, żeby nie przechwytywały wpisywanego tekstu. <kbd>Esc</kbd> nadal zamyka dialog.</p></div>
+      <p>Gdy fokus ma aplikacja natywna, te same skróty realizuje kompozytor — wywołując polecenia <a href="#ctl"><code>blue-environment --ctl</code></a>.</p>
+    </section>
+
+    <section class="doc-section" id="blokada">
+      <h2>Ekran blokady <a class="anchor" href="#blokada">#</a></h2>
+      <p>Ekran blokady (<kbd>Super</kbd>+<kbd>L</kbd>) obsługuje odblokowanie <strong>wzorem</strong> (pattern lock) oraz <strong>odciskiem palca</strong> przez <code>fprintd</code>. Wzór jest zapisywany jako skrót <strong>Argon2id</strong> — ten sam algorytm co sejf haseł Blue Accounts — a logika jest współdzielona przez bibliotekę <code>blue-auth</code>, więc format nigdy nie rozjedzie się między sesją pulpitu a menedżerem logowania (BEDM).</p>
+      <p>Konfiguracja: <strong>Ustawienia → Bezpieczeństwo</strong> lub aplikacja <strong>Blue Security and Privacy</strong>.</p>
+    </section>
+
+    <section class="doc-section" id="aplikacje">
+      <h2>Aplikacje wbudowane <a class="anchor" href="#aplikacje">#</a></h2>
+      <p>Blue Environment zawiera ponad 35 własnych aplikacji. Każda otwiera się w oknie powłoki i korzysta z tych samych motywów oraz tłumaczeń.</p>
+      <h3>Internet i komunikacja</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Aplikacja</th><th>Opis</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Blue Web</strong></td><td>przeglądarka z kartami, historią, panelem bocznym i własnymi ustawieniami</td></tr>
+          <tr><td><strong>Mail</strong></td><td>klient poczty (IMAP/SMTP)</td></tr>
+          <tr><td><strong>Blue Messages</strong></td><td>komunikator: XMPP, Matrix oraz SMS</td></tr>
+          <tr><td><strong>Blue Connect</strong></td><td>wykrywanie i parowanie urządzeń w sieci lokalnej w stylu KDE Connect (UDP, port zgodny z KDE Connect)</td></tr>
+          <tr><td><strong>Blue News</strong></td><td>czytnik wiadomości i kanałów RSS</td></tr>
+          <tr><td><strong>Blue Downloader</strong></td><td>menedżer pobierania</td></tr>
+        </tbody>
+      </table></div>
+      <h3>Praca i twórczość</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Aplikacja</th><th>Opis</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Blue Docs</strong></td><td>edytor dokumentów z importem i eksportem PDF/DOCX</td></tr>
+          <tr><td><strong>Blue Code</strong></td><td>edytor kodu (Monaco) z terminalem (xterm), drzewem plików, paletą poleceń, Git i serwerem deweloperskim</td></tr>
+          <tr><td><strong>Blue Edit</strong>, <strong>Notepad</strong></td><td>szybkie edytory tekstu i notatnik</td></tr>
+          <tr><td><strong>Blue Calendar</strong>, <strong>Blue Tasks</strong></td><td>kalendarz i lista zadań</td></tr>
+          <tr><td><strong>Translate</strong></td><td>tłumacz</td></tr>
+          <tr><td><strong>Calculator</strong></td><td>kalkulator</td></tr>
+        </tbody>
+      </table></div>
+      <h3>Multimedia i gry</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Aplikacja</th><th>Opis</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Blue Images</strong>, <strong>Blue Video</strong>, <strong>Blue Music</strong></td><td>przeglądarka obrazów, odtwarzacz wideo i muzyki</td></tr>
+          <tr><td><strong>Camera</strong>, <strong>Blue Screenshot</strong></td><td>aparat i zrzuty ekranu</td></tr>
+          <tr><td><strong>Blue Emoji</strong></td><td>wybieracz emoji</td></tr>
+          <tr><td><strong>Blue Play</strong></td><td>biblioteka i launcher gier: własne gry Blue, gry natywne Linux oraz Windows (Wine, Proton lub <code>umu-run</code>), ze statystykami</td></tr>
+        </tbody>
+      </table></div>
+      <h3>System i narzędzia</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Aplikacja</th><th>Opis</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Terminal</strong></td><td>emulator terminala</td></tr>
+          <tr><td><strong>Files</strong></td><td>menedżer plików</td></tr>
+          <tr><td><strong>Blue Archive</strong></td><td>menedżer archiwów</td></tr>
+          <tr><td><strong>System Monitor</strong></td><td>monitor procesów, CPU, pamięci i zasobów</td></tr>
+          <tr><td><strong>Blue Partition Manager</strong></td><td>zarządzanie partycjami dysków</td></tr>
+          <tr><td><strong>Blue Software</strong></td><td>centrum oprogramowania</td></tr>
+          <tr><td><strong>Blue Virt</strong></td><td>menedżer maszyn wirtualnych na QEMU: dyski qcow2, prawdziwe procesy <code>qemu-system-x86_64</code>, łagodne wyłączanie przez gniazdo monitora QEMU</td></tr>
+          <tr><td><strong>Blue Accounts</strong></td><td>sejf haseł (Argon2id + AES-256-GCM)</td></tr>
+          <tr><td><strong>Blue Security and Privacy</strong></td><td>centralny panel bezpieczeństwa, prywatności, kontroli rodzicielskiej i czasu przed ekranem</td></tr>
+          <tr><td><strong>Blue Notifications</strong></td><td>centrum powiadomień</td></tr>
+          <tr><td><strong>Settings</strong></td><td>ustawienia systemu (<a href="#ustawienia">szczegóły</a>)</td></tr>
+          <tr><td><strong>Blue Help</strong>, <strong>Blue Welcome</strong>, <strong>About Blue</strong></td><td>pomoc, ekran powitalny i informacje o systemie</td></tr>
+          <tr><td><strong>Install Blue Environment</strong></td><td>instalator</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section class="doc-section" id="blue-ai">
+      <h2>Blue AI <a class="anchor" href="#blue-ai">#</a></h2>
+      <p>Wbudowany asystent AI łączy się z wybranym dostawcą przez proxy w backendzie Rust. Obsługiwane serwisy:</p>
+      <div class="swatches">
+        <span class="sw">ChatGPT</span><span class="sw">Claude</span><span class="sw">Gemini</span><span class="sw">DeepSeek</span><span class="sw">Grok (xAI)</span><span class="sw">Lokalnie: Ollama</span>
+      </div>
+      <p>Modele chmurowe wymagają własnego klucza API dostawcy. Tryb lokalny korzysta z Ollamy (np. <code>llama3.2</code>, <code>mistral</code>, <code>codellama</code>, <code>phi3</code>, <code>qwen2.5</code>), więc rozmowy nie opuszczają komputera.</p>
+    </section>
+
+    <section class="doc-section" id="ustawienia">
+      <h2>Ustawienia <a class="anchor" href="#ustawienia">#</a></h2>
+      <p>Aplikacja <strong>Settings</strong> jest podzielona na sekcje:</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Grupa</th><th>Sekcje</th></tr></thead>
+        <tbody>
+          <tr><td>Połączenia</td><td>Sieć, Wi-Fi, Bluetooth, Sieć komórkowa</td></tr>
+          <tr><td>Urządzenia</td><td>Ekran i monitory, Drukarki, Klawiatura, Zasilanie, Nocne światło</td></tr>
+          <tr><td>Wygląd</td><td>Personalizacja, Motywy, Panel, Pogoda</td></tr>
+          <tr><td>Aplikacje</td><td>Aplikacje, Aplikacje domyślne, Sklonowane aplikacje, Własne typy plików, Wtyczki</td></tr>
+          <tr><td>Użytkownicy</td><td>Konta i użytkownicy</td></tr>
+          <tr><td>Bezpieczeństwo</td><td>Bezpieczeństwo (blokada wzorem/odciskiem), Kontrola rodzicielska, Czas przed ekranem</td></tr>
+          <tr><td>System</td><td>Język, O systemie</td></tr>
+        </tbody>
+      </table></div>
+      <h3>Kontrola rodzicielska</h3>
+      <p>Zabezpieczona PIN-em: blokowanie wybranych aplikacji, dzienne limity czasu i okna dozwolonych godzin. Statystyki użycia pokazuje sekcja <strong>Czas przed ekranem</strong>.</p>
+      <h3>Własne typy plików i aplikacje domyślne</h3>
+      <p>Możesz zdefiniować własne skojarzenia typów plików z aplikacjami oraz wskazać aplikacje domyślne. Zewnętrzne aplikacje można „sklonować”, by uruchamiać je z osobną konfiguracją.</p>
+    </section>
+
+    <section class="doc-section" id="motywy">
+      <h2>Motywy i wygląd <a class="anchor" href="#motywy">#</a></h2>
+      <p>Wygląd składa się z dwóch niezależnych warstw: <strong>motywu powłoki</strong> (panel, menu, okna) oraz <strong>schematu kolorów</strong> systemu.</p>
+      <h3>Motywy powłoki</h3>
+      <div class="swatches">
+        <span class="sw">Azure</span><span class="sw">Obsidian</span><span class="sw">Aurora</span><span class="sw">Ember</span><span class="sw">Glacier</span><span class="sw">Crimson</span><span class="sw">Mono</span><span class="sw">Orchid</span><span class="sw">Hydra</span><span class="sw">HDE</span>
+      </div>
+      <h3>Schematy kolorów</h3>
+      <div class="swatches">
+        <span class="sw">Blue Glass (domyślny)</span><span class="sw">Cyberpunk</span><span class="sw">Dracula</span><span class="sw">Light Glass</span>
+      </div>
+      <p>Poza wbudowanymi motywami możesz tworzyć <strong>własne motywy powłoki</strong> (przechowywane przez backend) i ustawiać tapetę — domyślna jest wybierana dynamicznie w zależności od systemu. Sekcje <strong>Personalizacja</strong>, <strong>Motywy</strong> i <strong>Panel</strong> w Ustawieniach pozwalają zmienić kolory, przezroczystość i układ panelu.</p>
+    </section>
+
+    <section class="doc-section" id="jezyki">
+      <h2>Języki <a class="anchor" href="#jezyki">#</a></h2>
+      <p>Interfejs jest przetłumaczony na <strong>16 języków</strong>: arabski, chiński, czeski, holenderski, angielski, francuski, niemiecki, włoski, japoński, polski, portugalski, rosyjski, hiszpański, szwedzki, turecki i ukraiński. Język zmienisz w <strong>Ustawienia → Język</strong>.</p>
+      <p>Repozytorium zawiera test kluczy tłumaczeń (<code>i18n-keys.test.ts</code>) i skrypt <code>npm run gen:i18n-report</code>, które pilnują kompletności.</p>
+    </section>
+
+    <section class="doc-section" id="wtyczki">
+      <h2>Wtyczki <a class="anchor" href="#wtyczki">#</a></h2>
+      <p>Wtyczki działają w <strong>piaskownicy</strong> (<code>PluginRuntime</code>) z jawnie przyznawanymi uprawnieniami: powiadomienia, schowek i prywatny magazyn danych wtyczki. Wbudowana wtyczka <strong>Sandbox Demo</strong> pokazuje każde z tych uprawnień w działaniu. Wtyczkami zarządzasz w <strong>Ustawienia → Wtyczki</strong>.</p>
+    </section>
+
+    <section class="doc-section" id="kompozytory">
+      <h2>Kompozytory (backendy) <a class="anchor" href="#kompozytory">#</a></h2>
+      <p>Blue Environment może działać na czterech kompozytorach. Wybór następuje w sekcji <code>[backend]</code> pliku <code>config.hk</code> (HackerOS Configuration Format):</p>
+      <div class="code-block"><div class="code-head"><span>config.hk</span><button class="copy-btn" type="button">Kopiuj</button></div>
+<pre><code>[backend]
+-&gt; compositor => wayfire          ! albo: labwc, sway, hackeros-comp (domyślny)
+-&gt; generate_wayfire_config => true
+-&gt; wayfire_binary => wayfire</code></pre></div>
+      <p>Dla backendów <code>labwc</code>, <code>sway</code> i <code>wayfire</code> dostępne są ustawienia <code>&lt;nazwa&gt;_binary</code>, <code>&lt;nazwa&gt;_args</code>, <code>&lt;nazwa&gt;_config_dir</code> i <code>generate_&lt;nazwa&gt;_config</code> — czytane są tylko te aktywnego kompozytora.</p>
+      <h3>Który plik konfiguracyjny?</h3>
+      <p>Używany jest istniejący <code>config.hk</code>, w kolejności: <code>$BLUE_CONFIG_HK</code>, <code>$XDG_CONFIG_HOME/Blue-Environment/</code>, <code>~/.config/Blue-Environment/</code>, <code>/etc/xdg/Blue-Environment/</code>. Jeśli żadnego nie ma, tworzony jest domyślny w <code>~/.config/Blue-Environment/config.hk</code>.</p>
+      <h3>Start systemu</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th><code>compositor</code></th><th>Co się dzieje</th></tr></thead>
+        <tbody>
+          <tr><td><code>hackeros-comp</code></td><td>binarka działa jako powłoka, bez zmian</td></tr>
+          <tr><td><code>labwc</code> / <code>sway</code> / <code>wayfire</code></td><td>brakująca konfiguracja jest generowana (bez nadpisywania istniejącej), po czym Blue uruchamia wybrany kompozytor, który startuje powłokę. HackerOS-Comp nie jest wymagany</td></tr>
+          <tr><td>wybrany kompozytor niezainstalowany</td><td>ostrzeżenie i zachowanie klasyczne</td></tr>
+        </tbody>
+      </table></div>
+      <p>Jeśli sesja graficzna już istnieje, kompozytor nie jest zagnieżdżany (wymusisz to opcją <code>--start-backend</code>). <code>--no-backend</code> zawsze uruchamia samą powłokę, a <code>--backend-info</code> wypisuje wykryte informacje.</p>
+      <h3>Co jest wspólne dla labwc, sway i wayfire</h3>
+      <ul>
+        <li>lista okien, fokus, minimalizacja, maksymalizacja i zamykanie każdego okna natywnego i XWayland (protokół <code>wlr-foreign-toplevel-management</code>);</li>
+        <li>systemowa historia schowka, także z zewnętrznych aplikacji (<code>wl-paste --watch</code>, pakiet <code>wl-clipboard</code>);</li>
+        <li>skróty globalne przy fokusie na aplikacji natywnej — przez <a href="#ctl"><code>blue-environment --ctl</code></a>;</li>
+        <li>zrzuty ekranu przez <code>grim</code>, blokada, przeładowanie konfiguracji i liczba pulpitów — tłumaczone na mechanizm danego kompozytora;</li>
+        <li>uruchamianie aplikacji natywnych z jawnym środowiskiem sesji (<code>WAYLAND_DISPLAY</code>, <code>DBUS_SESSION_BUS_ADDRESS</code>…), własną sesją (<code>setsid</code>) i logiem w <code>~/.cache/Blue-Environment/launch.log</code>;</li>
+        <li><kbd>Alt</kbd>+<kbd>Tab</kbd> zależy od fokusu: gdy fokus ma powłoka Blue, działa przełącznik Blue (okna Blue i natywne); gdy aplikacja natywna — przełącznik kompozytora.</li>
+      </ul>
+      <h3>Co różni backendy</h3>
+      <ul>
+        <li><strong>Sposób startu powłoki:</strong> labwc przyjmuje polecenie startowe w wierszu poleceń (<code>-s</code>); sway i wayfire startują programy tylko z własnej konfiguracji (linia <code>exec</code> / wpis <code>[autostart]</code>), więc Blue dba, by taka linia istniała. Przy istniejącej konfiguracji sway Blue jej nie rusza — generuje osobny plik z <code>include</code> i jedną linią <code>exec</code>; w wayfire dopisuje minimalny wpis <code>[autostart]</code>.</li>
+        <li><strong>Format konfiguracji</strong> skrótów, motywów i reguł okien — każdy backend ma własny generator (<code>labwc_config</code>, <code>sway_config</code>, <code>wayfire_config</code>). Domyślna konfiguracja sway jest <em>pływająca</em>, a nie kafelkowa.</li>
+      </ul>
+      <div class="callout warn"><strong>Znane ograniczenia</strong><p>Okna Blue żyją w warstwie powłoki, czyli pod oknami natywnymi. Przełączanie pulpitów „na żywo” i DPMS nie mają IPC w sway/wayfire. Wayfire nie ma przeładowania konfiguracji na żywo w tej wersji — zmiany wymagają ponownego logowania. Konfiguracja wayfire była testowana na podstawie dokumentacji wtyczek i testów jednostkowych, bez uruchomienia samego kompozytora.</p></div>
+    </section>
+
+    <section class="doc-section" id="ctl">
+      <h2>Sterowanie: <code>--ctl</code> <a class="anchor" href="#ctl">#</a></h2>
+      <p>Działającą powłoką można sterować z zewnątrz — komenda łączy się z gniazdem <code>$XDG_RUNTIME_DIR/blue-environment.sock</code>. Używają jej skróty kompozytorów, ale możesz ją wywołać z własnych skryptów:</p>
+      <div class="code-block"><div class="code-head"><span>Terminal</span><button class="copy-btn" type="button">Kopiuj</button></div>
+<pre><code>blue-environment --ctl toggle-start-menu
+blue-environment --ctl open-terminal
+blue-environment --ctl screenshot</code></pre></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Polecenie</th><th>Działanie</th></tr></thead>
+        <tbody>
+          <tr><td><code>toggle-start-menu</code></td><td>przełącza menu Start</td></tr>
+          <tr><td><code>fullscreen-menu</code></td><td>pełnoekranowy wybór aplikacji</td></tr>
+          <tr><td><code>toggle-control-center</code></td><td>centrum sterowania</td></tr>
+          <tr><td><code>toggle-clipboard</code></td><td>historia schowka</td></tr>
+          <tr><td><code>open-terminal</code></td><td>otwiera terminal</td></tr>
+          <tr><td><code>screenshot</code></td><td>zrzut ekranu</td></tr>
+          <tr><td><code>lock</code></td><td>blokuje ekran</td></tr>
+          <tr><td><code>show-desktop</code></td><td>pokazuje pulpit</td></tr>
+          <tr><td><code>switcher-next</code> / <code>switcher-prev</code></td><td>przełącznik okien w przód / w tył</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section class="doc-section" id="bezpieczenstwo">
+      <h2>Bezpieczeństwo <a class="anchor" href="#bezpieczenstwo">#</a></h2>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Mechanizm</th><th>Jak działa</th></tr></thead>
+        <tbody>
+          <tr><td>Blokada wzorem</td><td>wzór zapisywany jako skrót Argon2id (biblioteka <code>blue-auth</code>)</td></tr>
+          <tr><td>Odcisk palca</td><td>status i weryfikacja przez <code>fprintd</code></td></tr>
+          <tr><td>Blue Accounts</td><td>sejf haseł: Argon2id (KDF) + AES-256-GCM</td></tr>
+          <tr><td>Kontrola rodzicielska</td><td>PIN, blokowanie aplikacji, dzienne limity, dozwolone godziny</td></tr>
+          <tr><td>Czas przed ekranem</td><td>statystyki użycia aplikacji</td></tr>
+          <tr><td>Wtyczki</td><td>piaskownica z jawnymi uprawnieniami</td></tr>
+          <tr><td>Blue Connect</td><td>wzajemne parowanie urządzeń z TLS</td></tr>
+        </tbody>
+      </table></div>
+      <p>Aplikacja <strong>Blue Security and Privacy</strong> zbiera te ustawienia w jednym panelu, odsyłając do odpowiednich sekcji Ustawień.</p>
+    </section>
+
+    <section class="doc-section" id="problemy">
+      <h2>Rozwiązywanie problemów <a class="anchor" href="#problemy">#</a></h2>
+      <h3>„Unable to find your web assets”</h3>
+      <p>Frontend nie został zbudowany przed <code>tauri build</code>. Użyj zawsze <code>npm run build:tauri</code> — skrypt <code>beforeBuildCommand</code> zbuduje frontend automatycznie.</p>
+      <h3>Błąd uprawnień seatd / seat</h3>
+      <div class="code-block"><div class="code-head"><span>Terminal</span><button class="copy-btn" type="button">Kopiuj</button></div>
+<pre><code>sudo systemctl enable --now seatd
+sudo usermod -aG seat $USER
+# następnie wyloguj się i zaloguj ponownie</code></pre></div>
+      <h3>Błąd cechy chrono</h3>
+      <p>Upewnij się, że w <code>Cargo.toml</code> jest <code>chrono = "0.4"</code> bez dodatkowych cech (cecha <code>local-offset</code> nie istnieje w chrono 0.4.x).</p>
+      <h3>Aplikacja natywna nie startuje</h3>
+      <p>Sprawdź <code>~/.cache/Blue-Environment/launch.log</code> — trafia tam stderr uruchamianych aplikacji. Jeśli program kończy się błędem tuż po starcie, Blue pokazuje powiadomienie z powodem.</p>
+      <h3>Maszyna wirtualna i VirtualBox</h3>
+      <p>W maszynie wirtualnej Blue wykrywa <code>WAYLAND_DISPLAY</code> / <code>DISPLAY</code> i działa zagnieżdżone; na „gołym” sprzęcie (TTY, brak serwera grafiki) korzysta z trybu DRM/KMS przez libseat, co wymaga działającego <code>seatd</code>.</p>
+    </section>
+
+    <section class="doc-section" id="status">
+      <h2>Status i ograniczenia <a class="anchor" href="#status">#</a></h2>
+      <ul>
+        <li>Powłoka działa samodzielnie pod dowolnym istniejącym kompozytorem Wayland/X11; własny kompozytor oparty na Smithay (<code>compositor/</code>) jest planowaną architekturą i nie ma go jeszcze w repozytorium.</li>
+        <li>Okna Blue żyją pod oknami natywnymi (warstwa powłoki).</li>
+        <li>Część integracji (m.in. wayfire) wymaga weryfikacji na sprzęcie.</li>
+      </ul>
+      <p>Aktualne informacje o statusie znajdziesz w repozytorium projektu.</p>
+    </section>
+
+    <footer class="doc-footer">
+      Blue Environment · część ekosystemu HackerOS · © 2026 HackerOS Team ·
+      <a href="https://github.com/HackerOS-Linux-System/Blue-Environment" target="_blank" rel="noopener noreferrer">GitHub</a>
+    </footer>
+  </main>
+</div>
+
+<button id="toTop" aria-label="Wróć na górę" title="Wróć na górę">↑</button>
+<script src="script.js"></script>
+</body>
+</html>
