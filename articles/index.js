@@ -32,6 +32,18 @@ window.HACKEROS_ARTICLES_INDEX = {
    "file": "hsharp.js"
   },
   {
+   "id": "bit",
+   "file": "bit.js"
+  },
+  {
+   "id": "hacker-lang",
+   "file": "hacker-lang.js"
+  },
+  {
+   "id": "hackerscript",
+   "file": "hackerscript.js"
+  },
+  {
    "id": "hackeros-editions",
    "file": "hackeros-editions.js"
   },
