@@ -14,8 +14,8 @@ window.HACKEROS_ARTICLES["hackeros-editions"] = {
   "en": "Which HackerOS edition should you pick? A guide to editions and releases"
  },
  "summary": {
-  "pl": "Official, Gaming, Cybersecurity, LTS, Atomic… Krótkie porównanie wszystkich edycji i harmonogram ich wydań.",
-  "en": "Official, Gaming, Cybersecurity, LTS, Atomic… A short comparison of every edition and their release schedule."
+  "pl": "Official, Gaming, Cybersecurity, LTS, Atomic, Server… Krótkie porównanie wszystkich edycji i harmonogram ich wydań.",
+  "en": "Official, Gaming, Cybersecurity, LTS, Atomic, Server… A short comparison of every edition and their release schedule."
  },
  "content": {
   "pl": [
@@ -71,6 +71,10 @@ window.HACKEROS_ARTICLES["hackeros-editions"] = {
       "System niemutowalny (ostree) z menedżerem pakietów hammer. Faza pre-release."
      ],
      [
+      "<strong>Server</strong>",
+      "Edycja dla administratorów Linuksa i do zastosowań serwerowych — prosta, jak sama nazwa mówi."
+     ],
+     [
       "<strong>NVIDIA</strong>",
       "To samo co Official, ale z preinstalowanymi sterownikami NVIDIA."
      ],
@@ -111,7 +115,7 @@ window.HACKEROS_ARTICLES["hackeros-editions"] = {
       "Co miesiąc"
      ],
      [
-      "GNOME, Hydra, XFCE",
+      "GNOME, Hydra, XFCE, Blue",
       "Przy wydaniach głównych <strong>x.0</strong> oraz <strong>x.5</strong>"
      ],
      [
@@ -125,6 +129,10 @@ window.HACKEROS_ARTICLES["hackeros-editions"] = {
      [
       "Atomic",
       "Wersje <strong>x.1</strong> oraz <strong>x.9</strong>"
+     ],
+     [
+      "Server",
+      "Wersje <strong>x.2</strong>"
      ]
     ]
    },
@@ -199,6 +207,10 @@ window.HACKEROS_ARTICLES["hackeros-editions"] = {
       "Immutable system (ostree) with the hammer package manager. Currently pre-release."
      ],
      [
+      "<strong>Server</strong>",
+      "An edition for Linux administrators and server use — simple, as the name says."
+     ],
+     [
       "<strong>NVIDIA</strong>",
       "Same as Official, with NVIDIA drivers preinstalled."
      ],
@@ -239,7 +251,7 @@ window.HACKEROS_ARTICLES["hackeros-editions"] = {
       "Every month"
      ],
      [
-      "GNOME, Hydra, XFCE",
+      "GNOME, Hydra, XFCE, Blue",
       "With the main <strong>x.0</strong> and <strong>x.5</strong> releases"
      ],
      [
@@ -253,6 +265,10 @@ window.HACKEROS_ARTICLES["hackeros-editions"] = {
      [
       "Atomic",
       "<strong>x.1</strong> and <strong>x.9</strong> versions"
+     ],
+     [
+      "Server",
+      "<strong>x.2</strong> versions"
      ]
     ]
    },
