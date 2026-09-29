@@ -215,7 +215,7 @@ ${en ? 'official Hacker Lang documentation' : 'oficjalnej dokumentacji Hacker La
 </ul>
 <p><strong>${en ? 'H# CLI tools' : 'Narzędzia CLI H#'}:</strong></p>
 <ul>
-<li><code>bytes</code> – ${en ? 'package manager for H#.' : 'manager pakietów dla H#.'}</li>
+<li><code>bit</code> – ${en ? 'package manager and build tool for H#, Hacker Lang and HackerScript (successor of bytes).' : 'manager pakietów i narzędzie budowania dla H#, Hacker Lang i HackerScript (następca bytes).'}</li>
 <li><code>h#</code> – ${en ? 'LLVM compilation / fast compilation / efficient JIT preview / quick preview.' : 'kompilacja LLVM / szybka kompilacja / wydajny podgląd JIT / szybki podgląd.'}</li>
 </ul>
 <p>${en ? 'More info in the' : 'Więcej informacji znajdziesz w'}
@@ -376,12 +376,13 @@ function buildEditionsPane(c, lang) {
         ['GNOME',          'gnome',      'gnome-edition.png', null],
         ['XFCE',           'xfce',       'xfce-edition.png', null],
         ['Blue',           'blue',       'blue-edition.png',
-            'https://legendaryos-linux-system.github.io/website/'],
+            'https://hackeros-linux-system.github.io/HackerOS-Website/tools-docs/Blue-Environment/docs.html'],
         ['Gaming',         'gaming',     'gaming-edition.png', null],
         ['Cybersecurity',  'cybersec',   null, null],
         ['Cybersecurity Default', 'cybersecdefault', 'cybersecurity-default-edition.png', null],
         ['LTS',            'lts',        null, null],
         ['Atomic',         'atomic',     null, null],
+        ['Server',         'server',     null, null],
         ['NVIDIA',         'nvidia',     null, null],
         ['Container',      'container',  null, null],
     ];
