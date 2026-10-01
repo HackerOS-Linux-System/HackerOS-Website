@@ -1,1 +1,131 @@
+name: Build & Deploy HackerOS Website
 
+# Strona jest statyczna (czysty HTML/CSS/JS) – "build" to walidacja + złożenie
+# paczki _site, którą wdrażamy na GitHub Pages.
+#
+# Wymagane jednorazowo: Settings → Pages → Build and deployment → Source: "GitHub Actions".
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Jedno wdrożenie naraz; nowsze anuluje oczekujące (nie przerywa trwającego deployu).
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+env:
+  SITE_DIR: _site
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Validate JavaScript syntax
+        run: |
+          set -e
+          count=0
+          while IFS= read -r -d '' f; do
+            node --check "$f" || { echo "::error file=$f::Błąd składni JavaScript"; exit 1; }
+            count=$((count + 1))
+          done < <(find . -type f -name '*.js' -not -path './.git/*' -not -path "./${SITE_DIR}/*" -print0)
+          echo "Sprawdzono plików JS: $count"
+
+      - name: Check internal links (warnings only)
+        shell: python
+        run: |
+          import os, re, sys
+          from urllib.parse import unquote
+
+          ROOT = "."
+          SKIP = ("http://", "https://", "//", "#", "mailto:", "tel:", "javascript:", "data:", "/cdn-cgi/")
+          attr = re.compile(r'''(?:href|src)\s*=\s*["']([^"']+)["']''', re.I)
+          missing = 0
+          empty = []
+
+          for dp, dn, fn in os.walk(ROOT):
+              dn[:] = [d for d in dn if d not in (".git", "_site", "node_modules")]
+              for name in fn:
+                  if not name.endswith(".html"):
+                      continue
+                  path = os.path.join(dp, name)
+                  if os.path.getsize(path) <= 1:
+                      empty.append(path)
+                      continue
+                  with open(path, encoding="utf-8", errors="ignore") as fh:
+                      html = fh.read()
+                  for link in attr.findall(html):
+                      link = link.strip()
+                      if not link or link.startswith(SKIP) or "{{" in link or "${" in link:
+                          continue
+                      target = unquote(re.split(r"[?#]", link)[0])
+                      if not target:
+                          continue
+                      base = ROOT if target.startswith("/") else dp
+                      full = os.path.normpath(os.path.join(base, target.lstrip("/")))
+                      if not (os.path.exists(full) or os.path.exists(full + ".html")):
+                          missing += 1
+                          print(f"::warning file={path}::Brak pliku dla linku: {link}")
+
+          for p in empty:
+              print(f"::warning file={p}::Pusty plik HTML (strona-szkielet)")
+          print(f"Niedziałające linki: {missing}, puste strony: {len(empty)}")
+
+      - name: Assemble site
+        run: |
+          set -e
+          rm -rf "$SITE_DIR"
+          mkdir -p "$SITE_DIR"
+          tar -c \
+            --exclude='./.git' \
+            --exclude='./.github' \
+            --exclude='./.gitignore' \
+            --exclude="./$SITE_DIR" \
+            --exclude='./node_modules' \
+            . | tar -x -C "$SITE_DIR"
+          # Wyłącz Jekyll – serwuj pliki dokładnie tak, jak są.
+          touch "$SITE_DIR/.nojekyll"
+          test -f "$SITE_DIR/index.html"
+          test -f "$SITE_DIR/404.html"
+          echo "Rozmiar paczki:"; du -sh "$SITE_DIR"
+          echo "Liczba plików: $(find "$SITE_DIR" -type f | wc -l)"
+
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ env.SITE_DIR }}
+
+  deploy:
+    name: Deploy to GitHub Pages
+    # Pull requesty tylko budują i walidują – bez publikacji.
+    if: github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
