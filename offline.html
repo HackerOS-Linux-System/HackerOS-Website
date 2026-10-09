@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>HackerOS - Offline</title>
+<style>
+/* Minimalny styl strony – cały wygląd dialogu pochodzi z localStorage (hackeros:offline-dialog) */
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;}
+body{background:#1C2526;color:#fff;font-family:Arial,sans-serif;}
+#fallback{display:none;min-height:100vh;align-items:center;justify-content:center;text-align:center;padding:24px;}
+#fallback h1{font-size:28px;margin-bottom:10px;}
+#fallback p{color:#B0B0B0;margin-bottom:18px;}
+#fallback button{padding:10px 22px;border:0;border-radius:5px;background:#B0B0B0;color:#121212;font-weight:bold;font-size:15px;cursor:pointer;}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<!-- Awaryjny ekran, gdy localStorage jest pusty/wyłączony (np. tryb prywatny) -->
+<div id="fallback">
+  <div>
+    <h1 id="fb-t">Brak połączenia z internetem</h1>
+    <p id="fb-m">Sprawdź kabel, Wi-Fi lub dane komórkowe.</p>
+    <button id="fb-b" type="button">Spróbuj ponownie</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  var KEY = 'hackeros:offline-dialog', STATE_KEY = 'hackeros:offline-state', LANG_KEY = 'hackeros_lang';
+  var $ = function (id) { return document.getElementById(id); };
+
+  function lsGet(k) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : null; } catch (e) { return null; } }
+
+  /* --- ścieżka bazowa: z zapisu w localStorage, z Service Workera lub ze ścieżki --- */
+  var payload = lsGet(KEY);
+  var BASE = payload && payload.base;
+  if (!BASE) {
+    try {
+      var c = navigator.serviceWorker && navigator.serviceWorker.controller;
+      if (c) BASE = new URL(c.scriptURL).pathname.replace(/sw\.js$/, '');
+    } catch (e) {}
+  }
+  if (!BASE) {
+    var p = location.pathname, i = p.indexOf('/HackerOS-Website/');
+    BASE = i >= 0 ? p.slice(0, i) + '/HackerOS-Website/' : '/';
+  }
+
+  /* --- język --- */
+  var lang = null;
+  try { lang = localStorage.getItem(LANG_KEY); } catch (e) {}
+  var avail = payload && payload.i18n ? payload.i18n : null;
+  if (!lang || (avail && !avail[lang])) lang = (navigator.language || 'pl').slice(0, 2).toLowerCase();
+  if (avail && !avail[lang]) lang = 'pl';
+  document.documentElement.lang = lang;
+
+  /* --- po powrocie sieci: odśwież wejściową stronę albo przejdź na główną --- */
+  var onOfflinePage = /\/offline\.html$/.test(location.pathname);
+  function goBack() {
+    if (!onOfflinePage) { location.reload(); return; }
+    var s = lsGet(STATE_KEY), target = BASE + 'Home-page.html';
+    try { if (s && s.lastPage && new URL(s.lastPage).origin === location.origin && !/offline\.html/.test(s.lastPage)) target = s.lastPage; } catch (e) {}
+    location.href = target;
+  }
+  function ping() {
+    return new Promise(function (resolve) {
+      var done = false, ctrl = window.AbortController ? new AbortController() : null;
+      var to = setTimeout(function () { if (ctrl) ctrl.abort(); if (!done) { done = true; resolve(false); } }, 4000);
+      fetch(BASE + 'sw.js?_=' + Date.now(), { method: 'HEAD', cache: 'no-store', signal: ctrl ? ctrl.signal : undefined })
+        .then(function (r) { clearTimeout(to); if (!done) { done = true; resolve(!!r && r.status < 500); } })
+        .catch(function () { clearTimeout(to); if (!done) { done = true; resolve(false); } });
+    });
+  }
+
+  var t, setStatus, onRetry, root;
+
+  if (payload && payload.html && payload.css && avail) {
+    /* ===== Dialog narysowany z danych zapisanych w localStorage ===== */
+    var st = document.createElement('style'); st.textContent = payload.css; document.head.appendChild(st);
+    root = document.createElement('div');
+    root.className = 'hos-off-backdrop';
+    root.setAttribute('data-mode', 'page');
+    root.setAttribute('role', 'alertdialog');
+    root.setAttribute('aria-labelledby', 'hos-off-title');
+    root.innerHTML = payload.html;
+    $('app').appendChild(root);
+
+    t = avail[lang] || {};
+    var s = lsGet(STATE_KEY) || {};
+    root.querySelectorAll('[data-i18n]').forEach(function (el) { el.textContent = t[el.getAttribute('data-i18n')] || ''; });
+
+    function fmt(ts) {
+      if (!ts) return t.never;
+      var d = Math.round((ts - Date.now()) / 1000), a = Math.abs(d), r = '';
+      try {
+        var f = new Intl.RelativeTimeFormat(lang, { numeric: 'auto' });
+        r = a < 60 ? f.format(d, 'second') : a < 3600 ? f.format(Math.round(d / 60), 'minute') : a < 86400 ? f.format(Math.round(d / 3600), 'hour') : f.format(Math.round(d / 86400), 'day');
+      } catch (e) {}
+      var abs = ''; try { abs = new Date(ts).toLocaleString(lang); } catch (e) { abs = String(new Date(ts)); }
+      return r ? abs + ' (' + r + ')' : abs;
+    }
+    var lo = root.querySelector('[data-slot="lastOnline"]'); if (lo) lo.textContent = fmt(s.lastOnline);
+    var lp = root.querySelector('[data-slot="lastPage"]');
+    if (lp) lp.textContent = s.lastPage ? (s.lastTitle ? s.lastTitle + ' – ' : '') + s.lastPage.replace(/^https?:\/\/[^/]+/, '') : t.never;
+    var home = root.querySelector('[data-act="home"]'); if (home) home.setAttribute('href', BASE + 'Home-page.html');
+    document.title = 'HackerOS - ' + (t.title || 'Offline');
+
+    setStatus = function (txt, cls) {
+      var el = root.querySelector('[data-slot="status"]');
+      if (el) { el.textContent = txt || ''; el.className = 'hos-off-status' + (cls ? ' ' + cls : ''); }
+    };
+    root.addEventListener('click', function (e) {
+      var b = e.target.closest ? e.target.closest('[data-act="retry"]') : null;
+      if (b) { e.preventDefault(); onRetry(); }
+    });
+    var rb = root.querySelector('[data-act="retry"]'); if (rb) rb.focus();
+  } else {
+    /* ===== Awaryjnie: zapis w localStorage niedostępny ===== */
+    var PL = /^pl/i.test(lang || 'pl');
+    var tt = PL
+      ? { t: 'Brak połączenia z internetem', m: 'Sprawdź kabel, Wi-Fi lub dane komórkowe.', b: 'Spróbuj ponownie', c: 'Sprawdzanie połączenia...', s: 'Nadal brak sieci.', r: 'Połączenie przywrócone!' }
+      : { t: 'No internet connection', m: 'Check your cable, Wi-Fi or mobile data.', b: 'Try again', c: 'Checking connection...', s: 'Still offline.', r: 'Connection restored!' };
+    t = { checking: tt.c, still: tt.s, restored: tt.r };
+    $('fb-t').textContent = tt.t; $('fb-m').textContent = tt.m; $('fb-b').textContent = tt.b;
+    $('fallback').style.display = 'flex';
+    document.title = 'HackerOS - Offline';
+    setStatus = function (txt) { $('fb-m').textContent = txt; };
+    $('fb-b').addEventListener('click', function () { onRetry(); });
+  }
+
+  var busy = false;
+  onRetry = function () {
+    if (busy) return; busy = true;
+    setStatus(t.checking, '');
+    ping().then(function (ok) {
+      busy = false;
+      if (ok) {
+        if (root) root.querySelector('.hos-off-card').classList.add('ok');
+        setStatus(t.restored, 'good');
+        setTimeout(goBack, 900);
+      } else { setStatus(t.still, 'bad'); }
+    });
+  };
+
+  window.addEventListener('online', onRetry);
+  // Automatyczne sprawdzanie co 6 s (navigator.onLine nie zawsze zgłasza powrót sieci)
+  setInterval(function () { if (!busy) onRetry(); }, 6000);
+})();
+</script>
+</body>
+</html>
