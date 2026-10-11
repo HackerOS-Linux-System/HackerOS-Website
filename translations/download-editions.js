@@ -86,13 +86,13 @@ window.HACKEROS_DOWNLOAD_EDITIONS = [
     {
         id: 'blue',
         docsKey: 'blue',
-        name: 'HackerOS Blue',
+        name: 'HackerOS Official: Blue',
         img: 'blue-edition.png',
-        excluded: ['drive', 'mega', 'transfer'],
+        excluded: ['mega', 'transfer'],
         links: {
-            sf:       null,
+            sf:       'https://sourceforge.net/projects/hackeros/files/OFFICIAL/BLUE/HackerOS-V5.1-Blue.iso/download',
             mega:     null,
-            drive:    null,
+            drive:    'https://drive.google.com/file/d/1haBW-GC8jJvRlc_7j1WGW88UsCAoEgCS/view?usp=drivesdk',
             transfer: null
         }
     },
