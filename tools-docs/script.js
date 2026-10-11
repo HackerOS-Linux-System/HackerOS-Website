@@ -35,11 +35,18 @@ const nextBtn = document.getElementById('nextSlideBtn');
 function renderSlides() {
     if (!slidesTrack) return;
     slidesTrack.innerHTML = '';
-    slidesData.forEach(s => {
+    const total = slidesData.length;
+    slidesData.forEach((s, i) => {
         const div = document.createElement('div'); div.className = 'slide';
+        const top = document.createElement('div'); top.className = 'slide-top';
+        const mono = document.createElement('span'); mono.className = 'slide-mono';
+        mono.textContent = s.title.replace(/[^A-Za-z0-9#.]/g, '').slice(0, 2).toUpperCase() || 'HO';
+        const cnt = document.createElement('span'); cnt.className = 'slide-count';
+        cnt.textContent = String(i + 1).padStart(2, '0') + ' / ' + String(total).padStart(2, '0');
+        top.appendChild(mono); top.appendChild(cnt);
         const h3 = document.createElement('h3'); h3.textContent = s.title;
         const p = document.createElement('p'); p.textContent = s.desc;
-        div.appendChild(h3); div.appendChild(p); slidesTrack.appendChild(div);
+        div.appendChild(top); div.appendChild(h3); div.appendChild(p); slidesTrack.appendChild(div);
     });
     updateSliderPosition();
 }
@@ -90,6 +97,18 @@ function bindKeyboard() {
         else if (e.key === 'ArrowRight') { nextSlide(); resetAutoPlay(); e.preventDefault(); }
     });
 }
+function initSlideLinks() {
+    document.querySelectorAll('.nav-list a[data-slide]').forEach(a => {
+        a.addEventListener('click', e => {
+            e.preventDefault();
+            const title = (a.dataset.slide || '').toLowerCase();
+            const i = slidesData.findIndex(s => s.title.toLowerCase() === title);
+            if (i >= 0) { goToSlide(i); resetAutoPlay(); }
+            const sl = document.querySelector('.slider-shell');
+            if (sl) sl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+    });
+}
 function initLangDropdown() {
     const dd = document.getElementById('langDropdown');
     const btn = document.getElementById('langDropdownBtn');
@@ -129,6 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
     applyLang(lang);
     bindControls(); bindHoverEvents(); bindKeyboard();
     isHovering = false; startAutoPlay(); initLangDropdown();
+    initSlideLinks();
     initSearch();
 });
 window.addEventListener('resize', () => updateSliderPosition());
