@@ -5,6 +5,10 @@ window.HACKEROS_TRANS_TOOLS = {
         footerCopy:   'HackerOS · © 2026 HackerOS. Wszelkie prawa zastrzeżone. | Dokumentacja ekosystemu HackerOS',
         langDropBtn:  'Języki programowania',
         navItems: {
+            'bit':                 'bit',
+            'getit':               'getit',
+            'chker':               'chker',
+            'hdm':                 'HDM',
             'gaming-cli':          'gaming-cli',
             'hpm':                 'HPM',
             'hackeros-containers': 'HackerOS Containers',
@@ -66,7 +70,11 @@ window.HACKEROS_TRANS_TOOLS = {
             { title: "HackerOS Kernel", desc: "HackerOS domyślnie wykorzystuje autorskie jądro HackerOS Kernel w edycji cybersecurity, które jest specjalnie dostosowane do wymogów tej edycji. Planowane jest również wprowadzenie HackerOS Kernel jako domyślnego jądra w wersji official, zastępując standardowe jądro Debiana." },
             { title: "Hacker Launcher", desc: "Hacker Launcher to aplikacja umożliwiająca uruchamianie natywnych gier Linuxa oraz gier z Windowsa (przy użyciu Protona) w jednej aplikacji. Zapewnia wygodny dostęp do bibliotek gier, zarządzanie konfiguracjami i optymalizację ustawień dla różnych tytułów." },
             { title: "HackerOS Store", desc: "HackerOS Store to sklep wszystkich dostępnych programów w HackerOS – wygodne, scentralizowane miejsce do przeglądania, instalowania i aktualizowania aplikacji oraz dodatków w systemie." },
-            { title: "Blue Environment", desc: "Blue Environment – środowisko graficzne rozwijane przez LegendaryOS, dostępne w ekosystemie narzędzi HackerOS." }
+            { title: "Blue Environment", desc: "Blue Environment – środowisko graficzne rozwijane przez LegendaryOS, dostępne w ekosystemie narzędzi HackerOS." },
+            { title: "bit", desc: "bit – menedżer pakietów dla wszystkich języków programowania w HackerOS. Jedno narzędzie do instalowania, aktualizowania i zarządzania zależnościami niezależnie od używanego języka." },
+            { title: "getit", desc: "getit – alternatywa dla curl i git oraz narzędzie do pobierania katalogów z GitHub, GitLab i Codeberg. Pobierasz tylko wybrany katalog repozytorium, bez klonowania całości." },
+            { title: "chker", desc: "chker – narzędzie do zmiany jądra Linuxa w HackerOS. Pozwala łatwo przełączać się między dostępnymi jądrami systemu." },
+            { title: "HDM", desc: "HDM – HackerOS Display Manager, czyli menedżer logowania dla HackerOS." }
         ]
     },
     en: {
@@ -75,6 +83,10 @@ window.HACKEROS_TRANS_TOOLS = {
         footerCopy:   'HackerOS · © 2026 HackerOS. All rights reserved. | HackerOS ecosystem documentation',
         langDropBtn:  'Programming Languages',
         navItems: {
+            'bit':                 'bit',
+            'getit':               'getit',
+            'chker':               'chker',
+            'hdm':                 'HDM',
             'gaming-cli':          'gaming-cli',
             'hpm':                 'HPM',
             'hackeros-containers': 'HackerOS Containers',
@@ -136,7 +148,11 @@ window.HACKEROS_TRANS_TOOLS = {
             { title: "HackerOS Kernel", desc: "HackerOS by default uses the custom HackerOS Kernel in the cybersecurity edition, which is specially tailored for that edition's requirements. There are also plans to adopt HackerOS Kernel as the default kernel in the official version, replacing the standard Debian kernel." },
             { title: "Hacker Launcher", desc: "Hacker Launcher is an application that allows you to run native Linux games as well as Windows games (using Proton) in a single application. It provides convenient access to game libraries, configuration management and optimised settings for various titles." },
             { title: "HackerOS Store", desc: "HackerOS Store is a store of all available programs in HackerOS – a convenient, centralized place to browse, install and update applications and add-ons on the system." },
-            { title: "Blue Environment", desc: "Blue Environment – a graphical environment developed by LegendaryOS, available as part of the HackerOS tools ecosystem." }
+            { title: "Blue Environment", desc: "Blue Environment – a graphical environment developed by LegendaryOS, available as part of the HackerOS tools ecosystem." },
+            { title: "bit", desc: "bit – a package manager for all programming languages in HackerOS. One tool to install, update and manage dependencies regardless of the language you use." },
+            { title: "getit", desc: "getit – an alternative to curl and git, and a tool for downloading directories from GitHub, GitLab and Codeberg. Fetch only the directory you need, without cloning the whole repository." },
+            { title: "chker", desc: "chker – a tool for changing the Linux kernel in HackerOS. It lets you easily switch between the available system kernels." },
+            { title: "HDM", desc: "HDM – HackerOS Display Manager, the login manager for HackerOS." }
         ]
     }
 };
