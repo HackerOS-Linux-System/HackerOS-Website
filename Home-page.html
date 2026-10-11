@@ -34,22 +34,6 @@ footer{background-color:#121212;padding:20px;text-align:center;color:#B0B0B0;wid
 .cursor{animation:blink .7s infinite;}
 @keyframes blink{0%{opacity:1}50%{opacity:0}100%{opacity:1}}
 
-/* ── Highlights carousel ─────────────────────────────────────────── */
-.highlights{max-width:1200px;margin:0 auto 60px;padding:50px 20px 0;}
-.highlights h2{font-size:26px;margin-bottom:6px;text-align:center;}
-.highlights .highlights-sub{text-align:center;color:#B0B0B0;font-size:14.5px;margin-bottom:26px;}
-.highlights-viewport{overflow-x:auto;scroll-behavior:smooth;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:#3A4A55 transparent;padding-bottom:6px;}
-.highlights-viewport::-webkit-scrollbar{height:8px;}
-.highlights-viewport::-webkit-scrollbar-thumb{background:#3A4A55;border-radius:8px;}
-.highlights-track{display:flex;gap:22px;padding:6px 4px 10px;}
-.highlight-card{flex:0 0 300px;background:#2F3A44;border-radius:12px;padding:24px;box-shadow:0 4px 10px rgba(0,0,0,.3);display:flex;flex-direction:column;transition:transform .3s,box-shadow .3s;scroll-snap-align:start;}
-.highlight-card:hover{transform:translateY(-4px);box-shadow:0 6px 16px rgba(0,0,0,.45);}
-.highlight-card .tag{display:inline-block;font-size:10.5px;letter-spacing:1.5px;text-transform:uppercase;color:#00d4ff;background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.3);padding:3px 8px;border-radius:3px;margin-bottom:12px;align-self:flex-start;}
-.highlight-card h3{font-size:19px;margin-bottom:10px;}
-.highlight-card p{font-size:14.5px;color:#C6C6C6;margin-bottom:18px;flex:1;}
-.highlight-card a.card-link{align-self:flex-start;color:#4a9eff;text-decoration:none;font-weight:bold;font-size:14px;transition:color .2s;}
-.highlight-card a.card-link:hover{color:#7fb8ff;text-decoration:underline;}
-@media(max-width:600px){.highlight-card{flex:0 0 260px;}}
 
 /* ── Special day: HackerOS anniversary (March 3rd) ──────────────────── */
 .anniv-badge,.birthday-badge{display:none;}
@@ -113,33 +97,6 @@ body.day-creator-birthday .special-day-section h2{color:#5fc2ff;}
 </div>
 </section>
 
-<section class="highlights">
-<h2 id="highlights-heading">Co słychać w HackerOS</h2>
-<p class="highlights-sub" id="highlights-sub">Przewiń w prawo lub poczekaj — sekcja przewija się sama.</p>
-<div class="highlights-viewport" id="highlights-viewport">
-<div class="highlights-track" id="highlights-track">
-<div class="highlight-card">
-<span class="tag" id="hl1-tag">Recenzja</span>
-<h3 id="hl1-title">HackerOS okiem The New Stack</h3>
-<p id="hl1-text">Dziennikarz portalu The New Stack, Jack Wallen, przetestował HackerOS i opisał go jako debianopochodną dystrybucję dla zwykłych użytkowników, graczy oraz specjalistów od cyberbezpieczeństwa, chwaląc m.in. powłokę zsh i autorskie komendy „hacker”.</p>
-<a class="card-link" id="hl1-link" href="https://thenewstack.io/hackeros-is-what-a-linux-enthusiasts-os-should-be/" target="_blank" rel="noopener noreferrer">Czytaj recenzję →</a>
-</div>
-<div class="highlight-card">
-<span class="tag" id="hl2-tag">Najnowsze wydanie</span>
-<h3 id="hl2-title">HackerOS V4.9</h3>
-<p id="hl2-text">Sprawdź co nowego pojawiło się w najświeższej wersji HackerOS i przejrzyj pełną listę zmian oraz historię wcześniejszych wydań.</p>
-<a class="card-link" id="hl2-link" href="releases.html">Zobacz changelog →</a>
-</div>
-<div class="highlight-card">
-<span class="tag" id="hl3-tag">Społeczność</span>
-<h3 id="hl3-title">Dołącz do społeczności</h3>
-<p id="hl3-text">Masz pytania, pomysły albo chcesz po prostu pogadać o HackerOS? Dołącz do naszego serwera Discord i bądź na bieżąco.</p>
-<a class="card-link" id="hl3-link" href="https://discord.com/invite/8yHNcBaEKy" target="_blank" rel="noopener noreferrer">Dołącz na Discordzie →</a>
-</div>
-</div>
-</div>
-</section>
-
 <section class="special-day-section" id="special-day-section">
 <h2 id="special-day-title"></h2>
 <p id="special-day-text"></p>
@@ -179,65 +136,6 @@ document.getElementById('nav-team').textContent=t.navTeam;
 document.getElementById('nav-docs').textContent=t.navDocs;
 if(typingTimer)clearInterval(typingTimer);typingEl.textContent='';
 typingWords=t.words;typingIdx=0;typeWord(typingWords[0]);}
-/* ── Highlights i18n (falls back to English for languages not listed) ── */
-const HIGHLIGHTS_I18N={
-pl:{heading:'Co słychać w HackerOS',sub:'Przewiń w prawo lub poczekaj — sekcja przewija się sama.',
-hl1Tag:'Recenzja',hl1Title:'HackerOS okiem The New Stack',
-hl1Text:'Dziennikarz portalu The New Stack, Jack Wallen, przetestował HackerOS i opisał go jako debianopochodną dystrybucję dla zwykłych użytkowników, graczy oraz specjalistów od cyberbezpieczeństwa, chwaląc m.in. powłokę zsh i autorskie komendy „hacker”.',
-hl1Link:'Czytaj recenzję →',
-hl2Tag:'Najnowsze wydanie',hl2Title:'HackerOS V4.9',
-hl2Text:'Sprawdź co nowego pojawiło się w najświeższej wersji HackerOS i przejrzyj pełną listę zmian oraz historię wcześniejszych wydań.',
-hl2Link:'Zobacz changelog →',
-hl3Tag:'Społeczność',hl3Title:'Dołącz do społeczności',
-hl3Text:'Masz pytania, pomysły albo chcesz po prostu pogadać o HackerOS? Dołącz do naszego serwera Discord i bądź na bieżąco.',
-hl3Link:'Dołącz na Discordzie →'},
-en:{heading:'What\'s new in HackerOS',sub:'Scroll right, or just wait — this section scrolls itself.',
-hl1Tag:'Review',hl1Title:'HackerOS, reviewed by The New Stack',
-hl1Text:'The New Stack writer Jack Wallen tested HackerOS and described it as a Debian-based distro aimed at everyday users, gamers, and cybersecurity enthusiasts, praising its zsh shell and custom "hacker" commands.',
-hl1Link:'Read the review →',
-hl2Tag:'Latest release',hl2Title:'HackerOS V4.9',
-hl2Text:'See what\'s new in the latest HackerOS release and browse the full changelog along with the history of previous versions.',
-hl2Link:'View changelog →',
-hl3Tag:'Community',hl3Title:'Join the community',
-hl3Text:'Got questions, ideas, or just want to talk about HackerOS? Join our Discord server and stay up to date.',
-hl3Link:'Join Discord →'}};
-
-function applyHighlightsLang(lang){
-const t=HIGHLIGHTS_I18N[lang]||HIGHLIGHTS_I18N.en;
-document.getElementById('highlights-heading').textContent=t.heading;
-document.getElementById('highlights-sub').textContent=t.sub;
-document.getElementById('hl1-tag').textContent=t.hl1Tag;
-document.getElementById('hl1-title').textContent=t.hl1Title;
-document.getElementById('hl1-text').textContent=t.hl1Text;
-document.getElementById('hl1-link').textContent=t.hl1Link;
-document.getElementById('hl2-tag').textContent=t.hl2Tag;
-document.getElementById('hl2-title').textContent=t.hl2Title;
-document.getElementById('hl2-text').textContent=t.hl2Text;
-document.getElementById('hl2-link').textContent=t.hl2Link;
-document.getElementById('hl3-tag').textContent=t.hl3Tag;
-document.getElementById('hl3-title').textContent=t.hl3Title;
-document.getElementById('hl3-text').textContent=t.hl3Text;
-document.getElementById('hl3-link').textContent=t.hl3Link;
-}
-
-/* ── Auto-scrolling carousel: scrolls right every 30s, loops, manual scroll still works ── */
-function initHighlightsCarousel(){
-const viewport=document.getElementById('highlights-viewport');
-const track=document.getElementById('highlights-track');
-if(!viewport||!track)return;
-setInterval(()=>{
-if(!track.children.length)return;
-const gap=22;
-const cardWidth=track.children[0].getBoundingClientRect().width+gap;
-const maxScroll=viewport.scrollWidth-viewport.clientWidth;
-if(viewport.scrollLeft>=maxScroll-5){
-viewport.scrollTo({left:0,behavior:'smooth'});
-}else{
-viewport.scrollBy({left:cardWidth,behavior:'smooth'});
-}
-},30000);
-}
-
 /* ── Special days: HackerOS anniversary (Mar 3) & creator's birthday (Sep 24), any year ── */
 const SPECIAL_DAY_I18N={
 anniversary:{
@@ -291,7 +189,6 @@ section.style.display='none';
 
 function applyAllLang(lang){
 applyLang(lang);
-applyHighlightsLang(lang);
 applySpecialDay(lang);
 }
 window.__hackeros_applyLang=applyAllLang;
@@ -299,7 +196,6 @@ window.__hackeros_applyLang=applyAllLang;
 document.addEventListener('DOMContentLoaded',()=>{
 const lang=window.HackerLang.getLang();
 applyAllLang(lang);
-initHighlightsCarousel();
 });
 </script>
 <script>if('serviceWorker' in navigator&&location.protocol.indexOf('http')===0){navigator.serviceWorker.register('sw.js').catch(function(){});}</script>
