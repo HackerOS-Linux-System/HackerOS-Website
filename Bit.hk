@@ -1,1 +1,28 @@
+[package]
+-> name        => hackeros-website
+-> version     => 5.0.0
+-> description => Strona HackerOS napisana w 100% w HackerScript.
+-> authors     => ["HackerOS Team"]
+-> license     => GPL-3.0
+-> lang        => HackerScript
+-> using       => 0.5
 
+[edition]
+-> edition => 2026
+
+[layout]
+-> cmd => cmd
+
+[commands]
+-> site
+--> run => lua scripts/build-site.lua
+--> description => Buduje cala strone (cmd/pages/**/*.hcs, cmd/worker/*.hcs) do katalogu _site
+-> serve
+--> run => python3 -m http.server 8000 --directory _site
+--> description => Lokalny podglad zbudowanej strony (najpierw: bit site)
+-> clean
+--> run => rm -rf _site cache
+--> description => Usuwa zbudowana strone i cache
+
+[hooks]
+-> pre-build => echo "building hackeros-website (HackerScript, mode:website)"
