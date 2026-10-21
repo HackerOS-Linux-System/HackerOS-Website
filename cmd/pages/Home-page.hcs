@@ -1,0 +1,73 @@
+use <mode:website>
+
+include <../shared/offline>
+include <../logic/home>
+
+style {
+#app { display: none; }
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Arial',sans-serif;}
+body{background-color:#1C2526;color:#FFF;line-height:1.6;}
+header{background-color:#121212;position:fixed;width:100%;top:0;z-index:1000;box-shadow:0 4px 10px rgba(0,0,0,.7);transition:background-color .3s;}
+header:hover{background-color:#1A1A1A;}
+.social-links{background-color:rgba(255,255,255,.05);padding:10px 0;display:flex;justify-content:center;gap:12px;border-bottom:1px solid rgba(255,255,255,.1);}
+.social-links a{display:flex;justify-content:center;align-items:center;width:38px;height:38px;background-color:#2F3A44;border-radius:50%;transition:background-color .3s,transform .3s,box-shadow .3s;}
+.social-links a:hover{background-color:#B0B0B0;transform:scale(1.15);box-shadow:0 3px 8px rgba(255,255,255,.3);}
+.social-links svg{width:22px;height:22px;fill:#FFF;transition:fill .3s;}
+.social-links a:hover svg{fill:#121212;}
+.social-links img{width:24px;height:24px;object-fit:contain;}
+nav{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;padding:15px 20px;}
+nav .logo img{height:40px;width:auto;}
+nav ul{list-style:none;display:flex;gap:25px;align-items:center;}
+nav ul li a{color:#FFF;text-decoration:none;font-size:17px;transition:color .3s,transform .3s;position:relative;}
+nav ul li a::after{content:'';position:absolute;width:0;height:2px;bottom:-5px;left:0;background-color:#B0B0B0;transition:width .3s;}
+nav ul li a:hover::after{width:100%;}
+nav ul li a:hover{color:#B0B0B0;transform:translateY(-2px);}
+.hero{height:100vh;display:flex;justify-content:center;align-items:center;text-align:center;background:linear-gradient(45deg,#1C2526,#2F3A44);position:relative;overflow:hidden;padding-top:100px;}
+.hero::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:radial-gradient(circle,rgba(255,255,255,.1) 0%,rgba(0,0,0,.5) 100%);z-index:-1;}
+.hero-content h1{font-size:48px;margin-bottom:20px;text-shadow:2px 2px 4px rgba(0,0,0,.5);}
+.hero-content p{font-size:20px;margin-bottom:30px;color:#B0B0B0;}
+.hero-buttons{display:flex;gap:20px;justify-content:center;flex-wrap:wrap;}
+.btn{display:inline-block;padding:12px 24px;background-color:#B0B0B0;color:#121212;text-decoration:none;border-radius:5px;font-weight:bold;transition:background-color .3s,transform .3s,box-shadow .3s;}
+.btn:hover{background-color:#FFF;transform:scale(1.05);box-shadow:0 4px 10px rgba(255,255,255,.2);}
+footer{background-color:#121212;padding:20px;text-align:center;color:#B0B0B0;width:100%;box-shadow:0 -2px 5px rgba(0,0,0,.5);}
+.footer-buttons{display:flex;justify-content:center;gap:20px;margin-bottom:10px;flex-wrap:wrap;}
+.cursor{animation:blink .7s infinite;}
+@keyframes blink{0%{opacity:1}50%{opacity:0}100%{opacity:1}}
+
+
+
+.anniv-badge,.birthday-badge{display:none;}
+body.day-anniversary .hero{background:linear-gradient(135deg,#2b1d3d,#3a2450,#1C2526,#20303a);background-size:300% 300%;animation:annivGradient 12s ease infinite;}
+@keyframes annivGradient{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+body.day-anniversary .hero::before{background:radial-gradient(circle,rgba(255,208,110,.22) 0%,rgba(0,0,0,.5) 100%);}
+body.day-anniversary .anniv-badge{display:inline-block;margin-bottom:14px;padding:6px 16px;border-radius:20px;background:rgba(255,208,110,.12);border:1px solid rgba(255,208,110,.4);color:#ffd06e;font-size:14px;font-weight:bold;letter-spacing:.5px;}
+.confetti-piece{position:absolute;top:-12px;width:8px;height:14px;opacity:.9;border-radius:2px;pointer-events:none;animation-name:confettiFall;animation-timing-function:linear;animation-iteration-count:infinite;}
+@keyframes confettiFall{0%{transform:translateY(-10px) rotate(0deg);opacity:.9}100%{transform:translateY(110vh) rotate(360deg);opacity:0}}
+
+
+body.day-creator-birthday .birthday-badge{display:inline-block;margin-bottom:14px;padding:6px 16px;border-radius:20px;background:rgba(0,150,255,.12);border:1px solid rgba(0,150,255,.4);color:#5fc2ff;font-size:14px;font-weight:bold;letter-spacing:.5px;}
+body.day-creator-birthday .btn{background:linear-gradient(270deg,#0057ff,#00c3ff,#3aa0ff,#0057ff);background-size:600% 600%;color:#FFF;animation:btnGradientMove 4s ease infinite,btnPulse 2.2s ease-in-out infinite;box-shadow:0 0 14px rgba(0,150,255,.55);}
+body.day-creator-birthday .btn:hover{transform:scale(1.08);box-shadow:0 0 26px rgba(0,180,255,.85);}
+@keyframes btnGradientMove{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes btnPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.045)}}
+
+
+.special-day-section{display:none;max-width:800px;margin:0 auto 55px;padding:32px 26px;text-align:center;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);}
+.special-day-section h2{font-size:25px;margin-bottom:14px;}
+.special-day-section p{color:#C6C6C6;font-size:15.5px;}
+body.day-anniversary .special-day-section{border-color:rgba(255,208,110,.4);background:rgba(255,208,110,.06);}
+body.day-anniversary .special-day-section h2{color:#ffd06e;}
+body.day-creator-birthday .special-day-section{border-color:rgba(0,150,255,.4);background:rgba(0,150,255,.06);}
+body.day-creator-birthday .special-day-section h2{color:#5fc2ff;}
+}
+
+let PAGE_BODY: Str = "<header>\n<div class=\"social-links\">\n<a href=\"https://discord.com/invite/8yHNcBaEKy\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"Discord\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 16 16\"><path d=\"M13.545 2.907a13.2 13.2 0 0 0-3.257-1.011.05.05 0 0 0-.052.025c-.141.25-.297.577-.406.833a12.2 12.2 0 0 0-3.658 0 8 8 0 0 0-.412-.833.05.05 0 0 0-.052-.025c-1.125.194-2.22.534-3.257 1.011a.04.04 0 0 0-.021.018C.356 6.024-.213 9.047.066 12.032q.003.022.021.037a13.3 13.3 0 0 0 3.995 2.02.05.05 0 0 0 .056-.019q.463-.63.818-1.329a.05.05 0 0 0-.01-.059l-.018-.011a9 9 0 0 1-1.248-.595.05.05 0 0 1-.02-.066l.015-.019q.127-.095.248-.195a.05.05 0 0 1 .051-.007c2.619 1.196 5.454 1.196 8.041 0a.05.05 0 0 1 .053.007q.121.1.248.195a.05.05 0 0 1-.004.085 8 8 0 0 1-1.249.594.05.05 0 0 0-.03.03.05.05 0 0 0 .003.041c.24.465.515.909.817 1.329a.05.05 0 0 0 .056.019 13.2 13.2 0 0 0 4.001-2.02.05.05 0 0 0 .021-.037c.334-3.451-.559-6.449-2.366-9.106a.03.03 0 0 0-.02-.019m-8.198 7.307c-.789 0-1.438-.724-1.438-1.612s.637-1.613 1.438-1.613c.807 0 1.45.73 1.438 1.613 0 .888-.637 1.612-1.438 1.612m5.316 0c-.788 0-1.438-.724-1.438-1.612s.637-1.613 1.438-1.613c.807 0 1.451.73 1.438 1.613 0 .888-.631 1.612-1.438 1.612\"/></svg></a>\n<a href=\"https://x.com/hackeros_linux\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"X (Twitter)\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 16 16\"><path d=\"M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865z\"/></svg></a>\n<a href=\"https://linuxiarze.pl/distro-hackeros/\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"Linuxiarze\"><img src=\"https://linuxiarze.pl/obrazy/images/logo-linuxiarze1.webp\" alt=\"Linuxiarze\" onerror=\"this.onerror=null;this.src='link-placeholder.svg'\"></a>\n<a href=\"https://distrowatch.com/table.php?distribution=hackeros\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"DistroWatch\"><img src=\"https://cdn.simpleicons.org/distrowatch/white\" alt=\"DistroWatch\" width=\"24\" height=\"24\" style=\"display:block;margin:auto\"></a>\n<a href=\"https://www.reddit.com/r/HackerOS_/\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"Reddit\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><path d=\"M24 11.779c0-1.459-1.192-2.645-2.657-2.645-.715 0-1.363.286-1.84.746-1.81-1.191-4.259-1.949-6.971-2.046l1.483-4.669 4.016.941-.006.058c0 .828.671 1.5 1.5 1.5s1.5-.672 1.5-1.5c0-.828-.671-1.5-1.5-1.5-.689 0-1.259.541-1.466 1.236l-4.013-.908-1.656 5.207c-2.765.093-5.236.842-7.058 2.046a2.658 2.658 0 0 0-1.844-.746C1.192 9.134 0 10.32 0 11.779c0 .996.547 1.862 1.36 2.317-.04.256-.06.516-.06.784 0 3.514 4.412 6.364 9.868 6.364 5.455 0 9.868-2.85 9.868-6.364 0-.268-.021-.528-.06-.784.814-.455 1.36-1.321 1.36-2.317zm-14.355 2.93c0-.862.695-1.559 1.555-1.559.859 0 1.554.697 1.554 1.559 0 .861-.695 1.558-1.554 1.558-.86 0-1.555-.696-1.555-1.558zm7.945 4.978c-1.678 1.143-3.901 1.805-6.344 1.805-2.442 0-4.665-.662-6.344-1.805-.396-.269-.496-.766-.227-1.161.27-.396.766-.496 1.161-.227 1.374.934 3.184 1.48 5.41 1.48 2.226 0 4.036-.546 5.41-1.48.395-.269.891-.169 1.161.227.269.395.169.891-.227 1.161zm-.227-3.419c-.859 0-1.554-.697-1.554-1.558 0-.862.695-1.559 1.554-1.559.86 0 1.555.697 1.555 1.559 0 .861-.695 1.558-1.555 1.558z\"/></svg></a>\n<a href=\"https://github.com/HackerOS-Linux-System\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"GitHub\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 16 16\"><path d=\"M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z\"/></svg></a>\n<a href=\"https://sourceforge.net/projects/hackeros/\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"SourceForge\"><img src=\"https://cdn.simpleicons.org/sourceforge/white\" alt=\"SourceForge\" width=\"24\" height=\"24\" style=\"display:block;margin:auto\"></a>\n<a href=\"https://www.youtube.com/channel/UCB_b48f2diMH2JByN2OmgGw\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"YouTube\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><path d=\"M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z\"/></svg></a>\n</div>\n<nav>\n<div class=\"logo\"><img src=\"HackerOS.png\" alt=\"HackerOS Logo\"></div>\n<ul>\n<li><a id=\"nav-home\" href=\"Home-page.html\">Home</a></li>\n<li><a id=\"nav-download\" href=\"download.html\">Download</a></li>\n<li><a id=\"nav-releases\" href=\"releases.html\">Releases</a></li>\n<li><a id=\"nav-team\" href=\"hackeros-team.html\">HackerOS Team</a></li>\n<li><a id=\"nav-docs\" href=\"hackeros-documentation.html\">Documentation</a></li><li><a id=\"nav-articles\" href=\"articles.html\">Artykuły</a></li>\n</ul>\n</nav>\n</header>\n<section class=\"hero\">\n<div class=\"hero-content\">\n<span class=\"anniv-badge\" id=\"anniv-badge\">🎉 Rocznica HackerOS</span>\n<span class=\"birthday-badge\" id=\"birthday-badge\">🎂 Urodziny twórcy HackerOS</span>\n<h1 id=\"title\">Witaj w HackerOS.</h1>\n<p><span id=\"prefix\">Dystrybucja Linuksa dla: </span><span id=\"typing\"></span><span class=\"cursor\">|</span></p>\n<div class=\"hero-buttons\">\n<a id=\"btn-download\" href=\"download.html\" class=\"btn\">Pobierz Teraz</a>\n<a id=\"btn-docs\" href=\"hackeros-documentation.html\" class=\"btn\">Dokumentacja</a>\n</div>\n</div>\n</section>\n\n<section class=\"special-day-section\" id=\"special-day-section\">\n<h2 id=\"special-day-title\"></h2>\n<p id=\"special-day-text\"></p>\n</section>\n\n<footer>\n<div class=\"footer-buttons\">\n<a id=\"footer-forum\" href=\"https://github.com/HackerOS-Linux-System/HackerOS/discussions\" class=\"btn\">Forum Dyskusyjne</a>\n<a id=\"footer-bug\" href=\"https://github.com/HackerOS-Linux-System/HackerOS/issues\" class=\"btn\">Zgłoś błąd</a>\n<a id=\"footer-android\" href=\"https://github.com/HackerOS-Linux-System/HackerOS-App/releases/download/v0.7/HackerOS-App-0.7.apk\" class=\"btn\">Pobierz aplikacje na androida</a>\n</div>\n<p id=\"footer-copy\">© 2026 HackerOS. Wszelkie prawa zastrzeżone.</p>\n</footer>"
+
+fun main() [
+    boot_begin("pl", "HackerOS - Home")
+    set_viewport("width=device-width,initial-scale=1.0")
+    head_tag("link", ["rel", "icon", "type", "image/png", "href", "HackerOS.png"])
+    boot_body(PAGE_BODY)
+    offline_init("")
+    home_init()
+]
