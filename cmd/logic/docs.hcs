@@ -1,0 +1,1164 @@
+include <../shared/core>
+include <../shared/lang>
+include <../data/docs_t>
+include <../data/docs_html>
+
+
+style {
+.search-view h2{margin-bottom:6px;}
+.sr-summary{color:#B0B0B0;font-size:15px;margin-bottom:6px;}
+.sr-group{margin:26px 0 8px;color:#7da7d9;font-size:18px;border-bottom:1px solid #2F3A44;padding-bottom:6px;}
+.sr-group span{color:#8a8a8a;font-size:14px;font-weight:normal;margin-left:8px;}
+.sr-item{padding:11px 14px;margin:6px 0;cursor:pointer;border:1px solid #1f262d;border-radius:10px;background:#141414;transition:background .15s,border-color .15s;}
+.sr-item:hover{background:rgba(255,255,255,.07);border-color:#2F3A44;}
+.sr-path{font-size:12px;color:#7da7d9;margin-bottom:3px;font-weight:bold;}
+.sr-snip{font-size:15px;color:#d8d8d8;line-height:1.55;}
+.sr-snip mark,mark.sr-mark{background:rgba(255,214,102,.28);color:#fff;border-radius:3px;padding:0 2px;}
+.sr-more{display:inline-block;margin:4px 0 0;color:#4a9eff;cursor:pointer;font-size:14px;background:none;border:none;padding:4px 0;}
+.sr-empty{padding:18px 0;color:#B0B0B0;font-size:16px;}
+.sr-count{display:inline-block;margin-left:8px;background:#2F3A44;color:#fff;border-radius:10px;padding:0 8px;font-size:12px;line-height:18px;}
+.sr-back{background:#2F3A44;color:#fff;border:none;border-radius:8px;padding:3px 12px;cursor:pointer;font-size:13px;margin-left:8px;}
+.sr-back:hover{background:#43515e;}
+.sr-flash{animation:srFlash 2.2s ease-out;}
+@keyframes srFlash{0%{background:rgba(255,214,102,.35);box-shadow:0 0 0 6px rgba(255,214,102,.35);}100%{background:transparent;box-shadow:0 0 0 6px transparent;}}
+}
+
+let TAB_KEYS: List<Str> = ["introduction", "hardware", "installation", "firstSteps", "environment", "configuration", "troubleshooting", "license", "tools", "programming", "editions", "gaming", "gallery"]
+
+let d_active: Str = "introduction"
+let d_lang: Str = "pl"
+let d_trans: Any = null
+let d_t: Any = null
+
+!! ── pomocnicze DOM ─────────────────────────────────────────────────────
+fun d_el(tag: Str, text: Any) -> Any [
+    let e = document.createElement(tag)
+    e.textContent = text or ""
+    end e
+]
+
+fun d_elh(tag: Str, html: Any) -> Any [
+    let e = document.createElement(tag)
+    e.innerHTML = html or ""
+    end e
+]
+
+fun d_list(tag: Str, items: Any) -> Any [
+    let ul = document.createElement(tag)
+    for it in (items or []) [
+        let li = document.createElement("li")
+        li.innerHTML = it
+        ul.appendChild(li)
+    ]
+    end ul
+]
+
+fun d_ul(items: Any) -> Any [
+    end d_list("ul", items)
+]
+
+fun d_ol(items: Any) -> Any [
+    end d_list("ol", items)
+]
+
+fun d_copy_label(t: Any) -> Str [
+    if t != null and t.copyBtn [
+        end t.copyBtn
+    ]
+    end "Kopiuj"
+]
+
+fun d_copied_label(t: Any) -> Str [
+    if t != null and t.copiedBtn [
+        end t.copiedBtn
+    ]
+    end "Skopiowano!"
+]
+
+!! przycisk kopiowania: command w data-command, etykiety z tlumaczenia t
+fun d_bind_copy(btn: Any, cmd: Str, t: Any) [
+    fun on_click(e: Any) [
+        let orig = btn.textContent
+        fun restore() [
+            btn.textContent = orig
+        ]
+        fun done(x: Any) [
+            btn.textContent = d_copied_label(t)
+            setTimeout(restore, 1500)
+        ]
+        navigator.clipboard.writeText(cmd).then(done)
+    ]
+    btn.addEventListener("click", on_click)
+]
+
+fun d_mk_copy_btn(cmd: Str, t: Any) -> Any [
+    let btn = document.createElement("button")
+    btn.className = "copy-button"
+    btn.dataset.command = cmd
+    btn.textContent = d_copy_label(t)
+    d_bind_copy(btn, cmd, t)
+    end btn
+]
+
+fun d_mk_pre(cmd_text: Str, t: Any) -> Any [
+    let pre = document.createElement("pre")
+    let span = document.createElement("span")
+    span.textContent = cmd_text
+    pre.appendChild(span)
+    pre.appendChild(d_mk_copy_btn(cmd_text, t))
+    end pre
+]
+
+fun d_rebind_copy_btns(container: Any, t: Any) [
+    let btns = container.querySelectorAll(".copy-button")
+    for btn in btns [
+        let cmd = btn.dataset.command
+        btn.textContent = d_copy_label(t)
+        d_bind_copy(btn, cmd, t)
+    ]
+]
+
+!! ── zakladka: galeria (obrazy z GitHub API) ────────────────────────────
+fun d_json(r: Any) -> Any [
+    end r.json()
+]
+
+fun d_build_gallery_pane(lang: Str) -> Any [
+    let en = lang == "en"
+    let div = document.createElement("div")
+    div.id = "pane-gallery"
+    div.className = "tab-pane"
+
+    div.appendChild(d_el("h2", if_en(en, "13. Gallery", "13. Galeria")))
+
+    let loading_p = document.createElement("p")
+    loading_p.id = "gallery-loading"
+    loading_p.textContent = if_en(en, "Loading images from GitHub...", "Ładowanie zdjęć z GitHub...")
+    loading_p.style.cssText = "color:#888;font-style:italic;"
+    div.appendChild(loading_p)
+
+    let grid = document.createElement("div")
+    grid.id = "gallery-grid"
+    grid.style.cssText = "display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-top:20px;"
+    div.appendChild(grid)
+
+    let raw_base = "https://raw.githubusercontent.com/HackerOS-Linux-System/HackerOS-Website/main/gallery/"
+    let api_url = "https://api.github.com/repos/HackerOS-Linux-System/HackerOS-Website/contents/gallery"
+    let img_ext = rx_flags("\\.(png|jpg|jpeg|webp|gif)$", "i")
+
+    fun is_image(f: Any) -> Bool [
+        end img_ext.test(f.name)
+    ]
+
+    fun add_file(file: Any) [
+        let img_url = raw_base + file.name
+        let wrapper = document.createElement("div")
+        wrapper.style.cssText = "background:#121212;border-radius:10px;overflow:hidden;border:1px solid #2f3a44;transition:transform .2s,box-shadow .2s;cursor:pointer;"
+        fun on_over(e: Any) [
+            wrapper.style.transform = "translateY(-3px)"
+            wrapper.style.boxShadow = "0 8px 20px rgba(0,0,0,.5)"
+        ]
+        fun on_out(e: Any) [
+            wrapper.style.transform = ""
+            wrapper.style.boxShadow = ""
+        ]
+        wrapper.addEventListener("mouseover", on_over)
+        wrapper.addEventListener("mouseout", on_out)
+
+        let img = document.createElement("img")
+        img.src = img_url
+        img.alt = file.name
+        img.loading = "lazy"
+        img.style.cssText = "width:100%;height:180px;object-fit:cover;display:block;"
+        fun on_err(e: Any) [
+            wrapper.style.display = "none"
+        ]
+        img.addEventListener("error", on_err)
+
+        !! klik -> pelny rozmiar
+        fun on_img_click(e: Any) [
+            let overlay = document.createElement("div")
+            overlay.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:99999;display:flex;align-items:center;justify-content:center;cursor:zoom-out;"
+            let big_img = document.createElement("img")
+            big_img.src = img_url
+            big_img.style.cssText = "max-width:90vw;max-height:90vh;border-radius:8px;box-shadow:0 20px 60px rgba(0,0,0,.8);"
+            overlay.appendChild(big_img)
+            fun close_overlay(e2: Any) [
+                overlay.remove()
+            ]
+            overlay.addEventListener("click", close_overlay)
+            document.body.appendChild(overlay)
+        ]
+        img.addEventListener("click", on_img_click)
+
+        let caption = document.createElement("p")
+        let cap = rx_replace(file.name, img_ext, "")
+        caption.textContent = rx_replace(cap, rx_flags("[-_]", "g"), " ")
+        caption.style.cssText = "color:#888;font-size:12px;padding:8px 12px;text-align:center;"
+
+        wrapper.appendChild(img)
+        wrapper.appendChild(caption)
+        grid.appendChild(wrapper)
+    ]
+
+    fun on_files(files: Any) [
+        let images = []
+        if Array.isArray(files) [
+            images = files.filter(is_image)
+        ]
+        loading_p.style.display = "none"
+        if images.length == 0 [
+            let no_img = document.createElement("p")
+            no_img.textContent = if_en(en, "No images found in the gallery yet. Check back later!", "Brak zdjęć w galerii. Sprawdź ponownie później!")
+            no_img.style.color = "#888"
+            div.appendChild(no_img)
+            end
+        ]
+        images.forEach(add_file)
+    ]
+
+    fun on_fail(e: Any) [
+        loading_p.textContent = if_en(en, "Could not load gallery. Visit the GitHub repository directly.", "Nie można załadować galerii. Odwiedź repozytorium GitHub bezpośrednio.")
+        loading_p.style.color = "#e05"
+        let link = document.createElement("a")
+        link.href = "https://github.com/HackerOS-Linux-System/HackerOS-Website/tree/main/gallery"
+        link.target = "_blank"
+        link.textContent = if_en(en, "Open gallery on GitHub", "Otwórz galerię na GitHub")
+        link.style.cssText = "display:block;margin-top:8px;color:#4a9eff;"
+        div.appendChild(link)
+    ]
+
+    let opts = mkobj(["headers", mkobj(["Accept", "application/vnd.github+json"])])
+    fetch(api_url, opts).then(d_json).then(on_files).catch(on_fail)
+    end div
+]
+
+fun if_en(en: Bool, a: Str, b: Str) -> Str [
+    if en [
+        end a
+    ]
+    end b
+]
+
+!! ── zakladka: edycje ───────────────────────────────────────────────────
+fun d_build_editions_pane(c: Any, lang: Str) -> Any [
+    let div = document.createElement("div")
+    div.id = "pane-editions"
+    div.className = "tab-pane"
+    div.appendChild(d_el("h2", c.h2))
+
+    !! [nazwa, klucz w tlumaczeniu, obrazek, link do dokumentacji]
+    let names = ["Official", "Hydra", "GNOME", "XFCE", "Blue", "Gaming", "Cybersecurity", "Cybersecurity Default", "LTS", "Atomic", "Server", "NVIDIA", "Container"]
+    let keys = ["official", "hydra", "gnome", "xfce", "blue", "gaming", "cybersec", "cybersecdefault", "lts", "atomic", "server", "nvidia", "container"]
+    let imgs = ["official-edition.png", "hydra-edition.png", "gnome-edition.png", "xfce-edition.png", "blue-edition.png", "gaming-edition.png", "", "cybersecurity-default-edition.png", "", "", "", "", ""]
+    let blue_docs = "https://hackeros-linux-system.github.io/HackerOS-Website/tools-docs/Blue-Environment/docs.html"
+
+    let i = 0
+    while i < names.len() [
+        let name = names[i]
+        div.appendChild(d_el("h3", "Edition " + name))
+        if imgs[i] != "" [
+            let img = document.createElement("img")
+            img.src = imgs[i]
+            img.alt = name
+            img.style.cssText = "max-width:100%;border-radius:12px;margin:15px 0;box-shadow:0 4px 12px rgba(0,0,0,.6);"
+            div.appendChild(img)
+        ]
+        div.appendChild(d_elh("p", jget(c, keys[i])))
+
+        !! odnosnik do dokumentacji dla edycji Blue
+        if keys[i] == "blue" [
+            let en = lang == "en"
+            let link_p = document.createElement("p")
+            link_p.style.marginTop = "-8px"
+            link_p.innerHTML = if_en(en, "More details:", "Więcej szczegółów:") + " <a href=\"" + blue_docs + "\" target=\"_blank\" style=\"color:#4a9eff\">" + if_en(en, "here", "tutaj") + "</a>"
+            div.appendChild(link_p)
+        ]
+        i = i + 1
+    ]
+
+    let rc = document.createElement("div")
+    rc.className = "release-cycle"
+    rc.appendChild(d_el("h3", c.releaseCycleH))
+    rc.appendChild(d_elh("p", c.releaseCycleP))
+    div.appendChild(rc)
+    end div
+]
+
+!! ── pojedyncza zakladka ────────────────────────────────────────────────
+fun d_build_pane(key: Str, c: Any, t: Any, lang: Str) -> Any [
+    if key == "gallery" [
+        end d_build_gallery_pane(lang)
+    ]
+    let div = document.createElement("div")
+    div.id = "pane-" + key
+    div.className = "tab-pane"
+
+    if key == "tools" [
+        div.innerHTML = docs_tools_html(lang == "en")
+        d_rebind_copy_btns(div, t)
+        end div
+    ]
+    if key == "programming" [
+        let label = "Kopiuj"
+        if lang == "en" [
+            label = "Copy"
+        ]
+        if t != null and t.copyBtn [
+            label = t.copyBtn
+        ]
+        div.innerHTML = docs_programming_html(lang == "en").replace("@@COPY@@", label)
+        d_rebind_copy_btns(div, t)
+        end div
+    ]
+    if key == "editions" [
+        if c != null [
+            end d_build_editions_pane(c, lang)
+        ]
+        end d_build_editions_pane(d_trans.en.content.editions, lang)
+    ]
+
+    if c == null [
+        div.appendChild(d_el("p", "[Content not yet translated – showing English fallback]"))
+        end div
+    ]
+
+    if key == "introduction" [
+        let hero_img = document.createElement("img")
+        hero_img.src = "installed-hackeros.png"
+        hero_img.alt = "Zainstalowany HackerOS"
+        hero_img.style.cssText = "max-width:100%;border-radius:10px;margin-bottom:20px;"
+        div.appendChild(hero_img)
+        div.appendChild(d_el("h2", c.h2))
+        div.appendChild(d_elh("p", c.p1))
+        div.appendChild(d_ul(c.list1))
+        div.appendChild(d_elh("p", c.p2))
+        div.appendChild(d_el("h3", c.hPhilosophy))
+        div.appendChild(d_elh("p", c.pPhilosophy))
+        div.appendChild(d_ul(c.listPhilosophy))
+        div.appendChild(d_el("h3", c.hGoal))
+        div.appendChild(d_elh("p", c.pGoal))
+        div.appendChild(d_ul(c.listGoal))
+    ] elif key == "hardware" [
+        div.appendChild(d_el("h2", c.h2))
+        div.appendChild(d_el("h3", c.hMin))
+        div.appendChild(d_ul(c.listMin))
+        div.appendChild(d_el("p", c.pMin))
+        div.appendChild(d_el("h3", c.hRec))
+        div.appendChild(d_ul(c.listRec))
+        div.appendChild(d_el("h3", c.hArch))
+        div.appendChild(d_ul(c.listArch))
+    ] elif key == "installation" [
+        div.appendChild(d_el("h2", c.h2))
+        div.appendChild(d_el("h3", c.hDownload))
+        div.appendChild(d_el("p", c.pDownload))
+        div.appendChild(d_elh("p", "<a href=\"https://hackeros-linux-system.github.io/HackerOS-Website/download.html\" style=\"color:#4a9eff\">https://hackeros-linux-system.github.io/HackerOS-Website/download.html</a>"))
+        div.appendChild(d_el("h3", c.hBootable))
+        div.appendChild(d_ul(c.listBootable))
+        div.appendChild(d_mk_pre("sudo dd if=HackerOS.iso of=/dev/sdX bs=4M status=progress oflag=sync", t))
+        div.appendChild(d_el("h3", c.hLive))
+        div.appendChild(d_elh("p", c.pLive1))
+        div.appendChild(d_elh("p", c.pLive2))
+        div.appendChild(d_el("h3", c.hInstall))
+        div.appendChild(d_ol(c.listInstall))
+        div.appendChild(d_el("h3", c.hDual))
+        div.appendChild(d_ul(c.listDual))
+    ] elif key == "firstSteps" [
+        div.appendChild(d_el("h2", c.h2))
+        div.appendChild(d_el("h3", c.hLogin))
+        div.appendChild(d_ul(c.listLogin))
+        div.appendChild(d_el("h3", c.hPkgMgr))
+        div.appendChild(d_el("p", c.pPkgMgr))
+        div.appendChild(d_el("h4", "APT (Debian)"))
+        div.appendChild(d_mk_pre("sudo apt update\nsudo apt upgrade\nsudo apt install <package>\nsudo apt remove <package>\nsudo apt autoremove\nsudo apt autoclean", t))
+        div.appendChild(d_el("h4", "Flatpak"))
+        div.appendChild(d_mk_pre("flatpak install <package>\nflatpak update\nflatpak remove <package>\nflatpak search <name>", t))
+        div.appendChild(d_el("h4", "Snap"))
+        div.appendChild(d_mk_pre("snap install <package>\nsnap refresh\nsnap remove <package>\nsnap find <name>", t))
+        div.appendChild(d_el("h4", "Brew (Homebrew)"))
+        div.appendChild(d_mk_pre("brew install <package>\nbrew upgrade\nbrew uninstall <package>\nbrew update", t))
+        div.appendChild(d_el("h4", "HackerOS Package Manager (hpm)"))
+        div.appendChild(d_elh("p", "hpm – <a href=\"https://hackeros-linux-system.github.io/HackerOS-Website/tools-docs/hpm.html\" target=\"_blank\" style=\"color:#4a9eff\">dokumentacja / documentation</a>"))
+        div.appendChild(d_el("h4", "HackerOS Nix Manager (hnm)"))
+        div.appendChild(d_elh("p", "hnm – <a href=\"https://hackeros-linux-system.github.io/HackerOS-Website/tools-docs/hnm.html\" target=\"_blank\" style=\"color:#4a9eff\">dokumentacja / documentation</a>"))
+        div.appendChild(d_el("h3", c.hNetwork))
+        div.appendChild(d_mk_pre("hacker network", t))
+        div.appendChild(d_elh("p", c.pNetwork))
+        div.appendChild(d_el("h3", c.hKernels))
+        div.appendChild(d_elh("p", c.pKernels))
+        div.appendChild(d_mk_pre("sudo chker xanmod\n# or / lub:\nsudo chker liquorix", t))
+        div.appendChild(d_el("p", c.pKernelsDiff))
+    ] elif key == "environment" [
+        div.appendChild(d_el("h2", c.h2))
+        div.appendChild(d_el("h3", c.hDefault))
+        div.appendChild(d_elh("p", c.pDefault))
+        div.appendChild(d_el("h3", c.hPreinstalled))
+        div.appendChild(d_ul(c.listPreinstalled))
+        div.appendChild(d_el("h3", c.hInstallSoft))
+        div.appendChild(d_ul(c.listInstallSoft))
+    ] elif key == "configuration" [
+        div.appendChild(d_el("h2", c.h2))
+        div.appendChild(d_el("p", c.p1))
+        div.appendChild(d_ul(c.list1))
+    ] elif key == "troubleshooting" [
+        div.appendChild(d_el("h2", c.h2))
+        div.appendChild(d_ul(c.list1))
+    ] elif key == "license" [
+        div.appendChild(d_el("h2", c.h2))
+        div.appendChild(d_ul(c.list1))
+    ] elif key == "gaming" [
+        div.appendChild(d_el("h2", c.h2))
+        div.appendChild(d_elh("p", c.p1))
+        div.appendChild(d_elh("p", c.p2))
+        if c.hContrib [
+            div.appendChild(d_el("h3", c.hContrib))
+        ]
+        if c.p3 [
+            div.appendChild(d_elh("p", c.p3))
+        ]
+    ]
+    end div
+]
+
+!! ── menu zakladek ──────────────────────────────────────────────────────
+fun d_on_tab_click(e: Any) [
+    d_switch_tab(e.currentTarget.dataset.tab)
+]
+
+fun d_build_menu(t: Any, active_key: Str) [
+    let ul = document.getElementById("tab-menu-ul")
+    ul.innerHTML = ""
+    let i = 0
+    while i < t.tabs.length [
+        let label = t.tabs[i]
+        let key = TAB_KEYS[i]
+        let li = document.createElement("li")
+        li.className = "tab-link"
+        if key == active_key [
+            li.className = "tab-link active"
+        ]
+        li.dataset.tab = key
+        li.dataset.label = label
+        li.textContent = label
+        li.addEventListener("click", d_on_tab_click)
+        ul.appendChild(li)
+        i = i + 1
+    ]
+]
+
+fun d_remove_active(el: Any) [
+    cl_rm(el, "active")
+]
+
+fun d_switch_tab(key: Str) [
+    !! w trakcie wyszukiwania klik w kategorie otwiera ja z podswietlonymi trafieniami
+    if d_search_on [
+        d_open_tab(key, null)
+        end
+    ]
+    d_show_pane(key)
+]
+
+!! ── tlumaczenie ────────────────────────────────────────────────────────
+fun d_apply_lang(lang: Str) [
+    d_lang = lang
+    let t = jget(d_trans, lang)
+    if nil(t) [
+        end
+    ]
+    d_t = t
+
+    let content_src = null
+    if t.content [
+        content_src = t.content
+    ] elif d_trans.en [
+        content_src = d_trans.en.content
+    ] else [
+        content_src = js_obj()
+    ]
+
+    document.documentElement.lang = lang
+    document.title = t.pageTitle
+
+    let si = document.getElementById("search-input")
+    if si != null [
+        si.placeholder = t.searchPlaceholder
+    ]
+    let fc = document.getElementById("footer-copy")
+    if fc != null [
+        fc.textContent = t.footerCopy
+    ]
+    for k in ["home", "download", "releases", "team", "docs"] [
+        let a = document.getElementById("nav-" + k)
+        if a != null [
+            a.textContent = jget(t, "nav" + k.charAt(0).toUpperCase() + k.slice(1))
+        ]
+    ]
+
+    d_build_menu(t, d_active)
+
+    let area = document.getElementById("tab-content-area")
+    area.innerHTML = ""
+    for key in TAB_KEYS [
+        let c = jget(content_src, key)
+        if nil(c) [
+            c = null
+        ]
+        let pane = d_build_pane(key, c, t, lang)
+        if key == d_active [
+            pane.classList.add("active")
+        ]
+        area.appendChild(pane)
+    ]
+    d_index = null
+    d_clear_search()
+]
+
+!! ── wyszukiwanie: kategorie + tresc dokumentacji ──────────────────────
+!! Wpisujesz fraze -> po lewej zostaja kategorie z trafieniami (z licznikiem), a po prawej, w miejscu tresci,
+!! pojawia sie lista wynikow z calej dokumentacji (pogrupowana wg kategorii, z fragmentami i podswietleniem).
+!! Zapytanie: wiele slow (wszystkie musza wystapic), fraza w cudzyslowie, bez rozrozniania wielkosci
+!! liter i polskich znakow. Klik w wynik otwiera kategorie, podswietla slowa w tekscie i przewija do miejsca.
+let d_index: Any = null
+let d_cur_heading: Str = ""
+let d_results: Any = []
+let d_tokens: Any = []
+let d_search_on: Bool = false
+let d_partial: Bool = false
+let d_query: Str = ""
+
+fun d_norm(s: Any) -> Str [
+    let x = String(s or "").toLowerCase().normalize("NFD")
+    x = rx_replace(x, rx_flags("[\\u0300-\\u036f]", "g"), "")
+    end x.replace("ł", "l")
+]
+
+fun d_esc(s: Str) -> Str [
+    end s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+]
+
+fun d_block_text(b: Any) -> Str [
+    let src = b
+    if b.tagName == "PRE" [
+        let sp = b.querySelector("span")
+        if sp != null [
+            src = sp
+        ]
+    ]
+    end rx_replace(src.textContent, rx_flags("\\s+", "g"), " ").trim()
+]
+
+fun d_index_block(key: Str, tab_label: Str, b: Any) [
+    !! kontenery (maja w srodku inne bloki) pomijamy - indeksujemy ich dzieci
+    if b.querySelector("h2,h3,h4,p,li,pre,td,th,dt,dd") != null [
+        end
+    ]
+    let text = d_block_text(b)
+    if text.length < 2 [
+        end
+    ]
+    let tag = b.tagName
+    if tag == "H2" or tag == "H3" or tag == "H4" [
+        d_cur_heading = text
+    ]
+    d_index.push(mkobj(["key", key, "tab", tab_label, "heading", d_cur_heading, "text", text, "norm", d_norm(text), "ctx", d_norm(d_cur_heading + " " + tab_label), "tag", tag, "el", b]))
+]
+
+fun d_build_index() [
+    d_index = js_arr()
+    let panes = document.querySelectorAll(".tab-pane")
+    for pane in panes [
+        let key = pane.id.slice(5)
+        let link = document.querySelector(".tab-link[data-tab=\"" + key + "\"]")
+        let tab_label = key
+        if link != null [
+            tab_label = link.dataset.label or key
+        ]
+        d_cur_heading = ""
+        for b in pane.querySelectorAll("h2,h3,h4,p,li,pre,td,th,dt,dd") [
+            d_index_block(key, tab_label, b)
+        ]
+    ]
+]
+
+fun d_parse_query(q: Str) -> Any [
+    let tokens = js_arr()
+    let re = rx_flags("\"([^\"]+)\"|(\\S+)", "g")
+    let m = re.exec(q)
+    while m != null [
+        let t = d_norm(m[1] or m[2]).trim()
+        if t.length > 0 [
+            tokens.push(t)
+        ]
+        m = re.exec(q)
+    ]
+    end tokens
+]
+
+fun d_is_alnum(ch: Str) -> Bool [
+    end ch != "" and rx("[a-z0-9]").test(ch)
+]
+
+!! ocena wpisu: -1 gdy za malo trafionych slow, w przeciwnym razie im wyzej tym lepiej
+fun d_score(e: Any, tokens: Any, whole: Str, min_hits: Int) -> Float [
+    let norm = e.norm
+    let hits = 0
+    let text_hits = 0
+    let score = 0
+    for t in tokens [
+        let idx = norm.indexOf(t)
+        if idx >= 0 [
+            hits = hits + 1
+            text_hits = text_hits + 1
+            score = score + 10
+            if not d_is_alnum(norm.charAt(idx - 1)) and not d_is_alnum(norm.charAt(idx + t.length)) [
+                score = score + 5
+            ]
+        ] elif e.ctx.includes(t) [
+            !! slowo z naglowka / nazwy zakladki tez sie liczy (np. "wymagania pamiec ram")
+            hits = hits + 1
+            score = score + 5
+        ]
+    ]
+    if hits < min_hits or text_hits == 0 [
+        end -1
+    ]
+    if tokens.length > 1 and norm.includes(whole) [
+        score = score + 25
+    ]
+    if e.tag == "H2" or e.tag == "H3" or e.tag == "H4" [
+        score = score + 15
+    ]
+    end score - Math.min(e.text.length, 600) / 150
+]
+
+fun d_cmp_mark(a: Any, b: Any) -> Int [
+    end a[0] - b[0]
+]
+
+fun d_cmp_result(a: Any, b: Any) -> Int [
+    end b.score - a.score
+]
+
+!! fragment tekstu wokol pierwszego trafienia, z <mark> na trafionych slowach
+fun d_snippet(e: Any, tokens: Any) -> Str [
+    let norm = e.norm
+    let first = -1
+    for t in tokens [
+        let i = norm.indexOf(t)
+        if i >= 0 and (first < 0 or i < first) [
+            first = i
+        ]
+    ]
+    if first < 0 [
+        first = 0
+    ]
+    let start = Math.max(0, first - 60)
+    if start > 0 [
+        let sp = e.text.indexOf(" ", start)
+        if sp >= 0 and sp < first [
+            start = sp + 1
+        ]
+    ]
+    let stop = Math.min(e.text.length, start + 200)
+    let text = e.text.slice(start, stop)
+    let nrm = norm.slice(start, stop)
+    let marks = js_arr()
+    for t in tokens [
+        let i = nrm.indexOf(t)
+        while i >= 0 [
+            marks.push([i, i + t.length])
+            i = nrm.indexOf(t, i + t.length)
+        ]
+    ]
+    marks.sort(d_cmp_mark)
+    let html = ""
+    let pos = 0
+    for m in marks [
+        if m[0] >= pos [
+            html = html + d_esc(text.slice(pos, m[0])) + "<mark>" + d_esc(text.slice(m[0], m[1])) + "</mark>"
+            pos = m[1]
+        ] elif m[1] > pos [
+            html = html + "<mark>" + d_esc(text.slice(pos, m[1])) + "</mark>"
+            pos = m[1]
+        ]
+    ]
+    html = html + d_esc(text.slice(pos))
+    let pre = ""
+    if start > 0 [
+        pre = "… "
+    ]
+    let post = ""
+    if stop < e.text.length [
+        post = " …"
+    ]
+    end pre + html + post
+]
+
+
+!! polska odmiana: 1 wynik, 2-4 wyniki, 5+ wynikow (12-14 -> wynikow)
+fun d_pl_wynikow(n: Int) -> Str [
+    let m10 = n % 10
+    let m100 = n % 100
+    if n == 1 [
+        end n + " wynik"
+    ]
+    if m10 >= 2 and m10 <= 4 and not (m100 >= 12 and m100 <= 14) [
+        end n + " wyniki"
+    ]
+    end n + " wyników"
+]
+
+fun d_pl_kategorii(n: Int) -> Str [
+    if n == 1 [
+        end "w 1 kategorii"
+    ]
+    end "w " + n + " kategoriach"
+]
+
+fun d_set_note(text: Str) [
+    let note = document.getElementById("search-note")
+    if note != null [
+        note.textContent = text
+    ]
+]
+
+!! ── podswietlanie slow w tresci zakladki ───────────────────────────────
+fun d_clear_marks() [
+    for m in document.querySelectorAll("mark.sr-mark") [
+        let parent = m.parentNode
+        parent.replaceChild(document.createTextNode(m.textContent), m)
+        parent.normalize()
+    ]
+]
+
+fun d_collect_text_nodes(root: Any) -> Any [
+    let list = js_arr()
+    let walker = document.createTreeWalker(root, 4)
+    let n = walker.nextNode()
+    while n != null [
+        let p = n.parentNode
+        if p != null and p.tagName != "SCRIPT" and p.tagName != "STYLE" and p.tagName != "BUTTON" [
+            list.push(n)
+        ]
+        n = walker.nextNode()
+    ]
+    end list
+]
+
+fun d_highlight_node(n: Any) [
+    let text = n.nodeValue
+    let nrm = d_norm(text)
+    if nrm.length != text.length [
+        end
+    ]
+    let marks = js_arr()
+    for t in d_tokens [
+        let i = nrm.indexOf(t)
+        while i >= 0 [
+            marks.push([i, i + t.length])
+            i = nrm.indexOf(t, i + t.length)
+        ]
+    ]
+    if marks.length == 0 [
+        end
+    ]
+    marks.sort(d_cmp_mark)
+    let frag = document.createDocumentFragment()
+    let pos = 0
+    for m in marks [
+        if m[1] > pos [
+            let from = Math.max(m[0], pos)
+            if from > pos [
+                frag.appendChild(document.createTextNode(text.slice(pos, from)))
+            ]
+            let mk = document.createElement("mark")
+            mk.className = "sr-mark"
+            mk.textContent = text.slice(from, m[1])
+            frag.appendChild(mk)
+            pos = m[1]
+        ]
+    ]
+    if pos < text.length [
+        frag.appendChild(document.createTextNode(text.slice(pos)))
+    ]
+    n.parentNode.replaceChild(frag, n)
+]
+
+fun d_highlight_pane(pane: Any) [
+    d_collect_text_nodes(pane).forEach(d_highlight_node)
+]
+
+!! ── widoki ─────────────────────────────────────────────────────────────
+fun d_remove_view() [
+    let v = document.getElementById("pane-search")
+    if v != null [
+        v.remove()
+    ]
+]
+
+fun d_show_pane(key: Str) [
+    d_remove_view()
+    d_active = key
+    document.querySelectorAll(".tab-link").forEach(d_remove_active)
+    let link = document.querySelector(".tab-link[data-tab=\"" + key + "\"]")
+    if link != null [
+        link.classList.add("active")
+    ]
+    document.querySelectorAll(".tab-pane").forEach(d_remove_active)
+    let pane = document.getElementById("pane-" + key)
+    if pane != null [
+        pane.classList.add("active")
+    ]
+]
+
+fun d_set_note_back() [
+    let note = document.getElementById("search-note")
+    if note == null [
+        end
+    ]
+    let label = d_pl_wynikow(d_results.length)
+    let back = "← lista wyników"
+    if d_lang != "pl" [
+        label = d_results.length + " matches"
+        back = "← results list"
+    ]
+    note.innerHTML = d_esc(label) + " <button type=\"button\" class=\"sr-back\">" + back + "</button>"
+]
+
+fun d_open_tab(key: Str, el: Any) [
+    d_show_pane(key)
+    d_clear_marks()
+    let pane = document.getElementById("pane-" + key)
+    if pane != null [
+        d_highlight_pane(pane)
+    ]
+    d_set_note_back()
+    if el != null [
+        fun unflash() [
+            cl_rm(el, "sr-flash")
+        ]
+        fun jump() [
+            el.scrollIntoView(mkobj(["behavior", "smooth", "block", "center"]))
+            el.classList.add("sr-flash")
+            setTimeout(unflash, 2300)
+        ]
+        setTimeout(jump, 60)
+    ]
+]
+
+fun d_open_result(i: Int) [
+    let r = jget(d_results, i)
+    if nil(r) [
+        end
+    ]
+    d_open_tab(r.key, r.el)
+]
+
+fun d_on_view_click(e: Any) [
+    let more = e.target.closest(".sr-more")
+    if more != null [
+        d_open_tab(more.dataset.tab, null)
+        end
+    ]
+    let it = e.target.closest(".sr-item")
+    if it != null [
+        d_open_result(Number(it.dataset.i))
+    ]
+]
+
+fun d_on_note_click(e: Any) [
+    if e.target.closest(".sr-back") != null and d_search_on [
+        d_show_results_view()
+    ]
+]
+
+!! lista wynikow w miejscu tresci
+fun d_show_results_view() [
+    d_clear_marks()
+    d_remove_view()
+    document.querySelectorAll(".tab-pane").forEach(d_remove_active)
+    document.querySelectorAll(".tab-link").forEach(d_remove_active)
+    let pl = d_lang == "pl"
+    let view = document.createElement("div")
+    view.id = "pane-search"
+    view.className = "tab-pane active search-view"
+
+    let h2 = document.createElement("h2")
+    if pl [
+        h2.textContent = "Wyniki wyszukiwania"
+    ] else [
+        h2.textContent = "Search results"
+    ]
+    view.appendChild(h2)
+
+    !! grupowanie wynikow wg kategorii (kolejnosc = najlepszy wynik kategorii)
+    let order = js_arr()
+    let groups = js_obj()
+    let idx = 0
+    while idx < d_results.length [
+        let r = d_results[idx]
+        let g = jget(groups, r.key)
+        if nil(g) [
+            g = js_arr()
+            jset(groups, r.key, g)
+            order.push(r.key)
+        ]
+        g.push(idx)
+        idx = idx + 1
+    ]
+
+    let summary = document.createElement("div")
+    summary.className = "sr-summary"
+    let s_text = ""
+    if d_results.length == 0 [
+        if pl [
+            s_text = "Brak wyników dla „" + d_query + "”."
+        ] else [
+            s_text = "No results for “" + d_query + "”."
+        ]
+    ] else [
+        if pl [
+            s_text = d_pl_wynikow(d_results.length) + " " + d_pl_kategorii(order.length) + " dla „" + d_query + "”"
+            if d_partial [
+                s_text = s_text + " (część słów)"
+            ]
+        ] else [
+            s_text = d_results.length + " matches in " + order.length + " categories for “" + d_query + "”"
+            if d_partial [
+                s_text = s_text + " (some words)"
+            ]
+        ]
+    ]
+    summary.textContent = s_text
+    view.appendChild(summary)
+
+    if d_results.length == 0 [
+        let empty = document.createElement("div")
+        empty.className = "sr-empty"
+        if pl [
+            empty.textContent = "Spróbuj innych słów, krótszej frazy albo bez polskich znaków."
+        ] else [
+            empty.textContent = "Try different words or a shorter phrase."
+        ]
+        view.appendChild(empty)
+    ]
+
+    for key in order [
+        let g = jget(groups, key)
+        let first = d_results[g[0]]
+        let gh = document.createElement("h3")
+        gh.className = "sr-group"
+        gh.appendChild(document.createTextNode(first.tab))
+        let cnt = document.createElement("span")
+        cnt.textContent = String(g.length)
+        gh.appendChild(cnt)
+        view.appendChild(gh)
+        let shown = Math.min(g.length, 12)
+        let k = 0
+        while k < shown [
+            let ri = g[k]
+            let r = d_results[ri]
+            let item = document.createElement("div")
+            item.className = "sr-item"
+            item.dataset.i = String(ri)
+            let path = document.createElement("div")
+            path.className = "sr-path"
+            if r.heading and r.heading != r.entry.text [
+                path.textContent = r.heading
+            ] else [
+                path.textContent = r.tab
+            ]
+            let snip = document.createElement("div")
+            snip.className = "sr-snip"
+            snip.innerHTML = d_snippet(r.entry, d_tokens)
+            item.appendChild(path)
+            item.appendChild(snip)
+            view.appendChild(item)
+            k = k + 1
+        ]
+        if g.length > shown [
+            let more = document.createElement("button")
+            more.setAttribute("type", "button")
+            more.className = "sr-more"
+            more.dataset.tab = key
+            if pl [
+                more.textContent = "+ " + (g.length - shown) + " więcej — otwórz kategorię „" + first.tab + "”"
+            ] else [
+                more.textContent = "+ " + (g.length - shown) + " more — open “" + first.tab + "”"
+            ]
+            view.appendChild(more)
+        ]
+    ]
+    view.addEventListener("click", d_on_view_click)
+    document.getElementById("tab-content-area").appendChild(view)
+    if d_results.length == 0 [
+        d_set_note("")
+    ] else [
+        d_set_note(s_text)
+    ]
+]
+
+!! ── kategorie po lewej: tylko z trafieniami + licznik ──────────────────
+fun d_apply_menu_filter(counts: Any) [
+    for li in document.querySelectorAll(".tab-link") [
+        let key = li.dataset.tab
+        let label = li.dataset.label or li.textContent
+        let n = jget(counts, key) or 0
+        let nl = d_norm(label)
+        let label_hit = true
+        for t in d_tokens [
+            if not nl.includes(t) [
+                label_hit = false
+            ]
+        ]
+        li.classList.toggle("search-hidden", not (n > 0 or label_hit))
+        li.textContent = label
+        if n > 0 [
+            let b = document.createElement("span")
+            b.className = "sr-count"
+            b.textContent = String(n)
+            li.appendChild(b)
+        ]
+    ]
+]
+
+fun d_reset_menu(li: Any) [
+    cl_rm(li, "search-hidden")
+    li.textContent = li.dataset.label or li.textContent
+]
+
+fun d_search_end() [
+    d_search_on = false
+    d_clear_marks()
+    d_remove_view()
+    document.querySelectorAll(".tab-link").forEach(d_reset_menu)
+    d_show_pane(d_active)
+]
+
+fun d_clear_search() [
+    let si = document.getElementById("search-input")
+    let cb = document.getElementById("clear-search")
+    if si != null [
+        si.value = ""
+    ]
+    if cb != null [
+        cb.style.display = "none"
+    ]
+    d_set_note("")
+    if d_search_on [
+        d_search_end()
+    ] else [
+        document.querySelectorAll(".tab-link").forEach(d_reset_menu)
+    ]
+]
+
+fun d_run_search(raw: Str) [
+    let q = raw.trim()
+    if q.length < 2 [
+        if d_search_on [
+            d_search_end()
+        ]
+        d_set_note("")
+        end
+    ]
+    if d_index == null [
+        d_build_index()
+    ]
+    let tokens = d_parse_query(q)
+    if tokens.length == 0 [
+        end
+    ]
+    d_tokens = tokens
+    d_query = q
+    let whole = d_norm(q).replace("\"", "").trim()
+    let min_hits = tokens.length
+    d_partial = false
+    let found = js_arr()
+    let pass = 0
+    while pass < 2 [
+        for e in d_index [
+            let sc = d_score(e, tokens, whole, min_hits)
+            if sc >= 0 [
+                found.push(mkobj(["score", sc, "key", e.key, "tab", e.tab, "heading", e.heading, "el", e.el, "entry", e]))
+            ]
+        ]
+        if found.length > 0 or tokens.length < 3 [
+            pass = 2
+        ] else [
+            !! brak pelnych trafien: pokaz wpisy z wiekszoscia slow
+            min_hits = tokens.length - 1
+            d_partial = true
+            pass = pass + 1
+        ]
+    ]
+    found.sort(d_cmp_result)
+    d_results = found
+    d_search_on = true
+    let counts = js_obj()
+    for r in found [
+        jset(counts, r.key, (jget(counts, r.key) or 0) + 1)
+    ]
+    d_apply_menu_filter(counts)
+    d_show_results_view()
+]
+
+fun d_on_search_input(e: Any) [
+    let si = document.getElementById("search-input")
+    let cb = document.getElementById("clear-search")
+    let v = si.value.trim()
+    if cb != null [
+        if v [
+            cb.style.display = "block"
+        ] else [
+            cb.style.display = "none"
+        ]
+    ]
+    if not v [
+        if d_search_on [
+            d_search_end()
+        ]
+        d_set_note("")
+        end
+    ]
+    d_run_search(v)
+]
+
+fun d_on_search_keydown(e: Any) [
+    if e.key == "Enter" [
+        if d_search_on and d_results.length > 0 [
+            e.preventDefault()
+            d_open_result(0)
+        ]
+    ] elif e.key == "Escape" [
+        d_clear_search()
+    ]
+]
+
+fun d_on_clear_click(e: Any) [
+    d_clear_search()
+    let si = document.getElementById("search-input")
+    if si != null [
+        si.focus()
+    ]
+]
+
+fun docs_init() [
+    d_trans = trans_docs()
+    window.__hackeros_applyLang = d_apply_lang
+    d_apply_lang(get_lang())
+    let si = document.getElementById("search-input")
+    let cb = document.getElementById("clear-search")
+    if si != null [
+        si.addEventListener("input", d_on_search_input)
+        si.addEventListener("keydown", d_on_search_keydown)
+    ]
+    if cb != null [
+        cb.addEventListener("click", d_on_clear_click)
+    ]
+    let note = document.getElementById("search-note")
+    if note != null [
+        note.addEventListener("click", d_on_note_click)
+    ]
+    lang_switcher_init()
+]
