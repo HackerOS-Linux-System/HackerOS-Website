@@ -1,0 +1,532 @@
+use <mode:website>
+
+include <../../shared/offline>
+include <../../logic/docsites>
+
+style {
+#app { display: none; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:        #03050a;
+  --surface:   #080d18;
+  --surface2:  #0d1525;
+  --border:    #18253a;
+  --green:     #00e855;
+  --blue:      #2a90ff;
+  --red:       #ff2244;
+  --orange:    #ff8c00;
+  --purple:    #b040e0;
+  --yellow:    #ffd600;
+  --cyan:      #00dcd8;
+  --text:      #c8d8ee;
+  --dim:       #4a5e78;
+  --sidebar-w: 260px;
+  --header-h:  52px;
+  --font-mono: 'Share Tech Mono', monospace;
+  --font-orb:  'Orbitron', monospace;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.7;
+  display: flex;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+
+.scanlines {
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg, transparent, transparent 2px,
+    rgba(0,0,0,0.06) 2px, rgba(0,0,0,0.06) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: #0a1525; border: 1px solid var(--blue); }
+::-webkit-scrollbar-thumb:hover { background: var(--blue); }
+
+
+.sidebar {
+  width: var(--sidebar-w);
+  min-height: 100vh;
+  background: rgba(3,5,10,0.97);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 200;
+  overflow-y: auto;
+  transition: transform 0.25s ease;
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 20px 16px 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.logo-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--blue);
+  box-shadow: 0 0 8px var(--blue);
+  animation: pulse 2s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 6px var(--blue); }
+  50%       { opacity: 0.5; box-shadow: 0 0 14px var(--blue); }
+}
+
+.logo-text {
+  font-family: var(--font-orb);
+  font-weight: 900;
+  font-size: 13px;
+  letter-spacing: 3px;
+  color: var(--blue);
+  text-shadow: 0 0 10px rgba(42,144,255,0.4);
+}
+
+.logo-sub {
+  color: var(--dim);
+  font-weight: 400;
+  margin-left: 5px;
+}
+
+.sidebar-version {
+  font-size: 10px;
+  color: var(--dim);
+  letter-spacing: 2px;
+  padding: 6px 16px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-list {
+  list-style: none;
+  padding: 12px 0;
+  flex: 1;
+}
+
+.nav-section {
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: var(--dim);
+  padding: 14px 16px 5px;
+  text-transform: uppercase;
+}
+
+.nav-link {
+  display: block;
+  padding: 7px 16px;
+  color: var(--dim);
+  text-decoration: none;
+  font-size: 12px;
+  letter-spacing: 1px;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+}
+
+.nav-link:hover {
+  color: var(--text);
+  border-left-color: var(--border);
+  background: rgba(255,255,255,0.02);
+}
+
+.nav-link.active {
+  color: var(--blue);
+  border-left-color: var(--blue);
+  background: rgba(42,144,255,0.05);
+  text-shadow: 0 0 6px rgba(42,144,255,0.3);
+}
+
+
+.content {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.page-header {
+  position: sticky;
+  top: 0;
+  height: var(--header-h);
+  background: rgba(3,5,10,0.97);
+  border-bottom: 1px solid var(--border);
+  z-index: 100;
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding: 0 28px;
+  gap: 16px;
+}
+
+.menu-btn {
+  background: none;
+  border: none;
+  color: var(--dim);
+  font-size: 20px;
+  cursor: pointer;
+  display: none;
+  padding: 4px 8px;
+}
+
+.breadcrumb {
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--dim);
+  text-transform: uppercase;
+  flex: 1;
+}
+
+.header-right { display: flex; gap: 8px; }
+
+.doc-body {
+  flex: 1;
+  padding: 40px 48px;
+  max-width: 900px;
+}
+
+
+.doc-section { display: none; animation: fadeIn 0.2s ease; }
+.doc-section.active { display: block; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.section-label {
+  font-size: 9px;
+  letter-spacing: 4px;
+  color: var(--dim);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+h1 {
+  font-family: var(--font-orb);
+  font-size: 26px;
+  font-weight: 900;
+  color: var(--text);
+  letter-spacing: 3px;
+  margin-bottom: 16px;
+  text-transform: uppercase;
+}
+
+h2 {
+  font-family: var(--font-orb);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--dim);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin: 32px 0 12px;
+}
+
+p { margin-bottom: 14px; }
+
+.lead {
+  font-size: 15px;
+  color: var(--text);
+  line-height: 1.8;
+  margin-bottom: 28px;
+}
+
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 14px;
+  margin: 24px 0;
+}
+
+.info-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 18px 16px;
+  transition: all 0.2s;
+}
+
+.info-card:hover { transform: translateY(-2px); }
+
+.info-card.accent-blue  { border-top: 2px solid var(--blue); }
+.info-card.accent-green { border-top: 2px solid var(--green); }
+.info-card.accent-orange{ border-top: 2px solid var(--orange); }
+.info-card.accent-purple{ border-top: 2px solid var(--purple); }
+
+.card-icon { font-size: 24px; margin-bottom: 8px; }
+
+.card-title {
+  font-family: var(--font-orb);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.card-desc { font-size: 11px; color: var(--dim); line-height: 1.6; }
+
+
+.tech-row { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0 24px; }
+
+.tech-badge {
+  padding: 4px 12px;
+  font-size: 11px;
+  letter-spacing: 2px;
+  border: 1px solid;
+}
+
+.tech-badge.blue   { color: var(--blue);   border-color: var(--blue);   background: rgba(42,144,255,0.08); }
+.tech-badge.pink   { color: #ff4dab;       border-color: #ff4dab;       background: rgba(255,77,171,0.08); }
+.tech-badge.orange { color: var(--orange); border-color: var(--orange); background: rgba(255,140,0,0.08); }
+.tech-badge.green  { color: var(--blue);  border-color: var(--blue);  background: rgba(0,232,85,0.08); }
+
+
+.callout {
+  padding: 14px 18px;
+  border-left: 3px solid;
+  margin: 20px 0;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.callout-info { border-color: var(--blue);   background: rgba(42,144,255,0.06); }
+.callout-warn { border-color: var(--yellow);  background: rgba(255,214,0,0.05); }
+.callout-warn strong { color: var(--yellow); }
+.callout-info strong { color: var(--blue); }
+
+
+.doc-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 14px 0 24px;
+  font-size: 13px;
+}
+
+.doc-table th {
+  background: var(--surface2);
+  color: var(--dim);
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-align: left;
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.doc-table td {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  vertical-align: top;
+}
+
+.doc-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+
+.code {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  padding: 1px 6px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--cyan);
+}
+
+.code-block {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--blue);
+  padding: 16px 18px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--blue);
+  line-height: 1.8;
+  white-space: pre;
+  overflow-x: auto;
+  margin: 14px 0;
+}
+
+
+.doc-list {
+  margin: 10px 0 18px 20px;
+  line-height: 1.9;
+}
+
+.doc-list.numbered { list-style: decimal; }
+.doc-list li { margin-bottom: 4px; }
+.doc-list strong { color: var(--text); }
+
+
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  font-size: 10px;
+  letter-spacing: 1px;
+  border: 1px solid var(--border);
+  color: var(--dim);
+  background: var(--surface2);
+}
+
+.badge.yellow { color: var(--yellow); border-color: rgba(255,214,0,0.4); background: rgba(255,214,0,0.06); }
+.badge.blue   { color: var(--blue);   border-color: rgba(42,144,255,0.4); background: rgba(42,144,255,0.06); }
+.badge.red    { color: var(--red);    border-color: rgba(255,34,68,0.4);  background: rgba(255,34,68,0.06); }
+
+
+.key {
+  display: inline-block;
+  padding: 2px 8px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-bottom: 2px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text);
+  border-radius: 3px;
+}
+
+
+.game-header { margin-bottom: 20px; }
+
+.game-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 12px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.meta-item { font-size: 12px; color: var(--dim); }
+.meta-label { color: var(--text); margin-right: 4px; }
+
+
+.mechanic-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+  margin: 14px 0 24px;
+}
+
+.mechanic {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 16px;
+}
+
+.mechanic-title {
+  font-family: var(--font-orb);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--blue);
+  margin-bottom: 8px;
+}
+
+.mechanic p { font-size: 12px; color: var(--dim); margin: 0; line-height: 1.6; }
+
+
+.mission-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 14px 0 24px;
+}
+
+.mission-badge {
+  padding: 5px 14px;
+  font-size: 11px;
+  letter-spacing: 1px;
+  border: 1px solid;
+}
+
+.mission-badge.earth  { color: var(--blue);   border-color: rgba(42,144,255,0.4);  background: rgba(42,144,255,0.08); }
+.mission-badge.moon   { color: var(--yellow);  border-color: rgba(255,214,0,0.4);   background: rgba(255,214,0,0.06); }
+.mission-badge.mars   { color: var(--red);     border-color: rgba(255,34,68,0.4);   background: rgba(255,34,68,0.06); }
+.mission-badge.deep   { color: var(--purple);  border-color: rgba(176,64,224,0.4);  background: rgba(176,64,224,0.06); }
+
+
+.accent-red    { color: var(--red); }
+.accent-blue   { color: var(--blue); }
+.accent-green  { color: var(--blue); }
+.accent-orange { color: var(--orange); }
+.accent-purple { color: var(--purple); }
+
+
+.trouble-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--red);
+  padding: 18px 20px;
+  margin-bottom: 18px;
+}
+
+.trouble-title {
+  font-family: var(--font-orb);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--red);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  .content {
+    margin-left: 0;
+  }
+  .menu-btn {
+    display: block;
+  }
+  .doc-body {
+    padding: 24px 20px;
+  }
+}
+}
+
+let PAGE_BODY: Str = "  <div class=\"scanlines\"></div>\n\n  \n  <nav class=\"sidebar\" id=\"sidebar\">\n    <div class=\"sidebar-logo\">\n      <span class=\"logo-dot\"></span>\n      <span class=\"logo-text\">HACKEROS<span class=\"logo-sub\">GAMES</span></span>\n    </div>\n    <div class=\"sidebar-version\">DOCS // v0.7.0</div>\n\n    <ul class=\"nav-list\" id=\"nav-list\">\n      <li class=\"nav-section\">Overview</li>\n      <li><a href=\"#overview\" class=\"nav-link active\" data-section=\"overview\">Introduction</a></li>\n      <li><a href=\"#launcher\" class=\"nav-link\" data-section=\"launcher\">Launcher Interface</a></li>\n      <li><a href=\"#playtime\" class=\"nav-link\" data-section=\"playtime\">Playtime Tracking</a></li>\n      <li><a href=\"#settings\" class=\"nav-link\" data-section=\"settings\">Settings</a></li>\n      <li><a href=\"#addons\" class=\"nav-link\" data-section=\"addons\">Addons</a></li>\n\n      <li class=\"nav-section\">Games</li>\n      <li><a href=\"#the-racer\" class=\"nav-link\" data-section=\"the-racer\">The Racer</a></li>\n      <li><a href=\"#cosmonaut\" class=\"nav-link\" data-section=\"cosmonaut\">Cosmonaut</a></li>\n      <li><a href=\"#starblaster\" class=\"nav-link\" data-section=\"starblaster\">Starblaster</a></li>\n      <li><a href=\"#bark-squadron\" class=\"nav-link\" data-section=\"bark-squadron\">Bark Squadron</a></li>\n      <li><a href=\"#bit-jump\" class=\"nav-link\" data-section=\"bit-jump\">Bit Jump</a></li>\n\n      <li class=\"nav-section\">Technical</li>\n      <li><a href=\"#architecture\" class=\"nav-link\" data-section=\"architecture\">Architecture</a></li>\n      <li><a href=\"#paths\" class=\"nav-link\" data-section=\"paths\">File Paths</a></li>\n      <li><a href=\"#troubleshooting\" class=\"nav-link\" data-section=\"troubleshooting\">Troubleshooting</a></li>\n    </ul>\n  </nav>\n\n  \n  <main class=\"content\">\n    <header class=\"page-header\">\n      <div class=\"header-inner\">\n        <button class=\"menu-btn\" id=\"menu-btn\" aria-label=\"Toggle menu\">☰</button>\n        <div class=\"breadcrumb\" id=\"breadcrumb\">Introduction</div>\n        <div class=\"header-right\">\n          <span class=\"badge\">HACKEROS OS</span>\n        </div>\n      </div>\n    </header>\n\n    <div class=\"doc-body\">\n\n      \n      <section id=\"overview\" class=\"doc-section active\">\n        <div class=\"section-label\">OVERVIEW</div>\n        <h1>HackerOS Games</h1>\n        <p class=\"lead\">The native game launcher bundled with every edition of HackerOS. One interface for launching, configuring and tracking all HackerOS-native games.</p>\n\n        <div class=\"card-grid\">\n          <div class=\"info-card accent-blue\">\n            <div class=\"card-icon\">🎮</div>\n            <div class=\"card-title\">5 Games</div>\n            <div class=\"card-desc\">Curated library of HackerOS-native titles across multiple genres.</div>\n          </div>\n          <div class=\"info-card accent-green\">\n            <div class=\"card-icon\">⏱</div>\n            <div class=\"card-title\">Playtime Tracking</div>\n            <div class=\"card-desc\">Steam-style session tracking persisted to disk via Rust backend.</div>\n          </div>\n          <div class=\"info-card accent-orange\">\n            <div class=\"card-icon\">⚙</div>\n            <div class=\"card-title\">Per-Game Settings</div>\n            <div class=\"card-desc\">Fullscreen, resolution and volume flags passed on launch.</div>\n          </div>\n          <div class=\"info-card accent-purple\">\n            <div class=\"card-icon\">🧩</div>\n            <div class=\"card-title\">Addons</div>\n            <div class=\"card-desc\">Expansion content store — coming in a future update.</div>\n          </div>\n        </div>\n\n        <h2>Built With</h2>\n        <div class=\"tech-row\">\n          <div class=\"tech-badge blue\">Tauri 2</div>\n          <div class=\"tech-badge pink\">React 18</div>\n          <div class=\"tech-badge orange\">Rust</div>\n          <div class=\"tech-badge green\">TypeScript</div>\n        </div>\n\n        <div class=\"callout callout-info\">\n          <strong>Note:</strong> HackerOS Games is pre-installed on all HackerOS editions. No separate installation is required.\n        </div>\n      </section>\n\n      \n      <section id=\"launcher\" class=\"doc-section\">\n        <div class=\"section-label\">OVERVIEW</div>\n        <h1>Launcher Interface</h1>\n        <p>The launcher is divided into four sections accessible from the top navigation bar.</p>\n\n        <h2>Navigation</h2>\n        <table class=\"doc-table\">\n          <thead><tr><th>Tab</th><th>Description</th></tr></thead>\n          <tbody>\n            <tr><td><span class=\"code\">Library</span></td><td>Browse and launch your game library. Shows playtime stats per game.</td></tr>\n            <tr><td><span class=\"code\">Addons</span></td><td>Expansion content for installed games (coming soon).</td></tr>\n            <tr><td><span class=\"code\">Settings</span></td><td>Per-game launch configuration: fullscreen, resolution, volume.</td></tr>\n            <tr><td><span class=\"code\">About</span></td><td>Launcher version info and technology stack.</td></tr>\n          </tbody>\n        </table>\n\n        <h2>Window Controls</h2>\n        <p>The custom title bar provides three window controls:</p>\n        <ul class=\"doc-list\">\n          <li><span class=\"badge yellow\">—</span> Minimize to taskbar</li>\n          <li><span class=\"badge blue\">□</span> Toggle maximize / restore</li>\n          <li><span class=\"badge red\">✕</span> Close the launcher</li>\n        </ul>\n        <p>The title bar area can be dragged to move the window. Navigation tabs and window controls are excluded from the drag region.</p>\n\n        <h2>Library View</h2>\n        <p>The Library tab shows a sidebar list of all games on the left, and a detail panel on the right. Click any game in the sidebar to view its details, playtime stats and launch button.</p>\n        <div class=\"callout callout-warn\">\n          Games marked <span class=\"badge\">NOT INSTALLED</span> could not be found at their expected path in <span class=\"code\">/usr/share/HackerOS/Scripts/HackerOS-Games/</span>. Reinstall the relevant HackerOS game package to resolve this.\n        </div>\n      </section>\n\n      \n      <section id=\"playtime\" class=\"doc-section\">\n        <div class=\"section-label\">OVERVIEW</div>\n        <h1>Playtime Tracking</h1>\n        <p>HackerOS Games records how long you have played each game, similar to Steam's playtime feature.</p>\n\n        <h2>How It Works</h2>\n        <ol class=\"doc-list numbered\">\n          <li>When you click <strong>Launch Game</strong>, a session timer starts in the launcher frontend.</li>\n          <li>Every <strong>15 seconds</strong>, elapsed time is flushed to the Rust backend via a Tauri IPC call (<span class=\"code\">record_playtime</span>).</li>\n          <li>The backend appends the delta to a persistent JSON file at <span class=\"code\">~/.hackeros-games/playtime.json</span>.</li>\n          <li>An additional flush occurs when the launcher window loses focus or is closed.</li>\n        </ol>\n\n        <h2>Data Stored</h2>\n        <table class=\"doc-table\">\n          <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>\n          <tbody>\n            <tr><td><span class=\"code\">game_id</span></td><td>string</td><td>Internal game identifier</td></tr>\n            <tr><td><span class=\"code\">total_seconds</span></td><td>u64</td><td>Cumulative play time in seconds</td></tr>\n            <tr><td><span class=\"code\">last_played</span></td><td>u64</td><td>Unix timestamp of last session</td></tr>\n            <tr><td><span class=\"code\">sessions</span></td><td>u32</td><td>Number of times launched</td></tr>\n          </tbody>\n        </table>\n\n        <h2>Resetting Playtime</h2>\n        <p>To reset playtime data for all games, delete the file:</p>\n        <div class=\"code-block\">rm ~/.hackeros-games/playtime.json</div>\n      </section>\n\n      \n      <section id=\"settings\" class=\"doc-section\">\n        <div class=\"section-label\">OVERVIEW</div>\n        <h1>Settings</h1>\n        <p>The Settings tab allows per-game launch configuration. Select a game from the left sidebar, adjust options and click <strong>Save</strong>.</p>\n\n        <h2>Available Options</h2>\n        <table class=\"doc-table\">\n          <thead><tr><th>Option</th><th>Values</th><th>Description</th></tr></thead>\n          <tbody>\n            <tr>\n              <td><span class=\"code\">Fullscreen</span></td>\n              <td>Off / On</td>\n              <td>Passes <span class=\"code\">--fullscreen</span> flag when launching the game.</td>\n            </tr>\n            <tr>\n              <td><span class=\"code\">Resolution</span></td>\n              <td>1280×720 to 3840×2160</td>\n              <td>Target resolution. Support depends on each game's own implementation.</td>\n            </tr>\n            <tr>\n              <td><span class=\"code\">Volume</span></td>\n              <td>0% – 100%</td>\n              <td>Master volume level. Passed as metadata; game must support it.</td>\n            </tr>\n          </tbody>\n        </table>\n\n        <div class=\"callout callout-info\">\n          Settings are saved to <span class=\"code\">~/.hackeros-games/settings.json</span> and applied on the next game launch. Not all games honour every flag.\n        </div>\n\n        <h2>Reset to Defaults</h2>\n        <p>Click the <strong>Reset</strong> button on any game's settings panel, or delete the settings file:</p>\n        <div class=\"code-block\">rm ~/.hackeros-games/settings.json</div>\n      </section>\n\n      \n      <section id=\"addons\" class=\"doc-section\">\n        <div class=\"section-label\">OVERVIEW</div>\n        <h1>Addons</h1>\n        <p>The Addons section is reserved for expansion content that extends HackerOS games with new levels, features or assets.</p>\n\n        <div class=\"callout callout-warn\">\n          <strong>Coming Soon.</strong> The Addons store and download infrastructure are under development and will be available in a future HackerOS Games update.\n        </div>\n\n        <h2>Planned Addons</h2>\n        <table class=\"doc-table\">\n          <thead><tr><th>Addon</th><th>Target Game</th><th>Status</th></tr></thead>\n          <tbody>\n            <tr><td>Extended Waves</td><td>Starblaster</td><td><span class=\"badge yellow\">In Dev</span></td></tr>\n            <tr><td>Campaign Mode</td><td>Bark Squadron</td><td><span class=\"badge yellow\">In Dev</span></td></tr>\n            <tr><td>World 2</td><td>Bit Jump</td><td><span class=\"badge yellow\">In Dev</span></td></tr>\n            <tr><td>2027 Season Pack</td><td>The Racer</td><td><span class=\"badge yellow\">In Dev</span></td></tr>\n          </tbody>\n        </table>\n      </section>\n\n      \n      <section id=\"the-racer\" class=\"doc-section\">\n        <div class=\"section-label\">GAME</div>\n        <h1>The Racer</h1>\n        <div class=\"game-header\">\n          <div class=\"game-meta\">\n            <div class=\"meta-item\"><span class=\"meta-label\">Genre</span> Management / Simulation</div>\n            <div class=\"meta-item\"><span class=\"meta-label\">Engine</span> Rust + macroquad</div>\n            <div class=\"meta-item\"><span class=\"meta-label\">Version</span> 1.0.0</div>\n          </div>\n        </div>\n\n        <p>A motorsport management simulator where you build a racing team from the ground up and compete across five major racing series.</p>\n\n        <h2>Racing Series</h2>\n        <table class=\"doc-table\">\n          <thead><tr><th>Series</th><th>Rounds</th><th>Highlights</th></tr></thead>\n          <tbody>\n            <tr><td><span class=\"accent-red\">Formula 1 2026</span></td><td>24</td><td>Full 2026 calendar, hybrid power units, pit stops</td></tr>\n            <tr><td><span class=\"accent-blue\">IndyCar</span></td><td>17</td><td>Oval + road courses, high speed, Indy 500</td></tr>\n            <tr><td><span class=\"accent-green\">Formula E</span></td><td>16</td><td>Electric, no pit stops, attack mode strategy</td></tr>\n            <tr><td><span class=\"accent-orange\">WEC</span></td><td>8</td><td>Endurance racing, Le Mans, multi-hour stints</td></tr>\n            <tr><td><span class=\"accent-purple\">GT3</span></td><td>12</td><td>Production-based cars, pro-am grid</td></tr>\n          </tbody>\n        </table>\n\n        <h2>Game Mechanics</h2>\n        <div class=\"mechanic-grid\">\n          <div class=\"mechanic\">\n            <div class=\"mechanic-title\">Drivers</div>\n            <p>Hire and manage two drivers with individual stats: Pace, Consistency, Wet Skill, Tire Management, Experience and Morale.</p>\n          </div>\n          <div class=\"mechanic\">\n            <div class=\"mechanic-title\">Car Development</div>\n            <p>Invest in R&amp;D projects across five areas: Chassis, Engine, Reliability, Tire Degradation and Pit Speed. Each takes several races to complete.</p>\n          </div>\n          <div class=\"mechanic\">\n            <div class=\"mechanic-title\">Pit Strategy</div>\n            <p>Choose tire compound (Soft/Medium/Hard/Inter/Wet) and pit lap for each driver. Wet conditions make compound choice critical.</p>\n          </div>\n          <div class=\"mechanic\">\n            <div class=\"mechanic-title\">Track Map</div>\n            <p>Visual map of every circuit with accurate outlines. Shows S/F line, pit entry, and post-race results per round.</p>\n          </div>\n        </div>\n\n        <h2>Navigation</h2>\n        <table class=\"doc-table\">\n          <thead><tr><th>Tab</th><th>Function</th></tr></thead>\n          <tbody>\n            <tr><td>Dashboard</td><td>Season overview, next race info, recent results</td></tr>\n            <tr><td>Roster</td><td>Driver stats, contracts, morale</td></tr>\n            <tr><td>Car Dev</td><td>R&amp;D project management, car stats</td></tr>\n            <tr><td>Standings</td><td>Full constructor standings with points bar</td></tr>\n            <tr><td>Track Map</td><td>Circuit selector with SVG track outlines</td></tr>\n            <tr><td>Next Race</td><td>Opens race weekend: practice, qualifying, strategy, race</td></tr>\n          </tbody>\n        </table>\n\n        <h2>Save / Load</h2>\n        <p>Progress is auto-saved after each race to <span class=\"code\">the-racer-save.json</span> in the working directory. Use <strong>Continue</strong> from the main menu to resume.</p>\n      </section>\n\n      \n      <section id=\"cosmonaut\" class=\"doc-section\">\n        <div class=\"section-label\">GAME</div>\n        <h1>Cosmonaut</h1>\n        <div class=\"game-header\">\n          <div class=\"game-meta\">\n            <div class=\"meta-item\"><span class=\"meta-label\">Genre</span> Strategy / Exploration</div>\n            <div class=\"meta-item\"><span class=\"meta-label\">Engine</span> Odin + Raylib</div>\n            <div class=\"meta-item\"><span class=\"meta-label\">Version</span> 0.1.0 Alpha</div>\n            <div class=\"meta-item\"><span class=\"badge yellow\">Coming Soon</span></div>\n          </div>\n        </div>\n\n        <p>Manage a space agency from the dawn of the Space Race to interplanetary exploration. Inspired by the golden age of NASA.</p>\n\n        <h2>Starting Eras</h2>\n        <table class=\"doc-table\">\n          <thead><tr><th>Era</th><th>Year</th><th>Budget</th><th>Description</th></tr></thead>\n          <tbody>\n            <tr><td>Space Race</td><td>1957</td><td>$300M</td><td>Humble beginnings with Vanguard and Atlas rockets</td></tr>\n            <tr><td>Apollo Era</td><td>1960</td><td>$500M</td><td>Lunar ambition, improved technology</td></tr>\n            <tr><td>Shuttle Era</td><td>1975</td><td>$800M</td><td>Reusability focus, larger budgets</td></tr>\n            <tr><td>Modern Era</td><td>1995</td><td>$1200M</td><td>Advanced technology, commercial partnerships</td></tr>\n          </tbody>\n        </table>\n\n        <h2>Mission Types</h2>\n        <div class=\"mission-grid\">\n          <div class=\"mission-badge earth\">Orbital Test</div>\n          <div class=\"mission-badge earth\">Satellite Network</div>\n          <div class=\"mission-badge earth\">Crewed Orbit</div>\n          <div class=\"mission-badge moon\">Lunar Flyby</div>\n          <div class=\"mission-badge moon\">Lunar Orbit</div>\n          <div class=\"mission-badge moon\">Lunar Landing</div>\n          <div class=\"mission-badge mars\">Mars Probe</div>\n          <div class=\"mission-badge mars\">Mars Orbiter</div>\n          <div class=\"mission-badge mars\">Mars Surface</div>\n          <div class=\"mission-badge deep\">Asteroid Probe</div>\n          <div class=\"mission-badge deep\">Space Station</div>\n          <div class=\"mission-badge deep\">Deep Space</div>\n        </div>\n\n        <h2>Screens</h2>\n        <table class=\"doc-table\">\n          <thead><tr><th>Screen</th><th>Description</th></tr></thead>\n          <tbody>\n            <tr><td>Control</td><td>Mission Control dashboard with active missions and event log</td></tr>\n            <tr><td>Rockets</td><td>Fleet overview and design lab for new vehicles</td></tr>\n            <tr><td>Crew</td><td>Astronaut corps — stats, status, recruitment</td></tr>\n            <tr><td>Missions</td><td>Mission manifest with filters and flight log per mission</td></tr>\n            <tr><td>Research</td><td>R&amp;D projects across 7 technology areas</td></tr>\n            <tr><td>Star Map</td><td>Interactive Solar System map with exploration status</td></tr>\n            <tr><td>Base</td><td>Facility upgrades: Launch Pads, VAB, Tracking, Lab, Habitat</td></tr>\n          </tbody>\n        </table>\n\n        <h2>Controls</h2>\n        <table class=\"doc-table\">\n          <thead><tr><th>Key</th><th>Action</th></tr></thead>\n          <tbody>\n            <tr><td><span class=\"key\">Space</span></td><td>Advance one month (when on Dashboard)</td></tr>\n            <tr><td><span class=\"key\">Esc</span></td><td>Return to previous screen / Dashboard</td></tr>\n            <tr><td><span class=\"key\">Mouse</span></td><td>All navigation and interaction</td></tr>\n          </tbody>\n        </table>\n      </section>\n\n      \n      <section id=\"starblaster\" class=\"doc-section\">\n        <div class=\"section-label\">GAME</div>\n        <h1>Starblaster</h1>\n        <div class=\"game-header\">\n          <div class=\"game-meta\">\n            <div class=\"meta-item\"><span class=\"meta-label\">Genre</span> Bullet Hell / Shooter</div>\n            <div class=\"meta-item\"><span class=\"meta-label\">Engine</span> Rust + macroquad</div>\n            <div class=\"meta-item\"><span class=\"meta-label\">Version</span> 0.6.0</div>\n          </div>\n        </div>\n\n        <p>A top-down bullet hell shooter with dynamic difficulty, graze mechanics, combo multipliers and a full save/load system.</p>\n\n        <h2>Mechanics</h2>\n        <ul class=\"doc-list\">\n          <li><strong>Graze System</strong> — flying close to enemy bullets without being hit awards score and charges your Ultimate.</li>\n          <li><strong>Combo Multiplier</strong> — consecutive kills increase your score multiplier. Missing or taking a hit resets it.</li>\n          <li><strong>Heat System</strong> — sustained fire overheats your weapons, requiring a cooldown period.</li>\n          <li><strong>Ultimate Ability</strong> — screen-clearing attack charged by combat actions.</li>\n          <li><strong>Dynamic Difficulty</strong> — the Director AI adjusts enemy spawn rates based on your accuracy and health.</li>\n        </ul>\n\n        <h2>Enemy Types</h2>\n        <table class=\"doc-table\">\n          <thead><tr><th>Type</th><th>Behaviour</th></tr></thead>\n          <tbody>\n            <tr><td>Basic</td><td>Slow linear movement, easy to dodge</td></tr>\n            <tr><td>Fast</td><td>High speed, erratic movement</td></tr>\n            <tr><td>Tank</td><td>High HP, absorbs many hits</td></tr>\n            <tr><td>Shooter</td><td>Hovers and fires aimed bursts at the player</td></tr>\n            <tr><td>Kamikaze</td><td>Charges directly at the player on proximity</td></tr>\n            <tr><td>Asteroid</td><td>Fast-falling debris, nearly indestructible</td></tr>\n          </tbody>\n        </table>\n\n        <h2>Controls</h2>\n        <table class=\"doc-table\">\n          <thead><tr><th>Key</th><th>Action</th></tr></thead>\n          <tbody>\n            <tr><td><span class=\"key\">↑↓←→</span></td><td>Move ship</td></tr>\n            <tr><td><span class=\"key\">Space</span></td><td>Fire weapons</td></tr>\n            <tr><td><span class=\"key\">L-Shift</span></td><td>Activate Ultimate (when charged)</td></tr>\n            <tr><td><span class=\"key\">P</span></td><td>Pause game</td></tr>\n            <tr><td><span class=\"key\">S</span> (paused)</td><td>Save and exit to menu</td></tr>\n            <tr><td><span class=\"key\">L</span> (menu)</td><td>Load saved game</td></tr>\n          </tbody>\n        </table>\n      </section>\n\n      \n      <section id=\"bark-squadron\" class=\"doc-section\">\n        <div class=\"section-label\">GAME</div>\n        <h1>Bark Squadron</h1>\n        <div class=\"game-header\">\n          <div class=\"game-meta\">\n            <div class=\"meta-item\"><span class=\"meta-label\">Genre</span> Action / Flight</div>\n            <div class=\"meta-item\"><span class=\"meta-label\">Engine</span> TypeScript + React + Tauri</div>\n            <div class=\"meta-item\"><span class=\"meta-label\">Version</span> 0.6.0</div>\n          </div>\n        </div>\n\n        <p>Physics-based 2D dogfighting game with realistic aerodynamics — gravity, drag, stall speed, afterburners and water interactions.</p>\n\n        <h2>Physics Model</h2>\n        <ul class=\"doc-list\">\n          <li><strong>Gravity &amp; Drag</strong> — the aircraft is subject to gravity and air resistance at all times.</li>\n          <li><strong>Stall Speed</strong> — flying too slowly causes the nose to drop and the aircraft to lose control.</li>\n          <li><strong>Afterburner</strong> — thrust boost with visible flame and particle exhaust.</li>\n          <li><strong>Water Skimming</strong> — low-altitude passes create wake mist and spray effects.</li>\n          <li><strong>Camera Look-ahead</strong> — the camera smoothly leads the aircraft based on velocity direction.</li>\n        </ul>\n\n        <h2>Enemy Types</h2>\n        <table class=\"doc-table\">\n          <thead><tr><th>Type</th><th>Colour</th><th>Description</th></tr></thead>\n          <tbody>\n            <tr><td>Grunt</td><td><span class=\"badge\">Grey</span></td><td>Standard enemy, moderate speed, tracks player directly</td></tr>\n            <tr><td>Ace</td><td><span class=\"badge\">Black</span></td><td>High speed, predictive AI — leads the player position</td></tr>\n            <tr><td>Bomber</td><td><span class=\"badge\">Green</span></td><td>Very high HP, slow but heavily armed</td></tr>\n          </tbody>\n        </table>\n\n        <h2>Controls</h2>\n        <table class=\"doc-table\">\n          <thead><tr><th>Key</th><th>Action</th></tr></thead>\n          <tbody>\n            <tr><td><span class=\"key\">↑ / W</span></td><td>Afterburner thrust</td></tr>\n            <tr><td><span class=\"key\">← / A</span></td><td>Rotate left</td></tr>\n            <tr><td><span class=\"key\">→ / D</span></td><td>Rotate right</td></tr>\n            <tr><td><span class=\"key\">Space</span></td><td>Fire cannons</td></tr>\n            <tr><td><span class=\"key\">Esc</span></td><td>Pause / unpause</td></tr>\n          </tbody>\n        </table>\n\n        <h2>Settings</h2>\n        <ul class=\"doc-list\">\n          <li><strong>Difficulty</strong> — Easy, Normal, Hard (adjusts enemy count and damage)</li>\n          <li><strong>Sensitivity</strong> — Rotation speed multiplier (0.5 to 2.0)</li>\n          <li><strong>Particles</strong> — Toggle visual effects for performance</li>\n          <li><strong>High Quality</strong> — Water reflections and heat distortion effects</li>\n        </ul>\n      </section>\n\n      \n      <section id=\"bit-jump\" class=\"doc-section\">\n        <div class=\"section-label\">GAME</div>\n        <h1>Bit Jump</h1>\n        <div class=\"game-header\">\n          <div class=\"game-meta\">\n            <div class=\"meta-item\"><span class=\"meta-label\">Genre</span> Platformer</div>\n            <div class=\"meta-item\"><span class=\"meta-label\">Engine</span> Lua + LÖVE2D</div>\n            <div class=\"meta-item\"><span class=\"meta-label\">Version</span> 0.6.0</div>\n          </div>\n        </div>\n\n        <p>A Geometry Dash-inspired precision platformer across 8 hand-crafted levels featuring moving platforms, hazards, power-ups and a final boss.</p>\n\n        <div class=\"callout callout-info\">\n          Bit Jump requires <strong>LÖVE2D</strong> to be installed. On HackerOS it is launched automatically via <span class=\"code\">love /path/to/bit-jump.love</span>.\n        </div>\n\n        <h2>Game Modes</h2>\n        <table class=\"doc-table\">\n          <thead><tr><th>Mode</th><th>Description</th></tr></thead>\n          <tbody>\n            <tr><td>Normal</td><td>Complete 8 levels in sequence. 3 lives.</td></tr>\n            <tr><td>Time Attack</td><td>Race through levels within a time limit that grows per level.</td></tr>\n            <tr><td>Endless</td><td>Loop through all levels with increasing auto-speed. Score attack.</td></tr>\n            <tr><td>Practice</td><td>Unlimited lives. Learn level layouts without pressure.</td></tr>\n          </tbody>\n        </table>\n\n        <h2>Power-Ups</h2>\n        <table class=\"doc-table\">\n          <thead><tr><th>Power-Up</th><th>Effect</th></tr></thead>\n          <tbody>\n            <tr><td><span class=\"accent-blue\">Invincibility</span></td><td>5 seconds of immunity to all hazards and enemies</td></tr>\n            <tr><td><span class=\"accent-green\">Double Jump</span></td><td>Grants one additional mid-air jump</td></tr>\n            <tr><td><span class=\"accent-blue\">Shield</span></td><td>Absorbs one hit from any hazard</td></tr>\n            <tr><td><span class=\"accent-purple\">Speed Boost</span></td><td>5 seconds of increased auto-run speed</td></tr>\n          </tbody>\n        </table>\n\n        <h2>Hacking Ability</h2>\n        <p>Press <span class=\"key\">H</span> to activate a hack that disables all nearby enemies for 10 seconds. 10-second cooldown. Unlocks the <em>Hacker</em> achievement on first use.</p>\n\n        <h2>Achievements</h2>\n        <table class=\"doc-table\">\n          <thead><tr><th>Achievement</th><th>Condition</th></tr></thead>\n          <tbody>\n            <tr><td>Hacker</td><td>Use the hack ability for the first time</td></tr>\n            <tr><td>Data Collector</td><td>Collect all data orbs in a single level</td></tr>\n            <tr><td>Endless Runner</td><td>Complete a loop in Endless mode</td></tr>\n            <tr><td>Game Winner</td><td>Complete all 8 levels</td></tr>\n            <tr><td>Perfect Run</td><td>Reach the maximum score multiplier (x5)</td></tr>\n            <tr><td>Speed Demon</td><td>Collect a Speed Boost power-up</td></tr>\n          </tbody>\n        </table>\n      </section>\n\n      \n      <section id=\"architecture\" class=\"doc-section\">\n        <div class=\"section-label\">TECHNICAL</div>\n        <h1>Architecture</h1>\n\n        <h2>Launcher Stack</h2>\n        <div class=\"code-block\">\nHackerOS Games Launcher\n├── Frontend  (React 18 + TypeScript)\n│   ├── App.tsx              — root, window controls, nav, playtime tracker\n│   ├── components/\n│   │   ├── GamesSection.tsx — library sidebar + detail panel\n│   │   ├── SettingsSection.tsx\n│   │   ├── AddonsSection.tsx\n│   │   └── ParticlesBackground.tsx\n│   ├── constants.ts         — game configs\n│   └── types.ts             — shared TypeScript types\n│\n└── Backend   (Rust + Tauri 2)\n    └── src/main.rs\n        ├── check_game_exists  — verify binary at expected path\n        ├── launch_game        — spawn process + record session\n        ├── record_playtime    — append elapsed seconds\n        ├── get_all_playtime   — read current stats\n        ├── save_game_settings — persist per-game config\n        └── get_all_game_settings\n        </div>\n\n        <h2>IPC Commands</h2>\n        <table class=\"doc-table\">\n          <thead><tr><th>Command</th><th>Arguments</th><th>Returns</th></tr></thead>\n          <tbody>\n            <tr><td><span class=\"code\">check_game_exists</span></td><td><span class=\"code\">game_id: String</span></td><td><span class=\"code\">bool</span></td></tr>\n            <tr><td><span class=\"code\">launch_game</span></td><td><span class=\"code\">game_id: String</span></td><td><span class=\"code\">Result&lt;bool&gt;</span></td></tr>\n            <tr><td><span class=\"code\">record_playtime</span></td><td><span class=\"code\">game_id, seconds</span></td><td><span class=\"code\">Result&lt;()&gt;</span></td></tr>\n            <tr><td><span class=\"code\">get_all_playtime</span></td><td>—</td><td><span class=\"code\">HashMap&lt;String, GamePlaytime&gt;</span></td></tr>\n            <tr><td><span class=\"code\">save_game_settings</span></td><td><span class=\"code\">game_id, settings</span></td><td><span class=\"code\">Result&lt;()&gt;</span></td></tr>\n            <tr><td><span class=\"code\">get_all_game_settings</span></td><td>—</td><td><span class=\"code\">HashMap&lt;String, GameSettings&gt;</span></td></tr>\n          </tbody>\n        </table>\n      </section>\n\n      \n      <section id=\"paths\" class=\"doc-section\">\n        <div class=\"section-label\">TECHNICAL</div>\n        <h1>File Paths</h1>\n\n        <h2>Game Binaries</h2>\n        <table class=\"doc-table\">\n          <thead><tr><th>Game</th><th>Path</th></tr></thead>\n          <tbody>\n            <tr><td>Starblaster</td><td><span class=\"code\">/usr/share/HackerOS/Scripts/HackerOS-Games/starblaster</span></td></tr>\n            <tr><td>Bit Jump</td><td><span class=\"code\">/usr/share/HackerOS/Scripts/HackerOS-Games/bit-jump.love</span></td></tr>\n            <tr><td>The Racer</td><td><span class=\"code\">/usr/share/HackerOS/Scripts/HackerOS-Games/the-racer</span></td></tr>\n            <tr><td>Bark Squadron</td><td><span class=\"code\">/usr/share/HackerOS/Scripts/HackerOS-Games/bark-squadron.AppImage</span></td></tr>\n            <tr><td>Cosmonaut</td><td><span class=\"code\">/usr/share/HackerOS/Scripts/HackerOS-Games/cosmonaut</span></td></tr>\n          </tbody>\n        </table>\n\n        <h2>Data Files</h2>\n        <table class=\"doc-table\">\n          <thead><tr><th>File</th><th>Contents</th></tr></thead>\n          <tbody>\n            <tr><td><span class=\"code\">~/.hackeros-games/playtime.json</span></td><td>Playtime data for all games</td></tr>\n            <tr><td><span class=\"code\">~/.hackeros-games/settings.json</span></td><td>Per-game launch settings</td></tr>\n            <tr><td><span class=\"code\">./the-racer-save.json</span></td><td>The Racer season save (working dir)</td></tr>\n            <tr><td><span class=\"code\">./cosmonaut_save.json</span></td><td>Cosmonaut agency save (working dir)</td></tr>\n          </tbody>\n        </table>\n\n        <h2>Launcher Assets</h2>\n        <div class=\"code-block\">\n~/HackerOS-Games/app/\n├── images/\n│   ├── starblaster.png\n│   ├── bit-jump.png\n│   ├── the-racer.png\n│   ├── bark-squadron.png\n│   └── cosmonaut.png\n└── src-tauri/\n    └── capabilities/\n        └── default.json    — Tauri 2 permission grants\n        </div>\n      </section>\n\n      \n      <section id=\"troubleshooting\" class=\"doc-section\">\n        <div class=\"section-label\">TECHNICAL</div>\n        <h1>Troubleshooting</h1>\n\n        <div class=\"trouble-item\">\n          <div class=\"trouble-title\">Game shows \"NOT INSTALLED\"</div>\n          <p>The launcher cannot find the game binary at its expected path. Verify the file exists:</p>\n          <div class=\"code-block\">ls /usr/share/HackerOS/Scripts/HackerOS-Games/</div>\n          <p>If missing, reinstall the relevant HackerOS game package.</p>\n        </div>\n\n        <div class=\"trouble-item\">\n          <div class=\"trouble-title\">Window controls don't work (minimize / maximize / close)</div>\n          <p>Ensure the Tauri capabilities file grants window permissions:</p>\n          <div class=\"code-block\">cat ~/HackerOS-Games/app/src-tauri/capabilities/default.json</div>\n          <p>It must include <span class=\"code\">core:window:allow-minimize</span>, <span class=\"code\">core:window:allow-toggle-maximize</span> and <span class=\"code\">core:window:allow-close</span>.</p>\n        </div>\n\n        <div class=\"trouble-item\">\n          <div class=\"trouble-title\">Playtime not updating</div>\n          <p>Playtime syncs to disk every 15 seconds and on window blur/close. If you force-kill the launcher, the last 15s may not be saved. Check:</p>\n          <div class=\"code-block\">cat ~/.hackeros-games/playtime.json</div>\n        </div>\n\n        <div class=\"trouble-item\">\n          <div class=\"trouble-title\">Bit Jump won't launch</div>\n          <p>Bit Jump requires LÖVE2D. Install it:</p>\n          <div class=\"code-block\">sudo apt install love</div>\n        </div>\n\n        <div class=\"trouble-item\">\n          <div class=\"trouble-title\">Bark Squadron AppImage won't launch</div>\n          <p>The launcher auto-sets executable permissions on AppImages. If it still fails:</p>\n          <div class=\"code-block\">chmod +x /usr/share/HackerOS/Scripts/HackerOS-Games/bark-squadron.AppImage</div>\n        </div>\n\n        <div class=\"trouble-item\">\n          <div class=\"trouble-title\">Build errors on npm run tauri build</div>\n          <p>Ensure all Tauri 2 dependencies are installed:</p>\n          <div class=\"code-block\">npm install @tauri-apps/api@^2 @tauri-apps/plugin-shell@^2\nnpm install -D @tauri-apps/cli@^2</div>\n        </div>\n      </section>\n\n    </div>\n  </main>\n\n  "
+
+fun main() [
+    boot_begin("en", "HackerOS Games — Documentation")
+    set_viewport("width=device-width, initial-scale=1.0")
+    head_tag("link", ["rel", "preconnect", "href", "https://fonts.googleapis.com"])
+    head_tag("link", ["rel", "icon", "type", "image/png", "href", "https://raw.githubusercontent.com/HackerOS-Linux-System/HackerOS-Games/main/app/src-tauri/icons/icon-nobg.png"])
+    head_tag("link", ["rel", "preconnect", "href", "https://fonts.gstatic.com", "crossorigin", ""])
+    head_tag("link", ["href", "https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap", "rel", "stylesheet"])
+    boot_body(PAGE_BODY)
+    offline_init("../")
+    games_docs_init()
+]
