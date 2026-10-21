@@ -1,0 +1,33 @@
+include <../shared/core>
+include <../shared/lang>
+include <../data/team_t>
+
+let team_trans: Any = null
+
+fun team_apply_lang(lang: Str) [
+    let t = jget(team_trans, lang)
+    if nil(t) [
+        end
+    ]
+    document.documentElement.lang = lang
+    document.title = t.pageTitle
+    set_text("team-h1", t.sectionH1)
+    set_text("member0-role", t.member0Role)
+    let m1 = document.getElementById("member1-role")
+    if m1 != null and t.member1Role [
+        m1.textContent = t.member1Role
+    ]
+    set_text("footer-copy", t.footerCopy)
+    set_text("nav-home", t.navHome)
+    set_text("nav-download", t.navDownload)
+    set_text("nav-releases", t.navReleases)
+    set_text("nav-team", t.navTeam)
+    set_text("nav-docs", t.navDocs)
+]
+
+fun team_init() [
+    team_trans = trans_team()
+    window.__hackeros_applyLang = team_apply_lang
+    team_apply_lang(get_lang())
+    lang_switcher_init()
+]
