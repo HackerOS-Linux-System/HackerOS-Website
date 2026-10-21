@@ -1,0 +1,24 @@
+use <mode:website>
+
+include <../logic/offline_page>
+
+style {
+#app { display: none; }
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;}
+body{background:#1C2526;color:#fff;font-family:Arial,sans-serif;}
+#fallback{display:none;min-height:100vh;align-items:center;justify-content:center;text-align:center;padding:24px;}
+#fallback h1{font-size:28px;margin-bottom:10px;}
+#fallback p{color:#B0B0B0;margin-bottom:18px;}
+#fallback button{padding:10px 22px;border:0;border-radius:5px;background:#B0B0B0;color:#121212;font-weight:bold;font-size:15px;cursor:pointer;}
+}
+
+let PAGE_BODY: Str = "<div id=\"app\"></div>\n\n\n<div id=\"fallback\">\n  <div>\n    <h1 id=\"fb-t\">Brak połączenia z internetem</h1>\n    <p id=\"fb-m\">Sprawdź kabel, Wi-Fi lub dane komórkowe.</p>\n    <button id=\"fb-b\" type=\"button\">Spróbuj ponownie</button>\n  </div>\n</div>"
+
+fun main() [
+    boot_begin("pl", "HackerOS - Offline")
+    set_viewport("width=device-width,initial-scale=1.0")
+    head_tag("meta", ["name", "robots", "content", "noindex"])
+    boot_body(PAGE_BODY)
+    offline_page_init()
+]
