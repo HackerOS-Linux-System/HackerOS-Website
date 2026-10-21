@@ -1,0 +1,162 @@
+include <../shared/core>
+include <../shared/lang>
+include <../data/home_t>
+
+let typing_words: Any = []
+let typing_idx = 0
+let typing_timer: Any = null
+let typing_word: Any = ""
+let typing_j = 0
+let home_trans: Any = null
+
+!! ── efekt pisania ──────────────────────────────────────────────────────
+fun typing_type_tick() [
+    let el = document.getElementById("typing")
+    if typing_j < typing_word.length [
+        el.textContent = el.textContent + typing_word.charAt(typing_j)
+        typing_j = typing_j + 1
+    ] else [
+        clearInterval(typing_timer)
+        setTimeout(typing_delete_word, 2000)
+    ]
+]
+
+fun typing_type_word(w: Any) [
+    typing_word = w
+    typing_j = 0
+    typing_timer = setInterval(typing_type_tick, 100)
+]
+
+fun typing_delete_tick() [
+    let el = document.getElementById("typing")
+    if el.textContent.length > 0 [
+        el.textContent = el.textContent.slice(0, -1)
+    ] else [
+        clearInterval(typing_timer)
+        typing_idx = (typing_idx + 1) % typing_words.length
+        setTimeout(typing_next_word, 500)
+    ]
+]
+
+fun typing_next_word() [
+    typing_type_word(typing_words[typing_idx])
+]
+
+fun typing_delete_word() [
+    typing_timer = setInterval(typing_delete_tick, 50)
+]
+
+!! ── tlumaczenie ────────────────────────────────────────────────────────
+fun home_apply_lang(lang: Str) [
+    let t = jget(home_trans, lang)
+    if nil(t) or t == null [
+        end
+    ]
+    document.documentElement.lang = lang
+    set_text("title", t.title)
+    set_text("prefix", t.prefix)
+    set_text("btn-download", t.btnDownload)
+    set_text("btn-docs", t.btnDocs)
+    set_text("footer-forum", t.footerForum)
+    set_text("footer-bug", t.footerBug)
+    set_text("footer-android", t.footerAndroid)
+    set_text("footer-copy", t.footerCopy)
+    set_text("nav-home", t.navHome)
+    set_text("nav-download", t.navDownload)
+    set_text("nav-releases", t.navReleases)
+    set_text("nav-team", t.navTeam)
+    set_text("nav-docs", t.navDocs)
+    if typing_timer != null [
+        clearInterval(typing_timer)
+    ]
+    document.getElementById("typing").textContent = ""
+    typing_words = t.words
+    typing_idx = 0
+    typing_type_word(typing_words[0])
+]
+
+!! ── dni specjalne ──────────────────────────────────────────────────────
+fun special_day_text(kind: Str, lang: Str) -> Any [
+    !! [pl, en] dla kazdego rodzaju dnia; inne jezyki -> en
+    let t = js_obj()
+    if kind == "anniversary" [
+        if lang == "pl" [
+            t.title = "Dlaczego: Kolejny rok z HackerOS :D"
+            t.text = "3 marca to dzień, w którym wystartował projekt HackerOS. Każdego roku tego dnia świętujemy kolejną rocznicę rozwoju systemu razem z całą społecznością. Dziękujemy, że jesteście z nami!"
+        ] else [
+            t.title = "Why: Another year with HackerOS :D"
+            t.text = "March 3rd marks the day the HackerOS project started. Every year on this date we celebrate another anniversary of the system's development together with the whole community. Thank you for being with us!"
+        ]
+    ] else [
+        if lang == "pl" [
+            t.title = "Dlaczego: Urodziny twórcy systemu"
+            t.text = "24 września to urodziny twórcy HackerOS. Z tej okazji strona na jeden dzień zmienia swój wygląd — przyciski świecą na niebiesko z dynamiczną animacją. Wszystkiego najlepszego!"
+        ] else [
+            t.title = "Why: The system creator's birthday"
+            t.text = "September 24th is the birthday of HackerOS's creator. To mark the occasion, the site changes its look for one day — buttons glow blue with a dynamic animation. Happy birthday!"
+        ]
+    ]
+    end t
+]
+
+fun spawn_confetti() [
+    let hero = document.querySelector(".hero")
+    if hero == null [
+        end
+    ]
+    let colors = ["#ffd06e", "#ff8fd6", "#8ea9ff", "#7fffb0"]
+    let i = 0
+    while i < 26 [
+        let c = document.createElement("span")
+        c.className = "confetti-piece"
+        c.style.left = (Math.random() * 100) + "%"
+        c.style.animationDelay = (Math.random() * 8) + "s"
+        c.style.animationDuration = (5 + Math.random() * 4) + "s"
+        c.style.background = colors[i % colors.length]
+        hero.appendChild(c)
+        i = i + 1
+    ]
+]
+
+fun apply_special_day(lang: Str) [
+    let now = Reflect.construct(Date, [])
+    let day = now.getDate()
+    let month = now.getMonth()      !! 0-indeksowane: marzec = 2, wrzesien = 8
+    let body = document.body
+    let section = document.getElementById("special-day-section")
+    let title_el = document.getElementById("special-day-title")
+    let text_el = document.getElementById("special-day-text")
+
+    if month == 2 and day == 3 [
+        body.classList.add("day-anniversary")
+        let t = special_day_text("anniversary", lang)
+        title_el.textContent = t.title
+        text_el.textContent = t.text
+        section.style.display = "block"
+        spawn_confetti()
+    ] elif month == 8 and day == 24 [
+        body.classList.add("day-creator-birthday")
+        let t = special_day_text("birthday", lang)
+        title_el.textContent = t.title
+        text_el.textContent = t.text
+        section.style.display = "block"
+    ] else [
+        cl_rm(body, "day-anniversary")
+        cl_rm(body, "day-creator-birthday")
+        section.style.display = "none"
+    ]
+]
+
+fun home_apply_all_lang(lang: Str) [
+    home_apply_lang(lang)
+    apply_special_day(lang)
+]
+
+!! ── start ──────────────────────────────────────────────────────────────
+fun home_init() [
+    home_trans = trans_home()
+    window.__hackeros_applyLang = home_apply_all_lang
+    home_apply_all_lang(get_lang())
+    lang_switcher_init()
+    register_sw("sw.js")
+]
