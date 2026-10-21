@@ -1,0 +1,189 @@
+fun head_tag(tag: Str, attrs: List<Str>) [
+    let e = document.createElement(tag)
+    let i = 0
+    while i + 1 < attrs.len() [
+        e.setAttribute(attrs[i], attrs[i + 1])
+        i = i + 2
+    ]
+    document.head.appendChild(e)
+]
+
+!! ── start strony: tytul, <html lang>, atrybuty <body> ──────────────────
+fun boot_begin(lang: Str, title: Str) [
+    document.documentElement.lang = lang
+    document.title = title
+    !! Szkielet mode:website wstrzykuje wlasny <style> (body: margin 0, line-height 1.5, #app: max-width 52rem).
+    !! Usuwamy go, zeby wyglad zalezal wylacznie od CSS strony (jak w oryginale).
+    let skeleton = document.head.querySelector("style")
+    if skeleton != null and skeleton.textContent.includes("52rem") [
+        skeleton.remove()
+    ]
+    let app = document.getElementById("app")
+    if app != null [
+        app.remove()
+    ]
+]
+
+fun body_attr(name: Str, value: Str) [
+    document.body.setAttribute(name, value)
+]
+
+!! Wstawia gotowy markup strony na poczatek <body> (przed <script> app.js).
+fun boot_body(markup: Str) [
+    document.body.insertAdjacentHTML("afterbegin", markup)
+]
+
+!! ── skroty DOM ─────────────────────────────────────────────────────────
+fun by_id(id: Str) -> Any [
+    end document.getElementById(id)
+]
+
+fun set_text(id: Str, text: Any) [
+    let e = document.getElementById(id)
+    if e != null [
+        e.textContent = text
+    ]
+]
+
+fun qs(sel: Str) -> Any [
+    end document.querySelector(sel)
+]
+
+fun qsa(sel: Str) -> Any [
+    end document.querySelectorAll(sel)
+]
+
+fun mk(tag: Str) -> Any [
+    end document.createElement(tag)
+]
+
+!! element z tekstem (textContent) lub, gdy html == true, z innerHTML
+fun mk_text(tag: Str, text: Str) -> Any [
+    let e = document.createElement(tag)
+    e.textContent = text
+    end e
+]
+
+fun mk_html(tag: Str, html: Str) -> Any [
+    let e = document.createElement(tag)
+    e.innerHTML = html
+    end e
+]
+
+!! Obiekty/tablice JS tworzone bez literalow (HackerScript nie ma {} / [] dla obiektow JS)
+fun js_obj() -> Any [
+    end JSON.parse("{}")
+]
+
+fun js_arr() -> Any [
+    end JSON.parse("[]")
+]
+
+!! ── localStorage (Option-free: zwraca null, gdy brak) ──────────────────
+fun ls_raw(k: Str) -> Any [
+    end localStorage.getItem(k)
+]
+
+fun ls_put(k: Str, v: Str) [
+    localStorage.setItem(k, v)
+]
+
+!! Rejestracja Service Workera (sw.js) - tylko http(s)
+fun register_sw(path: Str) [
+    if not nil(navigator.serviceWorker) and location.protocol.indexOf("http") == 0 [
+        navigator.serviceWorker.register(path).catch(sw_ignore)
+    ]
+]
+
+fun sw_ignore(e: Any) [
+    end
+]
+
+!! Zmienia tresc istniejacego <meta name="viewport"> (szkielet mode:website ma wlasny)
+fun set_viewport(content: Str) [
+    let m = document.querySelector("meta[name=viewport]")
+    if m == null [
+        m = document.createElement("meta")
+        m.setAttribute("name", "viewport")
+        document.head.appendChild(m)
+    ]
+    m.setAttribute("content", content)
+]
+
+!! Dostep do wlasciwosci obiektu JS po dynamicznym kluczu (indeksowanie [] w HackerScript dotyczy tylko list)
+!! true gdy null LUB undefined (HackerScript porownuje == null jako === null)
+let JS_UNDEF: Any = JSON.parse("[]").at(0)
+
+fun nil(x: Any) -> Bool [
+    end Object.is(x, JS_UNDEF) or Object.is(x, null)
+]
+
+fun jget(o: Any, k: Any) -> Any [
+    let d = Object.getOwnPropertyDescriptor(o, k)
+    if nil(d) [
+        end null
+    ]
+    end d.value
+]
+
+fun jset(o: Any, k: Any, v: Any) [
+    Reflect.set(o, k, v)
+]
+
+fun jhas(o: Any, k: Any) -> Bool [
+    end Reflect.has(o, k)
+]
+
+!! RegExp z napisu (nie ma literalow /.../) i podmiana regexem (str.replace(x,y) w HackerScript = podmiana literalu)
+fun rx(pattern: Str) -> Any [
+    end Reflect.construct(RegExp, [pattern])
+]
+
+fun rx_flags(pattern: Str, flags: Str) -> Any [
+    end Reflect.construct(RegExp, [pattern, flags])
+]
+
+fun rx_replace(s: Str, re: Any, with_: Str) -> Str [
+    end String.prototype.replace.call(s, re, with_)
+]
+
+!! UWAGA: HackerScript przepisuje niektore nazwy metod (remove(x), insert, contains(x), pop, clear, len, fetch...)
+!! na swoje hks_* - dla obiektow DOM uzywamy wiec tych helperow.
+fun cl_rm(el: Any, c: Str) [
+    el.classList.toggle(c, false)
+]
+
+fun cl_add(el: Any, c: Str) [
+    el.classList.add(c)
+]
+
+fun cl_on(el: Any, c: Str, on: Bool) [
+    el.classList.toggle(c, on)
+]
+
+fun node_contains(a: Any, b: Any) -> Bool [
+    end Node.prototype.contains.call(a, b)
+]
+
+!! Buduje obiekt JS z plaskiej listy [klucz, wartosc, klucz, wartosc, ...] (dane tlumaczen)
+fun mkobj(kv: Any) -> Any [
+    let o = JSON.parse("{}")
+    let i = 0
+    while i + 1 < kv.length [
+        Reflect.set(o, kv[i], kv[i + 1])
+        i = i + 2
+    ]
+    end o
+]
+
+!! Lista kluczy obiektu
+fun jkeys(o: Any) -> Any [
+    end Object.keys(o)
+]
+
+!! Wstrzykuje CSS jako <style> (dla stylow, ktorych nie da sie umiescic w bloku style { } - np. zawierajacych `$`)
+fun head_style(css: Str) [
+    let st = document.createElement("style")
+    st.textContent = css
+    document.head.appendChild(st)
+]
