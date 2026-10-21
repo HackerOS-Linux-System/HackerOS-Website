@@ -1,0 +1,23 @@
+include <../shared/core>
+
+let hk_tab_ids: List<Str> = ["v1", "v2", "v3"]
+let hk_active: Str = ""
+
+fun hk_tab_btn(t: Any, i: Int) [
+    t.classList.toggle("active", hk_tab_ids[i] == hk_active)
+]
+
+fun hk_tab_content(c: Any) [
+    c.classList.toggle("active", c.id == "tab-" + hk_active)
+]
+
+fun hk_show_tab(v: Str) [
+    hk_active = v
+    document.querySelectorAll(".vtab").forEach(hk_tab_btn)
+    document.querySelectorAll(".vtab-content").forEach(hk_tab_content)
+]
+
+!! Przyciski w markupie wolaja showTab('v1') (atrybut onclick) - udostepniamy te nazwe globalnie
+fun hk_init() [
+    window.showTab = hk_show_tab
+]
