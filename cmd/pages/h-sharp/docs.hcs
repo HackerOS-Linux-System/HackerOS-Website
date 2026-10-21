@@ -1,0 +1,499 @@
+use <mode:website>
+
+include <../../shared/offline>
+include <../../logic/hsharp>
+
+style {
+#app { display: none; }
+:root {
+    --bg:       #080b0f;
+    --bg2:      #0c1016;
+    --bg3:      #101520;
+    --panel:    #141a24;
+    --panel2:   #1a2232;
+    --border:   #1e2a3a;
+    --border2:  #2a3a50;
+    --border3:  #3a4f68;
+    --white:    #e8f0ff;
+    --text:     #9ab0cc;
+    --text2:    #6a82a0;
+    --text3:    #384a60;
+    --red:      #ff3355;
+    --red2:     #cc2244;
+    --cyan:     #00d4ff;
+    --cyan2:    #0099cc;
+    --amber:    #ffaa00;
+    --green:    #00ff88;
+    --green2:   #00cc66;
+    --purple:   #aa66ff;
+    --orange:   #ff7733;
+    --code-bg:  #070a0e;
+    --gutter:   #1a2030;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 15px; }
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Oxanium', sans-serif;
+    line-height: 1.65;
+    overflow-x: hidden;
+}
+
+body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background: repeating-linear-gradient(
+        0deg, transparent, transparent 3px,
+        rgba(0,0,0,0.03) 3px, rgba(0,0,0,0.03) 4px
+    );
+    pointer-events: none;
+    z-index: 9999;
+}
+
+.layout {
+    display: grid;
+    grid-template-columns: 270px 1fr;
+    min-height: 100vh;
+}
+
+
+.sidebar {
+    position: sticky; top: 0;
+    height: 100vh; overflow-y: auto;
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    display: flex; flex-direction: column;
+}
+.sidebar::-webkit-scrollbar { width: 3px; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--border2); }
+
+.sb-logo {
+    padding: 24px 20px 18px;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(135deg, var(--bg2) 0%, rgba(255,51,85,0.05) 100%);
+}
+.sb-logo-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; letter-spacing: 0.25em;
+    text-transform: uppercase; color: var(--red);
+    margin-bottom: 6px;
+}
+.sb-logo-name {
+    font-family: 'Anybody', sans-serif;
+    font-size: 26px; font-weight: 900;
+    color: var(--white); letter-spacing: -0.02em;
+    line-height: 1.1;
+}
+.sb-logo-name em { color: var(--red); font-style: normal; }
+.sb-logo-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; color: var(--text3); margin-top: 5px;
+}
+.sb-actions {
+    display: flex; gap: 6px; margin-top: 12px;
+}
+.sb-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; padding: 5px 10px;
+    background: var(--panel); border: 1px solid var(--border2);
+    color: var(--text2); cursor: pointer; border-radius: 3px;
+    text-decoration: none; transition: all 0.15s;
+    letter-spacing: 0.05em;
+}
+.sb-btn:hover { background: var(--panel2); color: var(--white); border-color: var(--border3); }
+.sb-btn.primary { color: var(--red); border-color: rgba(255,51,85,0.4); }
+.sb-btn.primary:hover { background: rgba(255,51,85,0.1); }
+.sb-btn.back { color: var(--text2); border-color: var(--border); background: transparent; }
+.sb-btn.back:hover { color: var(--white); border-color: var(--border3); background: rgba(255,51,85,0.07); }
+
+.nav-group { padding: 4px 0; border-bottom: 1px solid var(--border); }
+.nav-group-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--text3);
+    padding: 10px 18px 3px;
+}
+.nav-link {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 18px; font-size: 13px; font-weight: 400;
+    color: var(--text2); text-decoration: none;
+    border-left: 2px solid transparent;
+    transition: all 0.12s; cursor: pointer;
+}
+.nav-link:hover, .nav-link.active {
+    color: var(--white); border-left-color: var(--red);
+    background: rgba(255,51,85,0.04);
+}
+.nav-mono {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; color: var(--red); opacity: 0.8;
+    min-width: 20px;
+}
+.nav-new {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px; padding: 1px 5px;
+    background: rgba(255,51,85,0.15); color: var(--red);
+    border-radius: 2px; margin-left: auto;
+    letter-spacing: 0.05em;
+}
+
+.sb-footer {
+    margin-top: auto; padding: 14px 18px;
+    border-top: 1px solid var(--border);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; color: var(--text3); line-height: 1.8;
+}
+.sb-footer a { color: var(--cyan); text-decoration: none; }
+
+
+.main { max-width: 960px; }
+
+
+.hero {
+    padding: 56px 56px 48px;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    position: relative; overflow: hidden;
+}
+.hero::before {
+    content: '';
+    position: absolute; top: -120px; right: -80px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(255,51,85,0.08) 0%, transparent 65%);
+    pointer-events: none;
+    animation: glow 6s ease-in-out infinite;
+}
+.hero::after {
+    content: '';
+    position: absolute; bottom: -60px; left: 30%;
+    width: 350px; height: 350px;
+    background: radial-gradient(circle, rgba(0,212,255,0.04) 0%, transparent 65%);
+    pointer-events: none;
+}
+@keyframes glow { 0%,100%{opacity:.5} 50%{opacity:1} }
+
+.hero-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.25em;
+    text-transform: uppercase; color: var(--red);
+    margin-bottom: 14px;
+    display: flex; align-items: center; gap: 10px;
+}
+.hero-tag::before {
+    content: ''; width: 32px; height: 1px; background: var(--red);
+}
+.hero h1 {
+    font-family: 'Anybody', sans-serif;
+    font-size: clamp(32px, 5vw, 52px);
+    font-weight: 900; color: var(--white);
+    letter-spacing: -0.03em; line-height: 1.05;
+    margin-bottom: 18px;
+}
+.hero h1 .accent { color: var(--red); }
+.hero h1 .accent2 { color: var(--cyan); }
+.hero-desc {
+    font-size: 15px; color: var(--text2);
+    max-width: 580px; line-height: 1.8;
+    margin-bottom: 28px;
+}
+.badges { display: flex; gap: 8px; flex-wrap: wrap; }
+.badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; padding: 4px 10px;
+    border-radius: 3px; border: 1px solid; letter-spacing: 0.05em;
+}
+.b-red    { color: var(--red);    border-color: rgba(255,51,85,0.35);  background: rgba(255,51,85,0.07); }
+.b-cyan   { color: var(--cyan);   border-color: rgba(0,212,255,0.3);   background: rgba(0,212,255,0.06); }
+.b-amber  { color: var(--amber);  border-color: rgba(255,170,0,0.3);   background: rgba(255,170,0,0.06); }
+.b-green  { color: var(--green);  border-color: rgba(0,255,136,0.3);   background: rgba(0,255,136,0.06); }
+.b-purple { color: var(--purple); border-color: rgba(170,102,255,0.3); background: rgba(170,102,255,0.06); }
+
+
+.section {
+    padding: 48px 56px;
+    border-bottom: 1px solid var(--border);
+    animation: fadeUp 0.3s ease both;
+}
+@keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none} }
+
+.sec-header {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 28px;
+}
+.sec-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; color: var(--text3); min-width: 26px;
+}
+.sec-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; padding: 2px 8px;
+    background: rgba(255,51,85,0.12); color: var(--red);
+    border-radius: 2px; letter-spacing: 0.1em;
+}
+.section h2 {
+    font-family: 'Anybody', sans-serif;
+    font-size: 22px; font-weight: 700; color: var(--white);
+    letter-spacing: -0.01em;
+}
+.section h3 {
+    font-size: 14px; font-weight: 600; color: var(--white);
+    margin: 26px 0 10px;
+    display: flex; align-items: center; gap: 8px;
+}
+.section h3::before {
+    content: ''; width: 3px; height: 14px;
+    background: var(--red); border-radius: 2px; display: block;
+}
+.section p {
+    color: var(--text2); margin-bottom: 12px;
+    line-height: 1.8; font-size: 14px;
+}
+.section p strong { color: var(--white); font-weight: 600; }
+[id] { scroll-margin-top: 20px; }
+
+
+.code-block {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px; margin: 14px 0;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+}
+.code-header {
+    display: flex; align-items: center;
+    justify-content: space-between;
+    padding: 8px 14px;
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+}
+.code-filename {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; color: var(--text3);
+    letter-spacing: 0.05em;
+    display: flex; align-items: center; gap: 6px;
+}
+.code-filename::before {
+    content: '▸'; color: var(--red); font-size: 8px;
+}
+.copy-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; color: var(--text3); background: none;
+    border: 1px solid var(--border); padding: 3px 8px;
+    cursor: pointer; border-radius: 2px;
+    transition: all 0.15s; letter-spacing: 0.05em;
+}
+.copy-btn:hover { color: var(--white); border-color: var(--border2); }
+
+.code-body {
+    display: flex; overflow-x: auto;
+}
+.line-nums {
+    padding: 18px 0;
+    background: var(--gutter);
+    border-right: 1px solid var(--border);
+    min-width: 42px; text-align: right;
+    user-select: none;
+}
+.line-nums span {
+    display: block; padding: 0 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: var(--text3);
+    line-height: 1.8;
+}
+.code-inner {
+    padding: 18px 20px; flex: 1;
+}
+.code-inner pre {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px; line-height: 1.8;
+    color: var(--text);
+    white-space: pre;
+}
+
+
+.t-comment  { color: #3a5070; font-style: italic; }
+.t-kw       { color: var(--cyan); font-weight: 600; }    
+.t-kw2      { color: var(--red); font-weight: 700; }     
+.t-prefix   { color: var(--red); font-weight: 700; }
+.t-str      { color: var(--amber); }
+.t-num      { color: var(--purple); }
+.t-var      { color: var(--orange); }
+.t-func     { color: #6699ff; }
+.t-lib      { color: var(--purple); }
+.t-op       { color: var(--green); font-weight: 700; }
+.t-type     { color: var(--cyan); font-style: italic; }
+.t-const    { color: var(--green); font-weight: 700; }
+.t-dim      { color: var(--text3); }
+
+
+.ref-table {
+    width: 100%; border-collapse: collapse;
+    margin: 14px 0; font-size: 13px;
+}
+.ref-table th {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--text3);
+    padding: 10px 14px; text-align: left;
+    border-bottom: 1px solid var(--border);
+    background: var(--panel);
+}
+.ref-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(30,42,58,0.6);
+    vertical-align: top;
+}
+.ref-table tr:last-child td { border-bottom: none; }
+.ref-table tr:hover td { background: rgba(255,51,85,0.02); }
+.td-syntax {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; color: var(--green);
+    white-space: nowrap;
+}
+.td-desc { color: var(--text2); font-size: 13px; }
+.td-note {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: var(--text3);
+}
+
+
+.callout {
+    display: flex; gap: 12px;
+    padding: 14px 16px; border-radius: 5px;
+    margin: 16px 0; font-size: 13px; line-height: 1.7;
+}
+.ci { font-family: 'JetBrains Mono', monospace; font-size: 12px; min-width: 20px; padding-top: 1px; }
+.cb { color: var(--text2); }
+.cb strong { color: var(--white); }
+.cb code { font-family: 'JetBrains Mono', monospace; font-size: 11px; background: rgba(255,255,255,0.06); padding: 1px 5px; border-radius: 2px; color: var(--green); }
+.c-info   { background: rgba(0,212,255,0.05);   border: 1px solid rgba(0,212,255,0.2); }
+.c-info .ci   { color: var(--cyan); }
+.c-warn   { background: rgba(255,170,0,0.05);   border: 1px solid rgba(255,170,0,0.2); }
+.c-warn .ci   { color: var(--amber); }
+.c-danger { background: rgba(255,51,85,0.05);   border: 1px solid rgba(255,51,85,0.2); }
+.c-danger .ci { color: var(--red); }
+.c-tip    { background: rgba(0,255,136,0.04);   border: 1px solid rgba(0,255,136,0.2); }
+.c-tip .ci    { color: var(--green); }
+.c-new    { background: rgba(170,102,255,0.05); border: 1px solid rgba(170,102,255,0.25); }
+.c-new .ci    { color: var(--purple); }
+
+
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0; }
+.grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 14px 0; }
+.grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 14px 0; }
+.card {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 5px; padding: 14px 16px;
+    transition: border-color 0.2s;
+}
+.card:hover { border-color: var(--border2); }
+.card-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: var(--red);
+    margin-bottom: 6px; font-weight: 700;
+    letter-spacing: 0.03em;
+}
+.card-body { font-size: 12.5px; color: var(--text2); line-height: 1.65; }
+
+
+.pill {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; padding: 2px 8px;
+    border-radius: 12px; margin: 2px; border: 1px solid;
+}
+.p-red    { color: var(--red);    border-color: rgba(255,51,85,0.4);  background: rgba(255,51,85,0.08); }
+.p-cyan   { color: var(--cyan);   border-color: rgba(0,212,255,0.35); background: rgba(0,212,255,0.07); }
+.p-amber  { color: var(--amber);  border-color: rgba(255,170,0,0.35); background: rgba(255,170,0,0.07); }
+.p-green  { color: var(--green);  border-color: rgba(0,255,136,0.3);  background: rgba(0,255,136,0.06); }
+.p-purple { color: var(--purple); border-color: rgba(170,102,255,0.3);background: rgba(170,102,255,0.07); }
+.p-orange { color: var(--orange); border-color: rgba(255,119,51,0.35);background: rgba(255,119,51,0.07); }
+.p-blue   { color: #4499ff;       border-color: rgba(68,153,255,0.35);background: rgba(68,153,255,0.07); }
+
+
+code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85em; background: rgba(0,212,255,0.06);
+    color: var(--cyan); padding: 1px 5px;
+    border-radius: 3px; border: 1px solid rgba(0,212,255,0.15);
+}
+
+
+.hero-pills { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 28px; }
+.feature-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 10px; margin-top: 20px;
+}
+.feat-item {
+    display: flex; gap: 10px; align-items: flex-start;
+    background: rgba(255,51,85,0.04); border: 1px solid var(--border);
+    border-radius: 5px; padding: 12px 14px; font-size: 12.5px;
+}
+.feat-icon { font-size: 18px; min-width: 24px; line-height: 1.4; }
+.feat-item strong { color: var(--white); display: block; font-size: 12px; margin-bottom: 2px; }
+.feat-item div { color: var(--text2); }
+.feat-item code { font-size: 10px; }
+
+
+.divider {
+    height: 1px; margin: 24px 0;
+    background: linear-gradient(90deg, var(--red) 0%, transparent 60%);
+    opacity: 0.25;
+}
+
+
+.section-loading {
+    padding: 48px 56px;
+    color: var(--text3);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    border-bottom: 1px solid var(--border);
+}
+
+
+@media (max-width: 800px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { position: static; height: auto; }
+    .hero, .section { padding: 28px 20px; }
+    .grid2, .grid3, .grid4 { grid-template-columns: 1fr; }
+    .feature-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 500px) {
+    .feature-grid { grid-template-columns: 1fr; }
+}
+
+
+.pg-wrap { border: 1px solid var(--border); border-radius: 6px; overflow: hidden; margin: 14px 0; box-shadow: 0 4px 24px rgba(0,0,0,0.4); }
+.pg-panes { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+@media (max-width: 860px) { .pg-panes { grid-template-columns: 1fr; } }
+.pg-pane { display: flex; flex-direction: column; min-height: 320px; }
+.pg-pane + .pg-pane { border-left: 1px solid var(--border); }
+@media (max-width: 860px) { .pg-pane + .pg-pane { border-left: none; border-top: 1px solid var(--border); } }
+.pg-pane-header { display: flex; align-items: center; justify-content: space-between; padding: 8px 14px; background: var(--panel); border-bottom: 1px solid var(--border); }
+.pg-pane-title { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text3); letter-spacing: 0.05em; }
+#pg-source { flex: 1; background: var(--code-bg); color: var(--text); border: none; outline: none; resize: none; padding: 16px 18px; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.8; tab-size: 4; }
+#pg-output { flex: 1; background: var(--code-bg); color: var(--text); margin: 0; padding: 16px 18px; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.8; white-space: pre-wrap; word-break: break-word; overflow-y: auto; }
+.pg-run-btn { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--white); background: rgba(255,51,85,0.14); border: 1px solid rgba(255,51,85,0.4); padding: 4px 12px; cursor: pointer; border-radius: 3px; transition: all 0.15s; letter-spacing: 0.05em; }
+.pg-run-btn:hover:not(:disabled) { background: rgba(255,51,85,0.24); }
+.pg-run-btn:disabled { opacity: 0.5; cursor: default; }
+.pg-status { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text3); }
+.pg-status-ok { color: var(--green); }
+.pg-status-err { color: var(--red); }
+.pg-note { font-size: 12.5px; color: var(--text2); padding: 12px 14px; border-top: 1px solid var(--border); background: var(--panel); }
+}
+
+let PAGE_BODY: Str = "<div class=\"layout\">\n  <nav class=\"sidebar\">\n    <div class=\"sb-logo\">\n      <div class=\"sb-logo-eyebrow\">Dokumentacja</div>\n      <div class=\"sb-logo-name\">H<em>#</em></div>\n      <div class=\"sb-logo-sub\">v0.6 &middot; HackerOS-first language</div>\n      <div class=\"sb-actions\">\n        <a class=\"sb-btn back\" href=\"https://hackeros-linux-system.github.io/HackerOS-Website/hackeros-documentation.html\">&#8592; Back</a>\n        <a class=\"sb-btn primary\" href=\"https://github.com/HackerOS-Linux-System/H-Sharp\" target=\"_blank\">Github</a>\n      </div>\n    </div>\n    <div class=\"nav-group\">\n      <div class=\"nav-group-label\">Wprowadzenie</div>\n      <a class=\"nav-link\" href=\"#intro\"><span class=\"nav-mono\">00</span>O języku H#</a>\n      <a class=\"nav-link\" href=\"#install\"><span class=\"nav-mono\">01</span>Instalacja &amp; narzędzia</a>\n      <a class=\"nav-link\" href=\"#struktura\"><span class=\"nav-mono\">02</span>Struktura projektu</a>\n    </div>\n    <div class=\"nav-group\">\n      <div class=\"nav-group-label\">Podstawy</div>\n      <a class=\"nav-link\" href=\"#komentarze\"><span class=\"nav-mono\">03</span>Komentarze</a>\n      <a class=\"nav-link\" href=\"#zmienne\"><span class=\"nav-mono\">04</span>Zmienne &amp; typy</a>\n      <a class=\"nav-link\" href=\"#importy\"><span class=\"nav-mono\">05</span>Import system</a>\n      <a class=\"nav-link\" href=\"#output\"><span class=\"nav-mono\">06</span>Wyjście / builtins</a>\n    </div>\n    <div class=\"nav-group\">\n      <div class=\"nav-group-label\">Sterowanie</div>\n      <a class=\"nav-link\" href=\"#if\"><span class=\"nav-mono\">07</span>If / Elsif / Else</a>\n      <a class=\"nav-link\" href=\"#match\"><span class=\"nav-mono\">08</span>Match <span class=\"nav-new\">pattern</span></a>\n      <a class=\"nav-link\" href=\"#while\"><span class=\"nav-mono\">09</span>While</a>\n      <a class=\"nav-link\" href=\"#for\"><span class=\"nav-mono\">10</span>For &amp; zakresy</a>\n    </div>\n    <div class=\"nav-group\">\n      <div class=\"nav-group-label\">Organizacja kodu</div>\n      <a class=\"nav-link\" href=\"#funkcje\"><span class=\"nav-mono\">11</span>Funkcje</a>\n      <a class=\"nav-link\" href=\"#struktury\"><span class=\"nav-mono\">12</span>Structs &amp; impl</a>\n      <a class=\"nav-link\" href=\"#traits\"><span class=\"nav-mono\">13</span>Traits</a>\n    </div>\n    <div class=\"nav-group\">\n      <div class=\"nav-group-label\">System typów</div>\n      <a class=\"nav-link\" href=\"#enum\"><span class=\"nav-mono\">14</span>Enum</a>\n      <a class=\"nav-link\" href=\"#typy-prim\"><span class=\"nav-mono\">15</span>Typy &amp; operatory</a>\n    </div>\n    <div class=\"nav-group\">\n      <div class=\"nav-group-label\">Zaawansowane</div>\n      <a class=\"nav-link\" href=\"#unsafe\"><span class=\"nav-mono\">16</span>Unsafe &amp; Arena <span class=\"nav-new\">mem</span></a>\n      <a class=\"nav-link\" href=\"#mem-modes\"><span class=\"nav-mono\">24</span>@ Tryby pamięci <span class=\"nav-new\">v0.7</span></a>\n      <a class=\"nav-link\" href=\"#extern\"><span class=\"nav-mono\">25</span>extern &amp; FFI</a>\n      <a class=\"nav-link\" href=\"#attributes\"><span class=\"nav-mono\">26</span>Atrybuty #[...]</a>\n      <a class=\"nav-link\" href=\"#optional\"><span class=\"nav-mono\">17</span>Optional &amp; błędy</a>\n      <a class=\"nav-link\" href=\"#generics\"><span class=\"nav-mono\">18</span>Generics</a>\n      <a class=\"nav-link\" href=\"#closures\"><span class=\"nav-mono\">19</span>Closures</a>\n    </div>\n    <div class=\"nav-group\">\n      <div class=\"nav-group-label\">Testy & Moduły</div>\n      <a class=\"nav-link\" href=\"#tests\"><span class=\"nav-mono\">22</span>Testy <span class=\"nav-new\">v0.6</span></a>\n      <a class=\"nav-link\" href=\"#modules\"><span class=\"nav-mono\">23</span>Moduły <span class=\"nav-new\">v0.6</span></a>\n    </div>\n    <div class=\"nav-group\">\n      <div class=\"nav-group-label\">Biblioteka std</div>\n      <a class=\"nav-link\" href=\"#spawn\"><span class=\"nav-mono\">20</span>std — wszystkie moduły</a>\n    </div>\n    <div class=\"nav-group\">\n      <div class=\"nav-group-label\">Referencja</div>\n      <a class=\"nav-link\" href=\"#gramatyka\"><span class=\"nav-mono\">29</span>Gramatyka &amp; parsowanie</a>\n      <a class=\"nav-link\" href=\"#bledy\"><span class=\"nav-mono\">30</span>Błędy &amp; diagnostyka</a>\n    </div>\n    <div class=\"nav-group\">\n      <div class=\"nav-group-label\">Przykłady</div>\n      <a class=\"nav-link\" href=\"#ex1\"><span class=\"nav-mono\">E1</span>Hello World</a>\n      <a class=\"nav-link\" href=\"#ex2\"><span class=\"nav-mono\">E2</span>Port Scanner</a>\n      <a class=\"nav-link\" href=\"#ex3\"><span class=\"nav-mono\">E3</span>XOR Cipher</a>\n      <a class=\"nav-link\" href=\"#ex4\"><span class=\"nav-mono\">E4</span>Struct + Trait + Enum</a>\n      <a class=\"nav-link\" href=\"#ex5\"><span class=\"nav-mono\">E5</span>GUI App — GTK4</a>\n      <a class=\"nav-link\" href=\"#ex6\"><span class=\"nav-mono\">E6</span>Python Interop</a>\n      <a class=\"nav-link\" href=\"#ex7\"><span class=\"nav-mono\">E7</span>Config JSON</a>\n      <a class=\"nav-link\" href=\"#ex8\"><span class=\"nav-mono\">E8</span>Fibonacci + memo</a>\n      <a class=\"nav-link\" href=\"#ex9\"><span class=\"nav-mono\">E9</span>Klient HTTP</a>\n      <a class=\"nav-link\" href=\"#ex10\"><span class=\"nav-mono\">E10</span>Producer/Consumer</a>\n      <a class=\"nav-link\" href=\"#ex11\"><span class=\"nav-mono\">E11</span>Binary Search</a>\n      <a class=\"nav-link\" href=\"#ex12\"><span class=\"nav-mono\">E12</span>Parser argumentów</a>\n      <a class=\"nav-link\" href=\"#ex13\"><span class=\"nav-mono\">E13</span>Key-Value Store</a>\n      <a class=\"nav-link\" href=\"#ex14\"><span class=\"nav-mono\">E14</span>Macierze</a>\n      <a class=\"nav-link\" href=\"#ex15\"><span class=\"nav-mono\">E15</span>Parser logów</a>\n      <a class=\"nav-link\" href=\"#ex16\"><span class=\"nav-mono\">E16</span>Maszyna stanów</a>\n      <a class=\"nav-link\" href=\"#ex17\"><span class=\"nav-mono\">E17</span>Result enum</a>\n      <a class=\"nav-link\" href=\"#ex18\"><span class=\"nav-mono\">E18</span>Kolejka zadań</a>\n      <a class=\"nav-link\" href=\"#ex19\"><span class=\"nav-mono\">E19</span>Silnik szablonów</a>\n      <a class=\"nav-link\" href=\"#ex20\"><span class=\"nav-mono\">E20</span>Parser binarny</a>\n      <a class=\"nav-link\" href=\"#cheatsheet\"><span class=\"nav-mono\">&#9733;</span>Cheat Sheet</a>\n    </div>\n    <div class=\"nav-group\">\n      <div class=\"nav-group-label\">Interaktywnie</div>\n      <a class=\"nav-link\" href=\"#playground\"><span class=\"nav-mono\">31</span>Playground <span class=\"nav-new\">wasm</span></a>\n    </div>\n    <div class=\"sb-footer\">\n      H# Language &mdash; HackerOS-first compiled<br>\n      <a href=\"https://github.com/HackerOS-Linux-System/H-Sharp\" target=\"_blank\">HackerOS-Linux-System/H-Sharp</a><br>\n      H# v0.1.0 &middot; Rust backend\n    </div>\n  </nav>\n  <main class=\"main\">\n    <div id=\"sec-intro\"        class=\"section-loading\">&#8203;</div>\n    <div id=\"sec-install\"      class=\"section-loading\">&#8203;</div>\n    <div id=\"sec-struktura\"    class=\"section-loading\">&#8203;</div>\n    <div id=\"sec-podstawy\"     class=\"section-loading\">&#8203;</div>\n    <div id=\"sec-sterowanie\"   class=\"section-loading\">&#8203;</div>\n    <div id=\"sec-organizacja\"  class=\"section-loading\">&#8203;</div>\n    <div id=\"sec-async\"        class=\"section-loading\">&#8203;</div>\n    <div id=\"sec-typy\"         class=\"section-loading\">&#8203;</div>\n    <div id=\"sec-zaawansowane\" class=\"section-loading\">&#8203;</div>\n    <div id=\"sec-przyklady\"    class=\"section-loading\">&#8203;</div>\n    <div id=\"sec-gramatyka\"    class=\"section-loading\">&#8203;</div>\n    <div id=\"sec-playground\"   class=\"section-loading\">&#8203;</div>\n  </main>\n</div>"
+
+fun main() [
+    boot_begin("pl", "H# Language — Dokumentacja v0.6")
+    set_viewport("width=device-width, initial-scale=1.0")
+    head_tag("link", ["rel", "preconnect", "href", "https://fonts.googleapis.com"])
+    head_tag("link", ["rel", "preconnect", "href", "https://fonts.gstatic.com", "crossorigin", ""])
+    head_tag("link", ["href", "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Anybody:wght@400;700;900&family=Oxanium:wght@300;400;600;700&display=swap", "rel", "stylesheet"])
+    head_tag("link", ["rel", "icon", "type", "image/png", "href", "https://raw.githubusercontent.com/HackerOS-Linux-System/H-Sharp/main/images/icon.png"])
+    boot_body(PAGE_BODY)
+    offline_init("../")
+    hsharp_docs_init()
+]
