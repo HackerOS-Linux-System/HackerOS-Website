@@ -1,0 +1,362 @@
+include <../shared/core>
+include <../shared/lang>
+include <../data/tools_t>
+
+let ti_trans: Any = null
+let slides_data: Any = []
+let current_index: Int = 0
+let auto_play_interval: Any = null
+let is_hovering: Bool = false
+let slides_track: Any = null
+let dots_container: Any = null
+
+!! ── slider ─────────────────────────────────────────────────────────────
+fun update_dot(d: Any, i: Int) [
+    d.classList.toggle("active", i == current_index)
+]
+
+fun update_dots() [
+    document.querySelectorAll(".dot").forEach(update_dot)
+]
+
+fun update_slider_position() [
+    if slides_track == null [
+        end
+    ]
+    slides_track.style.transform = "translateX(" + (-current_index * 100) + "%)"
+    update_dots()
+]
+
+fun render_slide(s: Any, i: Int) [
+    let total = slides_data.length
+    let div = document.createElement("div")
+    div.className = "slide"
+    let top = document.createElement("div")
+    top.className = "slide-top"
+    let mono = document.createElement("span")
+    mono.className = "slide-mono"
+    let letters = rx_replace(s.title, rx_flags("[^A-Za-z0-9#.]", "g"), "").slice(0, 2).toUpperCase()
+    if not letters [
+        letters = "HO"
+    ]
+    mono.textContent = letters
+    let cnt = document.createElement("span")
+    cnt.className = "slide-count"
+    cnt.textContent = String(i + 1).padStart(2, "0") + " / " + String(total).padStart(2, "0")
+    top.appendChild(mono)
+    top.appendChild(cnt)
+    let h3 = document.createElement("h3")
+    h3.textContent = s.title
+    let p = document.createElement("p")
+    p.textContent = s.desc
+    div.appendChild(top)
+    div.appendChild(h3)
+    div.appendChild(p)
+    slides_track.appendChild(div)
+]
+
+fun render_slides() [
+    if slides_track == null [
+        end
+    ]
+    slides_track.innerHTML = ""
+    slides_data.forEach(render_slide)
+    update_slider_position()
+]
+
+fun go_to_slide(idx: Int) [
+    let i = idx
+    if i < 0 [
+        i = slides_data.length - 1
+    ]
+    if i >= slides_data.length [
+        i = 0
+    ]
+    current_index = i
+    update_slider_position()
+]
+
+fun next_slide() [
+    go_to_slide(current_index + 1)
+]
+
+fun prev_slide() [
+    go_to_slide(current_index - 1)
+]
+
+fun auto_tick() [
+    if not is_hovering [
+        next_slide()
+    ]
+]
+
+fun start_auto_play() [
+    if auto_play_interval != null [
+        clearInterval(auto_play_interval)
+    ]
+    if is_hovering [
+        end
+    ]
+    auto_play_interval = setInterval(auto_tick, 20000)
+]
+
+fun stop_auto_play() [
+    if auto_play_interval != null [
+        clearInterval(auto_play_interval)
+        auto_play_interval = null
+    ]
+]
+
+fun reset_auto_play() [
+    stop_auto_play()
+    if not is_hovering [
+        start_auto_play()
+    ]
+]
+
+fun build_dots() [
+    if dots_container == null [
+        end
+    ]
+    dots_container.innerHTML = ""
+    let i = 0
+    while i < slides_data.length [
+        let d = document.createElement("div")
+        d.classList.add("dot")
+        if i == current_index [
+            d.classList.add("active")
+        ]
+        let idx = i
+        fun on_dot(e: Any) [
+            go_to_slide(idx)
+            reset_auto_play()
+        ]
+        d.addEventListener("click", on_dot)
+        dots_container.appendChild(d)
+        i = i + 1
+    ]
+]
+
+fun on_enter(e: Any) [
+    is_hovering = true
+    stop_auto_play()
+]
+
+fun on_leave(e: Any) [
+    is_hovering = false
+    start_auto_play()
+]
+
+fun bind_hover_events() [
+    let c = document.querySelector(".slider-container")
+    if c == null [
+        end
+    ]
+    c.addEventListener("mouseenter", on_enter)
+    c.addEventListener("mouseleave", on_leave)
+]
+
+fun on_prev(e: Any) [
+    prev_slide()
+    reset_auto_play()
+]
+
+fun on_next(e: Any) [
+    next_slide()
+    reset_auto_play()
+]
+
+fun bind_controls() [
+    let prev_btn = document.getElementById("prevSlideBtn")
+    let next_btn = document.getElementById("nextSlideBtn")
+    if prev_btn != null [
+        prev_btn.addEventListener("click", on_prev)
+    ]
+    if next_btn != null [
+        next_btn.addEventListener("click", on_next)
+    ]
+]
+
+fun on_slide_key(e: Any) [
+    if e.key == "ArrowLeft" [
+        prev_slide()
+        reset_auto_play()
+        e.preventDefault()
+    ] elif e.key == "ArrowRight" [
+        next_slide()
+        reset_auto_play()
+        e.preventDefault()
+    ]
+]
+
+fun init_slide_links_one(a: Any) [
+    fun on_link(e: Any) [
+        e.preventDefault()
+        let title = (a.dataset.slide or "").toLowerCase()
+        fun same_title(s: Any) -> Bool [
+            end s.title.toLowerCase() == title
+        ]
+        let i = slides_data.findIndex(same_title)
+        if i >= 0 [
+            go_to_slide(i)
+            reset_auto_play()
+        ]
+        let sl = document.querySelector(".slider-shell")
+        if sl != null [
+            let o = js_obj()
+            o.behavior = "smooth"
+            o.block = "center"
+            sl.scrollIntoView(o)
+        ]
+    ]
+    a.addEventListener("click", on_link)
+]
+
+fun init_slide_links() [
+    document.querySelectorAll(".nav-list a[data-slide]").forEach(init_slide_links_one)
+]
+
+!! ── menu "jezyki programowania" ────────────────────────────────────────
+fun on_dd_btn(e: Any) [
+    e.stopPropagation()
+    document.getElementById("langDropdown").classList.toggle("open")
+]
+
+fun on_dd_doc_click(e: Any) [
+    let dd = document.getElementById("langDropdown")
+    if not node_contains(dd, e.target) [
+        cl_rm(dd, "open")
+    ]
+]
+
+fun on_dd_key(e: Any) [
+    if e.key == "Escape" [
+        cl_rm(document.getElementById("langDropdown"), "open")
+    ]
+]
+
+fun init_lang_dropdown() [
+    let dd = document.getElementById("langDropdown")
+    let btn = document.getElementById("langDropdownBtn")
+    if dd == null or btn == null [
+        end
+    ]
+    btn.addEventListener("click", on_dd_btn)
+    document.addEventListener("click", on_dd_doc_click)
+    document.addEventListener("keydown", on_dd_key)
+]
+
+!! ── wyszukiwanie (tylko gorne menu) ────────────────────────────────────
+fun tool_matches(term: Str, element: Any) -> Bool [
+    if not term [
+        end true
+    ]
+    let text = element.textContent.toLowerCase()
+    let key = ""
+    if element.dataset.key [
+        key = element.dataset.key.toLowerCase()
+    ]
+    end text.includes(term) or key.includes(term)
+]
+
+let search_term: Str = ""
+
+fun filter_one(li: Any) [
+    let a = li.querySelector("a")
+    if a == null [
+        end
+    ]
+    li.classList.toggle("hidden-tool", not tool_matches(search_term, a))
+]
+
+fun filter_tools(value: Str) [
+    search_term = value.toLowerCase().trim()
+    document.querySelectorAll(".nav-list > li:not(.dropdown)").forEach(filter_one)
+]
+
+fun on_search_input(e: Any) [
+    filter_tools(e.currentTarget.value)
+]
+
+fun init_search() [
+    let input = document.getElementById("toolsSearch")
+    if input == null [
+        end
+    ]
+    input.addEventListener("input", on_search_input)
+    if input.value [
+        filter_tools(input.value)
+    ]
+]
+
+!! ── tlumaczenia ────────────────────────────────────────────────────────
+fun ti_nav_item(a: Any) [
+    let key = a.dataset.key
+    let items = ti_t.navItems
+    if items and jget(items, key) [
+        a.textContent = jget(items, key)
+    ]
+]
+
+let ti_t: Any = null
+
+fun ti_apply_lang(lang: Str) [
+    let t = jget(ti_trans, lang)
+    if nil(t) [
+        t = ti_trans.pl
+    ]
+    ti_t = t
+    document.documentElement.lang = lang
+    document.title = t.pageTitle
+    let h2 = document.getElementById("section-h2")
+    if h2 != null [
+        h2.textContent = t.sectionH2
+    ]
+    let fc = document.getElementById("footer-copy")
+    if fc != null [
+        fc.textContent = t.footerCopy
+    ]
+    document.querySelectorAll(".nav-list a[data-key]").forEach(ti_nav_item)
+    let drop_label = document.getElementById("lang-drop-label")
+    if drop_label != null and t.langDropBtn [
+        drop_label.textContent = t.langDropBtn
+    ]
+    let hsharp_link = document.getElementById("lang-drop-hsharp")
+    if hsharp_link != null and t.langDropLinks [
+        hsharp_link.textContent = t.langDropLinks.hsharp
+    ]
+    let hl_link = document.getElementById("lang-drop-hackerlang")
+    if hl_link != null and t.langDropLinks [
+        hl_link.textContent = t.langDropLinks.hackerLang
+    ]
+    let hscript_link = document.getElementById("lang-drop-hackerscript")
+    if hscript_link != null and t.langDropLinks and t.langDropLinks.hackerScript [
+        hscript_link.textContent = t.langDropLinks.hackerScript
+    ]
+    slides_data = t.slides or []
+    current_index = 0
+    render_slides()
+    build_dots()
+]
+
+fun on_resize(e: Any) [
+    update_slider_position()
+]
+
+fun tools_index_init() [
+    ti_trans = trans_tools()
+    slides_track = document.getElementById("slidesTrack")
+    dots_container = document.getElementById("dotsContainer")
+    window.__hackeros_applyLang = ti_apply_lang
+    ti_apply_lang(get_lang())
+    bind_controls()
+    bind_hover_events()
+    window.addEventListener("keydown", on_slide_key)
+    is_hovering = false
+    start_auto_play()
+    init_lang_dropdown()
+    init_slide_links()
+    init_search()
+    window.addEventListener("resize", on_resize)
+    lang_switcher_init()
+]
