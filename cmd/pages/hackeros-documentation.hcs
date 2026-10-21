@@ -1,0 +1,69 @@
+use <mode:website>
+
+include <../shared/offline>
+include <../logic/docs>
+
+style {
+#app { display: none; }
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Arial',sans-serif;}
+body{background-color:#000;color:#FFF;line-height:1.6;}
+header{background-color:#1A1A1A;padding:20px 0;position:fixed;width:100%;top:0;z-index:1000;}
+nav{max-width:100%;margin:0 auto;display:flex;justify-content:space-between;align-items:center;padding:0 20px;}
+nav .logo img{height:40px;width:auto;}
+nav ul{list-style:none;display:flex;gap:20px;align-items:center;}
+nav ul li a{color:#FFF;text-decoration:none;font-size:17px;transition:color .3s,transform .3s;position:relative;}
+nav ul li a::after{content:'';position:absolute;width:0;height:2px;bottom:-5px;left:0;background:#B0B0B0;transition:width .3s;}
+nav ul li a:hover::after{width:100%;}
+nav ul li a:hover{color:#B0B0B0;transform:translateY(-2px);}
+.main-section{max-width:100%;margin:80px auto 0;padding:20px;text-align:center;}
+.search-bar{margin-bottom:16px;text-align:center;}
+.search-wrapper{position:relative;width:65%;max-width:700px;margin:0 auto;}
+.search-bar input{width:100%;padding:14px 50px 14px 20px;border-radius:12px;border:2px solid #2F3A44;background:#1A1A1A;color:#FFF;font-size:18px;transition:all .3s;}
+.search-bar input:focus{border-color:#FFF;box-shadow:0 0 18px rgba(255,255,255,.25);outline:none;}
+.clear-btn{position:absolute;right:18px;top:50%;transform:translateY(-50%);background:none;border:none;color:#B0B0B0;font-size:24px;cursor:pointer;display:none;padding:0;}
+.clear-btn:hover{color:#FFF;}
+.search-results-note{text-align:center;color:#B0B0B0;font-size:14px;margin-bottom:10px;min-height:20px;}
+.tabs-container{display:flex;max-width:100%;margin:0 auto;border-radius:12px;overflow:hidden;}
+.tab-menu{width:250px;padding:25px;border-right:2px solid #2F3A44;flex-shrink:0;}
+.tab-menu ul{list-style:none;}
+.tab-link{margin-bottom:20px;cursor:pointer;padding:12px 15px;border-radius:8px;transition:background-color .3s,color .3s,transform .3s;color:#B0B0B0;font-weight:bold;font-size:18px;}
+.tab-link:hover{color:#FFF;transform:translateX(5px);}
+.tab-link.active{color:#FFF;background:rgba(255,255,255,.07);}
+.tab-link.search-hidden{display:none;}
+.hl{background:rgba(255,255,255,.2);border-radius:3px;padding:1px 3px;}
+.tab-content{flex:1;padding:30px;text-align:left;overflow:auto;}
+.tab-pane{display:none;}
+.tab-pane.active{display:block;}
+.tab-pane h2{font-size:28px;margin:30px 0 15px;}
+.tab-pane h3{font-size:24px;margin:25px 0 12px;color:#FFF;}
+.tab-pane h4{font-size:18px;margin:18px 0 8px;color:#DDD;}
+.tab-pane p{font-size:18px;color:#B0B0B0;margin-bottom:20px;}
+.tab-pane ul,.tab-pane ol{color:#B0B0B0;font-size:18px;list-style-position:inside;}
+.tab-pane ul li{margin-bottom:0.75rem;}
+.tab-pane code{background:#1A1A1A;padding:2px 6px;border-radius:4px;color:#AA6DFF;}
+.tab-pane pre{padding:12px;border-radius:5px;font-family:'Courier New',monospace;color:#B0B0B0;overflow-x:auto;display:flex;justify-content:space-between;align-items:center;background:#121212;gap:10px;}
+.tab-pane img{max-width:100%;border-radius:12px;margin:12px 0;}
+.tab-pane a{color:#4a9eff;}
+.tab-pane table{width:100%;border-collapse:collapse;margin:16px 0;background:#121212;}
+.tab-pane th,.tab-pane td{padding:14px 18px;text-align:left;border:1px solid #2F3A44;}
+.tab-pane th{background:#1A1A1A;font-weight:bold;}
+.copy-button{background:#B0B0B0;color:#1C2526;border:none;padding:5px 12px;cursor:pointer;border-radius:5px;font-size:13px;white-space:nowrap;flex-shrink:0;}
+.copy-button:hover{background:#FFF;color:#000;}
+.release-cycle{background:#121212;border-left:4px solid #AA6DFF;padding:18px;margin-top:24px;border-radius:8px;}
+.release-cycle h3{margin-top:0;color:#AA6DFF;}
+.release-cycle p{margin-bottom:0;}
+.doc-link{color:#4a9eff;text-decoration:underline;}
+@media(max-width:768px){.tabs-container{flex-direction:column;}.tab-menu{width:100%;border-right:none;border-bottom:2px solid #2F3A44;padding:15px;}.search-wrapper{width:90%;}}
+footer{padding:20px;text-align:center;color:#B0B0B0;width:100%;}
+}
+
+let PAGE_BODY: Str = "<header><nav>\n<div class=\"logo\"><img src=\"HackerOS.png\" alt=\"HackerOS Logo\"></div>\n<ul>\n<li><a id=\"nav-home\" href=\"Home-page.html\">Home</a></li>\n<li><a id=\"nav-download\" href=\"download.html\">Download</a></li>\n<li><a id=\"nav-releases\" href=\"releases.html\">Releases</a></li>\n<li><a id=\"nav-team\" href=\"hackeros-team.html\">HackerOS Team</a></li>\n<li><a id=\"nav-docs\" href=\"hackeros-documentation.html\">Documentation</a></li><li><a id=\"nav-articles\" href=\"articles.html\">Artykuły</a></li>\n</ul>\n</nav></header>\n\n<section class=\"main-section\">\n<div class=\"search-bar\"><div class=\"search-wrapper\">\n<input type=\"text\" id=\"search-input\" placeholder=\"🔍 Wyszukaj...\">\n<button id=\"clear-search\" class=\"clear-btn\">✕</button>\n</div></div>\n<div class=\"search-results-note\" id=\"search-note\"></div>\n<div class=\"tabs-container\">\n<div class=\"tab-menu\"><ul id=\"tab-menu-ul\"></ul></div>\n<div class=\"tab-content\" id=\"tab-content-area\"></div>\n</div>\n</section>\n<footer><p id=\"footer-copy\">© 2026 HackerOS.</p></footer>"
+
+fun main() [
+    boot_begin("pl", "HackerOS - Dokumentacja")
+    set_viewport("width=device-width,initial-scale=1.0")
+    head_tag("link", ["rel", "icon", "type", "image/png", "href", "HackerOS.png"])
+    boot_body(PAGE_BODY)
+    offline_init("")
+    docs_init()
+]
