@@ -1,0 +1,465 @@
+use <mode:website>
+
+include <../../shared/offline>
+include <../../logic/scrollspy>
+
+style {
+#app { display: none; }
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Space+Mono:wght@400;700&display=swap');
+
+  :root {
+    --bg:       #0D1117;
+    --surface:  #161B22;
+    --surface2: #21262D;
+    --border:   #30363D;
+    --accent:   #58A6FF;
+    --green:    #3FB950;
+    --red:      #F85149;
+    --yellow:   #D29922;
+    --purple:   #A371F7;
+    --muted:    #8B949E;
+    --text:     #C9D1D9;
+    --dim:      #484F58;
+    --glow:     0 0 20px rgba(88,166,255,.25);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 2px,
+      rgba(0,0,0,.08) 2px,
+      rgba(0,0,0,.08) 4px
+    );
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  
+  .layout {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    min-height: 100vh;
+  }
+
+  
+  aside {
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 0;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .logo {
+    padding: 24px 20px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo-name {
+    font-family: 'Space Mono', monospace;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: -.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .logo-name::before {
+    content: '▌';
+    color: var(--accent);
+    animation: blink 1.2s step-end infinite;
+  }
+
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .logo-sub {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+    letter-spacing: .5px;
+  }
+
+  .os-badge {
+    display: inline-block;
+    background: var(--purple);
+    color: #fff;
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 3px;
+    letter-spacing: .5px;
+    margin-top: 6px;
+    font-weight: 700;
+  }
+
+  nav {
+    padding: 16px 0;
+    flex: 1;
+  }
+
+  nav a {
+    display: block;
+    padding: 7px 20px;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 13px;
+    border-left: 2px solid transparent;
+    transition: all .15s;
+  }
+
+  nav a:hover,
+  nav a.active {
+    color: var(--accent);
+    border-left-color: var(--accent);
+    background: rgba(88,166,255,.07);
+  }
+
+  nav .nav-section {
+    font-size: 10px;
+    color: var(--dim);
+    padding: 14px 20px 4px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  .sidebar-footer {
+    padding: 16px 20px;
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+    color: var(--dim);
+  }
+
+  
+  main {
+    padding: 48px 64px;
+    max-width: 900px;
+  }
+
+  
+  section {
+    margin-bottom: 72px;
+    opacity: 0;
+    transform: translateY(16px);
+    animation: fadeUp .5s forwards;
+  }
+
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  section:nth-child(1) { animation-delay: .05s; }
+  section:nth-child(2) { animation-delay: .1s; }
+  section:nth-child(3) { animation-delay: .15s; }
+  section:nth-child(4) { animation-delay: .2s; }
+  section:nth-child(5) { animation-delay: .25s; }
+  section:nth-child(6) { animation-delay: .3s; }
+  section:nth-child(7) { animation-delay: .35s; }
+
+  h1 {
+    font-family: 'Space Mono', monospace;
+    font-size: 32px;
+    color: var(--accent);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  h1 .tag {
+    font-size: 13px;
+    background: var(--surface2);
+    color: var(--muted);
+    padding: 2px 8px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    font-weight: 400;
+  }
+
+  h2 {
+    font-family: 'Space Mono', monospace;
+    font-size: 18px;
+    color: var(--text);
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  h2::before {
+    content: '##';
+    color: var(--dim);
+    font-size: 12px;
+  }
+
+  h3 {
+    font-size: 14px;
+    color: var(--yellow);
+    margin: 20px 0 10px;
+    font-weight: 700;
+  }
+
+  p {
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+
+  strong {
+    color: var(--text);
+    font-weight: 700;
+  }
+
+  
+  .hero {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 32px;
+    margin-bottom: 48px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--purple), var(--green));
+  }
+
+  .hero-lead {
+    font-size: 16px;
+    color: var(--text);
+    margin-bottom: 16px;
+  }
+
+  .badges {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+  }
+
+  .badge {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1px solid;
+    font-weight: 600;
+    letter-spacing: .3px;
+  }
+
+  .badge-blue  { color: var(--accent);  border-color: var(--accent);  background: rgba(88,166,255,.1); }
+  .badge-green { color: var(--green);   border-color: var(--green);   background: rgba(63,185,80,.1); }
+  .badge-purple{ color: var(--purple);  border-color: var(--purple);  background: rgba(163,113,247,.1); }
+  .badge-yellow{ color: var(--yellow);  border-color: var(--yellow);  background: rgba(210,153,34,.1); }
+
+  
+  .term {
+    background: #010409;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin: 16px 0;
+    overflow: hidden;
+  }
+
+  .term-bar {
+    background: var(--surface2);
+    padding: 8px 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .term-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+  }
+  .term-dot.r { background: #FF5F57; }
+  .term-dot.y { background: #FFBD2E; }
+  .term-dot.g { background: #28CA41; }
+
+  .term-title {
+    font-size: 11px;
+    color: var(--muted);
+    margin-left: 8px;
+    letter-spacing: .5px;
+  }
+
+  .term-body {
+    padding: 16px 20px;
+    font-size: 13px;
+    line-height: 1.8;
+    overflow-x: auto;
+  }
+
+  .prompt { color: var(--green); }
+  .cmd    { color: var(--text); }
+  .comment { color: var(--dim); }
+  .out    { color: var(--muted); }
+  .hl     { color: var(--accent); }
+  .err    { color: var(--red); }
+  .warn   { color: var(--yellow); }
+
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 13px;
+  }
+
+  thead th {
+    text-align: left;
+    padding: 8px 12px;
+    background: var(--surface2);
+    color: var(--muted);
+    font-weight: 600;
+    border-bottom: 1px solid var(--border);
+    font-size: 11px;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background .1s;
+  }
+  tbody tr:hover { background: rgba(88,166,255,.04); }
+
+  tbody td {
+    padding: 9px 12px;
+    vertical-align: top;
+    color: var(--muted);
+  }
+
+  tbody td:first-child { white-space: nowrap; }
+
+  kbd {
+    display: inline-block;
+    background: var(--surface2);
+    border: 1px solid var(--dim);
+    border-radius: 4px;
+    padding: 1px 7px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text);
+    white-space: nowrap;
+    box-shadow: 0 1px 0 var(--dim);
+  }
+
+  code {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 1px 6px;
+    font-size: 12px;
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+    margin: 20px 0;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    transition: border-color .2s, box-shadow .2s;
+  }
+
+  .card:hover {
+    border-color: var(--accent);
+    box-shadow: var(--glow);
+  }
+
+  .card-icon {
+    font-size: 22px;
+    margin-bottom: 10px;
+    display: block;
+  }
+
+  .card h3 {
+    margin: 0 0 6px;
+    color: var(--text);
+    font-size: 13px;
+  }
+
+  .card p {
+    font-size: 12px;
+    margin: 0;
+  }
+
+  
+  .vfs-scheme {
+    color: var(--green);
+    font-weight: 700;
+  }
+
+  
+  .alert {
+    border-radius: 6px;
+    padding: 14px 18px;
+    margin: 16px 0;
+    border-left: 3px solid;
+    font-size: 13px;
+  }
+
+  .alert-info  { background: rgba(88,166,255,.08); border-color: var(--accent); color: var(--accent); }
+  .alert-warn  { background: rgba(210,153,34,.08); border-color: var(--yellow); color: var(--yellow); }
+  .alert-danger{ background: rgba(248,81,73,.08);  border-color: var(--red);    color: var(--red);    }
+
+  
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--surface); }
+  ::-webkit-scrollbar-thumb { background: var(--dim); border-radius: 3px; }
+
+  
+  @media (max-width: 768px) {
+    .layout { grid-template-columns: 1fr; }
+    aside { position: static; height: auto; }
+    main { padding: 24px 20px; }
+    h1 { font-size: 22px; }
+  }
+}
+
+let PAGE_BODY: Str = "<div class=\"layout\">\n\n\n<aside>\n  <div class=\"logo\">\n    <div class=\"logo-name\">ngt</div>\n    <div class=\"logo-sub\">night file manager · v0.3</div>\n    <div class=\"os-badge\">HackerOS</div>\n  </div>\n\n  <nav>\n    <div class=\"nav-section\">Getting Started</div>\n    <a href=\"#overview\">Overview</a>\n    <a href=\"#install\">Installation</a>\n    <a href=\"#quickstart\">Quick Start</a>\n\n    <div class=\"nav-section\">Features</div>\n    <a href=\"#ui\">Interface</a>\n    <a href=\"#vfs\">Virtual File Systems</a>\n    <a href=\"#podman\">Podman Integration</a>\n    <a href=\"#keybindings\">Keybindings</a>\n    <a href=\"#commands\">Commands</a>\n    <a href=\"#editor\">Built-in Editor</a>\n    <a href=\"#search\">Fuzzy Search</a>\n    <a href=\"#rename\">Bulk Rename</a>\n    <a href=\"#git\">Git Status</a>\n\n    <div class=\"nav-section\">Reference</div>\n    <a href=\"#config\">Configuration</a>\n    <a href=\"#vfs-ref\">VFS Reference</a>\n    <a href=\"#faq\">FAQ</a>\n  </nav>\n\n  <div class=\"sidebar-footer\">\n    Part of HackerOS ecosystem<br>\n    © 2025 HackerOS Project\n  </div>\n</aside>\n\n\n<main>\n\n\n<section id=\"overview\">\n  <h1>ngt <span class=\"tag\">night</span></h1>\n\n  <div class=\"hero\">\n    <p class=\"hero-lead\">\n      <strong>ngt (night)</strong> to dwupanelowy menedżer plików dla terminala,\n      zbudowany w Go z wykorzystaniem biblioteki Bubble Tea. Zaprojektowany jako\n      pierwszoklasowe narzędzie ekosystemu <strong>HackerOS</strong> — szybki,\n      rozszerzalny i wygodny w pracy z lokalnymi, zdalnymi i kontenerowymi\n      systemami plików.\n    </p>\n    <div class=\"badges\">\n      <span class=\"badge badge-blue\">Go 1.22+</span>\n      <span class=\"badge badge-green\">SFTP</span>\n      <span class=\"badge badge-purple\">Podman</span>\n      <span class=\"badge badge-yellow\">ZIP · TAR · TAR.GZ</span>\n      <span class=\"badge badge-blue\">Git-aware</span>\n      <span class=\"badge badge-green\">Syntax Highlighting</span>\n    </div>\n  </div>\n\n  <div class=\"cards\">\n    <div class=\"card\">\n      <span class=\"card-icon\">⚡</span>\n      <h3>Błyskawiczny</h3>\n      <p>Napisany w Go, renderuje pełny UI w milisekundach. Zero opóźnień nawet na dużych katalogach.</p>\n    </div>\n    <div class=\"card\">\n      <span class=\"card-icon\">🐳</span>\n      <h3>Podman-native</h3>\n      <p>Przeglądaj system plików działających kontenerów bezpośrednio z ngt — bez exec shell.</p>\n    </div>\n    <div class=\"card\">\n      <span class=\"card-icon\">🌐</span>\n      <h3>Multi-VFS</h3>\n      <p>Lokalne, SFTP, ZIP, TAR, TAR.GZ — wszystkie w jednym interfejsie. Kopiowanie między VFS.</p>\n    </div>\n    <div class=\"card\">\n      <span class=\"card-icon\">🎨</span>\n      <h3>Podświetlanie składni</h3>\n      <p>Podgląd plików z pełnym podświetlaniem Chroma — ponad 300 języków.</p>\n    </div>\n    <div class=\"card\">\n      <span class=\"card-icon\">🔍</span>\n      <h3>Fuzzy Search</h3>\n      <p>Przeszukuj drzewa katalogów w czasie rzeczywistym przez <kbd>Ctrl+P</kbd>.</p>\n    </div>\n    <div class=\"card\">\n      <span class=\"card-icon\">📁</span>\n      <h3>Git-aware</h3>\n      <p>Status M/A/D widoczny bezpośrednio na liście plików. Gałąź wyświetlona w pasku ścieżki.</p>\n    </div>\n  </div>\n</section>\n\n\n<section id=\"install\">\n  <h2>Installation</h2>\n\n  <p>W dystrybucji <strong>HackerOS</strong> ngt jest dostępny bezpośrednio z repozytorium systemowego:</p>\n\n  <div class=\"term\">\n    <div class=\"term-bar\">\n      <div class=\"term-dot r\"></div>\n      <div class=\"term-dot y\"></div>\n      <div class=\"term-dot g\"></div>\n      <div class=\"term-title\">bash</div>\n    </div>\n    <div class=\"term-body\">\n<span class=\"comment\">ngt jest wbuowany w HackerOS</span><br>\n<br>\n    </div>\n  </div>\n\n  <h3>Zależności</h3>\n  <table>\n    <thead><tr><th>Pakiet</th><th>Wersja</th><th>Cel</th></tr></thead>\n    <tbody>\n      <tr><td><code>charmbracelet/bubbletea</code></td><td>≥ 0.25</td><td>TUI framework</td></tr>\n      <tr><td><code>charmbracelet/lipgloss</code></td><td>≥ 0.9</td><td>Stylowanie terminala</td></tr>\n      <tr><td><code>alecthomas/chroma/v2</code></td><td>≥ 2.23</td><td>Podświetlanie składni</td></tr>\n      <tr><td><code>pkg/sftp</code></td><td>≥ 1.13</td><td>SFTP VFS</td></tr>\n      <tr><td><code>golang.org/x/crypto</code></td><td>≥ 0.22</td><td>SSH transport</td></tr>\n      <tr><td><code>golang.org/x/sync</code></td><td>≥ 0.7</td><td>Kopiowanie równoległe</td></tr>\n      <tr><td><code>podman</code> (system)</td><td>≥ 4.0</td><td>Podman VFS (opcjonalne)</td></tr>\n    </tbody>\n  </table>\n</section>\n\n\n<section id=\"quickstart\">\n  <h2>Quick Start</h2>\n\n  <div class=\"term\">\n    <div class=\"term-bar\">\n      <div class=\"term-dot r\"></div><div class=\"term-dot y\"></div><div class=\"term-dot g\"></div>\n      <div class=\"term-title\">bash</div>\n    </div>\n    <div class=\"term-body\">\n<span class=\"prompt\">$</span> <span class=\"cmd\">ngt</span><br>\n<br>\n<span class=\"comment\"># Uruchom w konkretnym katalogu</span><br>\n<span class=\"prompt\">$</span> <span class=\"cmd\">ngt /home/user/projekty</span>\n    </div>\n  </div>\n\n  <p>Po uruchomieniu zobaczysz <strong>dwa panele</strong> plików. Aktywny panel ma niebieską ramkę.\n  Przełączaj się między nimi klawiszem <kbd>Tab</kbd>.</p>\n\n  <div class=\"alert alert-info\">\n    💡 Pasek poleceń na dole przyjmuje komendy jak <code>cd katalog</code>, <code>mkdir nowy</code>,\n    <code>sftp://user@host</code>. Naciśnij <kbd>Enter</kbd>, aby wykonać.\n  </div>\n</section>\n\n\n<section id=\"ui\">\n  <h2>Interface</h2>\n\n  <div class=\"term\">\n    <div class=\"term-bar\">\n      <div class=\"term-dot r\"></div><div class=\"term-dot y\"></div><div class=\"term-dot g\"></div>\n      <div class=\"term-title\">ngt — layout</div>\n    </div>\n    <div class=\"term-body\" style=\"font-size:12px; line-height:1.5;\">\n<span class=\"hl\">  ngt v0.3  │  HackerOS file manager</span><br>\n<span class=\"out\">┌─────────────────────────────┬──────────────────────────────┐</span><br>\n<span class=\"out\">│ </span><span class=\"hl\">local  ~/projekty</span><span class=\"out\">  </span><span class=\"warn\"> main </span><span class=\"out\"> </span><span class=\"warn\">Name</span><span class=\"out\"> │ </span><span class=\"out\">local  ~/dokumenty</span><span class=\"out\">         </span><span class=\"warn\">Name</span><span class=\"out\"> │</span><br>\n<span class=\"out\">│</span><span class=\"hl\"> ▶ </span><span class=\"hl\">src/                         </span><span class=\"out\">│  </span><span class=\"out\">docs/                        </span><span class=\"out\">│</span><br>\n<span class=\"out\">│   </span><span class=\"out\">main.go               12.3 kB │  </span><span class=\"out\">README.md              2.1 kB │</span><br>\n<span class=\"out\">│   </span><span class=\"warn\">config.yaml            1.0 kB │  </span><span class=\"out\">notes.txt              500 B  │</span><br>\n<span class=\"out\">│   </span><span class=\"out\">go.mod                  400 B │  </span><span class=\"out\">                               │</span><br>\n<span class=\"out\">│                               │                               │</span><br>\n<span class=\"out\">└───────────────────────────────┴───────────────────────────────┘</span><br>\n<span class=\"out\">› </span><span class=\"cmd\">_</span><br>\n<span class=\"green\">✓ Panel refreshed</span><br>\n<span class=\"out\">F1</span><span class=\"muted\">Help</span> <span class=\"out\">F5</span><span class=\"muted\">Copy</span> <span class=\"out\">F6</span><span class=\"muted\">Move</span> <span class=\"out\">F8</span><span class=\"muted\">Delete</span> <span class=\"out\">^P</span><span class=\"muted\">Fuzzy</span> <span class=\"out\">^R</span><span class=\"muted\">Rename</span> <span class=\"out\">Q</span><span class=\"muted\">Quit</span>\n    </div>\n  </div>\n\n  <h3>Elementy interfejsu</h3>\n  <table>\n    <thead><tr><th>Element</th><th>Opis</th></tr></thead>\n    <tbody>\n      <tr><td>Pasek tytułu</td><td>Nazwa aplikacji, wersja, nazwa dystrybucji HackerOS</td></tr>\n      <tr><td>Pasek ścieżki</td><td>Tag VFS, bieżący katalog, gałąź Git, aktualny tryb sortowania</td></tr>\n      <tr><td>Panele plików</td><td>Dwukolumnowa lista. Aktywny panel — niebieska ramka, nieaktywny — szara</td></tr>\n      <tr><td>Pasek poleceń</td><td>Wiersz z promptem <code>›</code> — wpisuj polecenia jak w shellu</td></tr>\n      <tr><td>Pasek statusu</td><td>Wynik ostatniej operacji (zielony = OK, czerwony = błąd)</td></tr>\n      <tr><td>Pasek funkcyjny</td><td>Skróty F-key widoczne na dole ekranu</td></tr>\n    </tbody>\n  </table>\n</section>\n\n\n<section id=\"vfs\">\n  <h2>Virtual File Systems</h2>\n\n  <p>ngt obsługuje wiele <strong>wirtualnych systemów plików</strong> przez jednolity interfejs.\n  Możesz kopiować pliki między dowolnymi dwoma VFS — np. z SFTP do lokalnego archiwum ZIP.</p>\n\n  <table>\n    <thead><tr><th>VFS</th><th>Schemat URL</th><th>Tryb</th><th>Opis</th></tr></thead>\n    <tbody>\n      <tr>\n        <td><strong>Local</strong></td>\n        <td><code class=\"vfs-scheme\">local</code></td>\n        <td>RW</td>\n        <td>Standardowy system plików hosta. Pełne wsparcie odczytu i zapisu.</td>\n      </tr>\n      <tr>\n        <td><strong>SFTP</strong></td>\n        <td><code class=\"vfs-scheme\">sftp://</code></td>\n        <td>RW</td>\n        <td>Zdalny serwer przez SSH/SFTP. Tworzenie, usuwanie, przenoszenie plików.</td>\n      </tr>\n      <tr>\n        <td><strong>Podman</strong></td>\n        <td><code class=\"vfs-scheme\">podman://</code></td>\n        <td>RW</td>\n        <td>System plików działającego kontenera Podman. Odczyt i zapis przez <code>podman exec</code>.</td>\n      </tr>\n      <tr>\n        <td><strong>ZIP</strong></td>\n        <td><code class=\"vfs-scheme\">zip://</code></td>\n        <td>R</td>\n        <td>Przeglądanie zawartości archiwum ZIP. Mount przez naciśnięcie Enter na pliku.</td>\n      </tr>\n      <tr>\n        <td><strong>TAR / TAR.GZ</strong></td>\n        <td><code class=\"vfs-scheme\">tar://</code></td>\n        <td>R</td>\n        <td>Przeglądanie archiwów TAR i TAR.GZ. Mount automatyczny.</td>\n      </tr>\n    </tbody>\n  </table>\n\n  <div class=\"term\">\n    <div class=\"term-bar\">\n      <div class=\"term-dot r\"></div><div class=\"term-dot y\"></div><div class=\"term-dot g\"></div>\n      <div class=\"term-title\">Przykłady połączeń</div>\n    </div>\n    <div class=\"term-body\">\n<span class=\"comment\"># Połączenie SFTP</span><br>\n<span class=\"prompt\">›</span> <span class=\"cmd\">sftp://admin:haslo@192.168.1.10:22</span><br>\n<br>\n<span class=\"comment\"># Otwarcie archiwum ZIP (Enter na pliku w panelu)</span><br>\n<span class=\"prompt\">›</span> <span class=\"cmd\"><span class=\"hl\">deploy.zip</span></span> <span class=\"comment\">← naciśnij Enter</span><br>\n<br>\n<span class=\"comment\"># Połączenie z kontenerem Podman</span><br>\n<span class=\"prompt\">›</span> <span class=\"cmd\">podman my-container</span><br>\n<br>\n<span class=\"comment\"># Lista działających kontenerów</span><br>\n<span class=\"prompt\">›</span> <span class=\"cmd\">podmanls</span>\n    </div>\n  </div>\n</section>\n\n\n<section id=\"podman\">\n  <h2>Podman Integration</h2>\n\n  <div class=\"alert alert-info\">\n    🐳 Wymagany jest <strong>Podman 4.0+</strong> zainstalowany w systemie i dostępny w PATH.\n  </div>\n\n  <p>ngt ma natywne wsparcie dla Podmana — możesz przeglądać i edytować system plików\n  działającego kontenera bez wychodzenia z menedżera.</p>\n\n  <h3>Przeglądarka kontenerów</h3>\n  <p>Naciśnij <kbd>Ctrl+D</kbd>, aby otworzyć listę działających kontenerów Podman.\n  Naciśnij <kbd>Enter</kbd> na wybranym kontenerze, by podmontować jego system plików\n  w aktywnym panelu.</p>\n\n  <div class=\"term\">\n    <div class=\"term-bar\">\n      <div class=\"term-dot r\"></div><div class=\"term-dot y\"></div><div class=\"term-dot g\"></div>\n      <div class=\"term-title\">Podman Browser</div>\n    </div>\n    <div class=\"term-body\" style=\"font-size:12px;\">\n<span style=\"background:#892BE2;color:#fff;padding:0 6px;border-radius:3px;\">🐳 Podman Containers</span>  <span class=\"muted\">Enter: connect  •  Esc: cancel</span><br>\n<span class=\"out\">┌─────────────────────────────────────────────────────────────┐</span><br>\n<span class=\"hl\">▶ a3f5c8d1  web-app     Up 2 hours</span><br>\n<span class=\"out\">  b7e2a094  db-postgres  Up 5 hours</span><br>\n<span class=\"out\">  c1d4f832  redis-cache  Up 1 day</span><br>\n<span class=\"out\">└─────────────────────────────────────────────────────────────┘</span>\n    </div>\n  </div>\n\n  <h3>Operacje na plikach kontenera</h3>\n  <table>\n    <thead><tr><th>Operacja</th><th>Jak działa</th></tr></thead>\n    <tbody>\n      <tr><td>Przeglądanie</td><td><code>podman exec CONTAINER ls -la DIR</code></td></tr>\n      <tr><td>Odczyt pliku</td><td><code>podman exec CONTAINER cat FILE</code></td></tr>\n      <tr><td>Zapis pliku</td><td><code>podman exec -i CONTAINER tee FILE</code></td></tr>\n      <tr><td>Usunięcie</td><td><code>podman exec CONTAINER rm -rf PATH</code></td></tr>\n      <tr><td>Przeniesienie</td><td><code>podman exec CONTAINER mv SRC DST</code></td></tr>\n      <tr><td>Tworzenie katalogu</td><td><code>podman exec CONTAINER mkdir -p PATH</code></td></tr>\n    </tbody>\n  </table>\n\n  <div class=\"alert alert-warn\">\n    ⚠️ Operacje zapisu na systemie plików kontenera są <strong>trwałe</strong> i nie zostaną\n    cofnięte po zatrzymaniu kontenera (o ile nie używasz overlay read-only).\n  </div>\n</section>\n\n\n<section id=\"keybindings\">\n  <h2>Keybindings</h2>\n\n  <h3>Nawigacja</h3>\n  <table>\n    <thead><tr><th>Klawisz</th><th>Akcja</th></tr></thead>\n    <tbody>\n      <tr><td><kbd>j</kbd> / <kbd>↓</kbd></td><td>Przesuń kursor w dół</td></tr>\n      <tr><td><kbd>k</kbd> / <kbd>↑</kbd></td><td>Przesuń kursor w górę</td></tr>\n      <tr><td><kbd>Enter</kbd> / <kbd>l</kbd></td><td>Otwórz katalog / plik / archiwum</td></tr>\n      <tr><td><kbd>Backspace</kbd> / <kbd>h</kbd></td><td>Przejdź do katalogu nadrzędnego (<code>cd ..</code>)</td></tr>\n      <tr><td><kbd>Tab</kbd></td><td>Przełącz aktywny panel</td></tr>\n      <tr><td><kbd>r</kbd></td><td>Odśwież bieżący panel</td></tr>\n    </tbody>\n  </table>\n\n  <h3>Operacje na plikach</h3>\n  <table>\n    <thead><tr><th>Klawisz</th><th>Akcja</th></tr></thead>\n    <tbody>\n      <tr><td><kbd>Space</kbd></td><td>Zaznacz / odznacz plik</td></tr>\n      <tr><td><kbd>F5</kbd></td><td>Kopiuj zaznaczone do drugiego panelu</td></tr>\n      <tr><td><kbd>F6</kbd></td><td>Przenieś zaznaczone do drugiego panelu</td></tr>\n      <tr><td><kbd>F8</kbd></td><td>Usuń zaznaczone (z potwierdzeniem)</td></tr>\n      <tr><td><kbd>Ctrl+U</kbd></td><td>Duplikuj zaznaczony plik (<code>_copy</code>)</td></tr>\n    </tbody>\n  </table>\n\n  <h3>Narzędzia</h3>\n  <table>\n    <thead><tr><th>Klawisz</th><th>Akcja</th></tr></thead>\n    <tbody>\n      <tr><td><kbd>Ctrl+P</kbd></td><td>Fuzzy search w bieżącym drzewie</td></tr>\n      <tr><td><kbd>Ctrl+R</kbd></td><td>Bulk rename z wyrażeniami regularnymi</td></tr>\n      <tr><td><kbd>Ctrl+S</kbd></td><td>Cykl trybów sortowania (Nazwa → Rozmiar → Data → Rozszerzenie)</td></tr>\n      <tr><td><kbd>Ctrl+D</kbd></td><td>Otwórz przeglądarkę kontenerów Podman</td></tr>\n      <tr><td><kbd>Ctrl+O</kbd></td><td>Otwórz pod-shell w bieżącym katalogu</td></tr>\n      <tr><td><kbd>Ctrl+Z</kbd></td><td>Zawieś ngt (SIGTSTP)</td></tr>\n      <tr><td><kbd>F1</kbd></td><td>Pokaż pomoc w pasku statusu</td></tr>\n      <tr><td><kbd>q</kbd> / <kbd>Ctrl+C</kbd></td><td>Wyjście z ngt</td></tr>\n    </tbody>\n  </table>\n\n  <h3>Edytor wbudowany</h3>\n  <table>\n    <thead><tr><th>Klawisz</th><th>Akcja</th></tr></thead>\n    <tbody>\n      <tr><td><kbd>Ctrl+S</kbd></td><td>Zapisz plik</td></tr>\n      <tr><td><kbd>Esc</kbd></td><td>Wyjdź z edytora bez zapisywania</td></tr>\n    </tbody>\n  </table>\n</section>\n\n\n<section id=\"commands\">\n  <h2>Commands</h2>\n\n  <p>Wpisz polecenie w pasku poleceń (<code>›</code>) i naciśnij <kbd>Enter</kbd>.\n  Obsługiwane jest uzupełnianie klawiszem <kbd>Tab</kbd>.</p>\n\n  <table>\n    <thead><tr><th>Polecenie</th><th>Składnia</th><th>Opis</th></tr></thead>\n    <tbody>\n      <tr><td><code>cd</code></td><td><code>cd &lt;ścieżka&gt;</code></td><td>Zmień katalog (ścieżki względne i bezwzględne)</td></tr>\n      <tr><td><code>cp</code></td><td><code>cp &lt;src&gt; &lt;dst&gt;</code></td><td>Skopiuj plik (lub użyj F5 dla zaznaczonych)</td></tr>\n      <tr><td><code>mv</code></td><td><code>mv &lt;src&gt; &lt;dst&gt;</code></td><td>Przenieś plik (lub F6)</td></tr>\n      <tr><td><code>rm</code></td><td><code>rm</code></td><td>Usuń zaznaczone pliki (wymaga potwierdzenia)</td></tr>\n      <tr><td><code>mkdir</code></td><td><code>mkdir &lt;nazwa&gt;</code></td><td>Utwórz katalog</td></tr>\n      <tr><td><code>touch</code></td><td><code>touch &lt;plik&gt;</code></td><td>Utwórz pusty plik</td></tr>\n      <tr><td><code>hedit</code></td><td><code>hedit &lt;plik&gt;</code></td><td>Otwórz plik w wbudowanym edytorze (lub Enter na pliku)</td></tr>\n      <tr><td><code>sftp</code></td><td><code>sftp://user:pass@host</code></td><td>Podłącz SFTP w aktywnym panelu</td></tr>\n      <tr><td><code>podman</code></td><td><code>podman &lt;id/nazwa&gt;</code></td><td>Podłącz system plików kontenera Podman</td></tr>\n      <tr><td><code>podmanls</code></td><td><code>podmanls</code></td><td>Wyświetl przeglądarkę działających kontenerów</td></tr>\n    </tbody>\n  </table>\n\n  <div class=\"alert alert-info\">\n    💡 Nieznane polecenia są przekazywane do powłoki systemowej i uruchamiane w tle.\n    Wynik pojawia się w pasku statusu.\n  </div>\n</section>\n\n\n<section id=\"editor\">\n  <h2>Built-in Editor</h2>\n\n  <p>ngt posiada wbudowany edytor tekstu — naciśnij <kbd>Enter</kbd> na pliku tekstowym\n  lub wpisz <code>hedit &lt;plik&gt;</code>.</p>\n\n  <ul style=\"margin: 0 0 16px 20px; color: var(--muted);\">\n    <li>Limit rozmiaru pliku: <strong>10 MB</strong></li>\n    <li>Zapis: <kbd>Ctrl+S</kbd></li>\n    <li>Anulowanie: <kbd>Esc</kbd> (bez zapisywania)</li>\n    <li>Działa na wszystkich VFS obsługujących zapis (local, SFTP, Podman)</li>\n  </ul>\n\n  <div class=\"alert alert-warn\">\n    ⚠️ Edytor na SFTP i Podman VFS zapisuje plik w całości — nie obsługuje partial writes.\n  </div>\n</section>\n\n\n<section id=\"search\">\n  <h2>Fuzzy Search</h2>\n\n  <p>Naciśnij <kbd>Ctrl+P</kbd>, aby otworzyć tryb fuzzy search. ngt rekurencyjnie\n  przeszukuje bieżące drzewo katalogów i filtruje wyniki w czasie rzeczywistym.</p>\n\n  <div class=\"term\">\n    <div class=\"term-bar\">\n      <div class=\"term-dot r\"></div><div class=\"term-dot y\"></div><div class=\"term-dot g\"></div>\n      <div class=\"term-title\">Fuzzy Search</div>\n    </div>\n    <div class=\"term-body\">\n<span class=\"out\">  🔍 </span><span class=\"cmd\">main</span><span class=\"hl\">_</span><br>\n<span class=\"out\">┌────────────────────────────────────────┐</span><br>\n<span class=\"hl\">▶ src/main.go</span><br>\n<span class=\"out\">  cmd/main_test.go</span><br>\n<span class=\"out\">  internal/main_loop.go</span><br>\n<span class=\"out\">└────────────────────────────────────────┘</span><br>\n<span class=\"muted\">  3 results  •  Enter: navigate  •  Esc: cancel</span>\n    </div>\n  </div>\n\n  <p>Naciśnij <kbd>Enter</kbd> na wyniku, by przejść do katalogu zawierającego ten plik.</p>\n</section>\n\n\n<section id=\"rename\">\n  <h2>Bulk Rename</h2>\n\n  <p>Zaznacz pliki (<kbd>Space</kbd>), a następnie naciśnij <kbd>Ctrl+R</kbd>.\n  Rename przebiega w dwóch krokach:</p>\n\n  <ol style=\"margin: 0 0 16px 24px; color: var(--muted);\">\n    <li>Podaj wyrażenie regularne do dopasowania</li>\n    <li>Podaj ciąg zastępczy (obsługiwane grupy <code>$1</code>, <code>$2</code>)</li>\n  </ol>\n\n  <div class=\"term\">\n    <div class=\"term-bar\">\n      <div class=\"term-dot r\"></div><div class=\"term-dot y\"></div><div class=\"term-dot g\"></div>\n      <div class=\"term-title\">Przykład: zamień prefix report_ na summary_</div>\n    </div>\n    <div class=\"term-body\">\n<span class=\"muted\">Step 1/2: regex pattern</span><br>\n<span class=\"prompt\">›</span> <span class=\"cmd\">^report_(.+)$</span><br>\n<br>\n<span class=\"muted\">Step 2/2: replacement string</span><br>\n<span class=\"prompt\">›</span> <span class=\"cmd\">summary_$1</span><br>\n<br>\n<span class=\"green\">✓ Renamed 5 file(s)</span>\n    </div>\n  </div>\n</section>\n\n\n<section id=\"git\">\n  <h2>Git Status</h2>\n\n  <p>W katalogach będących repozytoriami Git, ngt automatycznie pokazuje status plików\n  i nazwę bieżącej gałęzi:</p>\n\n  <table>\n    <thead><tr><th>Kolor</th><th>Status Git</th><th>Znaczenie</th></tr></thead>\n    <tbody>\n      <tr>\n        <td><span style=\"color:var(--yellow)\">■</span> Żółty</td>\n        <td><code>M</code></td>\n        <td>Plik zmodyfikowany (Modified)</td>\n      </tr>\n      <tr>\n        <td><span style=\"color:var(--green)\">■</span> Zielony</td>\n        <td><code>A</code></td>\n        <td>Plik dodany do staging (Added)</td>\n      </tr>\n      <tr>\n        <td><span style=\"color:var(--red)\">■</span> Czerwony</td>\n        <td><code>D</code></td>\n        <td>Plik usunięty (Deleted)</td>\n      </tr>\n    </tbody>\n  </table>\n\n  <p>Gałąź widoczna jest w pasku ścieżki nad panelem jako zielony badge.</p>\n</section>\n\n\n<section id=\"config\">\n  <h2>Configuration</h2>\n\n  <p>W tej wersji ngt nie wymaga pliku konfiguracyjnego — wszystko jest dostępne\n  przez klawiaturę. Planowane wsparcie dla <code>~/.config/ngt/config.yaml</code> w v0.4.</p>\n\n  <div class=\"alert alert-info\">\n    📋 Planowane opcje: skróty klawiszowe, motyw kolorów, domyślny tryb sortowania,\n    lista zapisanych serwerów SFTP i kontenerów Podman.\n  </div>\n</section>\n\n\n<section id=\"vfs-ref\">\n  <h2>VFS Reference</h2>\n\n  <p>Interfejs <code>vfsHandler</code> implementowany przez wszystkie VFS:</p>\n\n  <div class=\"term\">\n    <div class=\"term-bar\">\n      <div class=\"term-dot r\"></div><div class=\"term-dot y\"></div><div class=\"term-dot g\"></div>\n      <div class=\"term-title\">Go interface</div>\n    </div>\n    <div class=\"term-body\" style=\"font-size:12px;\">\n<span class=\"hl\">type</span> <span class=\"warn\">vfsHandler</span> <span class=\"hl\">interface</span> {<br>\n&nbsp;&nbsp;<span class=\"muted\">// Odczyt</span><br>\n&nbsp;&nbsp;ReadDir(dir <span class=\"hl\">string</span>) ([]fs.DirEntry, <span class=\"hl\">error</span>)<br>\n&nbsp;&nbsp;Open(file <span class=\"hl\">string</span>) (fs.File, <span class=\"hl\">error</span>)<br>\n&nbsp;&nbsp;Stat(file <span class=\"hl\">string</span>) (fs.FileInfo, <span class=\"hl\">error</span>)<br>\n&nbsp;&nbsp;Chdir(dir <span class=\"hl\">string</span>) <span class=\"hl\">error</span><br>\n&nbsp;&nbsp;Getwd() (<span class=\"hl\">string</span>, <span class=\"hl\">error</span>)<br>\n&nbsp;&nbsp;<span class=\"muted\">// Zapis</span><br>\n&nbsp;&nbsp;Remove(path <span class=\"hl\">string</span>) <span class=\"hl\">error</span><br>\n&nbsp;&nbsp;Rename(src, dst <span class=\"hl\">string</span>) <span class=\"hl\">error</span><br>\n&nbsp;&nbsp;MkdirAll(path <span class=\"hl\">string</span>, perm fs.FileMode) <span class=\"hl\">error</span><br>\n&nbsp;&nbsp;Create(path <span class=\"hl\">string</span>) (io.WriteCloser, <span class=\"hl\">error</span>)<br>\n&nbsp;&nbsp;<span class=\"muted\">// Metadata</span><br>\n&nbsp;&nbsp;VFSName() <span class=\"hl\">string</span><br>\n}\n    </div>\n  </div>\n</section>\n\n\n<section id=\"faq\">\n  <h2>FAQ</h2>\n\n  <h3>Podman nie jest dostępny — co robić?</h3>\n  <p>Upewnij się, że <code>podman</code> jest w PATH i działa jako bieżący użytkownik\n  (rootless Podman). Przetestuj: <code>podman ps</code>.</p>\n\n  <h3>Nie widzę podświetlania składni</h3>\n  <p>Podświetlanie wymaga terminala z obsługą 256 kolorów lub TrueColor.\n  Sprawdź zmienną <code>$TERM</code> — powinna zawierać <code>256color</code> lub <code>truecolor</code>.</p>\n\n  <h3>Jak wrócić z VFS SFTP/Podman do lokalnego systemu plików?</h3>\n  <p>Wpisz <code>cd /dowolna/sciezka/lokalna</code> — ngt automatycznie przełączy\n  się na lokalny VFS jeśli ścieżka istnieje na hoście. (Planowane: <code>local</code>\n  komenda w v0.4.)</p>\n\n  <h3>Czy ngt działa na macOS / Windows?</h3>\n  <p>ngt jest zoptymalizowany pod HackerOS (Linux). Na macOS powinien działać\n  poprawnie z wyjątkiem integracji Podman. Windows nie jest obsługiwany.</p>\n\n  <h3>Jak zgłosić błąd?</h3>\n  <p>Użyj trackera na <code>https://git.hackeros.local/tools/ngt/issues</code>.</p>\n</section>\n\n</main>\n</div>"
+
+fun main() [
+    boot_begin("pl", "ngt — Night File Manager · HackerOS")
+    set_viewport("width=device-width, initial-scale=1.0")
+    head_tag("link", ["rel", "icon", "type", "image/png", "href", "../HackerOS.png"])
+    boot_body(PAGE_BODY)
+    offline_init("../")
+    scrollspy("section[id]", "nav a", "-30% 0px -60% 0px", 0.0)
+]
