@@ -1,0 +1,548 @@
+use <mode:website>
+
+include <../../shared/offline>
+include <../../logic/hackerdeck>
+
+style {
+#app { display: none; }
+  :root {
+    --bg: #060a12;
+    --bg2: #0d1120;
+    --bg3: #131929;
+    --cyan: #00e5ff;
+    --cyan-dim: rgba(0,229,255,0.12);
+    --cyan-border: rgba(0,229,255,0.25);
+    --green: #39ff8c;
+    --orange: #ff9500;
+    --red: #ff4557;
+    --white: #e8eaf0;
+    --muted: rgba(232,234,240,0.45);
+    --subtle: rgba(232,234,240,0.12);
+    --card-border: rgba(255,255,255,0.07);
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Space Grotesk', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--white);
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,229,255,0.015) 2px, rgba(0,229,255,0.015) 4px);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  
+  header {
+    position: relative;
+    overflow: hidden;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--cyan-border);
+    padding: 0 40px;
+  }
+
+  header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+  }
+
+  .header-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 0;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .logo-icon {
+    width: 46px; height: 46px;
+    background: var(--cyan-dim);
+    border: 1px solid var(--cyan-border);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+  }
+
+  .logo-text h1 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--cyan);
+    letter-spacing: -0.5px;
+  }
+
+  .logo-text p {
+    font-size: 12px;
+    color: var(--muted);
+    font-family: var(--mono);
+  }
+
+  nav {
+    display: flex;
+    gap: 6px;
+  }
+
+  nav a {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: all .2s;
+    border: 1px solid transparent;
+  }
+
+  nav a:hover {
+    color: var(--cyan);
+    border-color: var(--cyan-border);
+    background: var(--cyan-dim);
+  }
+
+  
+  .hero {
+    position: relative;
+    padding: 80px 40px 70px;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -200px; left: 50%; transform: translateX(-50%);
+    width: 700px; height: 700px;
+    background: radial-gradient(circle, rgba(0,229,255,0.07) 0%, transparent 65%);
+    pointer-events: none;
+  }
+
+  .badge {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--cyan);
+    background: var(--cyan-dim);
+    border: 1px solid var(--cyan-border);
+    padding: 5px 14px;
+    border-radius: 20px;
+    margin-bottom: 24px;
+  }
+
+  .hero h2 {
+    font-size: clamp(32px, 5vw, 58px);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -1.5px;
+    max-width: 760px;
+    margin: 0 auto 20px;
+  }
+
+  .hero h2 span { color: var(--cyan); }
+
+  .hero p {
+    color: var(--muted);
+    font-size: 17px;
+    max-width: 580px;
+    margin: 0 auto 36px;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all .2s;
+  }
+
+  .btn-primary {
+    background: var(--cyan);
+    color: #000;
+    border: none;
+  }
+
+  .btn-primary:hover { background: #33edff; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(0,229,255,0.25); }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--white);
+    border: 1px solid var(--subtle);
+  }
+
+  .btn-outline:hover { border-color: var(--cyan-border); color: var(--cyan); }
+
+  
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 40px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  
+  .section {
+    margin-top: 72px;
+  }
+
+  .section-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--cyan);
+    margin-bottom: 10px;
+  }
+
+  .section h2 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 6px;
+  }
+
+  .section > p {
+    color: var(--muted);
+    margin-bottom: 28px;
+    max-width: 620px;
+  }
+
+  
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+
+  .card {
+    background: var(--bg3);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 22px;
+    transition: border-color .2s, transform .2s;
+  }
+
+  .card:hover {
+    border-color: var(--cyan-border);
+    transform: translateY(-2px);
+  }
+
+  .card-icon {
+    width: 38px; height: 38px;
+    background: var(--cyan-dim);
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    margin-bottom: 14px;
+  }
+
+  .card h3 {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .card p {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  
+  .feature-hero {
+    background: var(--bg3);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 36px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 36px;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+
+  .feature-hero.reverse { direction: rtl; }
+  .feature-hero.reverse > * { direction: ltr; }
+
+  .feature-hero h3 {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    letter-spacing: -0.3px;
+  }
+
+  .feature-hero p {
+    color: var(--muted);
+    font-size: 14px;
+    margin-bottom: 16px;
+  }
+
+  .feature-visual {
+    background: var(--bg2);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 20px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.8;
+    min-height: 160px;
+  }
+
+  .c-cyan { color: var(--cyan); }
+  .c-green { color: var(--green); }
+  .c-orange { color: var(--orange); }
+  .c-red { color: var(--red); }
+  .c-muted { color: var(--muted); }
+
+  
+  .steps { list-style: none; counter-reset: steps; }
+  .steps li {
+    counter-increment: steps;
+    display: flex;
+    gap: 18px;
+    margin-bottom: 20px;
+    align-items: flex-start;
+  }
+
+  .steps li::before {
+    content: counter(steps);
+    flex-shrink: 0;
+    width: 30px; height: 30px;
+    background: var(--cyan-dim);
+    border: 1px solid var(--cyan-border);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--cyan);
+    margin-top: 2px;
+  }
+
+  .steps li strong { display: block; margin-bottom: 4px; }
+  .steps li p, .steps li span { font-size: 13px; color: var(--muted); }
+
+  
+  .code {
+    background: var(--bg2);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--cyan);
+    overflow-x: auto;
+    margin: 8px 0 16px;
+  }
+
+  .code .prompt { color: var(--muted); user-select: none; }
+
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  th {
+    text-align: left;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--card-border);
+    color: var(--cyan);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 400;
+  }
+
+  td {
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    color: var(--muted);
+  }
+
+  td:first-child { color: var(--white); font-family: var(--mono); font-size: 12px; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .table-wrap {
+    background: var(--bg3);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  
+  kbd {
+    display: inline-block;
+    background: var(--bg2);
+    border: 1px solid var(--card-border);
+    border-bottom-width: 2px;
+    border-radius: 5px;
+    padding: 2px 8px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--white);
+  }
+
+  
+  .tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: var(--mono);
+    font-size: 11px;
+  }
+
+  .tag-green { background: rgba(57,255,140,0.1); color: var(--green); }
+  .tag-orange { background: rgba(255,149,0,0.1); color: var(--orange); }
+  .tag-cyan { background: var(--cyan-dim); color: var(--cyan); }
+
+  
+  .alert {
+    display: flex;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin: 16px 0;
+  }
+
+  .alert-info { background: rgba(0,229,255,0.07); border: 1px solid var(--cyan-border); }
+  .alert-warn { background: rgba(255,149,0,0.07); border: 1px solid rgba(255,149,0,0.25); color: var(--orange); }
+  .alert span:first-child { flex-shrink: 0; }
+
+  
+  .wizard-steps {
+    display: flex;
+    gap: 0;
+    margin: 24px 0;
+  }
+
+  .wizard-step {
+    flex: 1;
+    text-align: center;
+    padding: 16px 8px;
+    position: relative;
+  }
+
+  .wizard-step::after {
+    content: '→';
+    position: absolute;
+    right: -8px;
+    top: 50%; transform: translateY(-50%);
+    color: var(--muted);
+    font-size: 18px;
+  }
+
+  .wizard-step:last-child::after { display: none; }
+
+  .wizard-step .ws-icon {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 8px;
+    font-size: 20px;
+  }
+
+  .ws-done { background: rgba(57,255,140,0.15); border: 1px solid rgba(57,255,140,0.3); }
+  .ws-active { background: var(--cyan-dim); border: 1px solid var(--cyan-border); }
+  .ws-todo { background: var(--bg2); border: 1px solid var(--card-border); }
+
+  .wizard-step .ws-label { font-size: 12px; color: var(--muted); }
+
+  
+  footer {
+    border-top: 1px solid var(--card-border);
+    padding: 32px 40px;
+    text-align: center;
+  }
+
+  footer p {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  footer span { color: var(--cyan); }
+
+  
+  #progress {
+    position: fixed;
+    top: 0; left: 0;
+    height: 2px;
+    background: var(--cyan);
+    z-index: 9999;
+    transition: width .1s;
+  }
+
+  
+  @media (max-width: 720px) {
+    header, main, footer { padding-left: 20px; padding-right: 20px; }
+    .header-inner { flex-direction: column; gap: 16px; }
+    .feature-hero { grid-template-columns: 1fr; }
+    .feature-hero.reverse { direction: ltr; }
+    .wizard-steps { flex-direction: column; gap: 8px; }
+    .wizard-step::after { display: none; }
+    nav { flex-wrap: wrap; justify-content: center; }
+  }
+
+  
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero > * { animation: fadeUp .5s ease both; }
+  .hero > *:nth-child(1) { animation-delay: .1s; }
+  .hero > *:nth-child(2) { animation-delay: .2s; }
+  .hero > *:nth-child(3) { animation-delay: .3s; }
+  .hero > *:nth-child(4) { animation-delay: .4s; }
+}
+
+let PAGE_BODY: Str = "<div id=\"progress\"></div>\n\n<header>\n  <div class=\"header-inner\">\n    <div class=\"logo\">\n      <div class=\"logo-icon\">🤖</div>\n      <div class=\"logo-text\">\n        <h1>HackerDeck</h1>\n        <p>v4.0 // dokumentacja</p>\n      </div>\n    </div>\n    <nav>\n      <a href=\"#start\">Start</a>\n      <a href=\"#features\">Funkcje</a>\n      <a href=\"#install\">Instalacja</a>\n      <a href=\"#keymapper\">Keymapper</a>\n      <a href=\"#store\">Sklep APK</a>\n      <a href=\"#shortcuts\">Skróty</a>\n      <a href=\"#faq\">FAQ</a>\n    </nav>\n  </div>\n</header>\n\n<div class=\"hero\">\n  <div class=\"badge\">Flutter · Waydroid · Linux · Open Source</div>\n  <h2>Zarządzanie <span>Waydroid</span> nigdy nie było prostsze</h2>\n  <p>HackerDeck to graficzny menadżer Waydroid z kreatorem instalacji, sklepem APK, wizualnym keymapperem i trybem FPS — wszystko w jednym oknie.</p>\n  <div class=\"hero-actions\">\n    <a href=\"#install\" class=\"btn btn-primary\">🚀 Zacznij tutaj</a>\n    <a href=\"#features\" class=\"btn btn-outline\">📖 Przejrzyj funkcje</a>\n  </div>\n</div>\n\n<main>\n\n  \n  <section class=\"section\" id=\"start\">\n    <div class=\"section-label\">Pierwsze uruchomienie</div>\n    <h2>Kreator uruchomi się automatycznie</h2>\n    <p>Przy pierwszym starcie HackerDeck wykrywa, czy Waydroid i zależności są zainstalowane. Jeśli nie — pojawia się kreator.</p>\n\n    <div class=\"wizard-steps\">\n      <div class=\"wizard-step\">\n        <div class=\"ws-icon ws-done\">✓</div>\n        <div class=\"ws-label\">Wykrywanie środowiska</div>\n      </div>\n      <div class=\"wizard-step\">\n        <div class=\"ws-icon ws-active\">📋</div>\n        <div class=\"ws-label\">Ekran powitalny</div>\n      </div>\n      <div class=\"wizard-step\">\n        <div class=\"ws-icon ws-todo\">⬇️</div>\n        <div class=\"ws-label\">Automatyczna instalacja</div>\n      </div>\n      <div class=\"wizard-step\">\n        <div class=\"ws-icon ws-todo\">🎉</div>\n        <div class=\"ws-label\">Gotowe!</div>\n      </div>\n    </div>\n\n    <div class=\"alert alert-info\">\n      <span>ℹ️</span>\n      <span>Kreator instaluje: <strong>apt-update → curl/ca-certificates/lxc → repo Waydroid → Waydroid → init GAPPS</strong>. Każdy krok wykonywany przez <code>pkexec</code> (wymaga hasła administratora).</span>\n    </div>\n\n    <div class=\"alert alert-warn\">\n      <span>⚠️</span>\n      <span>Wymagania systemowe: Linux x86_64, kernel z obsługą binder (≥ 5.8 dla większości dystrybucji), uprawnienia do <code>pkexec</code>.</span>\n    </div>\n  </section>\n\n  \n  <section class=\"section\" id=\"features\">\n    <div class=\"section-label\">Co oferuje HackerDeck v4.0</div>\n    <h2>Wszystkie narzędzia w jednym miejscu</h2>\n    <p>Zaprojektowany z myślą o graczach, programistach i entuzjastach Androida na Linuksie.</p>\n\n    <div class=\"grid-3\" style=\"margin-bottom:16px\">\n      <div class=\"card\">\n        <div class=\"card-icon\">🧙</div>\n        <h3>Kreator instalacji</h3>\n        <p>Automatyczna instalacja Waydroid, LXC, binder i GAPPS z paskiem postępu i logami w czasie rzeczywistym.</p>\n      </div>\n      <div class=\"card\">\n        <div class=\"card-icon\">📦</div>\n        <h3>Sklep APK</h3>\n        <p>Wbudowana biblioteka darmowych i open-source aplikacji: F-Droid, VLC, Termux, RetroArch i wiele innych.</p>\n      </div>\n      <div class=\"card\">\n        <div class=\"card-icon\">🎯</div>\n        <h3>Visual Keymapper</h3>\n        <p>Przeciągane kółka mapują klawisze klawiatury na dotknięcia ekranu Waydroid. Prawy klik = usuń.</p>\n      </div>\n      <div class=\"card\">\n        <div class=\"card-icon\">🎮</div>\n        <h3>Mouse Steering (FPS)</h3>\n        <p>Tryb FPS mapuje ruch myszy na swipe w Waydroid — idealne do PUBG, Free Fire, Call of Duty Mobile.</p>\n      </div>\n      <div class=\"card\">\n        <div class=\"card-icon\">🔀</div>\n        <h3>Multi-instancje</h3>\n        <p>Twórz i przełączaj oddzielne środowiska Android (np. Gaming, Praca). Każda instancja to osobny katalog danych.</p>\n      </div>\n      <div class=\"card\">\n        <div class=\"card-icon\">📊</div>\n        <h3>Dashboard</h3>\n        <p>Szybki podgląd statusu, skróty do najważniejszych akcji, statystyki instancji i mappingów.</p>\n      </div>\n    </div>\n  </section>\n\n  \n  <section class=\"section\" id=\"install\">\n    <div class=\"section-label\">Instalacja</div>\n    <h2>Uruchom HackerDeck</h2>\n\n    \n    <div style=\"background:linear-gradient(135deg,rgba(0,229,255,0.07),rgba(0,229,255,0.02));border:1px solid var(--cyan-border);border-radius:16px;padding:28px;margin-bottom:20px\">\n      <div style=\"display:flex;align-items:center;gap:12px;margin-bottom:16px\">\n        <span style=\"font-size:28px\">🐧</span>\n        <div>\n          <div style=\"font-size:18px;font-weight:700;color:var(--cyan)\">HackerOS</div>\n          <div style=\"font-size:12px;color:var(--muted)\">Jedno polecenie — wszystko gotowe</div>\n        </div>\n      </div>\n      <p style=\"font-size:13px;color:var(--muted);margin-bottom:16px\">Na HackerOS instalacja i usuwanie HackerDeck odbywa się przez menadżer pakietów <code>hacker</code>:</p>\n      <div class=\"code\" style=\"margin-bottom:12px\">\n        <span class=\"prompt\"># Instalacja</span><br>\n        <span style=\"color:var(--green)\">hacker unpack hackerdeck</span><br><br>\n        <span class=\"prompt\"># Deinstalacja</span><br>\n        <span style=\"color:var(--red)\">hacker pack hackerdeck</span>\n      </div>\n      <div style=\"display:flex;gap:8px;flex-wrap:wrap\">\n        <span class=\"tag tag-green\">✓ Automatyczne zależności</span>\n        <span class=\"tag tag-cyan\">✓ Integracja z HackerOS</span>\n        <span class=\"tag tag-green\">✓ Kreator przy pierwszym starcie</span>\n      </div>\n    </div>\n\n    \n    <details style=\"background:var(--bg3);border:1px solid var(--card-border);border-radius:12px;padding:20px;margin-bottom:16px\">\n      <summary style=\"cursor:pointer;font-weight:600;font-size:14px;list-style:none;display:flex;align-items:center;gap:10px\">\n        <span>🔧</span> Debian trixie / forky — instalacja ręczna\n        <span style=\"color:var(--muted);font-size:11px;margin-left:auto;font-weight:400\">kliknij aby rozwinąć</span>\n      </summary>\n      <div style=\"margin-top:16px\">\n        <div class=\"alert alert-warn\" style=\"margin-bottom:12px\">\n          <span>⚠️</span>\n          <span>Pakiet <code>binder-control</code> <strong>nie istnieje</strong> w Debianie trixie. HackerDeck używa <code>modprobe binder_linux</code> — wymaga kernela ≥ 5.12 z modułem binder.</span>\n        </div>\n        <ol class=\"steps\">\n          <li>\n            <div>\n              <strong>Sprawdź kernel i moduł binder</strong>\n              <div class=\"code\"><span class=\"prompt\">$ </span>uname -r<br><span class=\"prompt\">$ </span>modinfo binder_linux<br><span class=\"prompt\"># Jeśli brak modułu:</span><br><span class=\"prompt\">$ </span>sudo apt install linux-image-extra-$(uname -r)</div>\n            </div>\n          </li>\n          <li>\n            <div>\n              <strong>Zainstaluj HackerDeck (plik .deb lub AppImage)</strong>\n              <div class=\"code\"><span class=\"prompt\">$ </span>sudo dpkg -i hackerdeck_4.0.deb<br><span class=\"prompt\"># lub AppImage:</span><br><span class=\"prompt\">$ </span>chmod +x hackerdeck-4.0.AppImage && ./hackerdeck-4.0.AppImage</div>\n            </div>\n          </li>\n          <li>\n            <div>\n              <strong>Przy pierwszym uruchomieniu — kreator instalacji</strong>\n              <span>HackerDeck automatycznie wykryje brak Waydroid i uruchomi kreator: apt-update → LXC → modprobe binder_linux → repo waydroid → waydroid init GAPPS.</span>\n            </div>\n          </li>\n        </ol>\n      </div>\n    </details>\n\n    \n    <details style=\"background:var(--bg3);border:1px solid var(--card-border);border-radius:12px;padding:20px;margin-bottom:16px\">\n      <summary style=\"cursor:pointer;font-weight:600;font-size:14px;list-style:none;display:flex;align-items:center;gap:10px\">\n        <span>🛠️</span> Budowanie ze źródeł (Flutter)\n        <span style=\"color:var(--muted);font-size:11px;margin-left:auto;font-weight:400\">kliknij aby rozwinąć</span>\n      </summary>\n      <div style=\"margin-top:16px\">\n        <p style=\"font-size:13px;color:var(--muted);margin-bottom:12px\">Wymagany Flutter SDK ≥ 3.0. Kod źródłowy jest podzielony na pliki w <code>lib/</code>:</p>\n        <div class=\"code\" style=\"margin-bottom:12px\">\n          lib/<br>\n          &nbsp;&nbsp;main.dart &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class=\"c-muted\"># entry point + bootstrap</span><br>\n          &nbsp;&nbsp;home.dart &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class=\"c-muted\"># główna powłoka UI</span><br>\n          &nbsp;&nbsp;models.dart &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class=\"c-muted\"># modele danych</span><br>\n          &nbsp;&nbsp;theme.dart &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class=\"c-muted\"># motyw aplikacji</span><br>\n          &nbsp;&nbsp;setup_wizard.dart <span class=\"c-muted\"># kreator instalacji</span><br>\n          &nbsp;&nbsp;store_data.dart &nbsp;&nbsp;<span class=\"c-muted\"># katalog sklepu APK</span><br>\n          &nbsp;&nbsp;keymapper_painter.dart <span class=\"c-muted\"># CustomPainter</span><br>\n          &nbsp;&nbsp;pages/ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class=\"c-muted\"># dashboard, apps, store…</span>\n        </div>\n        <div class=\"code\">\n          <span class=\"prompt\">$ </span>git clone https://github.com/hackeros/hackerdeck.git && cd hackerdeck<br>\n          <span class=\"prompt\">$ </span>flutter pub get<br>\n          <span class=\"prompt\">$ </span>flutter build linux --release<br>\n          <span class=\"prompt\">$ </span>./build/linux/x64/release/bundle/hackerdeck\n        </div>\n      </div>\n    </details>\n\n    <div class=\"table-wrap\">\n      <table>\n        <thead><tr><th>Zależność Flutter</th><th>Wersja</th><th>Zastosowanie</th></tr></thead>\n        <tbody>\n          <tr><td>process_run</td><td>^1.0.0</td><td>Uruchamianie procesów systemowych</td></tr>\n          <tr><td>file_picker</td><td>^8.0.0</td><td>Wybór pliku .apk</td></tr>\n          <tr><td>path_provider</td><td>^2.1.3</td><td>Katalogi systemowe (tmp, config)</td></tr>\n          <tr><td>window_manager</td><td>^0.4.0</td><td>Zarządzanie oknem desktopowym</td></tr>\n        </tbody>\n      </table>\n    </div>\n  </section>\n\n  \n  <section class=\"section\" id=\"keymapper\">\n    <div class=\"section-label\">Visual Keymapper</div>\n    <h2>Mapuj klawisze wizualnie</h2>\n\n    <div class=\"feature-hero\">\n      <div>\n        <h3>Jak to działa?</h3>\n        <p>Kółka na ekranie reprezentują mapowania klawiszy → dotknięć. Gdy naciśniesz zmapowany klawisz, HackerDeck wysyła <code>waydroid shell input tap X Y</code> do kontenera.</p>\n        <ul style=\"list-style:none; padding:0; font-size:13px; color:var(--muted)\">\n          <li style=\"margin-bottom:8px\">🖱️ <strong style=\"color:var(--white)\">Przeciągnij</strong> — przesuń kółko na właściwą pozycję</li>\n          <li style=\"margin-bottom:8px\">🖱️ <strong style=\"color:var(--white)\">Prawy klik</strong> — usuń mapping</li>\n          <li style=\"margin-bottom:8px\">➕ <strong style=\"color:var(--white)\">Przycisk Dodaj</strong> — nowe kółko po środku</li>\n          <li>💾 <strong style=\"color:var(--white)\">Auto-zapis</strong> — każda zmiana zapisuje się do <code>~/.config/hackerdeck/keymaps.json</code></li>\n        </ul>\n      </div>\n      <div class=\"feature-visual\">\n        <div class=\"c-muted\">// keymaps.json (przykład)</div>\n        <br>\n        [<br>\n        &nbsp;&nbsp;{<br>\n        &nbsp;&nbsp;&nbsp;&nbsp;<span class=\"c-cyan\">\"key\"</span>: <span class=\"c-green\">\"w\"</span>,<br>\n        &nbsp;&nbsp;&nbsp;&nbsp;<span class=\"c-cyan\">\"type\"</span>: <span class=\"c-green\">\"tap\"</span>,<br>\n        &nbsp;&nbsp;&nbsp;&nbsp;<span class=\"c-cyan\">\"x\"</span>: <span class=\"c-orange\">500</span>,<br>\n        &nbsp;&nbsp;&nbsp;&nbsp;<span class=\"c-cyan\">\"y\"</span>: <span class=\"c-orange\">300</span><br>\n        &nbsp;&nbsp;},<br>\n        &nbsp;&nbsp;{ <span class=\"c-cyan\">\"key\"</span>: <span class=\"c-green\">\"s\"</span>, <span class=\"c-cyan\">\"x\"</span>: <span class=\"c-orange\">500</span>, <span class=\"c-cyan\">\"y\"</span>: <span class=\"c-orange\">700</span> },<br>\n        &nbsp;&nbsp;{ <span class=\"c-cyan\">\"key\"</span>: <span class=\"c-green\">\"a\"</span>, <span class=\"c-cyan\">\"x\"</span>: <span class=\"c-orange\">300</span>, <span class=\"c-cyan\">\"y\"</span>: <span class=\"c-orange\">500</span> },<br>\n        &nbsp;&nbsp;{ <span class=\"c-cyan\">\"key\"</span>: <span class=\"c-green\">\"d\"</span>, <span class=\"c-cyan\">\"x\"</span>: <span class=\"c-orange\">700</span>, <span class=\"c-cyan\">\"y\"</span>: <span class=\"c-orange\">500</span> }<br>\n        ]\n      </div>\n    </div>\n\n    <div class=\"alert alert-info\">\n      <span>💡</span>\n      <span>Wskazówka: Otwórz okno HackerDeck na górze okna Waydroid i wyrównaj kółka do elementów UI gry (przyciski, dżojstik). Dzięki temu trafisz idealnie w każdy element.</span>\n    </div>\n  </section>\n\n  \n  <section class=\"section\" id=\"store\">\n    <div class=\"section-label\">Sklep APK</div>\n    <h2>Zainstaluj aplikacje jednym klikiem</h2>\n    <p>HackerDeck zawiera wbudowany katalog sprawdzonych, darmowych aplikacji. Możesz też zainstalować dowolny plik .apk z dysku.</p>\n\n    <div class=\"grid-3\">\n      <div class=\"card\">\n        <div class=\"card-icon\">📦</div>\n        <h3>F-Droid / Aurora Store</h3>\n        <p><span class=\"tag tag-green\">Store</span> Sklepy z aplikacjami Android. Aurora umożliwia pobieranie z Google Play bez konta.</p>\n      </div>\n      <div class=\"card\">\n        <div class=\"card-icon\">🎮</div>\n        <h3>RetroArch / PPSSPP</h3>\n        <p><span class=\"tag tag-orange\">Emulacja</span> Emulatory gier. RetroArch obsługuje wiele platform, PPSSPP specjalizuje się w PSP.</p>\n      </div>\n      <div class=\"card\">\n        <div class=\"card-icon\">🎬</div>\n        <h3>VLC / Kodi / NewPipe</h3>\n        <p><span class=\"tag tag-cyan\">Media</span> Odtwarzacze multimedialne. NewPipe = YouTube bez reklam i śledzenia.</p>\n      </div>\n      <div class=\"card\">\n        <div class=\"card-icon\">💻</div>\n        <h3>Termux</h3>\n        <p><span class=\"tag tag-green\">Narzędzia</span> Terminal Linuksowy w Androidzie z pełnym menadżerem pakietów <code>apt</code>.</p>\n      </div>\n      <div class=\"card\">\n        <div class=\"card-icon\">🔒</div>\n        <h3>Signal / KeePassDX</h3>\n        <p><span class=\"tag tag-orange\">Bezpieczeństwo</span> Szyfrowany komunikator i menadżer haseł. Prywatność przede wszystkim.</p>\n      </div>\n      <div class=\"card\">\n        <div class=\"card-icon\">💎</div>\n        <h3>Obsidian / LibreOffice</h3>\n        <p><span class=\"tag tag-cyan\">Produktywność</span> Notatki Markdown i przeglądarka dokumentów biurowych.</p>\n      </div>\n    </div>\n\n    <div style=\"margin-top:20px\">\n      <h3 style=\"margin-bottom:10px;font-size:16px\">Instalacja własnego APK</h3>\n      <p style=\"font-size:13px;color:var(--muted);margin-bottom:10px\">Przejdź do zakładki <strong>Aplikacje</strong> i kliknij „Zainstaluj APK\". Wybierz plik .apk z dysku — HackerDeck uruchomi <code>waydroid app install</code> automatycznie.</p>\n    </div>\n  </section>\n\n  \n  <section class=\"section\" id=\"shortcuts\">\n    <div class=\"section-label\">Skróty klawiszowe i komendy</div>\n    <h2>Pełna lista skrótów</h2>\n\n    <div class=\"table-wrap\" style=\"margin-bottom:20px\">\n      <table>\n        <thead><tr><th>Skrót</th><th>Działanie</th><th>Kontekst</th></tr></thead>\n        <tbody>\n          <tr><td><kbd>F1</kbd></td><td>Włącz / wyłącz tryb Mouse Steering (FPS)</td><td>Globalne</td></tr>\n          <tr><td><kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd></td><td>Domyślne mapowania (dot. tap) — konfigurowalnie</td><td>Keymapper aktywny</td></tr>\n          <tr><td>PPM na kółku</td><td>Usuń mapping w Visual Keymapper</td><td>Zakładka Keymapper</td></tr>\n          <tr><td>Drag kółka</td><td>Przesuń mapping na nową pozycję</td><td>Zakładka Keymapper</td></tr>\n        </tbody>\n      </table>\n    </div>\n\n    <h3 style=\"font-size:16px;margin-bottom:10px\">Komendy Waydroid (skróty w Dashboard)</h3>\n    <div class=\"table-wrap\">\n      <table>\n        <thead><tr><th>Akcja</th><th>Polecenie</th></tr></thead>\n        <tbody>\n          <tr><td>Start kontenera</td><td><code>waydroid container start</code></td></tr>\n          <tr><td>Start sesji</td><td><code>waydroid session start</code></td></tr>\n          <tr><td>Stop wszystkiego</td><td><code>waydroid session stop</code></td></tr>\n          <tr><td>Pełny interfejs</td><td><code>waydroid show-full-ui</code></td></tr>\n          <tr><td>Lista aplikacji</td><td><code>waydroid app list</code></td></tr>\n          <tr><td>Instalacja APK</td><td><code>waydroid app install plik.apk</code></td></tr>\n          <tr><td>Uruchom aplikację</td><td><code>waydroid app launch com.package.name</code></td></tr>\n          <tr><td>Usuń aplikację</td><td><code>waydroid app remove com.package.name</code></td></tr>\n          <tr><td>Shell Androida</td><td><code>waydroid shell</code></td></tr>\n          <tr><td>Status</td><td><code>waydroid status</code></td></tr>\n        </tbody>\n      </table>\n    </div>\n  </section>\n\n  \n  <section class=\"section\">\n    <div class=\"section-label\">Pliki konfiguracyjne</div>\n    <h2>Gdzie są dane?</h2>\n\n    <div class=\"grid-2\">\n      <div class=\"card\">\n        <div class=\"card-icon\">📁</div>\n        <h3>~/.config/hackerdeck/</h3>\n        <p>Główny katalog konfiguracyjny HackerDeck. Tworzony automatycznie przy pierwszym uruchomieniu.</p>\n      </div>\n      <div class=\"card\">\n        <div class=\"card-icon\">🗃️</div>\n        <h3>instances.json</h3>\n        <p>Lista instancji Waydroid: nazwa i ścieżka katalogu danych każdej instancji.</p>\n      </div>\n      <div class=\"card\">\n        <div class=\"card-icon\">⌨️</div>\n        <h3>keymaps.json</h3>\n        <p>Mapowania klawiszy: klawisz, typ (tap), współrzędne X/Y. Edytowalny ręcznie lub przez UI.</p>\n      </div>\n      <div class=\"card\">\n        <div class=\"card-icon\">📋</div>\n        <h3>Logi (w UI)</h3>\n        <p>Panel logów na dole okna. Przechowuje ostatnie 500 wpisów. Można zwinąć klikając w nagłówek „Logi\".</p>\n      </div>\n    </div>\n  </section>\n\n  \n  <section class=\"section\" id=\"faq\">\n    <div class=\"section-label\">Często zadawane pytania</div>\n    <h2>FAQ</h2>\n\n    <div style=\"display:flex;flex-direction:column;gap:12px\">\n\n      <div class=\"card\">\n        <h3>❓ Kreator się zatrzymał z błędem — co robić?</h3>\n        <p style=\"margin-top:8px\">Sprawdź logi widoczne w oknie kreatora. Najczęstsze przyczyny: brak połączenia z internetem, brak <code>pkexec</code> (zainstaluj <code>policykit-1</code>) lub brak wsparcia binderu w kernelu. Kliknij „Spróbuj ponownie\" po naprawieniu problemu.</p>\n      </div>\n\n      <div class=\"card\">\n        <h3>❓ Waydroid jest zainstalowany, ale kreator nadal się pojawia</h3>\n        <p style=\"margin-top:8px\">Kreator sprawdza czy w PATH jest dostępne polecenie <code>waydroid</code> i <code>lxc-ls</code>. Upewnij się, że <code>/usr/bin/waydroid</code> istnieje. Możesz kliknąć „Pomiń\" w kreatorze, aby przejść bezpośrednio do interfejsu.</p>\n      </div>\n\n      <div class=\"card\">\n        <h3>❓ Sklep APK nie pobiera pliku</h3>\n        <p style=\"margin-top:8px\">Niektóre aplikacje linkują do stron releases (GitHub, F-Droid) zamiast bezpośrednio do pliku APK. W takim przypadku HackerDeck otworzy stronę w domyślnej przeglądarce. Pobierz APK ręcznie i użyj przycisku „Zainstaluj APK\" w zakładce Aplikacje.</p>\n      </div>\n\n      <div class=\"card\">\n        <h3>❓ Mouse Steering (FPS) działa wolno / kamera skacze</h3>\n        <p style=\"margin-top:8px\">Tryb FPS wysyła komendy przez <code>waydroid shell input swipe</code> — istnieje naturalne opóźnienie zależne od wydajności systemu. Czułość (2.5x) można dostosować edytując wartość w kodzie <code>_onMouseMove</code>. W przyszłej wersji planowany jest slider czułości w UI.</p>\n      </div>\n\n      <div class=\"card\">\n        <h3>❓ Jak dodać własną instancję Waydroid?</h3>\n        <p style=\"margin-top:8px\">Przejdź do zakładki <strong>Instancje</strong>, kliknij „Nowa instancja\" i wpisz nazwę. HackerDeck utworzy katalog <code>/var/lib/waydroid_&lt;nazwa&gt;</code>. Pamiętaj, że nowa instancja wymaga ręcznej inicjalizacji przez <code>waydroid init</code> (dostępne w zakładce Narzędzia).</p>\n      </div>\n\n      <div class=\"card\">\n        <h3>❓ Jak wyeksportować/zaimportować keymapę?</h3>\n        <p style=\"margin-top:8px\">Skopiuj plik <code>~/.config/hackerdeck/keymaps.json</code>. To zwykły plik JSON — możesz go edytować tekstowo lub udostępniać innym graczom tej samej gry.</p>\n      </div>\n\n    </div>\n  </section>\n\n</main>\n\n<footer>\n  <p>HackerDeck v4.0 · Zbudowany z ❤️ we <span>Flutter</span> · Dokumentacja wygenerowana automatycznie</p>\n  <p style=\"margin-top:6px\">Projekt open-source · Waydroid jest projektem zewnętrznym i ma własną <a href=\"https://waydro.id\" style=\"color:var(--cyan);text-decoration:none\">dokumentację</a></p>\n</footer>"
+
+fun main() [
+    boot_begin("pl", "HackerDeck v0.4 — Dokumentacja")
+    set_viewport("width=device-width, initial-scale=1.0")
+    head_tag("link", ["rel", "icon", "type", "image/png", "href", "../HackerOS.png"])
+    head_tag("link", ["rel", "preconnect", "href", "https://fonts.googleapis.com"])
+    head_tag("link", ["href", "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Space+Grotesk:wght@300;400;600;700&display=swap", "rel", "stylesheet"])
+    boot_body(PAGE_BODY)
+    offline_init("../")
+    hackerdeck_init()
+]
