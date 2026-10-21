@@ -1,0 +1,193 @@
+include <../shared/core>
+include <../shared/offline>
+
+let op_t: Any = null
+let op_root: Any = null
+let op_busy: Bool = false
+let op_base: Str = "/"
+let op_on_offline_page: Bool = false
+
+fun op_set_status(txt: Any, cls: Str) [
+    if op_root != null [
+        let el = op_root.querySelector("[data-slot=\"status\"]")
+        if el != null [
+            el.textContent = txt or ""
+            el.className = "hos-off-status"
+            if cls != "" [
+                el.className = "hos-off-status " + cls
+            ]
+        ]
+    ] else [
+        document.getElementById("fb-m").textContent = txt
+    ]
+]
+
+!! po powrocie sieci: odswiez wejsciowa strone albo przejdz na glowna
+fun op_go_back() [
+    if not op_on_offline_page [
+        location.reload()
+        end
+    ]
+    let s = ls_get_json(OFF_STATE_KEY)
+    let target = op_base + "Home-page.html"
+    if s != null and s.lastPage [
+        if Reflect.construct(URL, [s.lastPage]).origin == location.origin and not rx("offline\\.html").test(s.lastPage) [
+            target = s.lastPage
+        ]
+    ]
+    location.href = target
+]
+
+fun op_after_restore_ping(ok: Any) [
+    op_busy = false
+    if ok [
+        if op_root != null [
+            op_root.querySelector(".hos-off-card").classList.add("ok")
+        ]
+        op_set_status(op_t.restored, "good")
+        setTimeout(op_go_back, 900)
+    ] else [
+        op_set_status(op_t.still, "bad")
+    ]
+]
+
+fun op_on_retry(e: Any) [
+    if op_busy [
+        end
+    ]
+    op_busy = true
+    op_set_status(op_t.checking, "")
+    ping().then(op_after_restore_ping)
+]
+
+fun op_tick() [
+    if not op_busy [
+        op_on_retry(null)
+    ]
+]
+
+fun op_on_root_click(e: Any) [
+    let b = null
+    if e.target.closest != null [
+        b = e.target.closest("[data-act=\"retry\"]")
+    ]
+    if b != null [
+        e.preventDefault()
+        op_on_retry(e)
+    ]
+]
+
+fun op_fill_one(el: Any) [
+    el.textContent = jget(op_t, el.getAttribute("data-i18n")) or ""
+]
+
+fun offline_page_init() [
+    let payload = ls_get_json(OFF_STATE_KEY.replace("state", "dialog"))
+    let base = null
+    if payload != null [
+        base = payload.base
+    ]
+
+    !! sciezka bazowa: z zapisu w localStorage, z Service Workera lub ze sciezki
+    if not base [
+        let c = null
+        if not nil(navigator.serviceWorker) [
+            c = navigator.serviceWorker.controller
+        ]
+        if c != null [
+            base = rx_replace(Reflect.construct(URL, [c.scriptURL]).pathname, rx("sw\\.js$"), "")
+        ]
+    ]
+    if not base [
+        let p = location.pathname
+        let i = p.indexOf("/HackerOS-Website/")
+        base = "/"
+        if i >= 0 [
+            base = p.slice(0, i) + "/HackerOS-Website/"
+        ]
+    ]
+    op_base = base
+    OFF_BASE = base          !! ping() z shared/offline pyta ten adres
+
+    !! jezyk
+    let lang = localStorage.getItem(OFF_LANG_KEY)
+    let avail = null
+    if payload != null and payload.i18n [
+        avail = payload.i18n
+    ]
+    if not lang or (avail != null and nil(jget(avail, lang))) [
+        lang = (navigator.language or "pl").slice(0, 2).toLowerCase()
+    ]
+    if avail != null and nil(jget(avail, lang)) [
+        lang = "pl"
+    ]
+    document.documentElement.lang = lang
+    op_on_offline_page = rx("\\/offline\\.html$").test(location.pathname)
+
+    if payload != null and payload.html and payload.css and avail != null [
+        !! ===== dialog narysowany z danych zapisanych w localStorage =====
+        let st = document.createElement("style")
+        st.textContent = payload.css
+        document.head.appendChild(st)
+        op_root = document.createElement("div")
+        op_root.className = "hos-off-backdrop"
+        op_root.setAttribute("data-mode", "page")
+        op_root.setAttribute("role", "alertdialog")
+        op_root.setAttribute("aria-labelledby", "hos-off-title")
+        op_root.innerHTML = payload.html
+        document.getElementById("app").appendChild(op_root)
+
+        op_t = jget(avail, lang) or js_obj()
+        let s = ls_get_json(OFF_STATE_KEY)
+        if s == null [
+            s = js_obj()
+        ]
+        op_root.querySelectorAll("[data-i18n]").forEach(op_fill_one)
+
+        let lo = op_root.querySelector("[data-slot=\"lastOnline\"]")
+        if lo != null [
+            lo.textContent = fmt_ago(s.lastOnline, lang, op_t.never)
+        ]
+        let lp = op_root.querySelector("[data-slot=\"lastPage\"]")
+        if lp != null [
+            if s.lastPage [
+                let title_part = ""
+                if s.lastTitle [
+                    title_part = s.lastTitle + " – "
+                ]
+                lp.textContent = title_part + rx_replace(s.lastPage, rx("^https?:\\/\\/[^/]+"), "")
+            ] else [
+                lp.textContent = op_t.never
+            ]
+        ]
+        let home = op_root.querySelector("[data-act=\"home\"]")
+        if home != null [
+            home.setAttribute("href", base + "Home-page.html")
+        ]
+        document.title = "HackerOS - " + (op_t.title or "Offline")
+
+        op_root.addEventListener("click", op_on_root_click)
+        let rb = op_root.querySelector("[data-act=\"retry\"]")
+        if rb != null [
+            rb.focus()
+        ]
+    ] else [
+        !! ===== awaryjnie: zapis w localStorage niedostepny =====
+        let pl = rx_flags("^pl", "i").test(lang or "pl")
+        let tt = mkobj(["t", "No internet connection", "m", "Check your cable, Wi-Fi or mobile data.", "b", "Try again", "c", "Checking connection...", "s", "Still offline.", "r", "Connection restored!"])
+        if pl [
+            tt = mkobj(["t", "Brak połączenia z internetem", "m", "Sprawdź kabel, Wi-Fi lub dane komórkowe.", "b", "Spróbuj ponownie", "c", "Sprawdzanie połączenia...", "s", "Nadal brak sieci.", "r", "Połączenie przywrócone!"])
+        ]
+        op_t = mkobj(["checking", tt.c, "still", tt.s, "restored", tt.r])
+        document.getElementById("fb-t").textContent = tt.t
+        document.getElementById("fb-m").textContent = tt.m
+        document.getElementById("fb-b").textContent = tt.b
+        document.getElementById("fallback").style.display = "flex"
+        document.title = "HackerOS - Offline"
+        document.getElementById("fb-b").addEventListener("click", op_on_retry)
+    ]
+
+    window.addEventListener("online", op_on_retry)
+    !! automatyczne sprawdzanie co 6 s (navigator.onLine nie zawsze zglasza powrot sieci)
+    setInterval(op_tick, 6000)
+]
