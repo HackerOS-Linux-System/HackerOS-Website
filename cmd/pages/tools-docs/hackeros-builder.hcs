@@ -1,0 +1,6 @@
+use <mode:website>
+include <../../shared/core>
+
+fun main() [
+    boot_begin("", "")
+]
