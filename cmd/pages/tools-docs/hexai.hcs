@@ -1,0 +1,393 @@
+use <mode:website>
+
+include <../../shared/offline>
+
+style {
+#app { display: none; }
+    @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-base:     #1a1916;
+      --bg-surface:  #211f1c;
+      --bg-elevated: #2a2825;
+      --bg-hover:    #312f2b;
+      --border:      #3a3835;
+      --border-sub:  #2d2b28;
+      --accent:      #d97706;
+      --accent-dim:  #92400e;
+      --accent-glow: rgba(217,119,6,.15);
+      --text-pri:    #f5f0e8;
+      --text-sec:    #a89880;
+      --text-muted:  #6b6057;
+      --text-accent: #f59e0b;
+      --code-bg:     #1e1c19;
+      --green:       #4ade80;
+      --red:         #f87171;
+      --blue:        #60a5fa;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background: var(--bg-base);
+      color: var(--text-pri);
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    
+    .layout { display: flex; min-height: 100vh; }
+
+    
+    .nav {
+      width: 260px;
+      min-width: 260px;
+      background: var(--bg-surface);
+      border-right: 1px solid var(--border-sub);
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      padding: 0 0 40px;
+    }
+    .nav::-webkit-scrollbar { width: 3px; }
+    .nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    .nav-logo {
+      padding: 28px 24px 20px;
+      border-bottom: 1px solid var(--border-sub);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .nav-hex { font-size: 26px; color: var(--accent); line-height: 1; }
+    .nav-title {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-size: 22px;
+      color: var(--text-pri);
+      letter-spacing: -0.02em;
+    }
+    .nav-version {
+      font-size: 10px;
+      color: var(--text-muted);
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .nav-section {
+      padding: 16px 16px 4px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .nav a {
+      display: block;
+      padding: 6px 24px;
+      color: var(--text-sec);
+      text-decoration: none;
+      font-size: 13.5px;
+      border-left: 2px solid transparent;
+      transition: color .15s, border-color .15s, background .15s;
+    }
+    .nav a:hover {
+      color: var(--text-pri);
+      background: var(--bg-hover);
+      border-left-color: var(--border);
+    }
+    .nav a.active {
+      color: var(--text-accent);
+      border-left-color: var(--accent);
+      background: var(--accent-glow);
+    }
+
+    
+    .content {
+      flex: 1;
+      max-width: 860px;
+      padding: 60px 64px 100px;
+    }
+
+    
+    .hero {
+      margin-bottom: 80px;
+      padding-bottom: 48px;
+      border-bottom: 1px solid var(--border-sub);
+    }
+    .hero-eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .hero h1 {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-size: 52px;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      color: var(--text-pri);
+      margin-bottom: 20px;
+    }
+    .hero h1 em {
+      font-style: italic;
+      color: var(--text-accent);
+    }
+    .hero p {
+      font-size: 17px;
+      color: var(--text-sec);
+      max-width: 560px;
+      line-height: 1.7;
+    }
+    .badges { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 24px; }
+    .badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 99px;
+      border: 1px solid;
+    }
+    .badge-amber { color: var(--text-accent); border-color: var(--accent-dim); background: var(--accent-glow); }
+    .badge-green { color: var(--green); border-color: rgba(74,222,128,.3); background: rgba(74,222,128,.08); }
+    .badge-blue { color: var(--blue); border-color: rgba(96,165,250,.3); background: rgba(96,165,250,.08); }
+
+    
+    section { margin-bottom: 72px; scroll-margin-top: 32px; }
+    h2 {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-size: 34px;
+      letter-spacing: -0.02em;
+      color: var(--text-pri);
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-sub);
+    }
+    h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-pri);
+      margin: 28px 0 10px;
+    }
+    h4 {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-sec);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin: 20px 0 8px;
+    }
+    p { color: var(--text-sec); margin-bottom: 12px; }
+    p:last-child { margin-bottom: 0; }
+    strong { color: var(--text-pri); font-weight: 600; }
+    em { font-style: italic; color: var(--text-accent); }
+
+    
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12.5px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      padding: 1px 6px;
+      border-radius: 4px;
+      color: var(--text-accent);
+    }
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border-sub);
+      border-radius: 10px;
+      padding: 20px 24px;
+      overflow-x: auto;
+      margin: 16px 0;
+    }
+    pre code {
+      background: none;
+      border: none;
+      padding: 0;
+      color: var(--text-pri);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+    .code-header {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-sub);
+      border-bottom: none;
+      border-radius: 10px 10px 0 0;
+      padding: 8px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .code-header + pre {
+      border-radius: 0 0 10px 10px;
+      margin-top: 0;
+    }
+
+    
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin: 20px 0; }
+    .card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-sub);
+      border-radius: 12px;
+      padding: 20px;
+      transition: border-color .2s;
+    }
+    .card:hover { border-color: var(--border); }
+    .card-icon { font-size: 22px; margin-bottom: 10px; }
+    .card h4 { margin: 0 0 6px; font-size: 14px; color: var(--text-pri); text-transform: none; letter-spacing: 0; }
+    .card p { font-size: 13px; margin: 0; }
+
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+      margin: 16px 0;
+    }
+    th {
+      background: var(--bg-elevated);
+      color: var(--text-sec);
+      font-weight: 600;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 10px 14px;
+      border: 1px solid var(--border-sub);
+      text-align: left;
+    }
+    td {
+      padding: 10px 14px;
+      border: 1px solid var(--border-sub);
+      color: var(--text-sec);
+      vertical-align: top;
+    }
+    tr:hover td { background: var(--bg-hover); }
+
+    
+    .callout {
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin: 20px 0;
+      border-left: 3px solid;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .callout-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .callout-body { flex: 1; }
+    .callout-body strong { display: block; margin-bottom: 4px; font-size: 14px; }
+    .callout-body p { margin: 0; font-size: 13.5px; }
+    .callout-info { background: rgba(96,165,250,.08); border-color: rgba(96,165,250,.4); }
+    .callout-info .callout-body strong { color: var(--blue); }
+    .callout-warn { background: rgba(251,191,36,.08); border-color: rgba(251,191,36,.4); }
+    .callout-warn .callout-body strong { color: var(--text-accent); }
+    .callout-danger { background: rgba(248,113,113,.08); border-color: rgba(248,113,113,.4); }
+    .callout-danger .callout-body strong { color: var(--red); }
+    .callout-success { background: rgba(74,222,128,.08); border-color: rgba(74,222,128,.4); }
+    .callout-success .callout-body strong { color: var(--green); }
+
+    
+    .steps { counter-reset: step; margin: 16px 0; }
+    .step {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+      align-items: flex-start;
+    }
+    .step-num {
+      counter-increment: step;
+      flex-shrink: 0;
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--accent-dim);
+      color: var(--text-accent);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .step-body { flex: 1; }
+    .step-body strong { color: var(--text-pri); display: block; margin-bottom: 4px; }
+    .step-body p { margin: 0; font-size: 13.5px; }
+
+    
+    .endpoint {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-sub);
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 16px 0;
+    }
+    .endpoint-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-sub);
+      background: var(--bg-elevated);
+    }
+    .method {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+    .method-post { background: rgba(74,222,128,.15); color: var(--green); }
+    .method-get { background: rgba(96,165,250,.15); color: var(--blue); }
+    .method-delete { background: rgba(248,113,113,.15); color: var(--red); }
+    .endpoint-path {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: var(--text-pri);
+    }
+    .endpoint-desc { padding: 12px 16px; font-size: 13.5px; color: var(--text-sec); }
+
+    
+    .arch-diagram {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-sub);
+      border-radius: 12px;
+      padding: 32px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-sec);
+      margin: 20px 0;
+      line-height: 2;
+    }
+    .arch-diagram .hl { color: var(--text-accent); }
+    .arch-diagram .dim { color: var(--text-muted); }
+
+    
+    ul.toc { list-style: none; padding: 0; }
+    ul.toc li { margin: 4px 0; }
+    ul.toc a { color: var(--text-sec); text-decoration: none; font-size: 14px; }
+    ul.toc a:hover { color: var(--text-pri); }
+
+    
+    footer {
+      border-top: 1px solid var(--border-sub);
+      margin-top: 80px;
+      padding-top: 32px;
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+  
+}
+
+let PAGE_BODY: Str = "<div class=\"layout\">\n\n  \n  <nav class=\"nav\">\n    <div class=\"nav-logo\">\n      <span class=\"nav-hex\">⬡</span>\n      <div>\n        <div class=\"nav-title\">HexAi</div>\n        <div class=\"nav-version\">v2.0.0 · Dokumentacja</div>\n      </div>\n    </div>\n\n    <div class=\"nav-section\">Wprowadzenie</div>\n    <a href=\"#overview\">Przegląd</a>\n    <a href=\"#architecture\">Architektura</a>\n    <a href=\"#quickstart\">Szybki start</a>\n\n    <div class=\"nav-section\">Komponenty</div>\n    <a href=\"#backend\">Backend (Python)</a>\n    <a href=\"#desktop\">GUI Desktop (Tauri)</a>\n    <a href=\"#tui\">TUI (Go)</a>\n    <a href=\"#builder\">Builder</a>\n\n    <div class=\"nav-section\">API</div>\n    <a href=\"#api-chat\">Czat</a>\n    <a href=\"#api-engine\">Silnik &amp; Tryb</a>\n    <a href=\"#api-rag\">RAG</a>\n    <a href=\"#api-media\">Media</a>\n    <a href=\"#api-stats\">Statystyki</a>\n\n    <div class=\"nav-section\">Konfiguracja</div>\n    <a href=\"#config-models\">Modele</a>\n    <a href=\"#config-redis\">Redis</a>\n    <a href=\"#config-docker\">Docker</a>\n\n    <div class=\"nav-section\">Wdrożenie</div>\n    <a href=\"#deploy\">Produkcja</a>\n    <a href=\"#troubleshoot\">Rozwiązywanie problemów</a>\n  </nav>\n\n  \n  <main class=\"content\">\n\n    \n    <div class=\"hero\">\n      <div class=\"hero-eyebrow\">Dokumentacja techniczna</div>\n      <h1>HexAi – <em>Inteligentny</em><br>Asystent AI</h1>\n      <p>Lokalny, prywatny asystent AI z interfejsem desktopowym, terminalowym i REST API. Obsługuje LLM, RAG, transkrypcję audio, generowanie obrazów i bezpieczne wykonywanie kodu.</p>\n      <div class=\"badges\">\n        <span class=\"badge badge-amber\">Python 3.11–3.12</span>\n        <span class=\"badge badge-green\">FastAPI 0.115</span>\n        <span class=\"badge badge-green\">Rust 2021</span>\n        <span class=\"badge badge-blue\">Tauri 2.0</span>\n        <span class=\"badge badge-blue\">Next.js 14</span>\n      </div>\n    </div>\n\n    \n    <section id=\"overview\">\n      <h2>Przegląd</h2>\n      <p>HexAi to w pełni lokalny asystent AI, który nie wysyła żadnych danych do zewnętrznych serwerów. System składa się z czterech głównych komponentów:</p>\n\n      <div class=\"card-grid\">\n        <div class=\"card\">\n          <div class=\"card-icon\">⚙️</div>\n          <h4>Backend Python</h4>\n          <p>FastAPI REST API z obsługą LLM, RAG, pamięci, narzędzi i multimediów.</p>\n        </div>\n        <div class=\"card\">\n          <div class=\"card-icon\">🖥️</div>\n          <h4>Desktop GUI</h4>\n          <p>Aplikacja Tauri + Next.js z eleganckim, ciemnym interfejsem inspirowanym Claude.</p>\n        </div>\n        <div class=\"card\">\n          <div class=\"card-icon\">⌨️</div>\n          <h4>TUI (Go)</h4>\n          <p>Terminalowy interfejs użytkownika oparty na Bubble Tea – szybki i lekki.</p>\n        </div>\n        <div class=\"card\">\n          <div class=\"card-icon\">📦</div>\n          <h4>Builder</h4>\n          <p>Narzędzie Rust do pakowania backendu Python w samodzielny plik wykonywalny.</p>\n        </div>\n      </div>\n    </section>\n\n    \n    <section id=\"architecture\">\n      <h2>Architektura</h2>\n\n      <div class=\"arch-diagram\">\n<span class=\"hl\">┌────────────────────────────────────────────────────────────┐</span>\n<span class=\"hl\">│</span>                    <span class=\"hl\">HexAi System</span>                           <span class=\"hl\">│</span>\n<span class=\"hl\">├──────────────┬──────────────┬──────────────────────────────────┤</span>\n<span class=\"hl\">│  Desktop GUI │   TUI Rust   │          Builder Rust            │</span>\n<span class=\"hl\">│  Tauri+Next  │  (Bubble Tea)   │       (PyOxidizer wrapper)       │</span>\n<span class=\"hl\">├──────────────┴──────────────┴──────────────────────────────────┤</span>\n<span class=\"hl\">│</span>              <span class=\"hl\">REST API  http://localhost:8000</span>                   <span class=\"hl\">│</span>\n<span class=\"hl\">├────────────────────────────────────────────────────────────────┤</span>\n<span class=\"hl\">│</span>                    <span class=\"hl\">HexAI Core (Python)</span>                        <span class=\"hl\">│</span>\n<span class=\"hl\">│</span>  <span class=\"dim\">ModelManager</span>  │  <span class=\"dim\">AdvancedRAG</span>  │  <span class=\"dim\">PersistentMemory</span>  │  <span class=\"dim\">Tools</span>   <span class=\"hl\">│</span>\n<span class=\"hl\">│</span>  <span class=\"dim\">TTL cache</span>     │  <span class=\"dim\">Hybrid BM25</span>  │  <span class=\"dim\">Redis sessions</span>    │  <span class=\"dim\">Docker</span>  <span class=\"hl\">│</span>\n<span class=\"hl\">│</span>  <span class=\"dim\">GPU/CPU</span>       │  <span class=\"dim\">Reranking</span>   │  <span class=\"dim\">30-day facts</span>      │  <span class=\"dim\">Search</span>  <span class=\"hl\">│</span>\n<span class=\"hl\">├──────────────┬──────────────┬──────────────────────────────────┤</span>\n<span class=\"hl\">│</span> <span class=\"dim\">Transformers</span>  <span class=\"hl\">│</span>  <span class=\"dim\">Ollama API</span>  <span class=\"hl\">│</span>  <span class=\"dim\">ChromaDB</span>   <span class=\"hl\">│</span>  <span class=\"dim\">Redis</span>  <span class=\"hl\">│</span>  <span class=\"dim\">Docker</span>  <span class=\"hl\">│</span>\n<span class=\"hl\">│</span> <span class=\"dim\">Mistral-7B</span>    <span class=\"hl\">│</span>  <span class=\"dim\">llama2/code</span> <span class=\"hl\">│</span>  <span class=\"dim\">Vector DB</span>  <span class=\"hl\">│</span>        <span class=\"hl\">│</span>         <span class=\"hl\">│</span>\n<span class=\"hl\">└──────────────┴──────────────┴────────────┴────────┴─────────────┘</span>\n      </div>\n\n      <h3>Przepływ danych – czat (streaming)</h3>\n      <div class=\"steps\">\n        <div class=\"step\">\n          <div class=\"step-num\">1</div>\n          <div class=\"step-body\">\n            <strong>Klient → POST /chat</strong>\n            <p>Frontend lub TUI wysyła <code>{ message, session_id, stream: true }</code> do API.</p>\n          </div>\n        </div>\n        <div class=\"step\">\n          <div class=\"step-num\">2</div>\n          <div class=\"step-body\">\n            <strong>Sanityzacja &amp; kontekst</strong>\n            <p>Prompt jest sanityzowany, pobierana jest historia sesji z Redis oraz fakty o użytkowniku.</p>\n          </div>\n        </div>\n        <div class=\"step\">\n          <div class=\"step-num\">3</div>\n          <div class=\"step-body\">\n            <strong>Generowanie odpowiedzi</strong>\n            <p>Model (Transformers lub Ollama) generuje odpowiedź – tokeny są strumieniowane do klienta przez <code>StreamingResponse</code>.</p>\n          </div>\n        </div>\n        <div class=\"step\">\n          <div class=\"step-num\">4</div>\n          <div class=\"step-body\">\n            <strong>Wywołania narzędzi</strong>\n            <p>Jeśli odpowiedź zawiera wzorzec <code>{tool:name arg=\"val\"}</code>, narzędzie jest wykonywane i wyniki dołączane do kontekstu (maks. 3 iteracje).</p>\n          </div>\n        </div>\n        <div class=\"step\">\n          <div class=\"step-num\">5</div>\n          <div class=\"step-body\">\n            <strong>Zapis do pamięci</strong>\n            <p>Para (user_msg, assistant_msg) trafia do Redis i ChromaDB dla przyszłego recall.</p>\n          </div>\n        </div>\n      </div>\n    </section>\n\n    \n    <section id=\"quickstart\">\n      <h2>Szybki start</h2>\n\n      <h3>Instalacja w HackerOS</h3>\n      <p>HexAi jest natywną aplikacją HackerOS. Instalacja jedną komendą:</p>\n      <div class=\"code-header\"><span>bash</span><span>HackerOS Terminal</span></div>\n      <pre><code>hacker unpack hexai</code></pre>\n\n      <p>Aby usunąć HexAi z systemu:</p>\n      <div class=\"code-header\"><span>bash</span></div>\n      <pre><code>hacker pack hexai</code></pre>\n\n      <div class=\"callout callout-success\">\n        <div class=\"callout-icon\">✅</div>\n        <div class=\"callout-body\">\n          <strong>Automatyczne zarządzanie zależnościami</strong>\n          <p>Komendy <code>hacker unpack</code> i <code>hacker pack</code> automatycznie obsługują wszystkie zależności – Redis, Python venv, modele AI, sterowniki GPU i komponenty systemowe. Nie trzeba nic konfigurować ręcznie.</p>\n        </div>\n      </div>\n\n      <h3>Uruchomienie po instalacji</h3>\n      <p>Po wykonaniu <code>hacker unpack hexai</code> wszystkie komponenty są gotowe do użycia:</p>\n      <div class=\"code-header\"><span>bash</span></div>\n      <pre><code># Backend API (wymagany dla GUI i TUI)\nhexai-server\n\n# GUI Desktop\nhexai-gui\n\n# Terminal UI\nhexai-tui\n\n# Weryfikacja działania API\ncurl http://localhost:8000/health</code></pre>\n\n      <h3>Wymagania sprzętowe</h3>\n      <table>\n        <tr><th>Tryb</th><th>RAM</th><th>VRAM</th><th>Procesor</th></tr>\n        <tr><td>GPU (Transformers)</td><td>8 GB</td><td>≥ 6 GB</td><td>Dowolny x86-64</td></tr>\n        <tr><td>CPU (Ollama)</td><td>16 GB</td><td>Brak</td><td>x86-64 z AVX2</td></tr>\n      </table>\n\n      <h3>Instalacja manualna (poza HackerOS)</h3>\n      <p>Możliwa na innych dystrybucjach Linuksa ze źródeł:</p>\n      <div class=\"code-header\"><span>bash</span></div>\n      <pre><code># Zależności\npython3.12 -m venv .venv && source .venv/bin/activate\ndocker run -d --name hexai-redis -p 6379:6379 redis:7-alpine\n\n# Backend\ncd source-code\npip install -r requirements.txt\npython main.py\n\n# GUI (w osobnym terminalu)\ncd gui && npm install && npm run tauri-dev\n\n# TUI (w osobnym terminalu)\ncd tui && go run main.go</code></pre>\n\n      <table>\n        <tr><th>Narzędzie</th><th>Wersja</th><th>Uwagi</th></tr>\n        <tr><td>Python</td><td>3.11 lub 3.12</td><td>3.13 nie obsługuje whisper/melo</td></tr>\n        <tr><td>Redis</td><td>≥ 7</td><td>Pamięć sesji i faktów</td></tr>\n        <tr><td>CUDA</td><td>≥ 12 (opt.)</td><td>Tryb GPU (Transformers)</td></tr>\n        <tr><td>Docker</td><td>≥ 24 (opt.)</td><td>Sandbox do wykonywania kodu</td></tr>\n        <tr><td>Go</td><td>≥ 1.22</td><td>Kompilacja TUI</td></tr>\n        <tr><td>Node.js</td><td>≥ 20</td><td>Kompilacja GUI</td></tr>\n      </table>\n    </section>\n\n    \n    <section id=\"backend\">\n      <h2>Backend Python</h2>\n\n      <h3>Klasy główne</h3>\n\n      <h4>ModelManager</h4>\n      <p>Zarządza cyklem życia modelu Transformers. Ładuje model na żądanie i zwalnia go po <code>idle_timeout</code> sekundach bezczynności (domyślnie 600 s = 10 min). Zapobiega wyciekaniu pamięci GPU.</p>\n\n      <h4>AdvancedRAG</h4>\n      <p>Hybrydowe wyszukiwanie: wektorowe (ChromaDB + SentenceTransformers) + BM25 (lexicalne). Wyniki są rerankowane przez CrossEncoder (<code>ms-marco-MiniLM-L-6-v2</code>). Parametr <code>alpha</code> kontroluje balans vector/BM25.</p>\n\n      <h4>PersistentMemory</h4>\n      <p>Historia rozmów przechowywana w Redis jako listy JSON. TTL: 24 h (konfigurowalny). Obsługuje <code>get_history</code>, <code>add_message</code>, <code>clear_session</code>, <code>list_sessions</code>.</p>\n\n      <h4>UserProfiler</h4>\n      <p>Automatycznie ekstrahuje fakty o użytkowniku z rozmów (regex patterns: preferencje, stos technologiczny). Fakty przechowywane 30 dni.</p>\n\n      <h4>DockerExecutor</h4>\n      <p>Bezpieczne wykonywanie kodu Python w izolowanym kontenerze. Limity: 128 MB RAM, 50% CPU, brak dostępu do sieci, timeout 10 s, uruchomienie jako <code>nobody</code>.</p>\n\n      <h3>System promptów</h3>\n      <table>\n        <tr><th>Tryb</th><th>Opis</th></tr>\n        <tr><td><code>general</code></td><td>Asystent ogólnego przeznaczenia, zwięzły i pomocny</td></tr>\n        <tr><td><code>programista</code></td><td>Ekspert programistyczny, dokładny kod z obsługą błędów</td></tr>\n      </table>\n\n      <h3>Wywoływanie narzędzi</h3>\n      <p>Model może wywoływać narzędzia przez wzorzec w odpowiedzi:</p>\n      <pre><code>{tool:search_web query=\"Python async generators\"}\n{tool:get_weather city=\"Warsaw\"}</code></pre>\n\n      <div class=\"callout callout-warn\">\n        <div class=\"callout-icon\">⚠️</div>\n        <div class=\"callout-body\">\n          <strong>Python 3.13 – niekompatybilność</strong>\n          <p>Biblioteki <code>openai-whisper</code> i <code>melo</code> nie obsługują Python 3.13. Użyj Python 3.11 lub 3.12 dla pełnej funkcjonalności audio/TTS.</p>\n        </div>\n      </div>\n    </section>\n\n    \n    <section id=\"desktop\">\n      <h2>GUI Desktop (Tauri)</h2>\n      <p>Aplikacja desktopowa zbudowana na Tauri 2 + Next.js 14 + TypeScript. Interfejs inspirowany Claude.ai: ciemny motyw, typografia Instrument Serif, akcenty w kolorze bursztynu.</p>\n\n      <h3>Funkcje UI</h3>\n      <div class=\"card-grid\">\n        <div class=\"card\"><div class=\"card-icon\">💬</div><h4>Streaming czat</h4><p>Odpowiedzi są wyświetlane token po tokenie w czasie rzeczywistym.</p></div>\n        <div class=\"card\"><div class=\"card-icon\">📚</div><h4>Historia rozmów</h4><p>Ostatnie 20 rozmów zapisanych w localStorage z automatycznym tytułowaniem.</p></div>\n        <div class=\"card\"><div class=\"card-icon\">🎨</div><h4>Markdown + kod</h4><p>Renderowanie Markdown z podświetlaniem składni (react-syntax-highlighter).</p></div>\n        <div class=\"card\"><div class=\"card-icon\">📎</div><h4>Załączniki</h4><p>Transkrypcja audio i analiza obrazów z podglądem wyników w czacie.</p></div>\n        <div class=\"card\"><div class=\"card-icon\">⚙️</div><h4>Ustawienia inline</h4><p>Przełączanie silnika (GPU/CPU) i trybu (Ogólny/Dev) bez przeładowania.</p></div>\n        <div class=\"card\"><div class=\"card-icon\">📊</div><h4>Monitor VRAM</h4><p>Pasek zużycia pamięci GPU aktualizowany co 5 sekund.</p></div>\n      </div>\n\n      <h3>Struktura katalogów GUI</h3>\n      <pre><code>gui/\n├── src/\n│   ├── pages/\n│   │   └── index.tsx        # Główny interfejs czatu\n│   ├── lib/\n│   │   └── api.ts           # Klient API (axios + fetch streaming)\n│   └── styles/\n│       └── globals.css      # Tailwind base\n├── src-tauri/\n│   ├── src/main.rs          # Tauri host (minimalny)\n│   ├── tauri.conf.json      # Konfiguracja okna i CSP\n│   └── Cargo.toml\n├── next.config.js           # output: 'export' (static)\n└── package.json</code></pre>\n    </section>\n\n    \n    <section id=\"tui\">\n      <h2>TUI (Go)</h2>\n      <p>Interfejs terminalowy napisany w Go przy użyciu <strong>Bubble Tea</strong>, <strong>Bubbles</strong> i <strong>Lip Gloss</strong>. Streaming odpowiedzi w czasie rzeczywistym, piękny ciemny motyw inspirowany Claude.</p>\n\n      <h3>Skróty klawiszowe</h3>\n      <table>\n        <tr><th>Klawisz</th><th>Akcja</th></tr>\n        <tr><td><code>Enter</code></td><td>Wyślij wiadomość</td></tr>\n        <tr><td><code>Shift+Enter</code></td><td>Nowa linia w wiadomości</td></tr>\n        <tr><td><code>Ctrl+N</code></td><td>Nowa rozmowa (czyści historię)</td></tr>\n        <tr><td><code>Ctrl+S</code></td><td>Otwórz / zamknij ustawienia</td></tr>\n        <tr><td><code>↑ / ↓ / PgUp / PgDn</code></td><td>Przewijanie historii czatu</td></tr>\n        <tr><td><code>?</code></td><td>Pomoc</td></tr>\n        <tr><td><code>Ctrl+C / Ctrl+Q</code></td><td>Wyjście</td></tr>\n      </table>\n\n      <h3>Architektura TUI</h3>\n      <p>Aplikacja oparta na architekturze Elm (Model–Update–View) z biblioteką Bubble Tea:</p>\n      <ul style=\"color:var(--text-sec);padding-left:20px;line-height:2\">\n        <li><strong>Model</strong> – niezmenny stan aplikacji (wiadomości, ustawienia, stats)</li>\n        <li><strong>Update</strong> – czysta funkcja reagująca na zdarzenia (klawiatura, sieć, timer)</li>\n        <li><strong>View</strong> – renderowanie terminala przez Lip Gloss (styled strings)</li>\n        <li><strong>Streaming</strong> – goroutine czyta odpowiedź chunkami i wysyła przez <code>p.Send()</code></li>\n        <li><strong>Stats polling</strong> – <code>tea.Tick</code> co 5 s odpytuje <code>/stats</code></li>\n      </ul>\n\n      <h3>Uruchomienie / kompilacja</h3>\n      <div class=\"code-header\"><span>bash</span></div>\n      <pre><code>cd tui\n# Tryb deweloperski\ngo run main.go\n\n# Kompilacja binarna\ngo build -o hexai-tui .\n./hexai-tui</code></pre>\n    </section>\n\n    \n    <section id=\"builder\">\n      <h2>Builder</h2>\n      <p>Narzędzie Rust do pakowania backendu Python w samodzielny, przenośny plik binarny przy użyciu <strong>PyOxidizer</strong>.</p>\n\n      <h3>Użycie</h3>\n      <div class=\"code-header\"><span>bash</span></div>\n      <pre><code>cd builder\ncargo run --release -- --source ./source-code --out ./dist</code></pre>\n\n      <h3>Opcje</h3>\n      <table>\n        <tr><th>Flaga</th><th>Opis</th><th>Domyślnie</th></tr>\n        <tr><td><code>--source &lt;dir&gt;</code></td><td>Katalog z kodem Python</td><td><code>./source-code</code></td></tr>\n        <tr><td><code>--out &lt;dir&gt;</code></td><td>Katalog docelowy</td><td><code>.</code></td></tr>\n        <tr><td><code>--no-cleanup</code></td><td>Zachowaj pliki tymczasowe</td><td>false</td></tr>\n      </table>\n\n      <h3>Kroki budowania</h3>\n      <div class=\"steps\">\n        <div class=\"step\"><div class=\"step-num\">1</div><div class=\"step-body\"><strong>Walidacja</strong><p>Sprawdza czy katalog źródłowy i <code>main.py</code> istnieją.</p></div></div>\n        <div class=\"step\"><div class=\"step-num\">2</div><div class=\"step-body\"><strong>requirements.txt</strong><p>Generuje automatycznie jeśli brakuje (wykrywa importy przez regex).</p></div></div>\n        <div class=\"step\"><div class=\"step-num\">3</div><div class=\"step-body\"><strong>PyOxidizer</strong><p>Instaluje jeśli nie dostępny (<code>pip install pyoxidizer</code>).</p></div></div>\n        <div class=\"step\"><div class=\"step-num\">4</div><div class=\"step-body\"><strong>Konfiguracja</strong><p>Zapisuje <code>pyoxidizer.bzl</code> do katalogu źródłowego.</p></div></div>\n        <div class=\"step\"><div class=\"step-num\">5</div><div class=\"step-body\"><strong>Budowanie</strong><p>Uruchamia <code>pyoxidizer build</code> – może trwać kilka minut.</p></div></div>\n        <div class=\"step\"><div class=\"step-num\">6</div><div class=\"step-body\"><strong>Kopiowanie</strong><p>Szuka pliku <code>hexai</code> w katalogu <code>build/</code> i kopiuje do <code>--out</code>.</p></div></div>\n        <div class=\"step\"><div class=\"step-num\">7</div><div class=\"step-body\"><strong>Sprzątanie</strong><p>Usuwa pliki tymczasowe (chyba że <code>--no-cleanup</code>).</p></div></div>\n      </div>\n\n      <div class=\"callout callout-warn\">\n        <div class=\"callout-icon\">⚠️</div>\n        <div class=\"callout-body\">\n          <strong>Ograniczenia PyOxidizer</strong>\n          <p>Nie wszystkie pakiety z <code>requirements.txt</code> mogą być poprawnie spakowane – szczególnie <code>torch</code>, <code>bitsandbytes</code> i <code>chromadb</code>. Zalecane jest wdrożenie przez <code>venv</code> lub Docker w środowiskach produkcyjnych.</p>\n        </div>\n      </div>\n    </section>\n\n    \n    <section id=\"api-chat\">\n      <h2>API – Czat</h2>\n\n      <div class=\"endpoint\">\n        <div class=\"endpoint-header\">\n          <span class=\"method method-post\">POST</span>\n          <span class=\"endpoint-path\">/chat</span>\n        </div>\n        <div class=\"endpoint-desc\">\n          <p>Główny endpoint konwersacji. Obsługuje tryb streaming i nieblokujący.</p>\n          <pre><code>// Request\n{\n  \"session_id\": \"string | null\",\n  \"message\": \"string\",\n  \"stream\": false         // true → StreamingResponse (text/plain)\n}\n\n// Response (stream=false)\n{\n  \"session_id\": \"uuid\",\n  \"response\": \"string\"\n}</code></pre>\n        </div>\n      </div>\n\n      <div class=\"endpoint\">\n        <div class=\"endpoint-header\">\n          <span class=\"method method-get\">GET</span>\n          <span class=\"endpoint-path\">/sessions</span>\n        </div>\n        <div class=\"endpoint-desc\">Lista aktywnych sesji z Redis.</div>\n      </div>\n\n      <div class=\"endpoint\">\n        <div class=\"endpoint-header\">\n          <span class=\"method method-delete\">DELETE</span>\n          <span class=\"endpoint-path\">/session/{session_id}</span>\n        </div>\n        <div class=\"endpoint-desc\">Usuwa historię sesji z Redis.</div>\n      </div>\n    </section>\n\n    \n    <section id=\"api-engine\">\n      <h2>API – Silnik &amp; Tryb</h2>\n\n      <div class=\"endpoint\">\n        <div class=\"endpoint-header\">\n          <span class=\"method method-post\">POST</span>\n          <span class=\"endpoint-path\">/engine</span>\n        </div>\n        <div class=\"endpoint-desc\">\n          <pre><code>{ \"engine\": \"transformers\" }   // GPU\n{ \"engine\": \"ollama\" }         // CPU</code></pre>\n        </div>\n      </div>\n\n      <div class=\"endpoint\">\n        <div class=\"endpoint-header\">\n          <span class=\"method method-post\">POST</span>\n          <span class=\"endpoint-path\">/mode</span>\n        </div>\n        <div class=\"endpoint-desc\">\n          <pre><code>{ \"mode\": \"general\" }\n{ \"mode\": \"programista\" }</code></pre>\n        </div>\n      </div>\n    </section>\n\n    \n    <section id=\"api-rag\">\n      <h2>API – RAG</h2>\n\n      <div class=\"endpoint\">\n        <div class=\"endpoint-header\">\n          <span class=\"method method-post\">POST</span>\n          <span class=\"endpoint-path\">/rag</span>\n        </div>\n        <div class=\"endpoint-desc\">\n          <p>Zapytanie do bazy wiedzy (hybrydowe wyszukiwanie + reranking).</p>\n          <pre><code>{ \"query\": \"string\" }</code></pre>\n        </div>\n      </div>\n\n      <div class=\"endpoint\">\n        <div class=\"endpoint-header\">\n          <span class=\"method method-post\">POST</span>\n          <span class=\"endpoint-path\">/ingest</span>\n        </div>\n        <div class=\"endpoint-desc\">\n          <p>Indeksuje dokument (URL, PDF, plik tekstowy) w ChromaDB.</p>\n          <pre><code>{\n  \"source\": \"https://example.com/doc.pdf\",\n  \"chunk_size\": 500,\n  \"chunk_overlap\": 100\n}</code></pre>\n        </div>\n      </div>\n    </section>\n\n    \n    <section id=\"api-media\">\n      <h2>API – Media</h2>\n\n      <div class=\"endpoint\">\n        <div class=\"endpoint-header\">\n          <span class=\"method method-post\">POST</span>\n          <span class=\"endpoint-path\">/transcribe</span>\n        </div>\n        <div class=\"endpoint-desc\">Transkrypcja audio (Whisper small). <code>multipart/form-data</code> – pole <code>file</code>.</div>\n      </div>\n\n      <div class=\"endpoint\">\n        <div class=\"endpoint-header\">\n          <span class=\"method method-post\">POST</span>\n          <span class=\"endpoint-path\">/analyze_image</span>\n        </div>\n        <div class=\"endpoint-desc\">Analiza obrazu (LLaVA 1.5-7B). Pola: <code>file</code> (obraz), <code>prompt</code> (tekst).</div>\n      </div>\n\n      <div class=\"endpoint\">\n        <div class=\"endpoint-header\">\n          <span class=\"method method-post\">POST</span>\n          <span class=\"endpoint-path\">/generate_image</span>\n        </div>\n        <div class=\"endpoint-desc\">Generowanie obrazu (Stable Diffusion v1.4). Zwraca <code>image_base64</code>.</div>\n      </div>\n\n      <div class=\"endpoint\">\n        <div class=\"endpoint-header\">\n          <span class=\"method method-get\">GET</span>\n          <span class=\"endpoint-path\">/tts?text=...</span>\n        </div>\n        <div class=\"endpoint-desc\">Synteza mowy (MeloTTS, język PL). Zwraca <code>audio/wav</code>.</div>\n      </div>\n    </section>\n\n    \n    <section id=\"api-stats\">\n      <h2>API – Statystyki</h2>\n\n      <div class=\"endpoint\">\n        <div class=\"endpoint-header\">\n          <span class=\"method method-get\">GET</span>\n          <span class=\"endpoint-path\">/stats</span>\n        </div>\n        <div class=\"endpoint-desc\">\n          <pre><code>{\n  \"engine\": \"transformers\",\n  \"mode\": \"general\",\n  \"vram_used_gb\": 4.2,\n  \"vram_total_gb\": 8.0,\n  \"active_sessions\": 3,\n  \"history_len\": 0,\n  \"model_loaded\": true,\n  \"model_idle_seconds\": 42.1\n}</code></pre>\n        </div>\n      </div>\n\n      <div class=\"endpoint\">\n        <div class=\"endpoint-header\">\n          <span class=\"method method-get\">GET</span>\n          <span class=\"endpoint-path\">/health</span>\n        </div>\n        <div class=\"endpoint-desc\">Prosty health check. Zwraca <code>{ \"status\": \"ok\", \"version\": \"2.0.0\" }</code>.</div>\n      </div>\n    </section>\n\n    \n    <section id=\"config-models\">\n      <h2>Konfiguracja – Modele</h2>\n\n      <h3>Transformers (GPU)</h3>\n      <p>Domyślny model: <code>mistralai/Mistral-7B-v0.1</code> z kwantyzacją 4-bit (NF4). Wymaga VRAM ≥ 6 GB.</p>\n      <p>Aby zmienić model, edytuj <code>ModelManager._load_model()</code> w <code>main.py</code>:</p>\n      <pre><code>model_id = \"meta-llama/Llama-3-8B-Instruct\"  # przykład</code></pre>\n\n      <h3>Ollama (CPU)</h3>\n      <p>Ollama musi być zainstalowany i uruchomiony osobno:</p>\n      <div class=\"code-header\"><span>bash</span></div>\n      <pre><code>curl -fsSL https://ollama.ai/install.sh | sh\nollama pull llama2\nollama pull codellama:7b-instruct   # dla trybu programista</code></pre>\n    </section>\n\n    \n    <section id=\"config-redis\">\n      <h2>Konfiguracja – Redis</h2>\n      <p>Redis jest wymagany do przechowywania historii sesji i faktów o użytkownikach.</p>\n      <div class=\"code-header\"><span>bash</span></div>\n      <pre><code># Docker (zalecane)\ndocker run -d --name hexai-redis -p 6379:6379 redis:7-alpine\n\n# Ubuntu/Debian\nsudo apt install redis-server\nsudo systemctl start redis</code></pre>\n\n      <p>Zmiana hosta/portu Redis – edytuj w <code>main.py</code>:</p>\n      <pre><code>self.redis = redis.Redis(host=\"localhost\", port=6379, ...)</code></pre>\n    </section>\n\n    \n    <section id=\"config-docker\">\n      <h2>Konfiguracja – Docker (sandbox)</h2>\n      <p>Docker jest opcjonalny – używany tylko do bezpiecznego wykonywania kodu Python przez narzędzie <code>run_python</code>.</p>\n\n      <div class=\"callout callout-success\">\n        <div class=\"callout-icon\">✅</div>\n        <div class=\"callout-body\">\n          <strong>Bezpieczeństwo sandboxu</strong>\n          <p>Każde wykonanie kodu działa w izolowanym kontenerze: brak sieci, limit 128 MB RAM, 50% CPU, uruchomione jako <code>nobody</code>, timeout 10 s, automatyczne usuwanie kontenera.</p>\n        </div>\n      </div>\n    </section>\n\n    \n    <section id=\"deploy\">\n      <h2>Wdrożenie produkcyjne</h2>\n\n      <h3>Systemd service</h3>\n      <div class=\"code-header\"><span>ini</span><span>/etc/systemd/system/hexai.service</span></div>\n      <pre><code>[Unit]\nDescription=HexAi Backend\nAfter=network.target redis.service\n\n[Service]\nUser=hexai\nWorkingDirectory=/opt/hexai/source-code\nEnvironment=\"PATH=/opt/hexai/.venv/bin\"\nExecStart=/opt/hexai/.venv/bin/python main.py\nRestart=always\nRestartSec=5\n\n[Install]\nWantedBy=multi-user.target</code></pre>\n\n      <div class=\"code-header\"><span>bash</span></div>\n      <pre><code>sudo systemctl enable --now hexai</code></pre>\n\n      <h3>Nginx reverse proxy</h3>\n      <pre><code>server {\n    listen 80;\n    server_name hexai.local;\n\n    location / {\n        proxy_pass http://127.0.0.1:8000;\n        proxy_set_header X-Real-IP $remote_addr;\n        proxy_buffering off;   # wymagane dla streamingu\n        proxy_read_timeout 300s;\n    }\n}</code></pre>\n\n      <div class=\"callout callout-danger\">\n        <div class=\"callout-icon\">🔒</div>\n        <div class=\"callout-body\">\n          <strong>Bezpieczeństwo</strong>\n          <p>Nie wystawiaj portu 8000 bezpośrednio na internet. Używaj Nginx z HTTPS i autoryzacją w środowiskach produkcyjnych. Klucze API (SERPER_API_KEY) przechowuj w zmiennych środowiskowych, nie w kodzie.</p>\n        </div>\n      </div>\n    </section>\n\n    \n    <section id=\"troubleshoot\">\n      <h2>Rozwiązywanie problemów</h2>\n\n      <h3>SyntaxError: 'return' with value in async generator</h3>\n      <p>Naprawiono w v2.0.0. Metody generujące odpowiedzi są teraz konsekwentnie async generatorami (<code>yield</code> zamiast <code>return</code>).</p>\n\n      <h3>Cannot connect to Redis</h3>\n      <pre><code>docker start hexai-redis\n# lub sprawdź status:\nredis-cli ping</code></pre>\n\n      <h3>CUDA out of memory</h3>\n      <p>Zredukuj <code>max_new_tokens</code> w <code>_generate_transformers()</code> lub użyj silnika Ollama (CPU).</p>\n\n      <h3>Model nie ładuje się</h3>\n      <p>Upewnij się, że zaakceptowałeś warunki licencji Mistral na HuggingFace i masz token API ustawiony:</p>\n      <pre><code>huggingface-cli login</code></pre>\n\n      <h3>TUI – brak połączenia z API</h3>\n      <p>Upewnij się, że backend działa: <code>curl http://localhost:8000/health</code></p>\n    </section>\n\n    <footer>\n      <p>HexAi v2.0.0 · GPL-3.0 · HackerOS Team · <a href=\"mailto:hackeros068@gmail.com\" style=\"color:var(--accent)\">hackeros068@gmail.com</a></p>\n      <p style=\"margin-top:6px\">Dokumentacja wygenerowana automatycznie. Ostatnia aktualizacja: 2025.</p>\n    </footer>\n\n  </main>\n</div>"
+
+fun main() [
+    boot_begin("pl", "HexAi – Dokumentacja")
+    set_viewport("width=device-width, initial-scale=1.0")
+    head_tag("link", ["rel", "icon", "type", "image/png", "href", "../HackerOS.png"])
+    boot_body(PAGE_BODY)
+    offline_init("../")
+]
