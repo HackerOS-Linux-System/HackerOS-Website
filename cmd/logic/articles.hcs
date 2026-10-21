@@ -1,0 +1,585 @@
+include <../shared/core>
+include <../shared/lang>
+include <../data/team_t>
+include <../data/articles_t>
+include <../data/articles_data>
+
+const AR_TOKEN_SRC: Str = "(;;[^\\n]*|\\/\\/[^\\n]*)|(\"(?:[^\"\\\\\\n]|\\\\.)*\")|\\b(fn|is|end|let|mut|if|elsif|else|while|for|in|match|enum|struct|use|from|return|nil|true|false|as|pub|impl|trait|using|async|await)\\b|\\b(int|uint|string|bool|bytes|void|f32|f64|[iu](?:8|16|32|64|128))\\b|\\b(0x[0-9a-fA-F_]+|0b[01_]+|\\d[\\d_]*(?:\\.\\d+)?)\\b"
+
+let ar_lang: Str = "pl"
+let ar_articles: Any = null
+let ar_order: Any = []
+let ar_tags: Any = null
+let ar_query: Str = ""
+let ar_tag: Str = "all"
+let ar_loaded: Bool = false
+let ar_failed: Bool = false
+let ar_view: Any = null
+let ar_trans: Any = null
+let ar_team: Any = null
+let ar_token: Any = null
+
+!! ── pomocnicze ─────────────────────────────────────────────────────────
+fun ar_t() -> Any [
+    let t = jget(ar_trans, ar_lang)
+    if nil(t) [
+        end ar_trans.en
+    ]
+    end t
+]
+
+fun ar_loc(obj: Any) -> Str [
+    if not obj [
+        end ""
+    ]
+    end jget(obj, ar_lang) or obj.en or obj.pl or ""
+]
+
+fun ar_el(tag: Str, cls: Any, text: Any) -> Any [
+    let e = document.createElement(tag)
+    if cls [
+        e.className = cls
+    ]
+    if text != null [
+        e.textContent = text
+    ]
+    end e
+]
+
+fun ar_escape(s: Str) -> Str [
+    end s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+]
+
+fun ar_plain(html: Any) -> Str [
+    let s = String(html or "")
+    s = rx_replace(s, rx_flags("<[^>]+>", "g"), " ")
+    end rx_replace(s, rx_flags("&[a-z]+;", "g"), " ")
+]
+
+!! Inline HTML w danych artykulow ograniczony do krotkiej listy dozwolonych znacznikow
+let AR_ALLOWED: List<Str> = ["STRONG", "B", "EM", "I", "CODE", "A", "BR"]
+
+fun ar_clean_walk(node: Any) [
+    let kids = Array.prototype.slice.call(node.childNodes)
+    for ch in kids [
+        if ch.nodeType == 3 [
+            !! tekst - zostaje
+        ] elif ch.nodeType != 1 [
+            ch.remove()
+        ] elif not AR_ALLOWED.includes(ch.tagName) [
+            ch.replaceWith(document.createTextNode(ch.textContent))
+        ] else [
+            let attrs = Array.prototype.slice.call(ch.attributes)
+            for a in attrs [
+                if not (ch.tagName == "A" and a.name == "href") [
+                    ch.removeAttribute(a.name)
+                ]
+            ]
+            if ch.tagName == "A" [
+                let h = ch.getAttribute("href") or ""
+                if rx_flags("^https?:\\/\\/", "i").test(h) [
+                    ch.target = "_blank"
+                    ch.rel = "noopener noreferrer"
+                ] elif not rx_flags("^(mailto:|#|(?!\\/\\/)[\\w.\\/-]+([?#].*)?$)", "i").test(h) [
+                    ch.removeAttribute("href")
+                ]
+            ]
+            ar_clean_walk(ch)
+        ]
+    ]
+]
+
+fun ar_clean_html(html: Any) -> Str [
+    let parser = Reflect.construct(DOMParser, [])
+    let doc = parser.parseFromString("<body>" + html + "</body>", "text/html")
+    ar_clean_walk(doc.body)
+    end doc.body.innerHTML
+]
+
+!! ── kolorowanie skladni (H#, bash, bytes.hk) ───────────────────────────
+fun ar_highlight(src: Str, lang: Str) -> Str [
+    if lang == "text" [
+        end ar_escape(src)
+    ]
+    let out = ""
+    let last = 0
+    ar_token.lastIndex = 0
+    let m = ar_token.exec(src)
+    while m != null [
+        out = out + ar_escape(src.slice(last, m.index))
+        let cls = "tk-n"
+        if m[1] [
+            cls = "tk-c"
+        ] elif m[2] [
+            cls = "tk-s"
+        ] elif m[3] [
+            cls = "tk-k"
+        ] elif m[4] [
+            cls = "tk-t"
+        ]
+        if lang == "bash" and (m[3] or m[4]) [
+            out = out + ar_escape(m[0])
+        ] else [
+            out = out + "<span class=\"" + cls + "\">" + ar_escape(m[0]) + "</span>"
+        ]
+        last = m.index + m[0].length
+        m = ar_token.exec(src)
+    ]
+    end out + ar_escape(src.slice(last))
+]
+
+fun ar_copy_text(text: Str, btn: Any) [
+    fun restore() [
+        btn.textContent = ar_t().copy
+    ]
+    fun done(x: Any) [
+        btn.textContent = ar_t().copied
+        setTimeout(restore, 1400)
+    ]
+    if navigator.clipboard and navigator.clipboard.writeText [
+        navigator.clipboard.writeText(text).then(done, done)
+    ] else [
+        let ta = ar_el("textarea", null, null)
+        ta.value = text
+        document.body.appendChild(ta)
+        ta.select()
+        document.execCommand("copy")
+        ta.remove()
+        done(null)
+    ]
+]
+
+!! ── renderer blokow ────────────────────────────────────────────────────
+fun ar_render_blocks(blocks: Any, toc: Any) -> Any [
+    let frag = document.createDocumentFragment()
+    let n = 0
+    for b in (blocks or []) [
+        let node = null
+        let kind = b.t
+        if kind == "h2" or kind == "h3" [
+            node = ar_el(kind, null, b.text)
+            if kind == "h2" [
+                n = n + 1
+                node.id = "sec-" + n
+                toc.push(mkobj(["id", node.id, "text", b.text]))
+            ]
+        ] elif kind == "p" [
+            node = ar_el("p", null, null)
+            node.innerHTML = ar_clean_html(b.html)
+        ] elif kind == "quote" [
+            node = ar_el("blockquote", null, null)
+            node.innerHTML = ar_clean_html(b.html)
+        ] elif kind == "ul" or kind == "ol" [
+            node = ar_el(kind, null, null)
+            for it in (b.items or []) [
+                let li = ar_el("li", null, null)
+                li.innerHTML = ar_clean_html(it)
+                node.appendChild(li)
+            ]
+        ] elif kind == "code" [
+            let src = String(b.code or "")
+            if Array.isArray(b.code) [
+                src = b.code.join("\n")
+            ]
+            node = ar_el("div", "code", null)
+            let bar = ar_el("div", "code-bar", null)
+            bar.appendChild(ar_el("span", null, b.title or b.lang or ""))
+            let cp = ar_el("button", "cp", ar_t().copy)
+            cp.setAttribute("type", "button")
+            fun on_copy(e: Any) [
+                ar_copy_text(src, cp)
+            ]
+            cp.addEventListener("click", on_copy)
+            bar.appendChild(cp)
+            let pre = ar_el("pre", null, null)
+            let code = ar_el("code", null, null)
+            code.innerHTML = ar_highlight(src, b.lang or "text")
+            pre.appendChild(code)
+            node.appendChild(bar)
+            node.appendChild(pre)
+        ] elif kind == "note" [
+            let nk = "info"
+            if b.kind == "info" or b.kind == "tip" or b.kind == "warn" [
+                nk = b.kind
+            ]
+            node = ar_el("div", "note " + nk, null)
+            let lbl = "ℹ️"
+            if nk == "tip" [
+                lbl = "💡"
+            ] elif nk == "warn" [
+                lbl = "⚠️"
+            ]
+            node.appendChild(ar_el("span", "nl", lbl))
+            let body = ar_el("div", null, null)
+            body.innerHTML = ar_clean_html(b.html)
+            node.appendChild(body)
+        ] elif kind == "table" [
+            node = ar_el("div", "table-wrap", null)
+            let tbl = ar_el("table", null, null)
+            let thead = ar_el("thead", null, null)
+            let trh = ar_el("tr", null, null)
+            for h in (b.head or []) [
+                let th = ar_el("th", null, null)
+                th.innerHTML = ar_clean_html(h)
+                trh.appendChild(th)
+            ]
+            thead.appendChild(trh)
+            tbl.appendChild(thead)
+            let tb = ar_el("tbody", null, null)
+            for r in (b.rows or []) [
+                let tr = ar_el("tr", null, null)
+                for c in r [
+                    let td = ar_el("td", null, null)
+                    td.innerHTML = ar_clean_html(c)
+                    tr.appendChild(td)
+                ]
+                tb.appendChild(tr)
+            ]
+            tbl.appendChild(tb)
+            node.appendChild(tbl)
+        ]
+        if node != null [
+            frag.appendChild(node)
+        ]
+    ]
+    end frag
+]
+
+!! ── dane ───────────────────────────────────────────────────────────────
+fun ar_cmp_date(a: Any, b: Any) -> Int [
+    if a.date < b.date [
+        end 1
+    ]
+    if a.date > b.date [
+        end -1
+    ]
+    end 0
+]
+
+fun ar_sorted() -> Any [
+    let list = js_arr()
+    for id in ar_order [
+        let a = jget(ar_articles, id)
+        if a [
+            list.push(a)
+        ]
+    ]
+    list.sort(ar_cmp_date)
+    end list
+]
+
+fun ar_fmt_date(d: Str) -> Str [
+    let opts = js_obj()
+    opts.year = "numeric"
+    opts.month = "long"
+    opts.day = "numeric"
+    end Reflect.construct(Date, [d + "T00:00:00"]).toLocaleDateString(ar_lang, opts)
+]
+
+fun ar_tag_label(id: Str) -> Str [
+    let t = jget(ar_tags, id)
+    let l = ""
+    if t [
+        l = ar_loc(t)
+    ]
+    if not l [
+        end id
+    ]
+    end l
+]
+
+fun ar_content_of(a: Any) -> Any [
+    let c = a.content
+    end jget(c, ar_lang) or c.en or c.pl or []
+]
+
+fun ar_block_text(b: Any) -> Str [
+    let items = ""
+    if b.items [
+        items = b.items.join(" ")
+    ]
+    end ar_plain(b.html or b.text or items or "")
+]
+
+fun ar_haystack(a: Any) -> Str [
+    if a._hay and a._hayLang == ar_lang [
+        end a._hay
+    ]
+    let blocks = []
+    if a.content [
+        blocks = ar_content_of(a)
+    ]
+    let parts = js_arr()
+    for b in blocks [
+        parts.push(ar_block_text(b))
+    ]
+    let tag_names = js_arr()
+    for tg in (a.tags or []) [
+        tag_names.push(ar_tag_label(tg))
+    ]
+    a._hayLang = ar_lang
+    a._hay = (ar_loc(a.title) + " " + ar_loc(a.summary) + " " + tag_names.join(" ") + " " + parts.join(" ")).toLowerCase()
+    end a._hay
+]
+
+!! ── widoki ─────────────────────────────────────────────────────────────
+fun ar_meta_line(a: Any) -> Any [
+    let m = ar_el("div", "meta", null)
+    m.appendChild(ar_el("span", null, ar_fmt_date(a.date)))
+    m.appendChild(ar_el("span", null, a.readingMinutes + " " + ar_t().minRead))
+    for t in (a.tags or []) [
+        m.appendChild(ar_el("span", "tag", ar_tag_label(t)))
+    ]
+    end m
+]
+
+fun ar_render_list() [
+    let t = ar_t()
+    ar_view.innerHTML = ""
+    let head = ar_el("div", "list-head", null)
+    head.appendChild(ar_el("h1", null, t.h1))
+    head.appendChild(ar_el("p", null, t.intro))
+    ar_view.appendChild(head)
+
+    let bar = ar_el("div", "toolbar", null)
+    let sw = ar_el("div", "search", null)
+    let input = ar_el("input", null, null)
+    input.setAttribute("type", "search")
+    input.placeholder = t.searchPlaceholder
+    input.value = ar_query
+    input.setAttribute("aria-label", rx_replace(t.searchPlaceholder, rx("^\\S+\\s"), ""))
+    let clear = ar_el("button", null, "✕")
+    clear.setAttribute("type", "button")
+    clear.setAttribute("aria-label", "Clear")
+    if ar_query != "" [
+        clear.style.display = "block"
+    ] else [
+        clear.style.display = "none"
+    ]
+    sw.appendChild(input)
+    sw.appendChild(clear)
+    bar.appendChild(sw)
+
+    let chips = ar_el("div", "chips", null)
+    bar.appendChild(chips)
+    ar_view.appendChild(bar)
+    let grid = ar_el("div", "grid", null)
+    ar_view.appendChild(grid)
+
+    fun draw_chips() [
+        chips.innerHTML = ""
+        let used = js_obj()
+        for a in ar_sorted() [
+            for x in (a.tags or []) [
+                jset(used, x, 1)
+            ]
+        ]
+        let ids = ["all"].concat(Object.keys(used))
+        for id in ids [
+            let label = t.allTags
+            if id != "all" [
+                label = ar_tag_label(id)
+            ]
+            let c = ar_el("button", "chip", label)
+            c.setAttribute("type", "button")
+            if ar_tag == id [
+                c.setAttribute("aria-pressed", "true")
+            ] else [
+                c.setAttribute("aria-pressed", "false")
+            ]
+            fun on_chip(e: Any) [
+                ar_tag = id
+                draw_chips()
+                draw_grid()
+            ]
+            c.addEventListener("click", on_chip)
+            chips.appendChild(c)
+        ]
+    ]
+
+    fun item_ok(a: Any) -> Bool [
+        let q = ar_query.trim().toLowerCase()
+        let tag_ok = ar_tag == "all" or (a.tags or []).indexOf(ar_tag) >= 0
+        end tag_ok and (not q or ar_haystack(a).indexOf(q) >= 0)
+    ]
+
+    fun draw_grid() [
+        grid.innerHTML = ""
+        let q = ar_query.trim().toLowerCase()
+        let items = ar_sorted().filter(item_ok)
+        if items.length == 0 [
+            let msg = t.noResults
+            if ar_failed [
+                msg = t.loadError
+            ]
+            grid.appendChild(ar_el("div", "empty", msg))
+            end
+        ]
+        let filtering = q != "" or ar_tag != "all"
+        let i = 0
+        while i < items.length [
+            let a = items[i]
+            let cls = "card"
+            if i == 0 and not filtering [
+                cls = "card featured"
+            ]
+            let card = ar_el("a", cls, null)
+            card.href = "#/" + a.id
+            card.appendChild(ar_el("span", "ico", a.icon or "📄"))
+            let body = ar_el("div", "body", null)
+            body.appendChild(ar_el("h2", null, ar_loc(a.title)))
+            body.appendChild(ar_el("p", "sum", ar_loc(a.summary)))
+            body.appendChild(ar_meta_line(a))
+            card.appendChild(body)
+            grid.appendChild(card)
+            i = i + 1
+        ]
+    ]
+
+    fun on_input(e: Any) [
+        ar_query = input.value
+        if input.value [
+            clear.style.display = "block"
+        ] else [
+            clear.style.display = "none"
+        ]
+        draw_grid()
+    ]
+    fun on_clear(e: Any) [
+        input.value = ""
+        ar_query = ""
+        clear.style.display = "none"
+        draw_grid()
+        input.focus()
+    ]
+    input.addEventListener("input", on_input)
+    clear.addEventListener("click", on_clear)
+    draw_chips()
+    draw_grid()
+    document.title = t.pageTitle
+]
+
+fun ar_render_article(id: Str) [
+    let t = ar_t()
+    let a = jget(ar_articles, id)
+    ar_view.innerHTML = ""
+    let back = ar_el("a", "back", t.back)
+    back.href = "#/"
+    ar_view.appendChild(back)
+    if nil(a) [
+        ar_view.appendChild(ar_el("div", "notice", t.notFound))
+        document.title = t.pageTitle
+        end
+    ]
+
+    let blocks = ar_content_of(a)
+    let wrap = ar_el("div", "article-wrap", null)
+    let main = ar_el("article", null, null)
+    let head = ar_el("div", "article-head", null)
+    head.appendChild(ar_el("span", "ico", a.icon or "📄"))
+    head.appendChild(ar_el("h1", null, ar_loc(a.title)))
+    head.appendChild(ar_el("p", "lead", ar_loc(a.summary)))
+    let meta = ar_meta_line(a)
+    if a.author [
+        meta.insertBefore(ar_el("span", null, a.author), meta.firstChild)
+    ]
+    head.appendChild(meta)
+    main.appendChild(head)
+    if nil(jget(a.content, ar_lang)) and t.fallback [
+        main.appendChild(ar_el("div", "notice", t.fallback))
+    ]
+
+    let toc = js_arr()
+    let prose = ar_el("div", "prose", null)
+    prose.appendChild(ar_render_blocks(blocks, toc))
+    main.appendChild(prose)
+    wrap.appendChild(main)
+
+    if toc.length > 2 [
+        let side = ar_el("nav", "toc", null)
+        side.setAttribute("aria-label", t.toc)
+        side.appendChild(ar_el("h4", null, t.toc))
+        for x in toc [
+            let l = ar_el("a", null, x.text)
+            l.href = "#" + x.id
+            fun on_toc(e: Any) [
+                e.preventDefault()
+                document.getElementById(x.id).scrollIntoView()
+            ]
+            l.addEventListener("click", on_toc)
+            side.appendChild(l)
+        ]
+        wrap.appendChild(side)
+    ]
+    ar_view.appendChild(wrap)
+    document.title = ar_loc(a.title) + " - HackerOS"
+]
+
+fun ar_route(e: Any) [
+    if not ar_loaded [
+        end
+    ]
+    let m = rx("^#\\/([\\w-]+)").exec(location.hash)
+    if m != null [
+        ar_render_article(m[1])
+    ] else [
+        ar_render_list()
+    ]
+    window.scrollTo(0, 0)
+]
+
+!! ── jezyk ──────────────────────────────────────────────────────────────
+fun ar_apply_lang(lang_in: Str) [
+    let lang = lang_in
+    if nil(jget(ar_trans, lang)) [
+        lang = "en"
+    ]
+    ar_lang = lang
+    let t = ar_t()
+    let team = jget(ar_team, lang) or ar_team.en or js_obj()
+    document.documentElement.lang = lang
+    for k in ["home", "download", "releases", "team", "docs"] [
+        let a = document.getElementById("nav-" + k)
+        let key = "nav" + k.charAt(0).toUpperCase() + k.slice(1)
+        if a != null and jget(team, key) [
+            a.textContent = jget(team, key)
+        ]
+    ]
+    let na = document.getElementById("nav-articles")
+    if na != null [
+        na.textContent = t.navArticles
+    ]
+    let f = document.getElementById("footer-copy")
+    if f != null and team.footerCopy [
+        f.textContent = team.footerCopy
+    ]
+    if ar_loaded [
+        ar_route(null)
+    ] else [
+        document.title = t.pageTitle
+    ]
+]
+
+fun articles_init() [
+    ar_view = document.getElementById("view")
+    ar_trans = trans_articles()
+    ar_team = trans_team()
+    ar_token = Reflect.construct(RegExp, [AR_TOKEN_SRC, "g"])
+    window.__hackeros_applyLang = ar_apply_lang
+    window.addEventListener("hashchange", ar_route)
+    ar_apply_lang(get_lang())
+    ar_view.appendChild(ar_el("p", "notice", "…"))
+
+    let idx = articles_index()
+    ar_tags = idx.tags or js_obj()
+    ar_articles = articles_all()
+    ar_order = js_arr()
+    for e in idx.articles [
+        if jget(ar_articles, e.id) [
+            ar_order.push(e.id)
+        ]
+    ]
+    ar_loaded = true
+    ar_route(null)
+    lang_switcher_init()
+]
