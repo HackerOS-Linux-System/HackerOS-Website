@@ -1,0 +1,23 @@
+include <../shared/core>
+
+!! Kopiowanie do schowka z awaryjnym execCommand
+fun doc_fallback_copy(text: Str) [
+    let ta = document.createElement("textarea")
+    ta.value = text
+    ta.style.position = "fixed"
+    ta.style.opacity = "0"
+    document.body.appendChild(ta)
+    ta.select()
+    document.execCommand("copy")
+    document.body.removeChild(ta)
+]
+
+!! import() to slowo kluczowe HackerScript - dynamiczny import przez Function
+fun dyn_import(url: Str) -> Any [
+    let f = Reflect.construct(Function, ["u", "return import(u)"])
+    end f(url)
+]
+
+fun doc_text_of(el: Any) -> Str [
+    end el.innerText or el.textContent
+]
