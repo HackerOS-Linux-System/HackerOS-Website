@@ -1,0 +1,251 @@
+include <doc_copy>
+include <../data/hsharp_sections>
+
+!! [id kontenera, nazwa sekcji]
+let HS_SEC_IDS: List<Str> = ["sec-intro", "sec-install", "sec-struktura", "sec-podstawy", "sec-sterowanie", "sec-organizacja", "sec-async", "sec-typy", "sec-zaawansowane", "sec-przyklady", "sec-gramatyka", "sec-tests", "sec-modules", "sec-examples-extra", "sec-playground"]
+let HS_SEC_NAMES: List<Str> = ["intro", "install", "struktura", "podstawy", "sterowanie", "organizacja", "async", "typy", "zaawansowane", "przyklady", "gramatyka", "tests", "modules", "examples-extra", "playground"]
+
+fun hs_inject_sections() [
+    let reg = hsharp_sections()
+    let i = 0
+    while i < HS_SEC_IDS.len() [
+        let el = document.getElementById(HS_SEC_IDS[i])
+        if el != null [
+            let html = jget(reg, HS_SEC_NAMES[i])
+            if html [
+                el.className = ""
+                el.innerHTML = html
+            ] else [
+                el.innerHTML = "<div style=\"padding:48px 56px;color:#3a5070;font-family:monospace\">Sekcja " + HS_SEC_NAMES[i] + " nie zaladowana.</div>"
+            ]
+        ]
+        i = i + 1
+    ]
+]
+
+!! ── przyciski kopiowania ───────────────────────────────────────────────
+fun hs_bind_copy(btn: Any) [
+    fun reset() [
+        btn.textContent = "Copy"
+    ]
+    fun fallback(text: Str) [
+        let ta = document.createElement("textarea")
+        ta.value = text
+        ta.style.position = "fixed"
+        ta.style.opacity = "0"
+        document.body.appendChild(ta)
+        ta.select()
+        if document.execCommand("copy") [
+            btn.textContent = "Copied!"
+        ] else [
+            btn.textContent = "Error"
+        ]
+        document.body.removeChild(ta)
+        setTimeout(reset, 1800)
+    ]
+    fun on_click(e: Any) [
+        let block = btn.closest(".code-block")
+        let pre = null
+        if block != null [
+            pre = block.querySelector("pre")
+        ]
+        if pre == null [
+            end
+        ]
+        let text = pre.innerText or pre.textContent
+        fun copied(x: Any) [
+            btn.textContent = "Copied!"
+            setTimeout(reset, 1800)
+        ]
+        fun failed(x: Any) [
+            fallback(text)
+        ]
+        if navigator.clipboard and navigator.clipboard.writeText [
+            navigator.clipboard.writeText(text).then(copied).catch(failed)
+        ] else [
+            fallback(text)
+        ]
+    ]
+    btn.addEventListener("click", on_click)
+]
+
+fun hs_init_copy_buttons() [
+    document.querySelectorAll(".copy-btn").forEach(hs_bind_copy)
+]
+
+!! ── aktywna pozycja menu wg przewiniecia ───────────────────────────────
+let hs_nav_links: Any = null
+let hs_section_ids: Any = null
+let hs_current: Str = ""
+
+fun hs_check_section(id: Str) [
+    let el = document.getElementById(id)
+    if el != null and el.offsetTop <= window.scrollY + 100 [
+        hs_current = id
+    ]
+]
+
+fun hs_mark_link(a: Any) [
+    if a.getAttribute("href") == "#" + hs_current [
+        a.classList.add("active")
+    ] else [
+        cl_rm(a, "active")
+    ]
+]
+
+fun hs_set_active(e: Any) [
+    hs_current = ""
+    hs_section_ids.forEach(hs_check_section)
+    hs_nav_links.forEach(hs_mark_link)
+]
+
+fun hs_collect_ids(a: Any) [
+    let href = a.getAttribute("href")
+    if href and href.startsWith("#") [
+        hs_section_ids.push(href.slice(1))
+    ]
+]
+
+fun hs_init_active_nav() [
+    hs_nav_links = document.querySelectorAll(".nav-link")
+    hs_section_ids = js_arr()
+    hs_nav_links.forEach(hs_collect_ids)
+    let opts = js_obj()
+    opts.passive = true
+    window.addEventListener("scroll", hs_set_active, opts)
+    hs_set_active(null)
+]
+
+!! ── playground (Web Worker) ────────────────────────────────────────────
+let pg_worker: Any = null
+let pg_timeout: Any = null
+let pg_done: Bool = false
+let pg_src_el: Any = null
+let pg_out_el: Any = null
+let pg_status_el: Any = null
+let pg_btn: Any = null
+
+fun pg_set_status(text: Str, cls: Str) [
+    pg_status_el.textContent = text
+    pg_status_el.className = "pg-status"
+    if cls != "" [
+        pg_status_el.className = "pg-status " + cls
+    ]
+]
+
+fun pg_fresh_worker() -> Any [
+    if pg_worker != null [
+        pg_worker.terminate()
+    ]
+    let opts = js_obj()
+    opts.type = "module"
+    pg_worker = Reflect.construct(Worker, ["playground/worker.js", opts])
+    end pg_worker
+]
+
+fun pg_render_result(data: Any) [
+    clearTimeout(pg_timeout)
+    pg_out_el.textContent = ""
+    if data.__init_error [
+        pg_set_status("Nie udało się załadować WASM: " + data.__init_error, "pg-status-err")
+        end
+    ]
+    if data.__panic [
+        pg_set_status("Wewnętrzny błąd interpretera (panic): " + data.__panic, "pg-status-err")
+        end
+    ]
+    let r = JSON.parse(data.result)
+    let lines = js_arr()
+    if r.parse_errors and r.parse_errors.length [
+        for d in r.parse_errors [
+            lines.push(d.message)
+        ]
+    ]
+    if r.type_errors and r.type_errors.length [
+        for d in r.type_errors [
+            lines.push(d.message)
+        ]
+    ]
+    if r.stdout [
+        lines.push(rx_replace(r.stdout, rx("\\n$"), ""))
+    ]
+    if r.runtime_error [
+        lines.push(r.runtime_error)
+    ]
+    pg_out_el.textContent = lines.join("\n") or "(brak wyjścia)"
+    if r.ok [
+        pg_set_status("OK", "pg-status-ok")
+    ] else [
+        pg_set_status("Błąd", "pg-status-err")
+    ]
+]
+
+fun pg_on_message(ev: Any) [
+    pg_done = true
+    pg_btn.disabled = false
+    pg_render_result(ev.data)
+]
+
+fun pg_on_error(ev: Any) [
+    pg_done = true
+    pg_btn.disabled = false
+    clearTimeout(pg_timeout)
+    pg_set_status("Błąd workera: " + (ev.message or "nieznany"), "pg-status-err")
+]
+
+fun pg_on_timeout() [
+    if pg_done [
+        end
+    ]
+    pg_worker.terminate()
+    pg_worker = null
+    pg_btn.disabled = false
+    pg_set_status("Przekroczono limit czasu (5s) — program przerwany.", "pg-status-err")
+]
+
+fun pg_run(e: Any) [
+    let w = pg_fresh_worker()
+    pg_set_status("Uruchamianie…", "")
+    pg_out_el.textContent = ""
+    pg_btn.disabled = true
+    pg_done = false
+    w.onmessage = pg_on_message
+    w.onerror = pg_on_error
+    pg_timeout = setTimeout(pg_on_timeout, 5000)
+    w.postMessage(mkobj(["source", pg_src_el.value]))
+]
+
+fun pg_on_key(ev: Any) [
+    if (ev.ctrlKey or ev.metaKey) and ev.key == "Enter" [
+        ev.preventDefault()
+        pg_run(null)
+    ]
+]
+
+fun hs_init_playground() [
+    let root = document.getElementById("pg-root")
+    if root == null [
+        end
+    ]
+    pg_src_el = document.getElementById("pg-source")
+    pg_out_el = document.getElementById("pg-output")
+    pg_status_el = document.getElementById("pg-status")
+    pg_btn = document.getElementById("pg-run")
+    if pg_src_el == null or pg_out_el == null or pg_status_el == null or pg_btn == null [
+        end
+    ]
+    pg_btn.addEventListener("click", pg_run)
+    pg_src_el.addEventListener("keydown", pg_on_key)
+]
+
+fun hs_after_inject() [
+    hs_init_copy_buttons()
+    hs_init_active_nav()
+]
+
+fun hsharp_docs_init() [
+    hs_inject_sections()
+    !! kopiowanie i menu inicjujemy po wstrzyknieciu sekcji (przyciski sa w wstrzyknietym HTML)
+    setTimeout(hs_after_inject, 0)
+    hs_init_playground()
+]
