@@ -1,0 +1,573 @@
+include <../shared/core>
+
+const NF_CH: Str = "01#$%&*<>/\\{}[]=+?!ABCDEF"
+const NF_RC: Str = "01ABCDEF{}<>/\\#$%&*=+;:"
+
+let nf_reduce: Bool = false
+let nf_pl: Bool = true
+let nf_base: Str = "/"
+let nf_home: Str = "/Home-page.html"
+let nf_x: Any = null            !! teksty (pl/en)
+let nf_offline: Bool = false
+let nf_timers: Any = null
+let nf_attempt: Int = 0
+let nf_restored: Bool = false
+let nf_log: Any = null
+let nf_wrap: Any = null
+let nf_tear: Any = null
+let nf_bars: Any = null
+let nf_cv: Any = null
+let nf_cx: Any = null
+let nf_cols: Any = null
+let nf_rc: Any = null
+let nf_fs: Int = 16
+let nf_w: Int = 0
+let nf_h: Int = 0
+
+fun nf_texts() -> Any [
+    if nf_pl [
+        end mkobj(["off", "OFFLINE", "nf", "404",
+            "subOff", "<b>Brak połączenia z internetem.</b> Sprawdź kabel, Wi-Fi lub dane komórkowe.",
+            "subNf", "<b>Nie znaleziono strony.</b> Ten adres nie istnieje w systemie.",
+            "eyOff", "// połączenie.utracone", "eyNf", "// zasób.nie_znaleziony",
+            "retry", "Spróbuj ponownie", "home", "Strona główna", "link", "Łącze", "ping", "Ping", "sig", "Sygnał",
+            "up", "ONLINE", "down", "DOWN",
+            "rec", "Łączenie z serwerem", "att", "Próba",
+            "back", "Połączenie przywrócone. Przekierowanie...",
+            "chk", "Sprawdzanie...", "fail", "Nadal brak sieci.",
+            "stOff", "OFFLINE", "stNf", "BŁĄD 404", "stOn", "POŁĄCZONO"])
+    ]
+    end mkobj(["off", "OFFLINE", "nf", "404",
+        "subOff", "<b>No internet connection.</b> Check your cable, Wi-Fi or mobile data.",
+        "subNf", "<b>Page not found.</b> This address does not exist in the system.",
+        "eyOff", "// connection.lost", "eyNf", "// resource.not_found",
+        "retry", "Try again", "home", "Home page", "link", "Link", "ping", "Ping", "sig", "Signal",
+        "up", "ONLINE", "down", "DOWN",
+        "rec", "Connecting to server", "att", "Attempt",
+        "back", "Connection restored. Redirecting...",
+        "chk", "Checking...", "fail", "Still offline.",
+        "stOff", "OFFLINE", "stNf", "ERROR 404", "stOn", "CONNECTED"])
+]
+
+!! ── timery ─────────────────────────────────────────────────────────────
+fun nf_t(f: Any, ms: Any) -> Any [
+    let t = setTimeout(f, ms)
+    nf_timers.push(t)
+    end t
+]
+
+fun nf_clear_t() [
+    nf_timers.forEach(clearTimeout)
+    nf_timers = js_arr()
+]
+
+!! ── scramble tytulu ────────────────────────────────────────────────────
+fun nf_scramble(el: Any, txt: Str, done: Any) [
+    if nf_reduce [
+        el.textContent = txt
+        el.setAttribute("data-text", txt)
+        if done [
+            done()
+        ]
+        end
+    ]
+    let i = 0
+    let len = txt.length
+    let n = 0
+    let iv: Any = null
+    fun tick() [
+        let s = ""
+        let k = 0
+        while k < len [
+            if k < i [
+                s = s + txt.charAt(k)
+            ] else [
+                s = s + NF_CH.charAt(Math.floor(Math.random() * NF_CH.length))
+            ]
+            k = k + 1
+        ]
+        el.textContent = s
+        el.setAttribute("data-text", s)
+        n = n + 1
+        if n % 3 == 0 [
+            i = i + 1
+        ]
+        if i > len [
+            clearInterval(iv)
+            el.textContent = txt
+            el.setAttribute("data-text", txt)
+            if done [
+                done()
+            ]
+        ]
+    ]
+    iv = setInterval(tick, 40)
+]
+
+!! ── terminal ───────────────────────────────────────────────────────────
+fun nf_line(txt: Str, cls: Any, instant: Any, cb: Any) [
+    let d = document.createElement("div")
+    if cls [
+        d.className = cls
+    ]
+    nf_log.appendChild(d)
+    while nf_log.children.length > 13 [
+        nf_log.removeChild(nf_log.firstChild)
+    ]
+    if instant or nf_reduce [
+        d.textContent = txt
+        if cb [
+            cb()
+        ]
+        end
+    ]
+    let i = 0
+    let c = document.createElement("span")
+    c.className = "caret"
+    d.appendChild(c)
+    fun step() [
+        d.insertBefore(document.createTextNode(txt.slice(i, i + 2)), c)
+        i = i + 2
+        if i < txt.length [
+            nf_t(step, 12 + Math.random() * 18)
+        ] else [
+            c.remove()
+            if cb [
+                cb()
+            ]
+        ]
+    ]
+    step()
+]
+
+fun nf_run(seq: Any, i: Int, fin: Any) [
+    if i >= seq.length [
+        if fin [
+            fin()
+        ]
+        end
+    ]
+    let s = seq[i]
+    let instant = false
+    if s.length > 3 [
+        instant = s[3]
+    ]
+    let delay = 0
+    if s.length > 2 [
+        delay = s[2]
+    ]
+    fun nxt() [
+        nf_run(seq, i + 1, fin)
+    ]
+    fun go() [
+        nf_line(s[0], s[1], instant, nxt)
+    ]
+    nf_t(go, delay)
+]
+
+fun nf_hex(n: Int) -> Str [
+    let s = ""
+    let k = n
+    while k > 0 [
+        s = s + ("0" + Math.floor(Math.random() * 256).toString(16)).slice(-2) + " "
+        k = k - 1
+    ]
+    end s
+]
+
+fun nf_seq_offline() -> Any [
+    let warn = "[WARN] uplink lost, encrypting buffer..."
+    let ok = "[ OK ] offline mode active"
+    if nf_pl [
+        warn = "[WARN] utracono uplink, szyfruję bufor..."
+        ok = "[ OK ] tryb offline aktywny"
+    ]
+    let seq = js_arr()
+    seq.push(["$ ping -c 4 hackeros.org", "p", 200])
+    seq.push(["PING hackeros.org (?): 56 bytes of data", "d", 150, 1])
+    seq.push(["Request timeout for icmp_seq 0", "e", 500, 1])
+    seq.push(["Request timeout for icmp_seq 1", "e", 600, 1])
+    seq.push(["Request timeout for icmp_seq 2", "e", 600, 1])
+    seq.push(["--- 100% packet loss ---", "w", 300, 1])
+    seq.push(["$ ip link show wlan0", "p", 500])
+    seq.push(["wlan0: <NO-CARRIER,UP> state DOWN", "e", 200, 1])
+    seq.push([warn, "w", 400])
+    seq.push(["dump: " + nf_hex(10), "d", 250, 1])
+    seq.push([ok, "o", 500])
+    seq.push(["$ ./reconnect.sh --auto", "p", 500])
+    end seq
+]
+
+fun nf_seq_not_found() -> Any [
+    let warn = "[WARN] path missing from index"
+    let ok = "[ OK ] network ok, page missing"
+    if nf_pl [
+        warn = "[WARN] ścieżka nie istnieje w indeksie"
+        ok = "[ OK ] sieć działa, strony brak"
+    ]
+    let last = location.pathname.split("/").at(-1)
+    if not last [
+        last = "index"
+    ]
+    let seq = js_arr()
+    seq.push(["$ curl -I " + location.pathname.slice(0, 48), "p", 200])
+    seq.push(["HTTP/2 404 Not Found", "e", 500, 1])
+    seq.push([warn, "w", 400])
+    seq.push(["$ grep -r \"" + last.slice(0, 24) + "\" ./site", "p", 500])
+    seq.push(["grep: 0 matches", "e", 500, 1])
+    seq.push(["dump: " + nf_hex(10), "d", 250, 1])
+    seq.push([ok, "o", 500])
+    seq.push(["$ cd " + nf_base + " && ls", "p", 500])
+    seq.push(["Home-page.html  download.html  releases.html  articles.html", "d", 250, 1])
+    end seq
+]
+
+!! ── tryb (offline / 404) ───────────────────────────────────────────────
+fun nf_start_reconnect_cb() [
+    nf_start_reconnect()
+]
+
+fun nf_set_mode() [
+    let st = by_id("status")
+    let stt = by_id("st-t")
+    nf_clear_t()
+    nf_log.innerHTML = ""
+    if nf_offline [
+        st.className = "status"
+        stt.textContent = nf_x.stOff
+        by_id("eyebrow").textContent = nf_x.eyOff
+        by_id("sub").innerHTML = nf_x.subOff
+        nf_scramble(by_id("title"), nf_x.off, null)
+        by_id("code").textContent = "ERR_INTERNET_DISCONNECTED"
+        by_id("s-link").textContent = nf_x.down
+        by_id("s-link").className = "bad"
+        if nf_pl [
+            document.title = "HackerOS - Brak połączenia"
+        ] else [
+            document.title = "HackerOS - Offline"
+        ]
+        nf_run(nf_seq_offline(), 0, nf_start_reconnect_cb)
+    ] else [
+        st.className = "status nf"
+        stt.textContent = nf_x.stNf
+        by_id("eyebrow").textContent = nf_x.eyNf
+        by_id("sub").innerHTML = nf_x.subNf
+        nf_scramble(by_id("title"), nf_x.nf, null)
+        by_id("code").textContent = "HTTP_404_NOT_FOUND"
+        by_id("s-link").textContent = nf_x.up
+        by_id("s-link").className = ""
+        document.title = "HackerOS - 404"
+        by_id("ptxt").textContent = ""
+        by_id("pbar").style.width = "0"
+        nf_run(nf_seq_not_found(), 0, null)
+    ]
+]
+
+!! ── petla ponownego laczenia ───────────────────────────────────────────
+fun nf_start_reconnect() [
+    if nf_restored or not nf_offline [
+        end
+    ]
+    nf_attempt = nf_attempt + 1
+    let dur = 4500
+    let t0 = Date.now()
+    let bar = by_id("pbar")
+    by_id("ptxt").textContent = nf_x.rec + "... [" + nf_x.att + " " + nf_attempt + "]"
+    fun tick() [
+        if nf_restored or not nf_offline [
+            end
+        ]
+        let p = Math.min(1, (Date.now() - t0) / dur)
+        bar.style.width = (p * 100) + "%"
+        if p < 1 [
+            nf_t(tick, 60)
+        ] else [
+            nf_check(true)
+        ]
+    ]
+    tick()
+]
+
+fun nf_check(auto: Bool) [
+    if nf_restored [
+        end
+    ]
+    by_id("ptxt").textContent = nf_x.chk
+    let done = false
+    let ctrl = Reflect.construct(AbortController, [])
+    fun on_timeout() [
+        ctrl.abort()
+    ]
+    let to = setTimeout(on_timeout, 4000)
+    fun on_ok(r: Any) [
+        clearTimeout(to)
+        if done [
+            end
+        ]
+        done = true
+        if r != null and r.status < 500 [
+            nf_restore()
+        ] else [
+            nf_fail(auto)
+        ]
+    ]
+    fun on_err(e: Any) [
+        clearTimeout(to)
+        if done [
+            end
+        ]
+        done = true
+        nf_fail(auto)
+    ]
+    let opts = js_obj()
+    opts.method = "HEAD"
+    opts.cache = "no-store"
+    opts.signal = ctrl.signal
+    fetch(nf_base + "HackerOS.png?_=" + Date.now(), opts).then(on_ok).catch(on_err)
+]
+
+fun nf_fail(auto: Bool) [
+    if not nf_offline [
+        end
+    ]
+    by_id("pbar").style.width = "0"
+    by_id("ptxt").textContent = nf_x.fail
+    nf_line("[ERR] " + nf_x.fail, "e", true, null)
+    if auto [
+        nf_t(nf_start_reconnect_cb, 1200)
+    ]
+]
+
+fun nf_go_home() [
+    location.href = nf_home
+]
+
+fun nf_restore() [
+    if nf_restored [
+        end
+    ]
+    nf_restored = true
+    nf_offline = false
+    nf_clear_t()
+    by_id("status").className = "status on"
+    by_id("st-t").textContent = nf_x.stOn
+    by_id("s-link").textContent = nf_x.up
+    by_id("s-link").className = ""
+    by_id("pbar").style.width = "100%"
+    by_id("ptxt").textContent = nf_x.back
+    nf_line("[ OK ] " + nf_x.back, "o", true, null)
+    nf_burst()
+    setTimeout(nf_go_home, 2200)
+]
+
+fun nf_retry_later() [
+    if nf_offline [
+        nf_start_reconnect()
+    ]
+]
+
+fun nf_on_retry(e: Any) [
+    if not nf_offline [
+        location.reload()
+        end
+    ]
+    nf_clear_t()
+    by_id("pbar").style.width = "0"
+    nf_check(false)
+    nf_t(nf_retry_later, 1500)
+]
+
+fun nf_on_online(e: Any) [
+    if nf_offline [
+        nf_check(false)
+    ]
+]
+
+fun nf_on_offline(e: Any) [
+    if nf_restored [
+        end
+    ]
+    nf_offline = true
+    nf_set_mode()
+]
+
+!! ── "zywe" statystyki ──────────────────────────────────────────────────
+fun nf_stats() [
+    let lat = by_id("s-lat")
+    if nf_offline [
+        if Math.random() < 0.5 [
+            lat.textContent = "∞"
+        ] else [
+            lat.textContent = "timeout"
+        ]
+        lat.className = "bad"
+        let n = 0
+        if Math.random() >= 0.65 [
+            n = 1 + Math.floor(Math.random() * 2)
+        ]
+        let i = 0
+        while i < 4 [
+            if i < n [
+                nf_bars[i].className = "on"
+            ] else [
+                nf_bars[i].className = ""
+            ]
+            i = i + 1
+        ]
+    ] else [
+        lat.textContent = (8 + Math.floor(Math.random() * 40)) + " ms"
+        lat.className = ""
+        let j = 0
+        while j < 4 [
+            nf_bars[j].className = "on"
+            j = j + 1
+        ]
+    ]
+]
+
+!! ── losowe glitche i "screen tear" ─────────────────────────────────────
+fun nf_hide_tear() [
+    nf_tear.style.display = "none"
+]
+
+fun nf_burst() [
+    if nf_reduce [
+        end
+    ]
+    cl_rm(nf_wrap, "burst")
+    let force_reflow = nf_wrap.offsetWidth
+    nf_wrap.classList.add("burst")
+    nf_tear.style.top = (Math.random() * 100) + "%"
+    nf_tear.style.height = (4 + Math.random() * 50) + "px"
+    nf_tear.style.display = "block"
+    setTimeout(nf_hide_tear, 180)
+    if Math.random() < 0.6 [
+        let word = nf_x.nf
+        if nf_restored [
+            word = nf_x.up
+        ] elif nf_offline [
+            word = nf_x.off
+        ]
+        nf_scramble(by_id("title"), word, null)
+    ]
+]
+
+fun nf_loop_fire() [
+    nf_burst()
+    nf_loop()
+]
+
+fun nf_loop() [
+    setTimeout(nf_loop_fire, 1800 + Math.random() * 4500)
+]
+
+fun nf_on_title(e: Any) [
+    nf_burst()
+]
+
+!! ── matrix rain ────────────────────────────────────────────────────────
+fun nf_size(e: Any) [
+    nf_w = window.innerWidth
+    nf_h = window.innerHeight
+    nf_cv.width = nf_w
+    nf_cv.height = nf_h
+    let n = Math.ceil(nf_w / nf_fs)
+    nf_cols = js_arr()
+    let i = 0
+    while i < n [
+        nf_cols.push(Math.random() * nf_h / nf_fs)
+        i = i + 1
+    ]
+]
+
+fun nf_draw() [
+    nf_cx.fillStyle = "rgba(28,37,38,.12)"
+    nf_cx.fillRect(0, 0, nf_w, nf_h)
+    nf_cx.font = nf_fs + "px monospace"
+    let i = 0
+    while i < nf_cols.length [
+        let ch = nf_rc[Math.floor(Math.random() * nf_rc.length)]
+        if Math.random() < 0.04 [
+            nf_cx.fillStyle = "#ffffff"
+        ] elif nf_offline and Math.random() < 0.03 [
+            nf_cx.fillStyle = "#ff4d5e"
+        ] else [
+            nf_cx.fillStyle = "#00d4ff"
+        ]
+        nf_cx.fillText(ch, i * nf_fs, nf_cols[i] * nf_fs)
+        if nf_cols[i] * nf_fs > nf_h and Math.random() > 0.975 [
+            nf_cols[i] = 0
+        ]
+        if nf_offline and Math.random() < 0.3 [
+            nf_cols[i] = nf_cols[i] + 0
+        ] else [
+            nf_cols[i] = nf_cols[i] + 1
+        ]
+        i = i + 1
+    ]
+]
+
+!! ── start ──────────────────────────────────────────────────────────────
+fun notfound_init() [
+    nf_timers = js_arr()
+    nf_reduce = false
+    if not nil(window.matchMedia) [
+        nf_reduce = matchMedia("(prefers-reduced-motion: reduce)").matches
+    ]
+    nf_pl = rx_flags("^pl", "i").test(navigator.language or "pl")
+
+    !! sciezka bazowa (GitHub Pages project site vs. korzen)
+    let path = location.pathname
+    let bi = path.indexOf("/HackerOS-Website/")
+    nf_base = "/"
+    if bi >= 0 [
+        nf_base = path.slice(0, bi) + "/HackerOS-Website/"
+    ]
+    nf_home = nf_base + "Home-page.html"
+    by_id("home").href = nf_home
+    by_id("logo").src = nf_base + "HackerOS.png"
+    let ico = document.querySelector("link[rel=icon]")
+    if ico != null [
+        ico.href = nf_base + "HackerOS.png"
+    ]
+
+    nf_x = nf_texts()
+    by_id("retry").textContent = nf_x.retry
+    by_id("home").textContent = nf_x.home
+    by_id("l-link").textContent = nf_x.link
+    by_id("l-lat").textContent = nf_x.ping
+    by_id("l-sig").textContent = nf_x.sig
+    if nf_pl [
+        document.documentElement.lang = "pl"
+    ] else [
+        document.documentElement.lang = "en"
+    ]
+
+    nf_offline = not navigator.onLine
+    nf_attempt = 0
+    nf_restored = false
+    nf_log = by_id("log")
+    nf_bars = by_id("bars").children
+    nf_wrap = by_id("wrap")
+    nf_tear = by_id("tear")
+
+    by_id("retry").addEventListener("click", nf_on_retry)
+    window.addEventListener("online", nf_on_online)
+    window.addEventListener("offline", nf_on_offline)
+    setInterval(nf_stats, 700)
+    nf_loop()
+    by_id("title").addEventListener("mouseenter", nf_on_title)
+    by_id("title").addEventListener("click", nf_on_title)
+
+    nf_cv = by_id("rain")
+    nf_cx = nf_cv.getContext("2d")
+    nf_rc = NF_RC
+    nf_size(null)
+    window.addEventListener("resize", nf_size)
+    if not nf_reduce [
+        setInterval(nf_draw, 55)
+    ]
+
+    register_sw(nf_base + "sw.js")
+    nf_set_mode()
+]
