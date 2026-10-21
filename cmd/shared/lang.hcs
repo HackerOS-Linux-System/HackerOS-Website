@@ -1,0 +1,275 @@
+include <core>
+
+const LANG_STORAGE_KEY: Str = "hackeros_lang"
+let LANG_CODES: List<Str> = ["pl", "en", "de", "fr", "es", "it", "ru", "uk", "zh", "ja"]
+let LANG_FLAGS: List<Str> = ["🇵🇱", "🇬🇧", "🇩🇪", "🇫🇷", "🇪🇸", "🇮🇹", "🇷🇺", "🇺🇦", "🇨🇳", "🇯🇵"]
+let LANG_NAMES: List<Str> = ["Polski", "English", "Deutsch", "Français", "Español", "Italiano", "Русский", "Українська", "中文", "日本語"]
+!! Etykieta linku "Artykuly" w nawigacji (dodawana do kazdej strony)
+let NAV_ARTICLES: List<Str> = ["Artykuły", "Articles", "Artikel", "Articles", "Artículos", "Articoli", "Статьи", "Статті", "文章", "記事"]
+
+style {
+#hl-overlay{
+    position:fixed;inset:0;z-index:99998;
+    background:rgba(0,0,0,.55);
+    display:flex;align-items:center;justify-content:center;
+    opacity:0;pointer-events:none;
+    transition:opacity .2s ease;
+}
+#hl-overlay.hl-open{opacity:1;pointer-events:all;}
+#hl-modal{
+    background:#1a2028;
+    border:1px solid #2f3a44;
+    border-radius:16px;
+    padding:28px 32px 24px;
+    min-width:280px;
+    box-shadow:0 20px 50px rgba(0,0,0,.7);
+    transform:scale(.93);
+    transition:transform .2s ease;
+    font-family:'Arial',sans-serif;
+    color:#fff;
+}
+#hl-overlay.hl-open #hl-modal{transform:scale(1);}
+#hl-modal h3{
+    margin:0 0 18px;font-size:17px;font-weight:700;
+    color:#b0b0b0;letter-spacing:.5px;
+    border-bottom:1px solid #2f3a44;padding-bottom:12px;
+}
+.hl-grid{
+    display:grid;grid-template-columns:1fr 1fr;
+    gap:8px;
+}
+.hl-btn{
+    display:flex;align-items:center;gap:9px;
+    background:#242e38;border:1px solid #2f3a44;
+    border-radius:10px;padding:10px 14px;
+    cursor:pointer;transition:background .18s,border-color .18s,transform .12s;
+    color:#e0e6ed;font-size:14px;font-weight:600;
+    font-family:'Arial',sans-serif;
+    text-align:left;
+}
+.hl-btn:hover{background:#2f3d4d;border-color:#6f8aac;transform:translateY(-1px);}
+.hl-btn.hl-active{background:#2f3a44;border-color:#b0b0b0;color:#fff;}
+.hl-btn .hl-flag{font-size:20px;line-height:1;}
+#hl-close{
+    display:block;width:100%;margin-top:16px;
+    background:transparent;border:1px solid #3a4a55;
+    border-radius:8px;padding:8px;color:#888;
+    cursor:pointer;font-size:13px;font-family:'Arial',sans-serif;
+    transition:color .15s,border-color .15s;
+}
+#hl-close:hover{color:#fff;border-color:#888;}
+/* settings gear button in nav */
+.hl-settings-btn{
+    background:none;border:none;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    padding:4px;border-radius:8px;
+    transition:opacity .2s,transform .2s;
+    margin-left:6px;
+}
+.hl-settings-btn:hover{opacity:.75;transform:rotate(22deg);}
+.hl-settings-btn img{width:30px;height:30px;display:block;object-fit:contain;}
+}
+
+fun lang_index(code: Str) -> Int [
+    end LANG_CODES.indexOf(code)
+]
+
+fun lang_supported(code: Any) -> Bool [
+    end code != null and LANG_CODES.includes(code)
+]
+
+fun lang_flag(code: Str) -> Str [
+    end LANG_FLAGS[lang_index(code)]
+]
+
+fun lang_name(code: Str) -> Str [
+    end LANG_NAMES[lang_index(code)]
+]
+
+fun nav_articles_label(lang: Str) -> Str [
+    let i = lang_index(lang)
+    if i < 0 [
+        end NAV_ARTICLES[1]
+    ]
+    end NAV_ARTICLES[i]
+]
+
+fun get_lang() -> Str [
+    let stored = localStorage.getItem(LANG_STORAGE_KEY)
+    if stored != null and stored != "" and lang_supported(stored) [
+        end stored
+    ]
+    let browser = (navigator.language or navigator.userLanguage or "pl").slice(0, 2)
+    if lang_supported(browser) [
+        end browser
+    ]
+    end "pl"
+]
+
+fun apply_nav_articles() [
+    let e = document.getElementById("nav-articles")
+    if e != null [
+        e.textContent = nav_articles_label(get_lang())
+    ]
+]
+
+fun set_lang(lang: Str) [
+    if not lang_supported(lang) [
+        end
+    ]
+    localStorage.setItem(LANG_STORAGE_KEY, lang)
+    apply_nav_articles()
+]
+
+!! ── przelacznik jezyka (modal) ─────────────────────────────────────────
+fun hl_close_modal() [
+    let overlay = document.getElementById("hl-overlay")
+    if overlay != null [
+        cl_rm(overlay, "hl-open")
+    ]
+]
+
+fun hl_open_modal() [
+    let current = get_lang()
+    let btns = document.querySelectorAll(".hl-btn")
+    btns.forEach(hl_refresh_btn)
+    document.getElementById("hl-overlay").classList.add("hl-open")
+]
+
+!! Pomocnicze: stan aktywnego przycisku (current czytany z get_lang)
+fun hl_refresh_btn(b: Any) [
+    b.classList.toggle("hl-active", b.dataset.lang == get_lang())
+]
+
+fun hl_on_grid_click(e: Any) [
+    let btn = e.target.closest(".hl-btn")
+    if btn == null [
+        end
+    ]
+    let code = btn.dataset.lang
+    set_lang(code)
+    let all = document.querySelectorAll(".hl-btn")
+    all.forEach(hl_clear_active)
+    btn.classList.add("hl-active")
+    if not nil(window.__hackeros_applyLang) [
+        window.__hackeros_applyLang(code)
+    ]
+    hl_close_modal()
+]
+
+fun hl_clear_active(b: Any) [
+    cl_rm(b, "hl-active")
+]
+
+fun hl_on_overlay_click(e: Any) [
+    if e.target == e.currentTarget [
+        hl_close_modal()
+    ]
+]
+
+fun hl_on_keydown(e: Any) [
+    if e.key == "Escape" [
+        hl_close_modal()
+    ]
+]
+
+fun hl_build_modal() [
+    if document.getElementById("hl-overlay") != null [
+        end
+    ]
+    let overlay = document.createElement("div")
+    overlay.id = "hl-overlay"
+
+    let modal = document.createElement("div")
+    modal.id = "hl-modal"
+
+    let heading = document.createElement("h3")
+    heading.id = "hl-heading"
+    heading.textContent = "🌐 Wybierz język / Select language"
+    modal.appendChild(heading)
+
+    let grid = document.createElement("div")
+    grid.className = "hl-grid"
+
+    let current = get_lang()
+    for code in LANG_CODES [
+        let btn = document.createElement("button")
+        btn.className = "hl-btn"
+        if code == current [
+            btn.className = "hl-btn hl-active"
+        ]
+        btn.dataset.lang = code
+
+        let flag = document.createElement("span")
+        flag.className = "hl-flag"
+        flag.textContent = lang_flag(code)
+
+        let label = document.createElement("span")
+        label.textContent = lang_name(code)
+
+        btn.appendChild(flag)
+        btn.appendChild(label)
+        grid.appendChild(btn)
+    ]
+    grid.addEventListener("click", hl_on_grid_click)
+    modal.appendChild(grid)
+
+    let close_btn = document.createElement("button")
+    close_btn.id = "hl-close"
+    close_btn.textContent = "✕ Zamknij / Close"
+    close_btn.addEventListener("click", hl_close_modal)
+    modal.appendChild(close_btn)
+
+    overlay.appendChild(modal)
+    document.body.appendChild(overlay)
+
+    !! zamkniecie klikiem w tlo i klawiszem Escape
+    overlay.addEventListener("click", hl_on_overlay_click)
+    document.addEventListener("keydown", hl_on_keydown)
+]
+
+fun hl_img_error(e: Any) [
+    let img = e.target
+    img.style.display = "none"
+    let btn = img.parentNode
+    btn.textContent = "⚙️"
+    btn.style.fontSize = "20px"
+]
+
+fun hl_inject_settings_btn(img_path: Str) [
+    let nav_ul = document.querySelector("header nav ul") or document.querySelector("header .nav-list")
+    if nav_ul == null [
+        end
+    ]
+    if document.getElementById("hl-settings-li") != null [
+        end
+    ]
+    let li = document.createElement("li")
+    li.id = "hl-settings-li"
+
+    let btn = document.createElement("button")
+    btn.className = "hl-settings-btn"
+    btn.title = "Language / Język"
+    btn.setAttribute("aria-label", "Change language")
+
+    let img = document.createElement("img")
+    img.src = img_path
+    img.alt = "Settings"
+    img.addEventListener("error", hl_img_error)
+
+    btn.appendChild(img)
+    btn.addEventListener("click", hl_open_modal)
+    li.appendChild(btn)
+    nav_ul.appendChild(li)
+]
+
+!! Start: sciezka ikony zalezy od katalogu strony (tools-docs/ -> ../settings.png)
+fun lang_switcher_init() [
+    apply_nav_articles()
+    hl_build_modal()
+    let img_path = "settings.png"
+    if window.location.pathname.includes("/tools-docs/") [
+        img_path = "../settings.png"
+    ]
+    hl_inject_settings_btn(img_path)
+]
