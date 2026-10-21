@@ -1,0 +1,43 @@
+include <../shared/core>
+
+let spy_links_sel: Str = ""
+
+fun spy_clear(l: Any) [
+    cl_rm(l, "active")
+]
+
+fun spy_entry(entry: Any) [
+    if entry.isIntersecting [
+        document.querySelectorAll(spy_links_sel).forEach(spy_clear)
+        let a = document.querySelector(spy_links_sel + "[href=\"#" + entry.target.id + "\"]")
+        if a != null [
+            a.classList.add("active")
+        ]
+    ]
+]
+
+fun spy_callback(entries: Any) [
+    entries.forEach(spy_entry)
+]
+
+fun spy_observe(s: Any) [
+    if s.id [
+        spy_observer.observe(s)
+    ]
+]
+
+let spy_observer: Any = null
+
+!! sections_sel - obserwowane sekcje, links_sel - linki nawigacji,
+!! margin - rootMargin ("" => uzyj threshold), threshold - prog widocznosci
+fun scrollspy(sections_sel: Str, links_sel: Str, margin: Str, threshold: Float) [
+    spy_links_sel = links_sel
+    let opts = js_obj()
+    if margin != "" [
+        opts.rootMargin = margin
+    ] else [
+        opts.threshold = threshold
+    ]
+    spy_observer = Reflect.construct(IntersectionObserver, [spy_callback, opts])
+    document.querySelectorAll(sections_sel).forEach(spy_observe)
+]
