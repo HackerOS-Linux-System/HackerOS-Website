@@ -1,0 +1,91 @@
+include <../shared/core>
+include <../shared/lang>
+include <../data/releases_t>
+
+let rel_trans: Any = null
+let rel_t: Any = null
+
+fun rel_add_li(ul: Any, text: Any) [
+    let li = document.createElement("li")
+    li.textContent = text
+    ul.appendChild(li)
+]
+
+fun rel_date_li(d: Any) [
+    rel_add_li(rel_ul, d)
+]
+
+fun rel_change_li(c: Any) [
+    rel_add_li(rel_ul, c)
+]
+
+let rel_ul: Any = null
+let rel_container: Any = null
+
+fun rel_render_one(r: Any) [
+    let div = document.createElement("div")
+    div.className = "release"
+
+    let h2 = document.createElement("h2")
+    h2.textContent = r.version
+    div.appendChild(h2)
+
+    let desc = document.createElement("p")
+    desc.textContent = r.desc
+    div.appendChild(desc)
+
+    let dh = document.createElement("h3")
+    dh.textContent = rel_t.releaseDateLabel
+    div.appendChild(dh)
+    let dul = document.createElement("ul")
+    rel_ul = dul
+    r.dates.forEach(rel_date_li)
+    div.appendChild(dul)
+
+    let ch = document.createElement("h3")
+    ch.textContent = rel_t.changelogLabel
+    div.appendChild(ch)
+    let cul = document.createElement("ul")
+    rel_ul = cul
+    r.changelog.forEach(rel_change_li)
+    div.appendChild(cul)
+
+    rel_container.appendChild(div)
+]
+
+fun render_releases(t: Any) [
+    rel_t = t
+    rel_container = document.getElementById("releases-container")
+    rel_container.innerHTML = ""
+    t.releases.forEach(rel_render_one)
+]
+
+fun rel_nav(k: Str, t: Any) [
+    let a = document.getElementById("nav-" + k)
+    if a != null [
+        let key = "nav" + k.charAt(0).toUpperCase() + k.slice(1)
+        a.textContent = jget(t, key)
+    ]
+]
+
+fun rel_apply_lang(lang: Str) [
+    let t = jget(rel_trans, lang)
+    if nil(t) [
+        t = rel_trans.en
+    ]
+    document.documentElement.lang = lang
+    document.title = t.pageTitle
+    set_text("section-h1", t.sectionH1)
+    set_text("footer-copy", t.footerCopy)
+    for k in ["home", "download", "releases", "team", "docs"] [
+        rel_nav(k, t)
+    ]
+    render_releases(t)
+]
+
+fun releases_init() [
+    rel_trans = trans_releases()
+    window.__hackeros_applyLang = rel_apply_lang
+    rel_apply_lang(get_lang())
+    lang_switcher_init()
+]
