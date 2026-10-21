@@ -1,0 +1,67 @@
+include <../shared/core>
+
+let hd_nav_links: Any = null
+let hd_card_observer: Any = null
+let hd_nav_observer: Any = null
+
+fun hd_on_scroll(e: Any) [
+    let scroll = window.scrollY
+    let height = document.body.scrollHeight - window.innerHeight
+    document.getElementById("progress").style.width = (scroll / height * 100) + "%"
+]
+
+fun hd_clear_color(a: Any) [
+    a.style.color = ""
+]
+
+fun hd_nav_entry(entry: Any) [
+    if entry.isIntersecting [
+        hd_nav_links.forEach(hd_clear_color)
+        let active = document.querySelector("nav a[href=\"#" + entry.target.id + "\"]")
+        if active != null [
+            active.style.color = "var(--cyan)"
+        ]
+    ]
+]
+
+fun hd_nav_cb(entries: Any) [
+    entries.forEach(hd_nav_entry)
+]
+
+fun hd_observe_nav(s: Any) [
+    hd_nav_observer.observe(s)
+]
+
+fun hd_card_entry(entry: Any) [
+    if entry.isIntersecting [
+        entry.target.style.animation = "fadeUp 0.4s ease both"
+        hd_card_observer.unobserve(entry.target)
+    ]
+]
+
+fun hd_card_cb(entries: Any) [
+    entries.forEach(hd_card_entry)
+]
+
+fun hd_prepare_card(c: Any) [
+    c.style.opacity = "0"
+    c.style.transform = "translateY(16px)"
+    hd_card_observer.observe(c)
+]
+
+fun hackerdeck_init() [
+    window.addEventListener("scroll", hd_on_scroll)
+
+    let sections = document.querySelectorAll("section[id]")
+    hd_nav_links = document.querySelectorAll("nav a")
+    let o1 = js_obj()
+    o1.rootMargin = "-40% 0px -50% 0px"
+    hd_nav_observer = Reflect.construct(IntersectionObserver, [hd_nav_cb, o1])
+    sections.forEach(hd_observe_nav)
+
+    let cards = document.querySelectorAll(".card, .feature-hero, .table-wrap, .alert")
+    let o2 = js_obj()
+    o2.rootMargin = "0px 0px -60px 0px"
+    hd_card_observer = Reflect.construct(IntersectionObserver, [hd_card_cb, o2])
+    cards.forEach(hd_prepare_card)
+]
