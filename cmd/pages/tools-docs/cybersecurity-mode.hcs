@@ -1,0 +1,356 @@
+use <mode:website>
+
+include <../../shared/offline>
+include <../../logic/scrollspy>
+
+style {
+#app { display: none; }
+  :root {
+    --bg:        #111114;
+    --bg2:       #18181c;
+    --bg3:       #1f1f24;
+    --border:    #2a2a32;
+    --text:      #dde1ea;
+    --muted:     #606070;
+    --accent-r:  #ef4444;
+    --accent-b:  #3b82f6;
+    --accent-g:  #22c55e;
+    --accent-y:  #eab308;
+    --accent-c:  #22d3ee;
+    --mono:      'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+    --sans:      'IBM Plex Sans', 'Inter', system-ui, sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.7;
+    display: flex;
+    min-height: 100vh;
+  }
+
+  
+  nav {
+    width: 280px;
+    min-width: 280px;
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    padding: 0 0 24px;
+  }
+
+  .nav-logo {
+    padding: 24px 20px 16px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 12px;
+  }
+  .nav-logo-title {
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    color: var(--text);
+    text-transform: uppercase;
+  }
+  .nav-logo-sub {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+    font-family: var(--mono);
+  }
+
+  .nav-section {
+    padding: 8px 20px 4px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  nav a {
+    display: block;
+    padding: 7px 20px;
+    color: #8a8a9a;
+    text-decoration: none;
+    font-size: 13px;
+    border-left: 2px solid transparent;
+    transition: all .15s;
+  }
+  nav a:hover {
+    color: var(--text);
+    background: var(--bg3);
+  }
+  nav a.active {
+    color: var(--text);
+    border-left-color: var(--accent-g);
+    background: var(--bg3);
+  }
+
+  
+  main {
+    flex: 1;
+    max-width: 900px;
+    padding: 56px 64px 96px;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  
+  .back-button-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 24px;
+  }
+  .back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    padding: 6px 14px;
+    border-radius: 24px;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent-c);
+    text-decoration: none;
+    transition: 0.15s;
+    font-weight: 500;
+  }
+  .back-button:hover {
+    background: var(--bg2);
+    border-color: var(--accent-c);
+    text-decoration: none;
+    color: white;
+  }
+
+  
+  .hero {
+    padding: 0 0 56px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 56px;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: var(--accent-g)18;
+    border: 1px solid var(--accent-g)55;
+    color: var(--accent-g);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    padding: 3px 12px;
+    border-radius: 3px;
+    margin-bottom: 20px;
+    font-family: var(--mono);
+  }
+  .hero h1 {
+    font-size: 42px;
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -1px;
+    color: #fff;
+    margin-bottom: 16px;
+  }
+  .hero h1 span.red  { color: var(--accent-r); }
+  .hero h1 span.blue { color: var(--accent-b); }
+  .hero-sub {
+    color: #888;
+    font-size: 17px;
+    max-width: 600px;
+    line-height: 1.6;
+    margin-bottom: 32px;
+  }
+  .hero-meta {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .hero-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--muted);
+    font-family: var(--mono);
+  }
+  .hero-meta-item .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  
+  section { margin-bottom: 72px; }
+
+  h2 {
+    font-size: 26px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+    padding-top: 32px;
+    margin-top: 8px;
+  }
+  h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #ddd;
+    margin: 28px 0 10px;
+    letter-spacing: .3px;
+  }
+  h4 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--muted);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin: 20px 0 8px;
+  }
+  p { margin-bottom: 14px; color: #aaa; }
+  ul, ol { padding-left: 20px; color: #aaa; margin-bottom: 14px; }
+  li { margin-bottom: 6px; }
+  strong { color: var(--text); }
+  a { color: var(--accent-c); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  
+  code {
+    font-family: var(--mono);
+    font-size: 13px;
+    background: var(--bg3);
+    color: var(--accent-g);
+    padding: 1px 6px;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+  }
+  pre {
+    background: #0c0c0e;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px 24px;
+    overflow-x: auto;
+    margin: 16px 0 24px;
+    position: relative;
+  }
+  pre code {
+    background: transparent;
+    border: none;
+    color: #22e87a;
+    font-size: 13px;
+    padding: 0;
+  }
+  .pre-label {
+    font-size: 10px;
+    color: var(--muted);
+    font-family: var(--mono);
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  
+  .card-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 20px 0;
+  }
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+  }
+  .card-icon { font-size: 24px; margin-bottom: 10px; }
+  .card-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+  .card-desc  { font-size: 13px; color: var(--muted); line-height: 1.5; }
+  .card.red  { border-color: var(--accent-r)44; }
+  .card.blue { border-color: var(--accent-b)44; }
+  .card.green { border-color: var(--accent-g)44; }
+
+  
+  .mode-block {
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin: 16px 0;
+    border: 1px solid;
+  }
+  .mode-block.red  { background: var(--accent-r)0d; border-color: var(--accent-r)44; }
+  .mode-block.blue { background: var(--accent-b)0d; border-color: var(--accent-b)44; }
+  .mode-block h3   { margin-top: 0; }
+  .mode-block.red  h3 { color: var(--accent-r); }
+  .mode-block.blue h3 { color: var(--accent-b); }
+
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0 24px;
+    font-size: 13px;
+  }
+  th {
+    background: var(--bg3);
+    color: var(--muted);
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    color: #aaa;
+    vertical-align: top;
+  }
+  td:first-child { font-family: var(--mono); color: var(--accent-g); }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--bg3); }
+
+  
+  .alert {
+    border-radius: 6px;
+    padding: 14px 18px;
+    margin: 16px 0;
+    border-left: 3px solid;
+    font-size: 13px;
+  }
+  .alert.warn  { background: var(--accent-y)0d; border-color: var(--accent-y); color: #ccc; }
+  .alert.info  { background: var(--accent-b)0d; border-color: var(--accent-b); color: #ccc; }
+  .alert.tip   { background: var(--accent-g)0d; border-color: var(--accent-g); color: #ccc; }
+  .alert strong { color: var(--text); }
+
+  
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #2a2a3a; border-radius: 3px; }
+
+  @media (max-width: 900px) {
+    nav { display: none; }
+    main { padding: 32px 24px 64px; }
+    .card-grid { grid-template-columns: 1fr; }
+  }
+}
+
+let PAGE_BODY: Str = "<nav>\n  <div class=\"nav-logo\">\n    <div class=\"nav-logo-title\">Cybersecurity Mode</div>\n    <div class=\"nav-logo-sub\">HackerOS v1.0.0</div>\n  </div>\n\n  <div class=\"nav-section\">Overview</div>\n  <a href=\"#overview\" class=\"active\">Introduction</a>\n  <a href=\"#architecture\">Architecture</a>\n  <a href=\"#modes\">Operational Modes</a>\n\n  <div class=\"nav-section\">Installation</div>\n  <a href=\"#requirements\">Requirements</a>\n  <a href=\"#install\">Installing</a>\n  <a href=\"#container\">Container Setup</a>\n\n  <div class=\"nav-section\">Interface</div>\n  <a href=\"#ui-main\">Main Panel</a>\n  <a href=\"#ui-terminal\">Terminal Panel</a>\n  <a href=\"#ui-docs\">Docs Panel</a>\n  <a href=\"#ui-settings\">Settings Panel</a>\n  <a href=\"#hacker-menu\">Hacker Menu</a>\n\n  <div class=\"nav-section\">CLI</div>\n  <a href=\"#cli-ref\">cybersec CLI</a>\n  <a href=\"#cli-examples\">Examples</a>\n\n  <div class=\"nav-section\">Development</div>\n  \n  <a href=\"#ipc-protocol\">IPC Protocol</a>\n  <a href=\"#plugins\">Plugin System</a>\n\n  <div class=\"nav-section\">Reference</div>\n  <a href=\"#config\">Configuration</a>\n  <a href=\"#paths\">Paths</a>\n  <a href=\"#keybindings\">Keybindings</a>\n  <a href=\"#tools\">Tool Reference</a>\n</nav>\n\n\n<main>\n  \n  <div class=\"back-button-container\">\n    <a href=\"https://hackeros-linux-system.github.io/HackerOS-Website/tools-docs/index.html\" class=\"back-button\" target=\"_blank\" rel=\"noopener noreferrer\">\n      ← Back to HackerOS Tools\n    </a>\n  </div>\n\n  \n  <div class=\"hero\">\n    <div class=\"hero-badge\">HACKEROS DOCUMENTATION</div>\n    <h1>Cybersecurity<br><span class=\"red\">Mode</span></h1>\n    <p class=\"hero-sub\">\n      A professional-grade security environment for HackerOS.\n      Offensive penetration testing and defensive auditing in one unified interface,\n      powered by an isolated BlackArch Linux container.\n    </p>\n    <div class=\"hero-meta\">\n      <div class=\"hero-meta-item\">\n        <span class=\"dot\" style=\"background:#ef4444\"></span> Red Mode — Pentest\n      </div>\n      <div class=\"hero-meta-item\">\n        <span class=\"dot\" style=\"background:#3b82f6\"></span> Blue Mode — Audit\n      </div>\n      <div class=\"hero-meta-item\">\n        <span class=\"dot\" style=\"background:#22c55e\"></span> v1.0.0\n      </div>\n      <div class=\"hero-meta-item\">\n        <span class=\"dot\" style=\"background:#eab308\"></span> BlackArch Container\n      </div>\n    </div>\n  </div>\n\n  \n  <section id=\"overview\">\n    <h2>Introduction</h2>\n    <p>\n      <strong>Cybersecurity Mode</strong> is a dedicated security workstation environment designed for\n      HackerOS. It provides a unified graphical interface for both offensive security professionals\n      (penetration testers, red teamers) and defensive security practitioners (auditors, blue teamers),\n      running all tools inside an isolated <strong>BlackArch Linux Podman container</strong>.\n    </p>\n    <p>\n      The application is designed to run as a <strong>dedicated TTY session</strong> (similar to Steam's\n      Gamescope session) launched via <code>cage</code>, providing a clean, distraction-free security workspace.\n      It can also be launched inside an existing desktop session.\n    </p>\n    <div class=\"card-grid\">\n      <div class=\"card red\">\n        <div class=\"card-icon\">🔴</div>\n        <div class=\"card-title\">Offensive Security</div>\n        <div class=\"card-desc\">Penetration testing, vulnerability research, exploit development,\n        and attack simulation using industry-standard tools.</div>\n      </div>\n      <div class=\"card blue\">\n        <div class=\"card-icon\">🔵</div>\n        <div class=\"card-title\">Defensive Security</div>\n        <div class=\"card-desc\">System auditing, network monitoring, hardening, compliance analysis,\n        and incident response workflows.</div>\n      </div>\n      <div class=\"card green\">\n        <div class=\"card-icon\">📦</div>\n        <div class=\"card-title\">Isolated Container</div>\n        <div class=\"card-desc\">All tools run inside BlackArch Linux via Podman — completely\n        isolated from your host system.</div>\n      </div>\n      <div class=\"card\">\n        <div class=\"card-icon\">📖</div>\n        <div class=\"card-title\">Built-in Education</div>\n        <div class=\"card-desc\">Comprehensive in-app documentation for beginners,\n        with command references and practical examples.</div>\n      </div>\n    </div>\n  </section>\n\n  \n  <section id=\"architecture\">\n    <h2>Architecture</h2>\n    <p>Cybersecurity Mode is built from three separate compiled components that work together:</p>\n\n    <h3>Components</h3>\n    <table>\n      <tr><th>Component</th><th>Language</th><th>Binary</th><th>Purpose</th></tr>\n      <tr>\n        <td>GUI Frontend</td>\n        <td>Python 3.13 + PyQt6</td>\n        <td><code>cybersec-mode-main</code></td>\n        <td>Main graphical interface, all UI panels, compiled with Nuitka to static binary</td>\n       </tr>\n      <tr>\n        <td>Backend</td>\n        <td>Rust (tokio)</td>\n        <td><code>cybersec-mode-backend</code></td>\n        <td>Container lifecycle management, network scanning, IPC server over Unix socket</td>\n       </tr>\n      <tr>\n        <td>CLI</td>\n        <td>Crystal</td>\n        <td><code>cybersec</code></td>\n        <td>Command-line interface, session launcher, update/plugin management</td>\n       </tr>\n    </table>\n\n    <h3>Communication Flow</h3>\n    <pre><code>cybersec (CLI)\n    │\n    ├── launches cybersec-mode-main (GUI)\n    │       │\n    │       ├── connects via Unix socket ──► cybersec-mode-backend (Rust)\n    │       │       │\n    │       │       └── manages ──► Podman Container (BlackArch Linux)\n    │       │                           └── security tools (nmap, metasploit, …)\n    │       │\n    │       └── embeds ──► Terminal Panel ──► shell inside container\n    │\n    └── direct commands ──► container exec / podman / system</code></pre>\n\n    <div class=\"alert info\">\n      <strong>IPC Protocol:</strong> The GUI communicates with the backend using newline-delimited JSON-RPC\n      over a Unix domain socket at <code>/tmp/cybersec-mode-backend.sock</code>.\n    </div>\n  </section>\n\n  \n  <section id=\"modes\">\n    <h2>Operational Modes</h2>\n    <p>\n      On first launch (or every launch if configured), Cybersecurity Mode asks you to select an\n      operational mode. This determines which tools are prominently displayed and sets the visual\n      theme accent color.\n    </p>\n\n    <div class=\"mode-block red\">\n      <h3>🔴 Red Mode — Offensive / Pentest</h3>\n      <p>Designed for penetration testers and red teamers. Focuses on:</p>\n      <ul>\n        <li>Network reconnaissance and port scanning (nmap, masscan)</li>\n        <li>Vulnerability exploitation (Metasploit, searchsploit)</li>\n        <li>Web application attacks (Burp Suite, sqlmap, nikto, gobuster)</li>\n        <li>Password attacks (hashcat, john, hydra)</li>\n        <li>Wireless security (aircrack-ng, airmon-ng)</li>\n        <li>Post-exploitation and pivoting</li>\n      </ul>\n    </div>\n\n    <div class=\"mode-block blue\">\n      <h3>🔵 Blue Mode — Defensive / Audit</h3>\n      <p>Designed for security auditors and blue teamers. Focuses on:</p>\n      <ul>\n        <li>Network traffic analysis (Wireshark, tcpdump, Zeek)</li>\n        <li>Intrusion detection (Suricata, Snort, OSSEC)</li>\n        <li>System hardening and auditing (Lynis, auditd, chkrootkit)</li>\n        <li>Malware analysis (ClamAV, rkhunter, YARA)</li>\n        <li>Vulnerability assessment (OpenVAS, Nessus)</li>\n        <li>Log analysis and SIEM integration</li>\n      </ul>\n    </div>\n\n    <h3>Switching Modes</h3>\n    <p>You can switch modes at any time using:</p>\n    <ul>\n      <li><strong>Hacker Menu → Change Mode</strong> in the GUI</li>\n      <li><code>cybersec set-mode red</code> or <code>cybersec set-mode blue</code> from the CLI</li>\n    </ul>\n\n    <h3>Startup Behavior</h3>\n    <p>\n      In <strong>Settings → Always ask mode at startup</strong>, you control whether the mode\n      selection dialog appears every time. If disabled, Cybersecurity Mode remembers your last choice.\n    </p>\n  </section>\n\n  \n  <section id=\"requirements\">\n    <h2>Requirements</h2>\n\n    <h3>System Requirements</h3>\n    <table>\n      <tr><th>Component</th><th>Minimum</th><th>Recommended</th></tr>\n      <tr><td>OS</td><td colspan=\"2\">HackerOS (Arch-based)</td> </tr>\n      <tr><td>RAM</td><td>4 GB</td><td>8+ GB</td> </tr>\n      <tr><td>Disk</td><td>20 GB free</td><td>50+ GB</td> </tr>\n      <tr><td>Display</td><td>1280×800</td><td>1920×1080 or higher</td> </tr>\n      <tr><td>Network</td><td colspan=\"2\">Required for container image pull</td> </tr>\n    </table>\n\n    <h3>Runtime Dependencies</h3>\n    <table>\n      <tr><th>Package</th><th>Purpose</th></tr>\n      <tr><td>podman</td><td>Container engine (preferred over docker)</td> </tr>\n      <tr><td>cage</td><td>Wayland compositor for TTY session mode</td> </tr>\n      <tr><td>python3.13</td><td>Python runtime (bundled in binary via Nuitka)</td> </tr>\n      <tr><td>qt6-base</td><td>Qt6 runtime libraries for PyQt6</td> </tr>\n      <tr><td>libwayland</td><td>Wayland client libraries</td> </tr>\n    </table>\n\n    \n  </section>\n\n  \n  <section id=\"install\">\n    <h2>Installing</h2>\n\n    \n    <h3>For HackerOS</h3>\n    <pre><code>hacker unpack cybersecurity-mode</code></pre>\n    <p>This command will fetch and install the precompiled Cybersecurity Mode package directly on your HackerOS system.</p>\n  </section>\n\n  \n  <section id=\"container\">\n    <h2>Container Setup</h2>\n    <p>\n      All security tools run inside a <strong>BlackArch Linux Podman container</strong>.\n      The container is created automatically when you click <strong>Start Container</strong>\n      in the Main panel, or you can manage it manually.\n    </p>\n\n    <h3>Manual Container Management</h3>\n    <span class=\"pre-label\">bash</span>\n    <pre><code># Pull the BlackArch image manually\npodman pull blackarchlinux/blackarch\n\n# Create the container (done automatically by the app)\npodman run -d \\\n  --name cybersec-mode-env \\\n  --privileged \\\n  --network host \\\n  --cap-add NET_ADMIN \\\n  --cap-add NET_RAW \\\n  -v /home:/home:rw \\\n  blackarchlinux/blackarch \\\n  sleep infinity\n\n# Open a shell inside the container\npodman exec -it cybersec-mode-env bash\n\n# Install additional tools\npodman exec -it cybersec-mode-env pacman -S metasploit burpsuite</code></pre>\n\n    <div class=\"alert warn\">\n      <strong>Security Note:</strong> The container runs with <code>--privileged</code> and\n      <code>--network host</code> flags to allow raw network access required by security tools.\n      Only run this container in controlled lab environments.\n    </div>\n\n    <h3>Persistent Tool Data</h3>\n    <p>\n      Tool configurations and output files can be stored in <code>/home/&lt;user&gt;</code>\n      which is bind-mounted into the container. Results saved to <code>/home</code> persist\n      across container restarts.\n    </p>\n  </section>\n\n  \n  <section id=\"ui-main\">\n    <h2>Main Panel</h2>\n    <p>\n      The Main panel is the central dashboard showing available security tools for the currently\n      selected mode. It displays tool cards, container status, and provides quick-launch access.\n    </p>\n    <ul>\n      <li><strong>Tool Cards</strong> — Click the <code>▶</code> button on any tool card to open it in the terminal</li>\n      <li><strong>Search</strong> — Filter tools by name using the search box (top right)</li>\n      <li><strong>Container Status</strong> — Shows if the BlackArch container is running with a Start/Stop button</li>\n      <li><strong>Mode title</strong> — Changes between \"⚔ Offensive / Pentest\" and \"🛡 Defensive / Audit\"</li>\n    </ul>\n  </section>\n\n  <section id=\"ui-terminal\">\n    <h2>Terminal Panel</h2>\n    <p>\n      The Terminal panel provides an embedded shell connected directly to the BlackArch container.\n      It uses <code>bash</code> by default (configurable in Settings).\n    </p>\n\n    <h3>Features</h3>\n    <ul>\n      <li>Command history with ↑/↓ arrow key navigation</li>\n      <li>Output scrollback buffer (10,000 lines)</li>\n      <li>Clear button to reset output</li>\n      <li>New terminal button (opens additional session)</li>\n      <li>Direct container shell — commands run inside BlackArch</li>\n    </ul>\n\n    <h3>Shell Environment</h3>\n    <span class=\"pre-label\">terminal</span>\n    <pre><code># The terminal connects to:\npodman exec -it cybersec-mode-env bash\n\n# All BlackArch tools are available:\nnmap --version\nmsfconsole --version\nsqlmap --version</code></pre>\n  </section>\n\n  <section id=\"ui-docs\">\n    <h2>Docs Panel</h2>\n    <p>\n      The Docs panel provides in-app reference documentation organized by topic.\n      It is designed to be beginner-friendly while remaining useful for experienced practitioners.\n    </p>\n    <h3>Documentation Categories</h3>\n    <ul>\n      <li><strong>Getting Started</strong> — Welcome guide, first steps, container setup</li>\n      <li><strong>Penetration Testing</strong> — Reconnaissance, exploitation, web testing, post-exploitation</li>\n      <li><strong>Defensive Security</strong> — Network monitoring, system hardening, incident response</li>\n      <li><strong>CLI Reference</strong> — Complete <code>cybersec</code> CLI documentation</li>\n    </ul>\n  </section>\n\n  <section id=\"ui-settings\">\n    <h2>Settings Panel</h2>\n    <p>All user preferences are stored in <code>~/.cache/HackerOS/Cybersecurity-Mode/config.json</code>.</p>\n\n    <h3>Available Settings</h3>\n    <table>\n      <tr><th>Setting</th><th>Options</th><th>Default</th></tr>\n      <tr><td>Theme</td><td>dark_gray, dark_black, dark_slate, light</td><td>dark_gray</td> </tr>\n      <tr><td>UI Font Size</td><td>9–24 px</td><td>13</td> </tr>\n      <tr><td>Terminal Font Size</td><td>9–24 px</td><td>13</td> </tr>\n      <tr><td>Always Ask Mode</td><td>on / off</td><td>on</td> </tr>\n      <tr><td>Container Engine</td><td>podman, docker</td><td>podman</td> </tr>\n      <tr><td>Container Image</td><td>any OCI image</td><td>blackarchlinux/blackarch</td> </tr>\n      <tr><td>Shell</td><td>bash, zsh, fish, sh</td><td>bash</td> </tr>\n      <tr><td>Log Level</td><td>DEBUG, INFO, WARNING, ERROR</td><td>INFO</td> </tr>\n    </table>\n  </section>\n\n  <section id=\"hacker-menu\">\n    <h2>Hacker Menu</h2>\n    <p>\n      The Hacker Menu is accessible from the <strong>⚡ Hacker Menu</strong> button\n      in the bottom-left corner of the application. It provides quick access to system actions.\n    </p>\n    <table>\n      <tr><th>Action</th><th>Description</th><th>Session Only</th></tr>\n      <tr><td>Switch to Plasma</td><td>Exit Cybersecurity Mode session and start KDE Plasma</td><td>Yes</td> </tr>\n      <tr><td>Restart App</td><td>Restart Cybersecurity Mode application</td><td>No</td> </tr>\n      <tr><td>Shutdown</td><td>Power off the system (systemctl poweroff)</td><td>No</td> </tr>\n      <tr><td>Reboot</td><td>Reboot the system (systemctl reboot)</td><td>No</td> </tr>\n      <tr><td>Update System</td><td>Run <code>cybersec update</code> in the terminal</td><td>No</td> </tr>\n      <tr><td>Change Mode</td><td>Open the mode selection dialog (Red ↔ Blue)</td><td>No</td> </tr>\n    </table>\n    <div class=\"alert info\">\n      <strong>Session Only:</strong> \"Switch to Plasma\" only works when Cybersecurity Mode\n      is running as a dedicated Wayland session via <code>cage</code>.\n    </div>\n  </section>\n\n  \n  <section id=\"cli-ref\">\n    <h2>cybersec CLI Reference</h2>\n    <p>The <code>cybersec</code> binary is installed at <code>/usr/bin/cybersec</code>.</p>\n\n    <table>\n      <tr><th>Command</th><th>Description</th></tr>\n      <tr><td>cybersec</td><td>Launch Cybersecurity Mode as a TTY session (requires TTY)</td> </tr>\n      <tr><td>cybersec please</td><td>Open the GUI in the current session (no TTY check)</td> </tr>\n      <tr><td>cybersec help</td><td>Show command reference</td> </tr>\n      <tr><td>cybersec version</td><td>Print version string</td> </tr>\n      <tr><td>cybersec status</td><td>Show container, binary, and config status</td> </tr>\n      <tr><td>cybersec update</td><td>Update container image and application (live output)</td> </tr>\n      <tr><td>cybersec set-mode red</td><td>Switch to Red mode (saved to config)</td> </tr>\n      <tr><td>cybersec set-mode blue</td><td>Switch to Blue mode (saved to config)</td> </tr>\n      <tr><td>cybersec exec &lt;cmd&gt;</td><td>Execute a command inside the container</td> </tr>\n      <tr><td>cybersec plugin list</td><td>List installed plugins</td> </tr>\n      <tr><td>cybersec plugin install &lt;n&gt;</td><td>Install a plugin (placeholder)</td> </tr>\n      <tr><td>cybersec plugin remove &lt;n&gt;</td><td>Remove an installed plugin</td> </tr>\n      <tr><td>cybersec plugin info &lt;n&gt;</td><td>Show plugin metadata</td> </tr>\n    </table>\n  </section>\n\n  <section id=\"cli-examples\">\n    <h2>CLI Examples</h2>\n    <span class=\"pre-label\">bash</span>\n    <pre><code># Start a Cybersecurity Mode session from a TTY (e.g. Ctrl+Alt+F2)\ncybersec\n\n# Open the GUI inside your current KDE/GNOME session\ncybersec please\n\n# Check everything is working\ncybersec status\n\n# Run nmap directly in the container\ncybersec exec 'nmap -sV 192.168.1.0/24'\n\n# Run a full update (shows live output in terminal)\ncybersec update\n\n# Switch to blue mode permanently\ncybersec set-mode blue\n\n# List installed plugins\ncybersec plugin list</code></pre>\n  </section>\n\n  \n\n  \n  <section id=\"ipc-protocol\">\n    <h2>IPC Protocol</h2>\n    <p>\n      The GUI communicates with the Rust backend via <strong>newline-delimited JSON-RPC</strong>\n      over a Unix domain socket.\n    </p>\n\n    <h3>Request Format</h3>\n    <span class=\"pre-label\">json</span>\n    <pre><code>{\"method\": \"container_status\", \"params\": {\"name\": \"cybersec-mode-env\"}}</code></pre>\n\n    <h3>Response Format</h3>\n    <span class=\"pre-label\">json</span>\n    <pre><code>{\"ok\": true, \"result\": {\"name\": \"cybersec-mode-env\", \"running\": true, \"state\": \"running\"}}\n{\"ok\": false, \"error\": \"Container not found\"}</code></pre>\n\n    <h3>Available RPC Methods</h3>\n    <table>\n      <tr><th>Method</th><th>Params</th><th>Returns</th></tr>\n      <tr><td>ping</td><td>—</td><td><code>{\"pong\": true}</code></td> </tr>\n      <tr><td>container_status</td><td>name</td><td>running, state, engine</td> </tr>\n      <tr><td>container_start</td><td>image, name</td><td>started, reused</td> </tr>\n      <tr><td>container_stop</td><td>name</td><td>stopped</td> </tr>\n      <tr><td>container_exec</td><td>name, cmd</td><td>stdout, stderr, exit_code</td> </tr>\n      <tr><td>list_tools</td><td>—</td><td>tools[]</td> </tr>\n      <tr><td>system_info</td><td>—</td><td>hostname, kernel, uptime</td> </tr>\n      <tr><td>scan_network</td><td>target</td><td>raw nmap XML output</td> </tr>\n    </table>\n  </section>\n\n  \n  <section id=\"plugins\">\n    <h2>Plugin System</h2>\n    <div class=\"alert warn\">\n      <strong>Status:</strong> The plugin system is implemented as a placeholder in v1.0.0.\n      Full plugin support is planned for v1.1.0.\n    </div>\n    <p>\n      Plugins extend Cybersecurity Mode with additional tools, documentation pages, and UI panels.\n      Plugin metadata is stored as JSON files in <code>~/.cache/HackerOS/Cybersecurity-Mode/plugins/</code>.\n    </p>\n\n    <h3>Plugin Manifest Format (planned)</h3>\n    <span class=\"pre-label\">json</span>\n    <pre><code>{\n  \"name\": \"my-plugin\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Adds custom recon tools\",\n  \"author\": \"security-researcher\",\n  \"tools\": [\"amass\", \"subfinder\"],\n  \"docs\": \"docs/recon-advanced.html\",\n  \"panel\": \"panels/recon.py\"\n}</code></pre>\n  </section>\n\n  \n  <section id=\"config\">\n    <h2>Configuration Reference</h2>\n    <p>Config file: <code>~/.cache/HackerOS/Cybersecurity-Mode/config.json</code></p>\n\n    <span class=\"pre-label\">json — full default config</span>\n    <pre><code>{\n  \"mode\": null,\n  \"always_ask_mode\": true,\n  \"theme\": \"dark_gray\",\n  \"font_size\": 13,\n  \"terminal_font\": \"JetBrains Mono\",\n  \"terminal_font_size\": 13,\n  \"shell\": \"bash\",\n  \"container_engine\": \"podman\",\n  \"container_image\": \"blackarchlinux/blackarch\",\n  \"container_name\": \"cybersec-mode-env\",\n  \"backend_socket\": \"/tmp/cybersec-mode-backend.sock\",\n  \"session_mode\": false,\n  \"show_welcome\": true,\n  \"sidebar_collapsed\": false,\n  \"log_level\": \"INFO\",\n  \"keybindings\": {\n    \"toggle_terminal\": \"Ctrl+T\",\n    \"toggle_docs\":     \"Ctrl+D\",\n    \"toggle_main\":     \"Ctrl+M\",\n    \"toggle_settings\": \"Ctrl+,\",\n    \"hacker_menu\":     \"Ctrl+H\"\n  }\n}</code></pre>\n  </section>\n\n  \n  <section id=\"paths\">\n    <h2>Paths & Directories</h2>\n    <p>Key runtime paths for Cybersecurity Mode:</p>\n    <ul>\n      <li><strong>User config:</strong> <code>~/.cache/HackerOS/Cybersecurity-Mode/config.json</code></li>\n      <li><strong>Logs:</strong> <code>~/.local/share/HackerOS/Cybersecurity-Mode/logs/cybersec-mode.log</code></li>\n      <li><strong>IPC socket:</strong> <code>/tmp/cybersec-mode-backend.sock</code></li>\n      <li><strong>Container home mount:</strong> <code>/home</code> inside container → host home</li>\n    </ul>\n  </section>\n\n  \n  <section id=\"keybindings\">\n    <h2>Default Keybindings</h2>\n    <table>\n      <tr><th>Shortcut</th><th>Action</th></tr>\n      <tr><td>Ctrl+M</td><td>Go to Main panel</td> </tr>\n      <tr><td>Ctrl+T</td><td>Go to Terminal panel</td> </tr>\n      <tr><td>Ctrl+D</td><td>Go to Docs panel</td> </tr>\n      <tr><td>Ctrl+,</td><td>Go to Settings panel</td> </tr>\n      <tr><td>Ctrl+H</td><td>Toggle Hacker Menu</td> </tr>\n    </table>\n    <p>All keybindings are customizable in <strong>Settings → Keybindings</strong>.</p>\n  </section>\n\n  \n  <section id=\"tools\">\n    <h2>Tool Reference</h2>\n\n    <h3>Red Mode Tools</h3>\n    <table>\n      <tr><th>Tool</th><th>Category</th><th>Description</th></tr>\n      <tr><td>nmap</td><td>Scanning</td><td>Network discovery and port scanning</td> </tr>\n      <tr><td>metasploit</td><td>Exploitation</td><td>Penetration testing framework</td> </tr>\n      <tr><td>burpsuite</td><td>Web</td><td>Web proxy, scanner, and attack tool</td> </tr>\n      <tr><td>sqlmap</td><td>Web</td><td>Automated SQL injection</td> </tr>\n      <tr><td>hydra</td><td>Brute-force</td><td>Login credential brute-forcing</td> </tr>\n      <tr><td>aircrack-ng</td><td>Wireless</td><td>WiFi security auditing suite</td> </tr>\n      <tr><td>hashcat</td><td>Password</td><td>GPU-accelerated password cracking</td> </tr>\n      <tr><td>john</td><td>Password</td><td>John the Ripper password cracker</td> </tr>\n      <tr><td>gobuster</td><td>Web</td><td>Directory and DNS brute-forcing</td> </tr>\n      <tr><td>nikto</td><td>Web</td><td>Web server vulnerability scanner</td> </tr>\n    </table>\n\n    <h3>Blue Mode Tools</h3>\n    <table>\n      <tr><th>Tool</th><th>Category</th><th>Description</th></tr>\n      <tr><td>wireshark</td><td>Network</td><td>Graphical packet analyzer</td> </tr>\n      <tr><td>suricata</td><td>IDS/IPS</td><td>Network threat detection engine</td> </tr>\n      <tr><td>lynis</td><td>Audit</td><td>Security auditing and hardening tool</td> </tr>\n      <tr><td>openvas</td><td>Scanner</td><td>Full-featured vulnerability scanner</td> </tr>\n      <tr><td>fail2ban</td><td>Prevention</td><td>Log-based intrusion prevention</td> </tr>\n      <tr><td>auditd</td><td>Logging</td><td>Linux kernel audit daemon</td> </tr>\n      <tr><td>clamav</td><td>Malware</td><td>Open-source antivirus engine</td> </tr>\n      <tr><td>rkhunter</td><td>Malware</td><td>Rootkit detection and scanning</td> </tr>\n      <tr><td>tcpdump</td><td>Network</td><td>Command-line packet capture</td> </tr>\n      <tr><td>snort</td><td>IDS/IPS</td><td>Intrusion detection and prevention</td> </tr>\n    </table>\n  </section>\n\n</main>"
+
+fun main() [
+    boot_begin("en", "Cybersecurity Mode — HackerOS Documentation")
+    set_viewport("width=device-width, initial-scale=1.0")
+    head_tag("link", ["rel", "icon", "type", "image/png", "href", "../HackerOS.png"])
+    boot_body(PAGE_BODY)
+    offline_init("../")
+    scrollspy("section[id], div[id]", "nav a", "-20% 0px -70% 0px", 0.0)
+]
