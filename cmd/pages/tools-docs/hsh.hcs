@@ -1,0 +1,566 @@
+use <mode:website>
+
+include <../../shared/offline>
+include <../../logic/scrollspy>
+
+style {
+#app { display: none; }
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Syne:wght@400;700;800&display=swap');
+
+  :root {
+    --bg:        #0a0c0e;
+    --bg2:       #0f1214;
+    --bg3:       #141820;
+    --surface:   #1a1f28;
+    --border:    #1f2733;
+    --green:     #4cff91;
+    --green-dim: #1a4d32;
+    --cyan:      #4dd9ff;
+    --gold:      #ffd166;
+    --rose:      #ff6b8a;
+    --purple:    #a78bfa;
+    --text:      #c8d0dc;
+    --text-dim:  #5a6475;
+    --text-muted:#3a4050;
+    --code-bg:   #0d1117;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.08) 2px,
+      rgba(0,0,0,0.08) 4px
+    );
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  
+  .layout {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    min-height: 100vh;
+  }
+
+  
+  .sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    padding: 0 0 2rem;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+
+  .sidebar-logo {
+    padding: 1.5rem 1.5rem 1rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 1rem;
+  }
+
+  .logo-text {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.6rem;
+    color: var(--green);
+    letter-spacing: -0.02em;
+    display: block;
+  }
+
+  .logo-sub {
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  .version-badge {
+    display: inline-block;
+    background: var(--green-dim);
+    color: var(--green);
+    font-size: 0.65rem;
+    padding: 2px 8px;
+    border-radius: 2px;
+    margin-top: 6px;
+    letter-spacing: 0.08em;
+  }
+
+  .nav-section {
+    padding: 0 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .nav-section-title {
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--text-muted);
+    padding: 0.5rem 0.5rem 0.3rem;
+    display: block;
+  }
+
+  .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0.6rem;
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 0.8rem;
+    border-radius: 4px;
+    transition: all 0.15s;
+    border-left: 2px solid transparent;
+  }
+
+  .nav-link:hover,
+  .nav-link.active {
+    color: var(--green);
+    background: rgba(76, 255, 145, 0.06);
+    border-left-color: var(--green);
+  }
+
+  .nav-link .icon {
+    font-size: 0.75rem;
+    opacity: 0.6;
+    width: 14px;
+    text-align: center;
+  }
+
+  
+  .content {
+    padding: 3rem 4rem 6rem;
+    max-width: 900px;
+  }
+
+  
+  .hero {
+    margin-bottom: 5rem;
+    padding-bottom: 3rem;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 120px;
+    height: 1px;
+    background: var(--green);
+  }
+
+  .hero-tag {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: var(--green);
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 4.5rem;
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+    color: #fff;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero h1 .accent {
+    color: var(--green);
+    display: block;
+  }
+
+  .hero-desc {
+    font-size: 1rem;
+    color: var(--text-dim);
+    max-width: 520px;
+    line-height: 1.8;
+    margin-bottom: 2rem;
+  }
+
+  .hero-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: 0.72rem;
+    padding: 4px 12px;
+    border-radius: 2px;
+    letter-spacing: 0.04em;
+  }
+
+  .pill .dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+  }
+
+  
+  .section {
+    margin-bottom: 5rem;
+    scroll-margin-top: 2rem;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    min-width: 28px;
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.02em;
+  }
+
+  .section-title .accent { color: var(--green); }
+
+  h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--cyan);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin: 2rem 0 0.75rem;
+  }
+
+  p {
+    color: var(--text-dim);
+    margin-bottom: 1rem;
+    font-size: 0.88rem;
+  }
+
+  
+  .code-block {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--green);
+    border-radius: 0 6px 6px 0;
+    padding: 1.25rem 1.5rem;
+    margin: 1rem 0 1.5rem;
+    overflow-x: auto;
+    position: relative;
+  }
+
+  .code-block .label {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.75rem;
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--text-muted);
+  }
+
+  .code-block pre {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    line-height: 1.8;
+    color: var(--text);
+    white-space: pre;
+  }
+
+  .hl-green  { color: var(--green); }
+  .hl-cyan   { color: var(--cyan); }
+  .hl-gold   { color: var(--gold); }
+  .hl-rose   { color: var(--rose); }
+  .hl-purple { color: var(--purple); }
+  .hl-dim    { color: var(--text-muted); }
+
+  code {
+    background: var(--surface);
+    color: var(--cyan);
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 0.83em;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  
+  .prompt-preview {
+    background: #000;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 1.5rem 0;
+    box-shadow: 0 24px 48px rgba(0,0,0,0.6);
+  }
+
+  .terminal-bar {
+    background: var(--surface);
+    padding: 0.6rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .dot-r { width: 10px; height: 10px; border-radius: 50%; background: #ff5f57; }
+  .dot-y { width: 10px; height: 10px; border-radius: 50%; background: #febc2e; }
+  .dot-g { width: 10px; height: 10px; border-radius: 50%; background: #28c840; }
+  .term-title { margin-left: auto; margin-right: auto; font-size: 0.7rem; color: var(--text-muted); }
+
+  .terminal-body {
+    padding: 1.25rem 1.5rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    line-height: 2;
+  }
+
+  .prompt-line { display: block; white-space: nowrap; }
+
+  .p-time   { color: #5a6475; }
+  .p-dir    { color: var(--cyan); }
+  .p-git    { color: var(--gold); }
+  .p-char   { color: var(--green); }
+  .p-cmd    { color: var(--green); }
+  .p-flag   { color: var(--gold); }
+  .p-str    { color: #82e090; }
+  .p-hint   { color: #2a3040; }
+  .p-err    { color: var(--rose); }
+  .p-var    { color: var(--purple); }
+  .p-pipe   { color: #5a6475; }
+
+  
+  .table-wrap {
+    overflow-x: auto;
+    margin: 1rem 0 1.5rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+  }
+
+  thead tr {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+
+  th {
+    text-align: left;
+    padding: 0.7rem 1rem;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+
+  td {
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-dim);
+    vertical-align: top;
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  td:first-child {
+    color: var(--cyan);
+    font-family: 'JetBrains Mono', monospace;
+    white-space: nowrap;
+  }
+
+  
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    margin: 1.25rem 0;
+  }
+
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.1rem 1.25rem;
+    transition: border-color 0.2s;
+  }
+
+  .card:hover { border-color: var(--green); }
+
+  .card-icon {
+    font-size: 1.4rem;
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+
+  .card-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: #fff;
+    margin-bottom: 0.3rem;
+  }
+
+  .card-desc {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  
+  .callout {
+    border: 1px solid;
+    border-radius: 4px;
+    padding: 0.9rem 1.25rem;
+    margin: 1.25rem 0;
+    font-size: 0.83rem;
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+  }
+
+  .callout.tip  { border-color: var(--green-dim); background: rgba(76,255,145,0.04); color: var(--text-dim); }
+  .callout.warn { border-color: #4d3a00; background: rgba(255,209,102,0.04); color: var(--text-dim); }
+  .callout.info { border-color: #003a4d; background: rgba(77,217,255,0.04); color: var(--text-dim); }
+
+  .callout .ci { flex-shrink: 0; font-size: 1rem; }
+
+  
+  .theme-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 0.75rem;
+    margin: 1.25rem 0;
+  }
+
+  .theme-card {
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    transition: transform 0.2s, border-color 0.2s;
+    cursor: default;
+  }
+
+  .theme-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255,255,255,0.2);
+  }
+
+  .theme-bar {
+    height: 6px;
+  }
+
+  .theme-body {
+    padding: 0.75rem 1rem;
+    background: var(--bg2);
+    font-size: 0.72rem;
+  }
+
+  .theme-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    color: #fff;
+    font-size: 0.8rem;
+  }
+
+  .theme-desc { color: var(--text-muted); font-size: 0.7rem; margin-top: 2px; }
+
+  
+  kbd {
+    display: inline-block;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-bottom-width: 2px;
+    border-radius: 3px;
+    padding: 1px 7px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75em;
+    color: var(--text);
+    white-space: nowrap;
+  }
+
+  
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+
+  
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  .cursor {
+    display: inline-block;
+    width: 8px;
+    height: 1em;
+    background: var(--green);
+    vertical-align: text-bottom;
+    animation: blink 1.2s ease-in-out infinite;
+  }
+
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero { animation: fadeSlide 0.5s ease both; }
+  .section { animation: fadeSlide 0.5s ease both; }
+}
+
+let PAGE_BODY: Str = "<div class=\"layout\">\n\n\n<nav class=\"sidebar\">\n  <div class=\"sidebar-logo\">\n    <span class=\"logo-text\">hsh</span>\n    <span class=\"logo-sub\">HackerOS Shell</span>\n    <span class=\"version-badge\">v0.4.0</span>\n  </div>\n\n  <div class=\"nav-section\">\n    <span class=\"nav-section-title\">Wprowadzenie</span>\n    <a href=\"#start\"    class=\"nav-link\"><span class=\"icon\">◆</span> Pierwsze kroki</a>\n    <a href=\"#features\" class=\"nav-link\"><span class=\"icon\">◆</span> Funkcje</a>\n    <a href=\"#prompt\"   class=\"nav-link\"><span class=\"icon\">◆</span> Prompt</a>\n  </div>\n\n  <div class=\"nav-section\">\n    <span class=\"nav-section-title\">Język powłoki</span>\n    <a href=\"#vars\"      class=\"nav-link\"><span class=\"icon\">◆</span> Zmienne</a>\n    <a href=\"#arith\"     class=\"nav-link\"><span class=\"icon\">◆</span> Arytmetyka</a>\n    <a href=\"#redir\"     class=\"nav-link\"><span class=\"icon\">◆</span> Przekierowania</a>\n    <a href=\"#pipes\"     class=\"nav-link\"><span class=\"icon\">◆</span> Potoki</a>\n    <a href=\"#scripting\" class=\"nav-link\"><span class=\"icon\">◆</span> Skryptowanie</a>\n    <a href=\"#heredoc\"   class=\"nav-link\"><span class=\"icon\">◆</span> Heredoc</a>\n  </div>\n\n  <div class=\"nav-section\">\n    <span class=\"nav-section-title\">Builtins</span>\n    <a href=\"#builtins\"  class=\"nav-link\"><span class=\"icon\">◆</span> Wbudowane komendy</a>\n    <a href=\"#native\"    class=\"nav-link\"><span class=\"icon\">◆</span> Komendy natywne</a>\n    <a href=\"#jobs\"      class=\"nav-link\"><span class=\"icon\">◆</span> Zarządzanie zadaniami</a>\n  </div>\n\n  <div class=\"nav-section\">\n    <span class=\"nav-section-title\">Interfejs</span>\n    <a href=\"#hints\"     class=\"nav-link\"><span class=\"icon\">◆</span> Podpowiedzi</a>\n    <a href=\"#completion\" class=\"nav-link\"><span class=\"icon\">◆</span> Uzupełnianie</a>\n    <a href=\"#shortcuts\" class=\"nav-link\"><span class=\"icon\">◆</span> Skróty klaw.</a>\n    <a href=\"#themes\"    class=\"nav-link\"><span class=\"icon\">◆</span> Motywy</a>\n  </div>\n\n  <div class=\"nav-section\">\n    <span class=\"nav-section-title\">Konfiguracja</span>\n    <a href=\"#hshrc\"   class=\"nav-link\"><span class=\"icon\">◆</span> .hshrc</a>\n    <a href=\"#security\" class=\"nav-link\"><span class=\"icon\">◆</span> Bezpieczeństwo</a>\n    <a href=\"#flags\"   class=\"nav-link\"><span class=\"icon\">◆</span> Flagi startowe</a>\n  </div>\n</nav>\n\n\n<main class=\"content\">\n\n  \n  <div class=\"hero\">\n    <span class=\"hero-tag\">// dokumentacja powłoki</span>\n    <h1>\n      HackerOS\n      <span class=\"accent\">Shell.</span>\n    </h1>\n    <p class=\"hero-desc\">\n      hsh to nowoczesna powłoka napisana w całości w Rust — szybka, bezpieczna i gotowa\n      do codziennej pracy bez fallbacku do <code>/bin/sh</code>.\n      Obsługuje pełne skryptowanie POSIX, natywne potoki, kolorowanie składni i inteligentne podpowiedzi.\n    </p>\n    <div class=\"hero-pills\">\n      <div class=\"pill\"><span class=\"dot\" style=\"background:var(--green)\"></span> Rust · tokio async</div>\n      <div class=\"pill\"><span class=\"dot\" style=\"background:var(--cyan)\"></span> Zero sh fallback</div>\n      <div class=\"pill\"><span class=\"dot\" style=\"background:var(--gold)\"></span> BSD-3-Clause</div>\n      <div class=\"pill\"><span class=\"dot\" style=\"background:var(--purple)\"></span> 20 motywów</div>\n    </div>\n  </div>\n\n  \n  <section class=\"section\" id=\"start\">\n    <div class=\"section-header\">\n      <span class=\"section-num\">01</span>\n      <h2 class=\"section-title\">Pierwsze <span class=\"accent\">kroki</span></h2>\n    </div>\n\n    <p>hsh uruchamia się jak każda inna powłoka. Można go ustawić jako domyślną powłokę lub uruchamiać bezpośrednio.</p>\n\n    <div class=\"code-block\">\n      <span class=\"label\">shell</span>\n      <pre><span class=\"hl-dim\"># Uruchomienie interaktywne</span>\nhsh\n\n<span class=\"hl-dim\"># Wykonanie pojedynczego polecenia</span>\nhsh <span class=\"hl-gold\">-c</span> <span class=\"hl-green\">'echo \"hello hsh\"'</span>\n\n<span class=\"hl-dim\"># Dry-run — sprawdź co zostałoby wykonane</span>\nhsh <span class=\"hl-gold\">--dry-run</span>\n\n<span class=\"hl-dim\"># Wersja</span>\nhsh <span class=\"hl-gold\">--version</span>\n\n<span class=\"hl-dim\"># Ustawienie jako domyślna powłoka</span>\nchsh <span class=\"hl-gold\">-s</span> $(which hsh)</pre>\n    </div>\n\n    <div class=\"prompt-preview\">\n      <div class=\"terminal-bar\">\n        <div class=\"dot-r\"></div><div class=\"dot-y\"></div><div class=\"dot-g\"></div>\n        <span class=\"term-title\">hsh — ~/projects/myapp</span>\n      </div>\n      <div class=\"terminal-body\">\n        <span class=\"prompt-line\">\n          <span class=\"p-time\">17:42:11</span>\n          &nbsp;&nbsp;<span class=\"p-dir\">~/projects/myapp</span>\n          &nbsp;&nbsp;<span class=\"p-git\">(⎇ main ✗)</span>\n          &nbsp;&nbsp;<span class=\"p-char\">❯</span>\n          &nbsp;<span class=\"p-cmd\">git</span>\n          &nbsp;<span class=\"p-flag\">commit</span>\n          &nbsp;<span class=\"p-flag\">-m</span>\n          &nbsp;<span class=\"p-str\">\"fix memory leak\"</span>\n          <span class=\"p-hint\">&nbsp; → git push origin main</span>\n          <span class=\"cursor\"></span>\n        </span>\n        <span class=\"prompt-line\" style=\"color:var(--text-muted); font-size:0.75rem; margin-top:0.5rem;\">\n          &nbsp;&nbsp;[master 2c4f891] fix memory leak\n        </span>\n        <span class=\"prompt-line\">\n          <span class=\"p-time\">17:42:14</span>\n          &nbsp;&nbsp;<span class=\"p-dir\">~/projects/myapp</span>\n          &nbsp;&nbsp;<span class=\"p-git\">(⎇ main <span style=\"color:var(--green)\">↑1</span>)</span>\n          &nbsp;&nbsp;<span class=\"p-char\">❯</span>\n          <span class=\"cursor\"></span>\n        </span>\n      </div>\n    </div>\n  </section>\n\n  \n  <section class=\"section\" id=\"features\">\n    <div class=\"section-header\">\n      <span class=\"section-num\">02</span>\n      <h2 class=\"section-title\">Główne <span class=\"accent\">funkcje</span></h2>\n    </div>\n\n    <div class=\"cards\">\n      <div class=\"card\">\n        <span class=\"card-icon\">⚡</span>\n        <div class=\"card-title\">Natywne potoki</div>\n        <div class=\"card-desc\">Potoki przez pipe(2) + fork w Rust. Zero wywołań /bin/sh.</div>\n      </div>\n      <div class=\"card\">\n        <span class=\"card-icon\">🎨</span>\n        <div class=\"card-title\">Kolorowanie składni</div>\n        <div class=\"card-desc\">Podświetlanie w czasie rzeczywistym: komendy, flagi, ścieżki, zmienne.</div>\n      </div>\n      <div class=\"card\">\n        <span class=\"card-icon\">🧠</span>\n        <div class=\"card-title\">SmartHints</div>\n        <div class=\"card-desc\">Podpowiedzi uczymy się z historii. Fish-like inline suggestions.</div>\n      </div>\n      <div class=\"card\">\n        <span class=\"card-icon\">🔢</span>\n        <div class=\"card-title\">Arytmetyka</div>\n        <div class=\"card-desc\">Pełny parser <code>$(( ))</code>: operatory, potęgowanie, porównania, zmienne.</div>\n      </div>\n      <div class=\"card\">\n        <span class=\"card-icon\">📜</span>\n        <div class=\"card-title\">Skrypty POSIX</div>\n        <div class=\"card-desc\">if/for/while/case/funkcje bez fallbacku. Własny parser AST.</div>\n      </div>\n      <div class=\"card\">\n        <span class=\"card-icon\">🛡️</span>\n        <div class=\"card-title\">Guard niebezpiecznych</div>\n        <div class=\"card-desc\">Detekcja rm -rf /, fork bomb i innych. Wymaga potwierdzenia.</div>\n      </div>\n      <div class=\"card\">\n        <span class=\"card-icon\">🎯</span>\n        <div class=\"card-title\">20 motywów</div>\n        <div class=\"card-desc\">Gruvbox, Dracula, Nord, Catppuccin, Tokyo Night i wiele więcej.</div>\n      </div>\n      <div class=\"card\">\n        <span class=\"card-icon\">⏱️</span>\n        <div class=\"card-title\">Czas wykonania</div>\n        <div class=\"card-desc\">Automatycznie pokazuje czas dla komend trwających dłużej niż 2s.</div>\n      </div>\n    </div>\n  </section>\n\n  \n  <section class=\"section\" id=\"prompt\">\n    <div class=\"section-header\">\n      <span class=\"section-num\">03</span>\n      <h2 class=\"section-title\">Budowa <span class=\"accent\">promptu</span></h2>\n    </div>\n\n    <p>Prompt hsh składa się z segmentów, które wyświetlają się kontekstowo — pojawią się tylko gdy są istotne.</p>\n\n    <div class=\"table-wrap\">\n      <table>\n        <thead><tr><th>Segment</th><th>Zawartość</th><th>Warunek wyświetlenia</th></tr></thead>\n        <tbody>\n          <tr><td><span style=\"color:#5a6475\">17:42:11</span></td><td>Aktualny czas HH:MM:SS</td><td>zawsze</td></tr>\n          <tr><td><span style=\"color:var(--cyan)\">~/projects</span></td><td>Skrócona ścieżka (~ zamiast $HOME)</td><td>zawsze</td></tr>\n          <tr><td><span style=\"color:var(--gold)\">(⎇ main ✗)</span></td><td>Gałąź git + status dirty/ahead/behind</td><td>w repozytorium git</td></tr>\n          <tr><td><span style=\"color:var(--rose)\">✗ [1]</span></td><td>Exit code ostatniej komendy</td><td>kod ≠ 0</td></tr>\n          <tr><td><span style=\"color:#5a6475\">2.3s</span></td><td>Czas wykonania komendy</td><td>czas ≥ 2000ms</td></tr>\n          <tr><td><span style=\"color:var(--rose)\">cpu:72% mem:85%</span></td><td>Obciążenie systemu</td><td>CPU &gt; 70% lub RAM &gt; 80%</td></tr>\n          <tr><td><span style=\"color:var(--rose)\">⚡</span></td><td>Tryb root</td><td>uid == 0</td></tr>\n          <tr><td><span style=\"color:#5a6475\">[2]</span></td><td>Głębokość zagnieżdżenia powłoki</td><td>HSH_DEPTH &gt; 0</td></tr>\n          <tr><td><span style=\"color:var(--green)\">❯</span></td><td>Znak zachęty (zielony/czerwony)</td><td>zawsze</td></tr>\n        </tbody>\n      </table>\n    </div>\n\n    <h3>Kolory git</h3>\n    <div class=\"table-wrap\">\n      <table>\n        <thead><tr><th>Stan</th><th>Kolor</th><th>Znaczenie</th></tr></thead>\n        <tbody>\n          <tr><td>zielony</td><td style=\"color:var(--green)\">●</td><td>Czyste drzewo robocze, zsynchronizowane z remote</td></tr>\n          <tr><td>żółty</td><td style=\"color:var(--gold)\">●</td><td>Są commity do push/pull (ahead/behind)</td></tr>\n          <tr><td>czerwony</td><td style=\"color:var(--rose)\">●</td><td>Niezacommitowane zmiany (dirty)</td></tr>\n        </tbody>\n      </table>\n    </div>\n\n    <div class=\"callout tip\">\n      <span class=\"ci\">💡</span>\n      <span>Dane git są pobierane asynchronicznie w tle co 2 sekundy — prompt nigdy nie blokuje się na wolnym repozytorium.</span>\n    </div>\n  </section>\n\n  \n  <section class=\"section\" id=\"vars\">\n    <div class=\"section-header\">\n      <span class=\"section-num\">04</span>\n      <h2 class=\"section-title\">Zmienne <span class=\"accent\">powłoki</span></h2>\n    </div>\n\n    <h3>Ustawianie i odczyt</h3>\n    <div class=\"code-block\">\n      <span class=\"label\">hsh</span>\n      <pre><span class=\"hl-dim\"># Zmienna lokalna (widoczna tylko w hsh)</span>\n<span class=\"hl-cyan\">FOO</span>=bar\n\n<span class=\"hl-dim\"># Eksport do środowiska</span>\n<span class=\"hl-green\">export</span> <span class=\"hl-cyan\">FOO</span>=bar\n\n<span class=\"hl-dim\"># Inline — tylko dla jednej komendy</span>\n<span class=\"hl-cyan\">LANG</span>=pl_PL.UTF-8 man grep\n\n<span class=\"hl-dim\"># Odczyt</span>\n<span class=\"hl-green\">echo</span> <span class=\"hl-purple\">$FOO</span>\n<span class=\"hl-green\">echo</span> <span class=\"hl-purple\">${FOO}</span></pre>\n    </div>\n\n    <h3>Modyfikatory</h3>\n    <div class=\"code-block\">\n      <span class=\"label\">hsh</span>\n      <pre><span class=\"hl-dim\"># Wartość domyślna gdy pusta/nieustawiona</span>\n<span class=\"hl-green\">echo</span> <span class=\"hl-purple\">${FOO:-domyślna}</span>\n\n<span class=\"hl-dim\"># Alternatywa gdy ustawiona</span>\n<span class=\"hl-green\">echo</span> <span class=\"hl-purple\">${FOO:+alternatywa}</span>\n\n<span class=\"hl-dim\"># Błąd gdy pusta (przerywa skrypt przy -e)</span>\n<span class=\"hl-green\">echo</span> <span class=\"hl-purple\">${FOO:?Zmienna FOO jest wymagana}</span></pre>\n    </div>\n\n    <h3>Zmienne specjalne</h3>\n    <div class=\"table-wrap\">\n      <table>\n        <thead><tr><th>Zmienna</th><th>Znaczenie</th></tr></thead>\n        <tbody>\n          <tr><td>$?</td><td>Exit code ostatniej komendy</td></tr>\n          <tr><td>$$</td><td>PID bieżącego procesu hsh</td></tr>\n          <tr><td>$0</td><td>Nazwa powłoki (<code>hsh</code>)</td></tr>\n          <tr><td>$#</td><td>Liczba argumentów pozycyjnych</td></tr>\n          <tr><td>$@, $*</td><td>Wszystkie argumenty pozycyjne</td></tr>\n          <tr><td>$1, $2, …</td><td>Kolejne argumenty pozycyjne</td></tr>\n          <tr><td>$RANDOM</td><td>Losowa liczba całkowita</td></tr>\n          <tr><td>$SECONDS</td><td>Sekundy od uruchomienia hsh</td></tr>\n          <tr><td>$PWD</td><td>Bieżący katalog</td></tr>\n          <tr><td>$OLDPWD</td><td>Poprzedni katalog (przed cd)</td></tr>\n        </tbody>\n      </table>\n    </div>\n\n    <h3>Podstawianie komend</h3>\n    <div class=\"code-block\">\n      <span class=\"label\">hsh</span>\n      <pre><span class=\"hl-dim\"># Nowy styl (zalecany)</span>\n<span class=\"hl-cyan\">FILES</span>=$(<span class=\"hl-green\">ls</span> <span class=\"hl-gold\">*.rs</span>)\n<span class=\"hl-cyan\">DATE</span>=$(<span class=\"hl-green\">date</span> <span class=\"hl-gold\">+%Y-%m-%d</span>)\n\n<span class=\"hl-dim\"># Stary styl (backtick)</span>\n<span class=\"hl-cyan\">HOST</span>=`hostname`\n\n<span class=\"hl-dim\"># W środku stringa</span>\n<span class=\"hl-green\">echo</span> <span class=\"hl-green\">\"Dzisiaj: $(date)\"</span></pre>\n    </div>\n  </section>\n\n  \n  <section class=\"section\" id=\"arith\">\n    <div class=\"section-header\">\n      <span class=\"section-num\">05</span>\n      <h2 class=\"section-title\">Arytmetyka <span class=\"accent\">$(( ))</span></h2>\n    </div>\n\n    <p>hsh posiada własny parser wyrażeń arytmetycznych — nie wywołuje żadnego zewnętrznego procesu.</p>\n\n    <div class=\"code-block\">\n      <span class=\"label\">hsh</span>\n      <pre><span class=\"hl-dim\"># Podstawowe działania</span>\n<span class=\"hl-green\">echo</span> $(( 2 + 3 ))      <span class=\"hl-dim\"># 5</span>\n<span class=\"hl-green\">echo</span> $(( 10 / 3 ))     <span class=\"hl-dim\"># 3  (dzielenie całkowite)</span>\n<span class=\"hl-green\">echo</span> $(( 10 % 3 ))     <span class=\"hl-dim\"># 1  (modulo)</span>\n<span class=\"hl-green\">echo</span> $(( 2 ** 10 ))    <span class=\"hl-dim\"># 1024 (potęgowanie)</span>\n\n<span class=\"hl-dim\"># Ze zmiennymi</span>\n<span class=\"hl-cyan\">x</span>=5; <span class=\"hl-cyan\">y</span>=3\n<span class=\"hl-green\">echo</span> $(( x * y + 1 )) <span class=\"hl-dim\"># 16</span>\n\n<span class=\"hl-dim\"># Przypisanie przez arytmetykę</span>\n<span class=\"hl-cyan\">i</span>=$(( i + 1 ))\n\n<span class=\"hl-dim\"># Porównania (zwracają 0 lub 1)</span>\n<span class=\"hl-green\">echo</span> $(( x > y ))     <span class=\"hl-dim\"># 1</span>\n<span class=\"hl-green\">echo</span> $(( x == 5 ))    <span class=\"hl-dim\"># 1</span>\n\n<span class=\"hl-dim\"># Logika</span>\n<span class=\"hl-green\">echo</span> $(( x > 0 && y > 0 ))  <span class=\"hl-dim\"># 1</span>\n<span class=\"hl-green\">echo</span> $(( x > 10 || y > 0 )) <span class=\"hl-dim\"># 1</span>\n<span class=\"hl-green\">echo</span> $(( !0 ))               <span class=\"hl-dim\"># 1</span>\n\n<span class=\"hl-dim\"># Zagnieżdżone</span>\n<span class=\"hl-green\">echo</span> $(( (2 + 3) * (4 - 1) )) <span class=\"hl-dim\"># 15</span></pre>\n    </div>\n\n    <div class=\"table-wrap\">\n      <table>\n        <thead><tr><th>Operator</th><th>Opis</th><th>Priorytet</th></tr></thead>\n        <tbody>\n          <tr><td>||</td><td>Logiczne LUB</td><td>najniższy</td></tr>\n          <tr><td>&amp;&amp;</td><td>Logiczne I</td><td>↑</td></tr>\n          <tr><td>== != &lt; &lt;= &gt; &gt;=</td><td>Porównania</td><td>↑</td></tr>\n          <tr><td>+ -</td><td>Dodawanie, odejmowanie</td><td>↑</td></tr>\n          <tr><td>* / %</td><td>Mnożenie, dzielenie, modulo</td><td>↑</td></tr>\n          <tr><td>**</td><td>Potęgowanie</td><td>↑</td></tr>\n          <tr><td>- !</td><td>Jednoargumentowe: negacja, NOT</td><td>najwyższy</td></tr>\n        </tbody>\n      </table>\n    </div>\n\n    <div class=\"callout warn\">\n      <span class=\"ci\">⚠</span>\n      <span>Dzielenie przez zero i ujemne wykładniki w <code>**</code> zwracają błąd i przerywają wyrażenie.</span>\n    </div>\n  </section>\n\n  \n  <section class=\"section\" id=\"redir\">\n    <div class=\"section-header\">\n      <span class=\"section-num\">06</span>\n      <h2 class=\"section-title\">Przekierowania <span class=\"accent\">I/O</span></h2>\n    </div>\n\n    <p>Wszystkie przekierowania są implementowane natywnie przez <code>open()</code> + <code>dup2()</code> — bez pośrednictwa <code>/bin/sh</code>.</p>\n\n    <div class=\"code-block\">\n      <span class=\"label\">hsh</span>\n      <pre><span class=\"hl-dim\"># Nadpisz plik</span>\n<span class=\"hl-green\">echo</span> <span class=\"hl-green\">\"hello\"</span> > output.txt\n\n<span class=\"hl-dim\"># Dopisz do pliku</span>\n<span class=\"hl-green\">echo</span> <span class=\"hl-green\">\"world\"</span> >> output.txt\n\n<span class=\"hl-dim\"># Stdin z pliku</span>\n<span class=\"hl-green\">grep</span> error < log.txt\n\n<span class=\"hl-dim\"># Stderr do pliku</span>\n<span class=\"hl-green\">cmd</span> 2> errors.log\n\n<span class=\"hl-dim\"># Stderr → stdout (przekieruj stderr do stdout)</span>\n<span class=\"hl-green\">cmd</span> 2>&1\n\n<span class=\"hl-dim\"># Stdout i stderr razem do pliku</span>\n<span class=\"hl-green\">cmd</span> &> all.log\n\n<span class=\"hl-dim\"># Dowolny deskryptor pliku</span>\n<span class=\"hl-green\">cmd</span> 3> custom.log\n<span class=\"hl-green\">cmd</span> 3>&1</pre>\n    </div>\n\n    <div class=\"table-wrap\">\n      <table>\n        <thead><tr><th>Składnia</th><th>Działanie</th></tr></thead>\n        <tbody>\n          <tr><td>&gt; plik</td><td>stdout → plik (nadpisuje)</td></tr>\n          <tr><td>&gt;&gt; plik</td><td>stdout → plik (dopisuje)</td></tr>\n          <tr><td>&lt; plik</td><td>stdin ← plik</td></tr>\n          <tr><td>2&gt; plik</td><td>stderr → plik</td></tr>\n          <tr><td>2&gt;&amp;1</td><td>stderr → tam gdzie stdout</td></tr>\n          <tr><td>&amp;&gt; plik</td><td>stdout + stderr → plik</td></tr>\n          <tr><td>N&gt; plik</td><td>deskryptor N → plik</td></tr>\n          <tr><td>N&gt;&amp;M</td><td>deskryptor N → deskryptor M</td></tr>\n          <tr><td>&lt;&lt; DELIM</td><td>heredoc — stdin z literału</td></tr>\n          <tr><td>&lt;&lt;- DELIM</td><td>heredoc z usuwaniem tabulatorów</td></tr>\n        </tbody>\n      </table>\n    </div>\n  </section>\n\n  \n  <section class=\"section\" id=\"pipes\">\n    <div class=\"section-header\">\n      <span class=\"section-num\">07</span>\n      <h2 class=\"section-title\">Potoki <span class=\"accent\">(pipelines)</span></h2>\n    </div>\n\n    <p>hsh tworzy potoki przez natywne wywołanie <code>pipe(2)</code> — każdy etap to osobny proces połączony z następnym przez stdout/stdin.</p>\n\n    <div class=\"code-block\">\n      <span class=\"label\">hsh</span>\n      <pre><span class=\"hl-dim\"># Prosty potok</span>\n<span class=\"hl-green\">ls</span> <span class=\"hl-gold\">-la</span> <span class=\"hl-purple\">|</span> <span class=\"hl-green\">grep</span> .rs\n\n<span class=\"hl-dim\"># Wielostopniowy</span>\n<span class=\"hl-green\">cat</span> log.txt <span class=\"hl-purple\">|</span> <span class=\"hl-green\">grep</span> ERROR <span class=\"hl-purple\">|</span> <span class=\"hl-green\">sort</span> <span class=\"hl-purple\">|</span> <span class=\"hl-green\">uniq</span> <span class=\"hl-purple\">|</span> <span class=\"hl-green\">head</span> <span class=\"hl-gold\">-20</span>\n\n<span class=\"hl-dim\"># Z przekierowaniami na końcu</span>\n<span class=\"hl-green\">find</span> . <span class=\"hl-gold\">-name</span> <span class=\"hl-green\">'*.rs'</span> <span class=\"hl-purple\">|</span> <span class=\"hl-green\">wc</span> <span class=\"hl-gold\">-l</span> > count.txt\n\n<span class=\"hl-dim\"># Stderr w potoku</span>\n<span class=\"hl-green\">cmd</span> 2>&1 <span class=\"hl-purple\">|</span> <span class=\"hl-green\">grep</span> error\n\n<span class=\"hl-dim\"># Tylko natywne komendy (zero fork na /bin)</span>\n<span class=\"hl-green\">find</span> . <span class=\"hl-purple\">|</span> <span class=\"hl-green\">grep</span> .rs <span class=\"hl-purple\">|</span> <span class=\"hl-green\">wc</span> <span class=\"hl-gold\">-l</span>\n\n<span class=\"hl-dim\"># Background pipeline</span>\n<span class=\"hl-green\">long_cmd</span> <span class=\"hl-purple\">|</span> <span class=\"hl-green\">process</span> &</pre>\n    </div>\n\n    <div class=\"callout info\">\n      <span class=\"ci\">ℹ</span>\n      <span>Exit code potoku to exit code ostatniego etapu. Przy <code>set -e</code> niezerowy kod dowolnego etapu przerywa skrypt.</span>\n    </div>\n  </section>\n\n  \n  <section class=\"section\" id=\"scripting\">\n    <div class=\"section-header\">\n      <span class=\"section-num\">08</span>\n      <h2 class=\"section-title\">Skrypty <span class=\"accent\">i kontrola przepływu</span></h2>\n    </div>\n\n    <p>hsh zawiera własny parser i interpreter AST — wszystkie konstrukty skryptowe działają bez wywoływania <code>/bin/sh</code>.</p>\n\n    <h3>if / elif / else</h3>\n    <div class=\"code-block\">\n      <span class=\"label\">hsh</span>\n      <pre><span class=\"hl-green\">if</span> [ <span class=\"hl-gold\">-f</span> config.toml ]; <span class=\"hl-green\">then</span>\n    <span class=\"hl-green\">echo</span> <span class=\"hl-green\">\"plik istnieje\"</span>\n<span class=\"hl-green\">elif</span> [ <span class=\"hl-gold\">-d</span> config/ ]; <span class=\"hl-green\">then</span>\n    <span class=\"hl-green\">echo</span> <span class=\"hl-green\">\"katalog istnieje\"</span>\n<span class=\"hl-green\">else</span>\n    <span class=\"hl-green\">echo</span> <span class=\"hl-green\">\"nic nie znaleziono\"</span>\n<span class=\"hl-green\">fi</span></pre>\n    </div>\n\n    <h3>for</h3>\n    <div class=\"code-block\">\n      <span class=\"label\">hsh</span>\n      <pre><span class=\"hl-dim\"># Iteracja po plikach (glob)</span>\n<span class=\"hl-green\">for</span> <span class=\"hl-cyan\">f</span> <span class=\"hl-green\">in</span> <span class=\"hl-gold\">*.rs</span>; <span class=\"hl-green\">do</span>\n    <span class=\"hl-green\">echo</span> <span class=\"hl-green\">\"kompilacja: $f\"</span>\n<span class=\"hl-green\">done</span>\n\n<span class=\"hl-dim\"># Iteracja po liczbach</span>\n<span class=\"hl-green\">for</span> <span class=\"hl-cyan\">i</span> <span class=\"hl-green\">in</span> 1 2 3 4 5; <span class=\"hl-green\">do</span>\n    <span class=\"hl-green\">echo</span> <span class=\"hl-purple\">$i</span>\n<span class=\"hl-green\">done</span>\n\n<span class=\"hl-dim\"># Iteracja po wyjściu komendy</span>\n<span class=\"hl-green\">for</span> <span class=\"hl-cyan\">line</span> <span class=\"hl-green\">in</span> $(<span class=\"hl-green\">cat</span> list.txt); <span class=\"hl-green\">do</span>\n    <span class=\"hl-green\">process</span> <span class=\"hl-purple\">$line</span>\n<span class=\"hl-green\">done</span></pre>\n    </div>\n\n    <h3>while</h3>\n    <div class=\"code-block\">\n      <span class=\"label\">hsh</span>\n      <pre><span class=\"hl-cyan\">i</span>=0\n<span class=\"hl-green\">while</span> [ <span class=\"hl-purple\">$i</span> <span class=\"hl-gold\">-lt</span> 10 ]; <span class=\"hl-green\">do</span>\n    <span class=\"hl-green\">echo</span> <span class=\"hl-purple\">$i</span>\n    <span class=\"hl-cyan\">i</span>=$(( i + 1 ))\n<span class=\"hl-green\">done</span></pre>\n    </div>\n\n    <h3>case</h3>\n    <div class=\"code-block\">\n      <span class=\"label\">hsh</span>\n      <pre><span class=\"hl-green\">case</span> <span class=\"hl-purple\">$1</span> <span class=\"hl-green\">in</span>\n    start)\n        <span class=\"hl-green\">echo</span> <span class=\"hl-green\">\"Uruchamianie...\"</span>\n        ;;\n    stop|halt)\n        <span class=\"hl-green\">echo</span> <span class=\"hl-green\">\"Zatrzymywanie...\"</span>\n        ;;\n    *)\n        <span class=\"hl-green\">echo</span> <span class=\"hl-green\">\"Użycie: $0 {start|stop}\"</span>\n        ;;\n<span class=\"hl-green\">esac</span></pre>\n    </div>\n\n    <h3>Funkcje</h3>\n    <div class=\"code-block\">\n      <span class=\"label\">hsh</span>\n      <pre><span class=\"hl-dim\"># Definicja</span>\n<span class=\"hl-cyan\">greet</span>() {\n    <span class=\"hl-green\">echo</span> <span class=\"hl-green\">\"Cześć, $1! Masz $# argumentów.\"</span>\n}\n\n<span class=\"hl-dim\"># Wywołanie</span>\ngreet Michał\n\n<span class=\"hl-dim\"># Funkcja z logiką</span>\n<span class=\"hl-cyan\">is_even</span>() {\n    <span class=\"hl-green\">return</span> $(( $1 % 2 ))\n}\n\n<span class=\"hl-green\">if</span> is_even 42; <span class=\"hl-green\">then</span>\n    <span class=\"hl-green\">echo</span> <span class=\"hl-green\">\"parzysta\"</span>\n<span class=\"hl-green\">fi</span></pre>\n    </div>\n\n    <h3>Operatory łączenia</h3>\n    <div class=\"code-block\">\n      <span class=\"label\">hsh</span>\n      <pre><span class=\"hl-dim\"># Wykonaj cmd2 tylko gdy cmd1 się powiodło</span>\n<span class=\"hl-green\">make</span> && <span class=\"hl-green\">./run_tests</span>\n\n<span class=\"hl-dim\"># Wykonaj cmd2 tylko gdy cmd1 się nie powiodło</span>\n<span class=\"hl-green\">ping</span> -c1 server || <span class=\"hl-green\">echo</span> <span class=\"hl-green\">\"serwer niedostępny\"</span>\n\n<span class=\"hl-dim\"># Zawsze oba</span>\n<span class=\"hl-green\">build</span> ; <span class=\"hl-green\">deploy</span></pre>\n    </div>\n\n    <h3>Opcje powłoki (set)</h3>\n    <div class=\"table-wrap\">\n      <table>\n        <thead><tr><th>Opcja</th><th>Opis</th></tr></thead>\n        <tbody>\n          <tr><td>set -e</td><td>Przerwij skrypt gdy jakakolwiek komenda zwróci błąd (errexit)</td></tr>\n          <tr><td>set -x</td><td>Wypisuj każdą wykonywaną komendę z prefiksem <code>+</code> (xtrace)</td></tr>\n          <tr><td>set -u</td><td>Traktuj nieznane zmienne jako błąd (nounset)</td></tr>\n          <tr><td>set +e</td><td>Wyłącz errexit</td></tr>\n        </tbody>\n      </table>\n    </div>\n  </section>\n\n  \n  <section class=\"section\" id=\"heredoc\">\n    <div class=\"section-header\">\n      <span class=\"section-num\">09</span>\n      <h2 class=\"section-title\">Heredoc <span class=\"accent\">&lt;&lt;</span></h2>\n    </div>\n\n    <div class=\"code-block\">\n      <span class=\"label\">hsh</span>\n      <pre><span class=\"hl-dim\"># Podstawowy heredoc (rozszerza zmienne)</span>\n<span class=\"hl-cyan\">NAME</span>=Michał\n<span class=\"hl-green\">cat</span> << EOF\nCześć, <span class=\"hl-purple\">$NAME</span>!\nDzisiaj jest $(<span class=\"hl-green\">date</span> +%A).\nEOF\n\n<span class=\"hl-dim\"># Bez rozszerzania zmiennych (literal)</span>\n<span class=\"hl-green\">cat</span> << <span class=\"hl-green\">'EOF'</span>\nTo $NIE zostanie rozwinięte.\nEOF\n\n<span class=\"hl-dim\"># Usuwanie wiodących tabulatorów (&lt;&lt;-)</span>\n<span class=\"hl-green\">cat</span> <<- EOF\n    Ta linia ma usunięty tab na początku.\n    Ta też.\nEOF</pre>\n    </div>\n\n    <div class=\"callout tip\">\n      <span class=\"ci\">💡</span>\n      <span>Heredoc automatycznie rozszerza zmienne <code>$VAR</code> i <code>${VAR}</code>. Otocz delimiter cudzysłowem (<code>&lt;&lt; 'EOF'</code>) żeby wyłączyć rozszerzanie.</span>\n    </div>\n  </section>\n\n  \n  <section class=\"section\" id=\"builtins\">\n    <div class=\"section-header\">\n      <span class=\"section-num\">10</span>\n      <h2 class=\"section-title\">Wbudowane <span class=\"accent\">komendy</span></h2>\n    </div>\n\n    <div class=\"table-wrap\">\n      <table>\n        <thead><tr><th>Komenda</th><th>Opis</th></tr></thead>\n        <tbody>\n          <tr><td>cd [dir|-]</td><td>Zmień katalog. <code>-</code> wraca do poprzedniego (<code>$OLDPWD</code>).</td></tr>\n          <tr><td>exit [kod]</td><td>Wyjdź z hsh z podanym kodem wyjścia (domyślnie 0).</td></tr>\n          <tr><td>history [query]</td><td>Historia komend z timestampami. Z argumentem — fuzzy search.</td></tr>\n          <tr><td>which NAME</td><td>Pokaż typ komendy: builtin, alias, lub pełna ścieżka binarium.</td></tr>\n          <tr><td>type NAME</td><td>Alias dla <code>which</code>.</td></tr>\n          <tr><td>export KEY=VAL</td><td>Ustaw zmienną środowiskową. <code>export -p</code> wyświetla wszystkie.</td></tr>\n          <tr><td>alias</td><td>Wyświetl wszystkie zdefiniowane aliasy.</td></tr>\n          <tr><td>unalias NAME</td><td>Usuń alias (wymaga restartu — aliasy są ładowane z .hshrc).</td></tr>\n          <tr><td>set [-e|-x|-u]</td><td>Ustaw opcje powłoki: errexit, xtrace, nounset.</td></tr>\n          <tr><td>pushd [dir]</td><td>Wepchnij bieżący katalog na stos i przejdź do <code>dir</code>.</td></tr>\n          <tr><td>popd</td><td>Wyskocz katalog ze stosu i przejdź do niego.</td></tr>\n          <tr><td>dirs</td><td>Wyświetl stos katalogów.</td></tr>\n          <tr><td>source FILE</td><td>Wykonaj plik w bieżącym kontekście powłoki.</td></tr>\n          <tr><td>. FILE</td><td>Alias dla <code>source</code>.</td></tr>\n          <tr><td>test EXPR</td><td>Oceń wyrażenie warunkowe. Zwraca 0 (prawda) lub 1 (fałsz).</td></tr>\n          <tr><td>[ EXPR ]</td><td>Alias dla <code>test</code>.</td></tr>\n          <tr><td>jobs</td><td>Wyświetl listę zadań w tle.</td></tr>\n          <tr><td>fg [%id]</td><td>Przenieś zadanie na pierwszy plan.</td></tr>\n          <tr><td>bg [%id]</td><td>Wznów zadanie w tle.</td></tr>\n          <tr><td>stop [%id]</td><td>Zatrzymaj zadanie (SIGSTOP).</td></tr>\n          <tr><td>kill [-SIG] %id</td><td>Wyślij sygnał do zadania.</td></tr>\n          <tr><td>wait [%id]</td><td>Czekaj na zakończenie zadania.</td></tr>\n          <tr><td>hsh-help</td><td>Krótka pomoc wbudowana.</td></tr>\n          <tr><td>hsh-docs [temat]</td><td>Rozbudowana dokumentacja (w terminalu).</td></tr>\n          <tr><td>hsh-settings</td><td>Interaktywna zmiana motywu kolorystycznego.</td></tr>\n        </tbody>\n      </table>\n    </div>\n\n    <h3>test — operatory</h3>\n    <div class=\"table-wrap\">\n      <table>\n        <thead><tr><th>Operator</th><th>Znaczenie</th></tr></thead>\n        <tbody>\n          <tr><td>-f PLIK</td><td>Plik istnieje i jest plikiem regularnym</td></tr>\n          <tr><td>-d PLIK</td><td>Plik istnieje i jest katalogiem</td></tr>\n          <tr><td>-e PLIK</td><td>Plik istnieje (dowolny typ)</td></tr>\n          <tr><td>-r / -w / -x</td><td>Plik jest do odczytu / zapisu / wykonania</td></tr>\n          <tr><td>-z STR</td><td>String jest pusty</td></tr>\n          <tr><td>-n STR</td><td>String jest niepusty</td></tr>\n          <tr><td>-L PLIK</td><td>Plik jest dowiązaniem symbolicznym</td></tr>\n          <tr><td>-s PLIK</td><td>Plik ma rozmiar &gt; 0</td></tr>\n          <tr><td>A = B</td><td>Stringi są równe</td></tr>\n          <tr><td>A != B</td><td>Stringi są różne</td></tr>\n          <tr><td>A -eq B</td><td>Liczby równe</td></tr>\n          <tr><td>A -ne / -lt / -le / -gt / -ge B</td><td>Porównania liczbowe</td></tr>\n          <tr><td>! EXPR</td><td>Negacja</td></tr>\n          <tr><td>EXPR -a EXPR</td><td>Logiczne I (AND)</td></tr>\n          <tr><td>EXPR -o EXPR</td><td>Logiczne LUB (OR)</td></tr>\n          <tr><td>A -nt B</td><td>Plik A nowszy niż B</td></tr>\n          <tr><td>A -ot B</td><td>Plik A starszy niż B</td></tr>\n        </tbody>\n      </table>\n    </div>\n  </section>\n\n  \n  <section class=\"section\" id=\"native\">\n    <div class=\"section-header\">\n      <span class=\"section-num\">11</span>\n      <h2 class=\"section-title\">Komendy <span class=\"accent\">natywne</span></h2>\n    </div>\n\n    <p>Następujące komendy są zaimplementowane bezpośrednio w hsh — nie wywołują zewnętrznych binariów nawet gdy są dostępne w <code>$PATH</code>:</p>\n\n    <div class=\"cards\">\n      <div class=\"card\">\n        <span class=\"card-icon\">📝</span>\n        <div class=\"card-title\">echo</div>\n        <div class=\"card-desc\">Flaga <code>-n</code>, sekwencje escape <code>\\n \\t \\r</code></div>\n      </div>\n      <div class=\"card\">\n        <span class=\"card-icon\">📍</span>\n        <div class=\"card-title\">pwd</div>\n        <div class=\"card-desc\">Bieżący katalog roboczy</div>\n      </div>\n      <div class=\"card\">\n        <span class=\"card-icon\">📂</span>\n        <div class=\"card-title\">ls</div>\n        <div class=\"card-desc\">Flagi: <code>-l -a -h</code>, kolorowanie typów plików</div>\n      </div>\n      <div class=\"card\">\n        <span class=\"card-icon\">🐱</span>\n        <div class=\"card-title\">cat</div>\n        <div class=\"card-desc\">Z kolorowaniem składni przez syntect (base16-ocean.dark)</div>\n      </div>\n      <div class=\"card\">\n        <span class=\"card-icon\">📁</span>\n        <div class=\"card-title\">mkdir</div>\n        <div class=\"card-desc\">Flaga <code>-p</code> (utwórz katalogi pośrednie)</div>\n      </div>\n      <div class=\"card\">\n        <span class=\"card-icon\">🗑️</span>\n        <div class=\"card-title\">rm</div>\n        <div class=\"card-desc\">Flagi: <code>-r -rf -f</code></div>\n      </div>\n      <div class=\"card\">\n        <span class=\"card-icon\">📋</span>\n        <div class=\"card-title\">cp</div>\n        <div class=\"card-desc\">Flagi: <code>-r -R</code>, kopiowanie między urządzeniami</div>\n      </div>\n      <div class=\"card\">\n        <span class=\"card-icon\">🚚</span>\n        <div class=\"card-title\">mv</div>\n        <div class=\"card-desc\">Przenoszenie cross-device (copy + delete)</div>\n      </div>\n      <div class=\"card\">\n        <span class=\"card-icon\">✏️</span>\n        <div class=\"card-title\">touch</div>\n        <div class=\"card-desc\">Utwórz plik lub aktualizuj czas modyfikacji</div>\n      </div>\n      <div class=\"card\">\n        <span class=\"card-icon\">🌍</span>\n        <div class=\"card-title\">env</div>\n        <div class=\"card-desc\">Wyświetl lub uruchom z zmodyfikowanym środowiskiem</div>\n      </div>\n      <div class=\"card\">\n        <span class=\"card-icon\">🔍</span>\n        <div class=\"card-title\">grep</div>\n        <div class=\"card-desc\">Flagi: <code>-i -v -c -n</code>, kolorowanie dopasowań</div>\n      </div>\n      <div class=\"card\">\n        <span class=\"card-icon\">⬆️</span>\n        <div class=\"card-title\">head / tail</div>\n        <div class=\"card-desc\">Flaga <code>-n N</code>, wiele plików</div>\n      </div>\n      <div class=\"card\">\n        <span class=\"card-icon\">🔢</span>\n        <div class=\"card-title\">wc</div>\n        <div class=\"card-desc\">Flagi: <code>-l -w -c</code></div>\n      </div>\n      <div class=\"card\">\n        <span class=\"card-icon\">🖥️</span>\n        <div class=\"card-title\">uname</div>\n        <div class=\"card-desc\">Flagi: <code>-a -s -n -r -m</code></div>\n      </div>\n      <div class=\"card\">\n        <span class=\"card-icon\">🔎</span>\n        <div class=\"card-title\">find</div>\n        <div class=\"card-desc\">Opcje <code>-name</code> (glob) i <code>-type</code></div>\n      </div>\n      <div class=\"card\">\n        <span class=\"card-icon\">🔄</span>\n        <div class=\"card-title\">xargs</div>\n        <div class=\"card-desc\">Podstawowe xargs z obsługą <code>{}</code></div>\n      </div>\n      <div class=\"card\">\n        <span class=\"card-icon\">📐</span>\n        <div class=\"card-title\">printf</div>\n        <div class=\"card-desc\">Formaty <code>%s %d %f %c</code> i sekwencje <code>\\n \\t</code></div>\n      </div>\n      <div class=\"card\">\n        <span class=\"card-icon\">✅</span>\n        <div class=\"card-title\">true / false</div>\n        <div class=\"card-desc\">Zawsze zwraca 0 lub 1</div>\n      </div>\n    </div>\n  </section>\n\n  \n  <section class=\"section\" id=\"jobs\">\n    <div class=\"section-header\">\n      <span class=\"section-num\">12</span>\n      <h2 class=\"section-title\">Zarządzanie <span class=\"accent\">zadaniami</span></h2>\n    </div>\n\n    <div class=\"code-block\">\n      <span class=\"label\">hsh</span>\n      <pre><span class=\"hl-dim\"># Uruchom w tle</span>\n<span class=\"hl-green\">long_process</span> &\n<span class=\"hl-dim\"># [1] 1234</span>\n\n<span class=\"hl-dim\"># Wyświetl zadania</span>\n<span class=\"hl-green\">jobs</span>\n<span class=\"hl-dim\"># [1] Running   1234  long_process</span>\n\n<span class=\"hl-dim\"># Przenieś na pierwszy plan</span>\n<span class=\"hl-green\">fg</span> %1\n\n<span class=\"hl-dim\"># Wróć do tła</span>\n<span class=\"hl-dim\"># (Ctrl+Z zatrzymuje, bg wznawia)</span>\n<span class=\"hl-green\">bg</span> %1\n\n<span class=\"hl-dim\"># Wyślij sygnał</span>\n<span class=\"hl-green\">kill</span> %1             <span class=\"hl-dim\"># SIGTERM</span>\n<span class=\"hl-green\">kill</span> <span class=\"hl-gold\">-KILL</span> %1       <span class=\"hl-dim\"># SIGKILL</span>\n<span class=\"hl-green\">kill</span> <span class=\"hl-gold\">-STOP</span> %1       <span class=\"hl-dim\"># zatrzymaj</span>\n<span class=\"hl-green\">kill</span> <span class=\"hl-gold\">-CONT</span> %1       <span class=\"hl-dim\"># wznów</span>\n\n<span class=\"hl-dim\"># Czekaj na zakończenie</span>\n<span class=\"hl-green\">wait</span> %1</pre>\n    </div>\n\n    <div class=\"callout info\">\n      <span class=\"ci\">ℹ</span>\n      <span>hsh automatycznie sprawdza zakończone zadania po każdej komendzie i wyświetla powiadomienie: <code>[1] Done (0)  long_process</code></span>\n    </div>\n  </section>\n\n  \n  <section class=\"section\" id=\"hints\">\n    <div class=\"section-header\">\n      <span class=\"section-num\">13</span>\n      <h2 class=\"section-title\">System <span class=\"accent\">podpowiedzi</span></h2>\n    </div>\n\n    <p>hsh łączy trzy warstwy podpowiedzi inspirowane fish i zsh:</p>\n\n    <h3>1. Historia inline (jak fish)</h3>\n    <p>Wpisz kilka pierwszych liter — hsh sugeruje pełną komendę z historii jako szary tekst. Naciśnij <kbd>→</kbd> żeby zaakceptować.</p>\n\n    <div class=\"prompt-preview\">\n      <div class=\"terminal-bar\">\n        <div class=\"dot-r\"></div><div class=\"dot-y\"></div><div class=\"dot-g\"></div>\n        <span class=\"term-title\">SmartHints demo</span>\n      </div>\n      <div class=\"terminal-body\">\n        <span class=\"prompt-line\">\n          <span class=\"p-time\">09:15:33</span> &nbsp;&nbsp;<span class=\"p-dir\">~/dev</span> &nbsp;&nbsp;<span class=\"p-char\">❯</span>\n          &nbsp;<span class=\"p-cmd\">git co</span><span class=\"p-hint\">mmit -m \"feat: add retry logic\"</span>\n        </span>\n        <span class=\"prompt-line\" style=\"color:var(--text-muted); font-size:0.72rem; margin-top:0.25rem; padding-left:0.5rem;\">\n          ↑ naciśnij → żeby zaakceptować cały hint\n        </span>\n      </div>\n    </div>\n\n    <h3>2. Sekwencje (next-command prediction)</h3>\n    <p>Na pustej linii hsh podpowiada komendę, którą zwykle wykonujesz po tej poprzedniej. Dane uczą się automatycznie z Twojej historii.</p>\n\n    <h3>3. cd preview</h3>\n    <p>Podczas wpisywania <code>cd cz</code> hsh wyświetla pasujące katalogi w bieżącym folderze bezpośrednio w hincie.</p>\n\n    <h3>Spellcheck</h3>\n    <p>Gdy komenda zwróci exit code 127 (nie znaleziono), hsh używa dystansu Levenshteina do zaproponowania poprawki:</p>\n\n    <div class=\"code-block\">\n      <span class=\"label\">hsh</span>\n      <pre><span class=\"hl-green\">gti</span> status\n<span class=\"hl-rose\">hsh: gti: command not found</span>\n<span class=\"hl-gold\">❓ Czy chodziło Ci o: git status?</span></pre>\n    </div>\n\n    <p>Dane SmartHints są zapisywane w <code>~/.hsh-hints.json</code> i ładowane przy każdym uruchomieniu.</p>\n  </section>\n\n  \n  <section class=\"section\" id=\"completion\">\n    <div class=\"section-header\">\n      <span class=\"section-num\">14</span>\n      <h2 class=\"section-title\">Uzupełnianie <span class=\"accent\">Tab</span></h2>\n    </div>\n\n    <div class=\"table-wrap\">\n      <table>\n        <thead><tr><th>Kontekst</th><th>Co uzupełnia Tab</th></tr></thead>\n        <tbody>\n          <tr><td>Pierwsze słowo</td><td>Komendy z <code>$PATH</code> + builtins (posortowane, bez duplikatów)</td></tr>\n          <tr><td>Po git</td><td>add, commit -m, push origin, pull, status, log --oneline, branch, checkout, …</td></tr>\n          <tr><td>Po cargo</td><td>build, run, test, check, clippy, fmt, doc, publish, …</td></tr>\n          <tr><td>Po systemctl</td><td>start, stop, restart, enable, disable, status, …</td></tr>\n          <tr><td>Po apt</td><td>install, remove, update, upgrade, search, show, …</td></tr>\n          <tr><td>Po docker</td><td>run, build, pull, push, ps, images, stop, exec, logs, …</td></tr>\n          <tr><td>Po npm</td><td>install, run, start, test, build, publish, …</td></tr>\n          <tr><td>Po pip</td><td>install, uninstall, list, show, freeze, …</td></tr>\n          <tr><td>Po kubectl</td><td>get, apply, delete, describe, logs, exec, …</td></tr>\n          <tr><td>Ścieżki</td><td>Pliki i katalogi przez FilenameCompleter</td></tr>\n        </tbody>\n      </table>\n    </div>\n\n    <div class=\"callout tip\">\n      <span class=\"ci\">💡</span>\n      <span>Komenda Tab zawsze wyświetla listę pasujących opcji (tryb List) zamiast cyklicznie uzupełniać — łatwiej zobaczyć wszystkie możliwości naraz.</span>\n    </div>\n  </section>\n\n  \n  <section class=\"section\" id=\"shortcuts\">\n    <div class=\"section-header\">\n      <span class=\"section-num\">15</span>\n      <h2 class=\"section-title\">Skróty <span class=\"accent\">klawiszowe</span></h2>\n    </div>\n\n    <p>hsh działa w trybie Emacs (domyślny). Wszystkie standardowe skróty Readline są dostępne.</p>\n\n    <div class=\"table-wrap\">\n      <table>\n        <thead><tr><th>Skrót</th><th>Działanie</th></tr></thead>\n        <tbody>\n          <tr><td><kbd>→</kbd> / <kbd>End</kbd></td><td>Zaakceptuj cały hint / uzupełnienie</td></tr>\n          <tr><td><kbd>Alt</kbd>+<kbd>F</kbd></td><td>Zaakceptuj jedno słowo hintu (forward-word)</td></tr>\n          <tr><td><kbd>Tab</kbd></td><td>Uzupełnij komendę, subkomendę lub ścieżkę</td></tr>\n          <tr><td><kbd>Ctrl</kbd>+<kbd>R</kbd></td><td>Wyszukiwanie wsteczne w historii (reverse search)</td></tr>\n          <tr><td><kbd>Ctrl</kbd>+<kbd>L</kbd></td><td>Wyczyść ekran</td></tr>\n          <tr><td><kbd>Ctrl</kbd>+<kbd>C</kbd></td><td>Przerwij bieżącą linię lub komendę</td></tr>\n          <tr><td><kbd>Ctrl</kbd>+<kbd>D</kbd></td><td>EOF — wyjdź z hsh</td></tr>\n          <tr><td><kbd>Ctrl</kbd>+<kbd>A</kbd></td><td>Skocz na początek linii</td></tr>\n          <tr><td><kbd>Ctrl</kbd>+<kbd>E</kbd></td><td>Skocz na koniec linii</td></tr>\n          <tr><td><kbd>Ctrl</kbd>+<kbd>W</kbd></td><td>Usuń słowo przed kursorem</td></tr>\n          <tr><td><kbd>Ctrl</kbd>+<kbd>U</kbd></td><td>Usuń od kursora do początku linii</td></tr>\n          <tr><td><kbd>Ctrl</kbd>+<kbd>K</kbd></td><td>Usuń od kursora do końca linii</td></tr>\n          <tr><td><kbd>Alt</kbd>+<kbd>B</kbd></td><td>Cofnij o jedno słowo</td></tr>\n          <tr><td><kbd>↑</kbd> / <kbd>↓</kbd></td><td>Poprzednia / następna komenda w historii</td></tr>\n          <tr><td><kbd>Ctrl</kbd>+<kbd>Z</kbd></td><td>Zatrzymaj bieżący proces (SIGSTOP) → użyj <code>bg</code> / <code>fg</code></td></tr>\n        </tbody>\n      </table>\n    </div>\n  </section>\n\n  \n  <section class=\"section\" id=\"themes\">\n    <div class=\"section-header\">\n      <span class=\"section-num\">16</span>\n      <h2 class=\"section-title\">Motywy <span class=\"accent\">kolorystyczne</span></h2>\n    </div>\n\n    <p>Zmień motyw przez <code>hsh-settings</code>. Ustawienie zapisuje się natychmiast do <code>~/.config/hackeros/hsh/theme.json</code>.</p>\n\n    <div class=\"theme-grid\">\n      <div class=\"theme-card\">\n        <div class=\"theme-bar\" style=\"background: linear-gradient(90deg,#4cff91,#4dd9ff,#ffd166)\"></div>\n        <div class=\"theme-body\"><div class=\"theme-name\">default</div><div class=\"theme-desc\">Miętowo-złoty. Stonowany, nowoczesny.</div></div>\n      </div>\n      <div class=\"theme-card\">\n        <div class=\"theme-bar\" style=\"background: linear-gradient(90deg,#a855f7,#06b6d4,#f472b6)\"></div>\n        <div class=\"theme-body\"><div class=\"theme-name\">cosmic</div><div class=\"theme-desc\">Cyberpunk fiolet + cyan.</div></div>\n      </div>\n      <div class=\"theme-card\">\n        <div class=\"theme-bar\" style=\"background: linear-gradient(90deg,#88c0d0,#81a1c1,#a3be8c)\"></div>\n        <div class=\"theme-body\"><div class=\"theme-name\">nord</div><div class=\"theme-desc\">Skandynawski błękit. Zimna paleta.</div></div>\n      </div>\n      <div class=\"theme-card\">\n        <div class=\"theme-bar\" style=\"background: linear-gradient(90deg,#fabd2f,#b8bb26,#83a598)\"></div>\n        <div class=\"theme-body\"><div class=\"theme-name\">gruvbox</div><div class=\"theme-desc\">Ciepły retro amber.</div></div>\n      </div>\n      <div class=\"theme-card\">\n        <div class=\"theme-bar\" style=\"background: linear-gradient(90deg,#50fa7b,#ff79c6,#8be9fd)\"></div>\n        <div class=\"theme-body\"><div class=\"theme-name\">dracula</div><div class=\"theme-desc\">Ciemny fiolet + różowy.</div></div>\n      </div>\n      <div class=\"theme-card\">\n        <div class=\"theme-bar\" style=\"background: linear-gradient(90deg,#00ff41,#008f11,#003b00)\"></div>\n        <div class=\"theme-body\"><div class=\"theme-name\">hackeros</div><div class=\"theme-desc\">Matrix zielony na czarnym.</div></div>\n      </div>\n      <div class=\"theme-card\">\n        <div class=\"theme-bar\" style=\"background: linear-gradient(90deg,#859900,#268bd2,#2aa198)\"></div>\n        <div class=\"theme-body\"><div class=\"theme-name\">solarized-dark</div><div class=\"theme-desc\">Klasyczny solarized.</div></div>\n      </div>\n      <div class=\"theme-card\">\n        <div class=\"theme-bar\" style=\"background: linear-gradient(90deg,#ff9e64,#7dcfff,#c0caf5)\"></div>\n        <div class=\"theme-body\"><div class=\"theme-name\">tokyo-night</div><div class=\"theme-desc\">Nocny Tokio — niebieski + pomarańczowy.</div></div>\n      </div>\n      <div class=\"theme-card\">\n        <div class=\"theme-bar\" style=\"background: linear-gradient(90deg,#a6e3a1,#89dceb,#cba6f7)\"></div>\n        <div class=\"theme-body\"><div class=\"theme-name\">catppuccin-mocha</div><div class=\"theme-desc\">Pastelowy mocha.</div></div>\n      </div>\n      <div class=\"theme-card\">\n        <div class=\"theme-bar\" style=\"background: linear-gradient(90deg,#eb6f92,#c4a7e7,#9ccfd8)\"></div>\n        <div class=\"theme-body\"><div class=\"theme-name\">rose-pine</div><div class=\"theme-desc\">Ciepły fiolet + różowy.</div></div>\n      </div>\n      <div class=\"theme-card\">\n        <div class=\"theme-bar\" style=\"background: linear-gradient(90deg,#ff00ff,#00ffff,#ff0090)\"></div>\n        <div class=\"theme-body\"><div class=\"theme-name\">cyberpunk</div><div class=\"theme-desc\">Neonowy magenta + cyan.</div></div>\n      </div>\n      <div class=\"theme-card\">\n        <div class=\"theme-bar\" style=\"background: linear-gradient(90deg,#a9dc76,#ffd866,#fc9867)\"></div>\n        <div class=\"theme-body\"><div class=\"theme-name\">monokai</div><div class=\"theme-desc\">Klasyczny Monokai.</div></div>\n      </div>\n      <div class=\"theme-card\">\n        <div class=\"theme-bar\" style=\"background: linear-gradient(90deg,#a8cc8c,#71bef2,#e8912d)\"></div>\n        <div class=\"theme-body\"><div class=\"theme-name\">everforest</div><div class=\"theme-desc\">Leśna zieleń. Naturalny, miękki.</div></div>\n      </div>\n      <div class=\"theme-card\">\n        <div class=\"theme-bar\" style=\"background: linear-gradient(90deg,#7aa89f,#c8d3f5,#e0af68)\"></div>\n        <div class=\"theme-body\"><div class=\"theme-name\">kanagawa</div><div class=\"theme-desc\">Japońska estetyka. Głęboki błękit.</div></div>\n      </div>\n      <div class=\"theme-card\">\n        <div class=\"theme-bar\" style=\"background: linear-gradient(90deg,#e06c75,#98c379,#61afef)\"></div>\n        <div class=\"theme-body\"><div class=\"theme-name\">one-dark</div><div class=\"theme-desc\">Atom One Dark.</div></div>\n      </div>\n      <div class=\"theme-card\">\n        <div class=\"theme-bar\" style=\"background: linear-gradient(90deg,#78dce8,#a9dc76,#ffd866)\"></div>\n        <div class=\"theme-body\"><div class=\"theme-name\">ayu-dark</div><div class=\"theme-desc\">Ayu ciemny — minimalistyczny.</div></div>\n      </div>\n    </div>\n  </section>\n\n  \n  <section class=\"section\" id=\"hshrc\">\n    <div class=\"section-header\">\n      <span class=\"section-num\">17</span>\n      <h2 class=\"section-title\">Konfiguracja <span class=\"accent\">.hshrc</span></h2>\n    </div>\n\n    <p>Plik <code>~/.hshrc</code> używa formatu <code>.hk</code> (HackerOS config). Ładowany przy każdym uruchomieniu interaktywnym.</p>\n\n    <div class=\"code-block\">\n      <span class=\"label\">~/.hshrc</span>\n      <pre><span class=\"hl-dim\"># ── Aliasy ───────────────────────────────────────────────</span>\n[aliases]\nll = \"ls -lah\"\nla = \"ls -a\"\ng  = \"git\"\ngs = \"git status\"\ngp = \"git push origin\"\ngl = \"git log --oneline --graph\"\nv  = \"vim\"\npy = \"python3\"\ndc = \"docker compose\"\n\n<span class=\"hl-dim\"># ── Prompt ───────────────────────────────────────────────</span>\n[prompt]\n<span class=\"hl-dim\"># Kolejność segmentów (eksperymentalne)</span>\nsegment_order = \"time, dir, git, mem_cpu\"</pre>\n    </div>\n\n    <div class=\"table-wrap\">\n      <table>\n        <thead><tr><th>Plik / Ścieżka</th><th>Zawartość</th></tr></thead>\n        <tbody>\n          <tr><td>~/.hshrc</td><td>Aliasy i konfiguracja promptu</td></tr>\n          <tr><td>~/.hsh-history-ts.json</td><td>Historia z timestampami (JSON)</td></tr>\n          <tr><td>~/.hsh-hints.json</td><td>Dane SmartHints (sekwencje, prefiksy)</td></tr>\n          <tr><td>~/.hsh-path-cache.json</td><td>Cache komend z $PATH (TTL: 5 minut)</td></tr>\n          <tr><td>~/.hsh-history</td><td>Historia dla rustyline (Ctrl+R)</td></tr>\n          <tr><td>~/.config/hackeros/hsh/theme.json</td><td>Aktywny motyw kolorystyczny</td></tr>\n        </tbody>\n      </table>\n    </div>\n  </section>\n\n  \n  <section class=\"section\" id=\"security\">\n    <div class=\"section-header\">\n      <span class=\"section-num\">18</span>\n      <h2 class=\"section-title\">Bezpieczeństwo <span class=\"accent\">i ochrona</span></h2>\n    </div>\n\n    <h3>Niebezpieczne komendy</h3>\n    <p>hsh automatycznie wykrywa i blokuje potencjalnie destruktywne komendy. Wymagają wpisania <code>yes</code>:</p>\n\n    <div class=\"table-wrap\">\n      <table>\n        <thead><tr><th>Wzorzec</th><th>Ostrzeżenie</th></tr></thead>\n        <tbody>\n          <tr><td><code>rm -rf /</code></td><td>Usunięcie wszystkich plików</td></tr>\n          <tr><td><code>rm -rf /*</code></td><td>Usunięcie wszystkich plików</td></tr>\n          <tr><td><code>dd if=/dev/zero of=/dev/sda</code></td><td>Nadpisanie dysku</td></tr>\n          <tr><td><code>:(){ :|:&amp; };:</code></td><td>Fork bomb — crash systemu</td></tr>\n          <tr><td><code>curl | sh</code></td><td>Zdalne wykonanie kodu</td></tr>\n          <tr><td><code>wget -O- | bash</code></td><td>Zdalne wykonanie kodu</td></tr>\n          <tr><td><code>chmod -R 777 /</code></td><td>Globalne uprawnienia 777</td></tr>\n          <tr><td><code>mkfs /dev/sda</code></td><td>Formatowanie dysku</td></tr>\n        </tbody>\n      </table>\n    </div>\n\n    <h3>Auto-sudo dla edytorów</h3>\n    <p>Gdy edytujesz plik w <code>/etc/</code>, <code>/usr/</code>, <code>/var/</code> lub <code>/boot/</code> przez <code>vi</code>, <code>vim</code>, <code>nano</code> lub <code>emacs</code> — hsh pyta czy chcesz użyć <code>sudo</code>.</p>\n\n    <h3>Kolorowanie składni — detekcja</h3>\n    <p>Niebezpieczne komendy są wizualnie oznaczane <span style=\"background:#ff0000; color:#fff; padding: 1px 6px; border-radius:2px;\">czerwonym migającym tłem</span> już podczas wpisywania, zanim naciśniesz Enter.</p>\n  </section>\n\n  \n  <section class=\"section\" id=\"flags\">\n    <div class=\"section-header\">\n      <span class=\"section-num\">19</span>\n      <h2 class=\"section-title\">Flagi <span class=\"accent\">startowe</span></h2>\n    </div>\n\n    <div class=\"table-wrap\">\n      <table>\n        <thead><tr><th>Flaga</th><th>Opis</th><th>Przykład</th></tr></thead>\n        <tbody>\n          <tr><td>-c 'cmd'</td><td>Wykonaj komendę i wyjdź</td><td><code>hsh -c 'echo hello'</code></td></tr>\n          <tr><td>--dry-run</td><td>Symuluj — wypisz komendy zamiast wykonywać</td><td><code>hsh --dry-run</code></td></tr>\n          <tr><td>--version / -V</td><td>Wyświetl wersję i wyjdź</td><td><code>hsh --version</code></td></tr>\n        </tbody>\n      </table>\n    </div>\n\n    <h3>Tryb dry-run</h3>\n    <p>W trybie <code>--dry-run</code> żadna komenda nie jest wykonywana — hsh wypisuje tylko co <em>by</em> zostało wykonane:</p>\n\n    <div class=\"code-block\">\n      <span class=\"label\">hsh --dry-run</span>\n      <pre><span class=\"hl-dim\">❯</span> rm -rf build/\n<span class=\"hl-gold\">[dry-run] rm -rf build/</span>\n\n<span class=\"hl-dim\">❯</span> export DB_URL=postgres://localhost\n<span class=\"hl-gold\">[dry-run] export DB_URL=postgres://localhost</span>\n\n<span class=\"hl-dim\">❯</span> build.sh &\n<span class=\"hl-gold\">[dry-run] [bg] build.sh</span></pre>\n    </div>\n\n    <div class=\"callout tip\">\n      <span class=\"ci\">💡</span>\n      <span>Tryb dry-run jest przydatny do debugowania skryptów — uruchom <code>hsh --dry-run -c ./deploy.sh</code> żeby zobaczyć pełną sekwencję operacji bez ryzyka.</span>\n    </div>\n  </section>\n\n  \n  <div style=\"margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 0.75rem;\">\n    <div style=\"display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;\">\n      <span><span style=\"color:var(--green)\">hsh</span> v0.4.0 · HackerOS Shell · Rust + tokio</span>\n      <span>Licencja: BSD-3-Clause</span>\n    </div>\n    <div style=\"margin-top:0.5rem; color: var(--text-muted);\">\n      Napisany w Rust. Bez zależności od /bin/sh. Działa wszędzie tam gdzie działa Linux.\n    </div>\n  </div>\n\n</main>\n</div>"
+
+fun main() [
+    boot_begin("pl", "hsh — HackerOS Shell Documentation")
+    set_viewport("width=device-width, initial-scale=1.0")
+    head_tag("link", ["rel", "icon", "type", "image/png", "href", "../HackerOS.png"])
+    boot_body(PAGE_BODY)
+    offline_init("../")
+    scrollspy(".section, .hero", ".nav-link", "", 0.3)
+]
