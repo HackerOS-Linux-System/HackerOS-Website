@@ -1,0 +1,610 @@
+include <core>
+
+const OFF_KEY: Str = "hackeros:offline-dialog"
+const OFF_STATE_KEY: Str = "hackeros:offline-state"
+const OFF_LANG_KEY: Str = "hackeros_lang"
+const OFF_VERSION: Int = 1
+
+const OFF_TEMPLATE_HTML: Str = "<div class=\"hos-off-card\"><div class=\"hos-off-ico\" aria-hidden=\"true\"><svg viewBox=\"0 0 24 24\" width=\"44\" height=\"44\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M2 8.8a15 15 0 0 1 4.2-2.6\"/><path d=\"M10.7 5.1A15 15 0 0 1 22 8.8\"/><path d=\"M5 12.6a10 10 0 0 1 3.4-2\"/><path d=\"M15.5 10.1a10 10 0 0 1 3.5 2.5\"/><path d=\"M8.5 16.4a5 5 0 0 1 4.3-1.3\"/><path d=\"M15.6 16.4a5 5 0 0 0-.6-.5\"/><circle cx=\"12\" cy=\"20\" r=\"1\" fill=\"currentColor\"/><path d=\"M2 2l20 20\"/></svg></div><div class=\"hos-off-tag\"><i></i><span data-i18n=\"tag\"></span></div><h2 class=\"hos-off-title\" id=\"hos-off-title\" data-i18n=\"title\"></h2><p class=\"hos-off-msg\" data-i18n=\"msg\"></p><ul class=\"hos-off-info\"><li><span data-i18n=\"lastOnline\"></span> <b data-slot=\"lastOnline\"></b></li><li><span data-i18n=\"lastPage\"></span> <b data-slot=\"lastPage\"></b></li></ul><div class=\"hos-off-status\" data-slot=\"status\" role=\"status\" aria-live=\"polite\"></div><div class=\"hos-off-btns\"><button type=\"button\" class=\"hos-off-btn\" data-act=\"retry\" data-i18n=\"retry\"></button><a class=\"hos-off-btn alt\" data-act=\"home\" href=\"#\" data-i18n=\"home\"></a><button type=\"button\" class=\"hos-off-btn alt\" data-act=\"dismiss\" data-i18n=\"dismiss\"></button></div><p class=\"hos-off-hint\" data-i18n=\"hint\"></p></div>"
+const OFF_TEMPLATE_CSS: Str = ".hos-off-backdrop{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;padding:18px;background:radial-gradient(circle at 50% 40%,rgba(47,58,68,.92) 0%,rgba(10,12,14,.97) 100%);font-family:Arial,sans-serif;color:#fff;overflow:auto;}.hos-off-backdrop[hidden]{display:none!important;}.hos-off-card{width:100%;max-width:520px;background:rgba(18,18,18,.92);border:1px solid #3A4A55;border-radius:12px;padding:28px 24px 22px;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.65),0 0 30px rgba(0,212,255,.10);line-height:1.55;}.hos-off-ico{color:#ff4d5e;display:flex;justify-content:center;margin-bottom:6px;animation:hosOffPulse 2s ease-in-out infinite;}.hos-off-tag{display:inline-flex;align-items:center;gap:8px;font-family:\"Courier New\",Consolas,monospace;font-size:12.5px;letter-spacing:3px;color:#ff4d5e;border:1px solid #ff4d5e;background:rgba(255,77,94,.1);border-radius:3px;padding:3px 12px;margin-bottom:12px;}.hos-off-tag i{width:8px;height:8px;border-radius:50%;background:currentColor;animation:hosOffBlink .9s infinite;}.hos-off-card.ok .hos-off-tag{color:#35e08a;border-color:#35e08a;background:rgba(53,224,138,.1);}.hos-off-card.ok .hos-off-ico{color:#35e08a;animation:none;}.hos-off-title{font-size:clamp(20px,5vw,26px);margin:0 0 8px;font-weight:bold;color:#fff;}.hos-off-msg{color:#B0B0B0;font-size:15px;margin:0 0 14px;}.hos-off-info{list-style:none;margin:0 0 12px;padding:10px 12px;background:rgba(47,58,68,.7);border-radius:8px;text-align:left;font-family:\"Courier New\",Consolas,monospace;font-size:12.5px;color:#B0B0B0;}.hos-off-info li{margin:2px 0;word-break:break-all;}.hos-off-info b{color:#00d4ff;font-weight:normal;}.hos-off-status{min-height:1.4em;margin-bottom:10px;font-family:\"Courier New\",Consolas,monospace;font-size:13px;color:#00d4ff;}.hos-off-status.bad{color:#ff4d5e;}.hos-off-status.good{color:#35e08a;}.hos-off-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:12px;}.hos-off-btn{display:inline-block;padding:10px 20px;background:#B0B0B0;color:#121212;text-decoration:none;border-radius:5px;font-weight:bold;border:2px solid #B0B0B0;cursor:pointer;font-size:15px;font-family:inherit;transition:background-color .25s,transform .25s,box-shadow .25s;}.hos-off-btn:hover,.hos-off-btn:focus-visible{background:#fff;transform:scale(1.04);box-shadow:0 4px 14px rgba(0,212,255,.35);outline:none;}.hos-off-btn.alt{background:transparent;color:#fff;border-color:#3A4A55;}.hos-off-btn.alt:hover,.hos-off-btn.alt:focus-visible{background:#2F3A44;border-color:#00d4ff;}.hos-off-backdrop[data-mode=\"page\"] [data-act=\"dismiss\"]{display:none;}.hos-off-hint{margin:0;font-size:11.5px;color:#6f7f8a;}@keyframes hosOffPulse{50%{opacity:.45;transform:scale(.94)}}@keyframes hosOffBlink{50%{opacity:.15}}@media(prefers-reduced-motion:reduce){.hos-off-ico,.hos-off-tag i{animation:none!important}}"
+
+let OFF_BASE: Str = "/"
+let OFF_NO_OVERLAY: Bool = false      !! 404.html ma wlasny ekran offline
+let off_root: Any = null
+let off_prev_focus: Any = null
+let off_dismissed: Bool = false
+let off_checking: Bool = false
+let off_prev_overflow: Str = ""
+let off_i18n_cache: Any = null
+
+!! ── tlumaczenia (10 jezykow) ───────────────────────────────────────────
+fun off_i18n() -> Any [
+    if off_i18n_cache != null [
+        end off_i18n_cache
+    ]
+    let i = js_obj()
+    let v1 = js_obj()
+    jset(v1, "tag", "OFFLINE")
+    jset(v1, "title", "Brak połączenia z internetem")
+    jset(v1, "msg", "Nie możesz teraz przeglądać strony HackerOS. Sprawdź kabel, Wi-Fi lub dane komórkowe – wrócimy automatycznie, gdy sieć wróci.")
+    jset(v1, "hint", "Ten komunikat jest zapisany lokalnie w Twojej przeglądarce, więc wyświetli się nawet bez internetu.")
+    jset(v1, "lastOnline", "Ostatnio online:")
+    jset(v1, "lastPage", "Ostatnia strona:")
+    jset(v1, "never", "brak danych")
+    jset(v1, "retry", "Spróbuj ponownie")
+    jset(v1, "home", "Strona główna")
+    jset(v1, "dismiss", "Kontynuuj offline")
+    jset(v1, "checking", "Sprawdzanie połączenia...")
+    jset(v1, "still", "Nadal brak sieci.")
+    jset(v1, "restored", "Połączenie przywrócone!")
+    jset(i, "pl", v1)
+    let v15 = js_obj()
+    jset(v15, "tag", "OFFLINE")
+    jset(v15, "title", "No internet connection")
+    jset(v15, "msg", "You cannot browse the HackerOS website right now. Check your cable, Wi-Fi or mobile data – we will come back automatically when the network returns.")
+    jset(v15, "hint", "This message is stored locally in your browser, so it shows even without internet.")
+    jset(v15, "lastOnline", "Last online:")
+    jset(v15, "lastPage", "Last page:")
+    jset(v15, "never", "no data")
+    jset(v15, "retry", "Try again")
+    jset(v15, "home", "Home page")
+    jset(v15, "dismiss", "Continue offline")
+    jset(v15, "checking", "Checking connection...")
+    jset(v15, "still", "Still offline.")
+    jset(v15, "restored", "Connection restored!")
+    jset(i, "en", v15)
+    let v29 = js_obj()
+    jset(v29, "tag", "OFFLINE")
+    jset(v29, "title", "Keine Internetverbindung")
+    jset(v29, "msg", "Du kannst die HackerOS-Website gerade nicht aufrufen. Prüfe Kabel, WLAN oder mobile Daten – wir kehren automatisch zurück, sobald das Netz wieder da ist.")
+    jset(v29, "hint", "Diese Meldung ist lokal in deinem Browser gespeichert und erscheint daher auch ohne Internet.")
+    jset(v29, "lastOnline", "Zuletzt online:")
+    jset(v29, "lastPage", "Letzte Seite:")
+    jset(v29, "never", "keine Daten")
+    jset(v29, "retry", "Erneut versuchen")
+    jset(v29, "home", "Startseite")
+    jset(v29, "dismiss", "Offline fortfahren")
+    jset(v29, "checking", "Verbindung wird geprüft...")
+    jset(v29, "still", "Weiterhin offline.")
+    jset(v29, "restored", "Verbindung wiederhergestellt!")
+    jset(i, "de", v29)
+    let v43 = js_obj()
+    jset(v43, "tag", "OFFLINE")
+    jset(v43, "title", "Pas de connexion Internet")
+    jset(v43, "msg", "Vous ne pouvez pas consulter le site HackerOS pour le moment. Vérifiez votre câble, le Wi-Fi ou les données mobiles – nous reviendrons automatiquement dès que le réseau sera rétabli.")
+    jset(v43, "hint", "Ce message est enregistré localement dans votre navigateur ; il s’affiche donc même sans Internet.")
+    jset(v43, "lastOnline", "Dernière connexion :")
+    jset(v43, "lastPage", "Dernière page :")
+    jset(v43, "never", "aucune donnée")
+    jset(v43, "retry", "Réessayer")
+    jset(v43, "home", "Accueil")
+    jset(v43, "dismiss", "Continuer hors ligne")
+    jset(v43, "checking", "Vérification de la connexion...")
+    jset(v43, "still", "Toujours hors ligne.")
+    jset(v43, "restored", "Connexion rétablie !")
+    jset(i, "fr", v43)
+    let v57 = js_obj()
+    jset(v57, "tag", "OFFLINE")
+    jset(v57, "title", "Sin conexión a internet")
+    jset(v57, "msg", "No puedes navegar por el sitio de HackerOS ahora mismo. Revisa el cable, el Wi-Fi o los datos móviles – volveremos automáticamente cuando regrese la red.")
+    jset(v57, "hint", "Este mensaje está guardado localmente en tu navegador, así que se muestra incluso sin internet.")
+    jset(v57, "lastOnline", "Última conexión:")
+    jset(v57, "lastPage", "Última página:")
+    jset(v57, "never", "sin datos")
+    jset(v57, "retry", "Reintentar")
+    jset(v57, "home", "Inicio")
+    jset(v57, "dismiss", "Continuar sin conexión")
+    jset(v57, "checking", "Comprobando conexión...")
+    jset(v57, "still", "Sigue sin conexión.")
+    jset(v57, "restored", "¡Conexión restablecida!")
+    jset(i, "es", v57)
+    let v71 = js_obj()
+    jset(v71, "tag", "OFFLINE")
+    jset(v71, "title", "Nessuna connessione a internet")
+    jset(v71, "msg", "Al momento non puoi navigare sul sito di HackerOS. Controlla cavo, Wi-Fi o dati mobili – torneremo automaticamente quando la rete sarà di nuovo disponibile.")
+    jset(v71, "hint", "Questo messaggio è salvato localmente nel tuo browser, quindi appare anche senza internet.")
+    jset(v71, "lastOnline", "Ultima connessione:")
+    jset(v71, "lastPage", "Ultima pagina:")
+    jset(v71, "never", "nessun dato")
+    jset(v71, "retry", "Riprova")
+    jset(v71, "home", "Pagina iniziale")
+    jset(v71, "dismiss", "Continua offline")
+    jset(v71, "checking", "Controllo della connessione...")
+    jset(v71, "still", "Ancora offline.")
+    jset(v71, "restored", "Connessione ripristinata!")
+    jset(i, "it", v71)
+    let v85 = js_obj()
+    jset(v85, "tag", "OFFLINE")
+    jset(v85, "title", "Нет подключения к интернету")
+    jset(v85, "msg", "Сейчас вы не можете просматривать сайт HackerOS. Проверьте кабель, Wi-Fi или мобильные данные – мы автоматически вернёмся, когда сеть появится.")
+    jset(v85, "hint", "Это сообщение сохранено локально в вашем браузере, поэтому оно отображается даже без интернета.")
+    jset(v85, "lastOnline", "Последний раз онлайн:")
+    jset(v85, "lastPage", "Последняя страница:")
+    jset(v85, "never", "нет данных")
+    jset(v85, "retry", "Повторить")
+    jset(v85, "home", "Главная")
+    jset(v85, "dismiss", "Продолжить офлайн")
+    jset(v85, "checking", "Проверка соединения...")
+    jset(v85, "still", "Сети по-прежнему нет.")
+    jset(v85, "restored", "Соединение восстановлено!")
+    jset(i, "ru", v85)
+    let v99 = js_obj()
+    jset(v99, "tag", "OFFLINE")
+    jset(v99, "title", "Немає підключення до інтернету")
+    jset(v99, "msg", "Зараз ви не можете переглядати сайт HackerOS. Перевірте кабель, Wi-Fi або мобільні дані – ми автоматично повернемося, коли мережа з’явиться.")
+    jset(v99, "hint", "Це повідомлення збережено локально у вашому браузері, тому воно відображається навіть без інтернету.")
+    jset(v99, "lastOnline", "Востаннє онлайн:")
+    jset(v99, "lastPage", "Остання сторінка:")
+    jset(v99, "never", "немає даних")
+    jset(v99, "retry", "Спробувати знову")
+    jset(v99, "home", "Головна")
+    jset(v99, "dismiss", "Продовжити офлайн")
+    jset(v99, "checking", "Перевірка з’єднання...")
+    jset(v99, "still", "Мережі все ще немає.")
+    jset(v99, "restored", "З’єднання відновлено!")
+    jset(i, "uk", v99)
+    let v113 = js_obj()
+    jset(v113, "tag", "OFFLINE")
+    jset(v113, "title", "无法连接到互联网")
+    jset(v113, "msg", "您目前无法浏览 HackerOS 网站。请检查网线、Wi-Fi 或移动数据——网络恢复后我们会自动返回。")
+    jset(v113, "hint", "此提示已保存在您浏览器的本地存储中，因此即使没有网络也能显示。")
+    jset(v113, "lastOnline", "上次在线：")
+    jset(v113, "lastPage", "上次访问的页面：")
+    jset(v113, "never", "无数据")
+    jset(v113, "retry", "重试")
+    jset(v113, "home", "首页")
+    jset(v113, "dismiss", "继续离线浏览")
+    jset(v113, "checking", "正在检查连接…")
+    jset(v113, "still", "仍处于离线状态。")
+    jset(v113, "restored", "连接已恢复！")
+    jset(i, "zh", v113)
+    let v127 = js_obj()
+    jset(v127, "tag", "OFFLINE")
+    jset(v127, "title", "インターネットに接続できません")
+    jset(v127, "msg", "現在 HackerOS のサイトを閲覧できません。ケーブル、Wi-Fi、モバイルデータを確認してください。ネットワークが回復すると自動的に戻ります。")
+    jset(v127, "hint", "このメッセージはブラウザのローカルストレージに保存されているため、インターネットがなくても表示されます。")
+    jset(v127, "lastOnline", "最後にオンラインだった時刻：")
+    jset(v127, "lastPage", "最後のページ：")
+    jset(v127, "never", "データなし")
+    jset(v127, "retry", "再試行")
+    jset(v127, "home", "ホーム")
+    jset(v127, "dismiss", "オフラインのまま続ける")
+    jset(v127, "checking", "接続を確認しています…")
+    jset(v127, "still", "まだオフラインです。")
+    jset(v127, "restored", "接続が回復しました！")
+    jset(i, "ja", v127)
+    off_i18n_cache = i
+    end i
+]
+
+!! ── bezpieczny dostep do localStorage (JSON) ───────────────────────────
+fun ls_get_json(k: Str) -> Any [
+    let v = localStorage.getItem(k)
+    if v == null or v == "" [
+        end null
+    ]
+    end JSON.parse(v)
+]
+
+fun ls_set_json(k: Str, v: Any) -> Bool [
+    localStorage.setItem(k, JSON.stringify(v))
+    end true
+]
+
+fun build_payload() -> Any [
+    let p = js_obj()
+    p.v = OFF_VERSION
+    p.base = OFF_BASE
+    p.savedAt = Date.now()
+    p.html = OFF_TEMPLATE_HTML
+    p.css = OFF_TEMPLATE_CSS
+    p.i18n = off_i18n()
+    end p
+]
+
+fun persist_dialog() -> Any [
+    let cur = ls_get_json(OFF_KEY)
+    if cur != null and cur.v == OFF_VERSION and cur.base == OFF_BASE and cur.html and cur.css and cur.i18n [
+        end cur
+    ]
+    let p = build_payload()
+    ls_set_json(OFF_KEY, p)
+    end p
+]
+
+fun get_payload() -> Any [
+    let p = ls_get_json(OFF_KEY)
+    if p != null and p.html and p.css and p.i18n [
+        end p
+    ]
+    end build_payload()
+]
+
+!! ── stan: ostatnia strona, ostatni moment online, licznik rozlaczen ────
+fun get_state() -> Any [
+    let s = ls_get_json(OFF_STATE_KEY)
+    if s != null [
+        end s
+    ]
+    let n = js_obj()
+    n.lastOnline = 0
+    n.lastPage = ""
+    n.lastTitle = ""
+    n.offlineCount = 0
+    n.lastOffline = 0
+    n.visits = 0
+    end n
+]
+
+fun save_state(s: Any) [
+    ls_set_json(OFF_STATE_KEY, s)
+]
+
+fun touch_online(new_visit: Bool) [
+    let s = get_state()
+    s.lastOnline = Date.now()
+    s.lastPage = location.href
+    s.lastTitle = document.title or ""
+    if new_visit [
+        s.visits = (s.visits or 0) + 1
+    ]
+    save_state(s)
+]
+
+!! ── jezyk ──────────────────────────────────────────────────────────────
+fun off_lang() -> Str [
+    let i = off_i18n()
+    let l = localStorage.getItem(OFF_LANG_KEY)
+    if l == null or l == "" or not jhas(i, l) [
+        l = (navigator.language or "pl").slice(0, 2).toLowerCase()
+    ]
+    if jhas(i, l) [
+        end l
+    ]
+    end "pl"
+]
+
+!! ── renderowanie dialogu z zapisanych danych ───────────────────────────
+fun fmt_ago(ts: Any, lang: Str, never: Str) -> Str [
+    if ts == null or ts == 0 [
+        end never
+    ]
+    let diff = Math.round((ts - Date.now()) / 1000)
+    let abs = Math.abs(diff)
+    let rel = ""
+    let opts = js_obj()
+    opts.numeric = "auto"
+    let rtf = Reflect.construct(Intl.RelativeTimeFormat, [lang, opts])
+    if abs < 60 [
+        rel = rtf.format(diff, "second")
+    ] elif abs < 3600 [
+        rel = rtf.format(Math.round(diff / 60), "minute")
+    ] elif abs < 86400 [
+        rel = rtf.format(Math.round(diff / 3600), "hour")
+    ] else [
+        rel = rtf.format(Math.round(diff / 86400), "day")
+    ]
+    let abs2 = Reflect.construct(Date, [ts]).toLocaleString(lang)
+    if rel != "" [
+        end abs2 + " (" + rel + ")"
+    ]
+    end abs2
+]
+
+fun fill_one(el: Any) [
+    let t = off_fill_t
+    el.textContent = jget(t, el.getAttribute("data-i18n")) or ""
+]
+
+let off_fill_t: Any = null
+
+fun fill(root: Any, payload: Any, lang: Str) -> Any [
+    let t = jget(payload.i18n, lang) or payload.i18n.pl or js_obj()
+    let s = get_state()
+    off_fill_t = t
+    root.querySelectorAll("[data-i18n]").forEach(fill_one)
+    let lo = root.querySelector("[data-slot=\"lastOnline\"]")
+    if lo != null [
+        lo.textContent = fmt_ago(s.lastOnline, lang, t.never)
+    ]
+    let lp = root.querySelector("[data-slot=\"lastPage\"]")
+    if lp != null [
+        if s.lastPage [
+            let title_part = ""
+            if s.lastTitle [
+                title_part = s.lastTitle + " – "
+            ]
+            lp.textContent = title_part + rx_replace(s.lastPage, rx("^https?:\\/\\/[^/]+"), "")
+        ] else [
+            lp.textContent = t.never
+        ]
+    ]
+    let home = root.querySelector("[data-act=\"home\"]")
+    if home != null [
+        home.setAttribute("href", (payload.base or OFF_BASE) + "Home-page.html")
+    ]
+    end t
+]
+
+!! ── sprawdzanie realnej lacznosci (navigator.onLine bywa mylace) ───────
+!! Zwraca Promise<bool>; zapytanie HEAD do sw.js nie jest przechwytywane przez Service Workera.
+fun ping() -> Any [
+    end Reflect.construct(Promise, [ping_executor])
+]
+
+fun ping_executor(resolve: Any) [
+    let done = false
+    let ctrl = Reflect.construct(AbortController, [])
+    fun on_timeout() [
+        ctrl.abort()
+        if not done [
+            done = true
+            resolve(false)
+        ]
+    ]
+    let to = setTimeout(on_timeout, 4000)
+    fun on_ok(r: Any) [
+        clearTimeout(to)
+        if not done [
+            done = true
+            resolve(r != null and r.status < 500)
+        ]
+    ]
+    fun on_err(e: Any) [
+        clearTimeout(to)
+        if not done [
+            done = true
+            resolve(false)
+        ]
+    ]
+    let opts = js_obj()
+    opts.method = "HEAD"
+    opts.cache = "no-store"
+    opts.signal = ctrl.signal
+    fetch(OFF_BASE + "sw.js?_=" + Date.now(), opts).then(on_ok).catch(on_err)
+]
+
+!! ── overlay na otwartej stronie ────────────────────────────────────────
+fun off_visible(n: Any) -> Bool [
+    end n.offsetParent != null
+]
+
+fun off_on_click(e: Any) [
+    let b = e.target.closest("[data-act]")
+    if b == null [
+        end
+    ]
+    let act = b.getAttribute("data-act")
+    if act == "retry" [
+        e.preventDefault()
+        recheck()
+    ] elif act == "dismiss" [
+        e.preventDefault()
+        off_dismissed = true
+        hide()
+    ]
+]
+
+fun off_on_keydown(e: Any) [
+    if e.key == "Escape" [
+        off_dismissed = true
+        hide()
+        end
+    ]
+    if e.key != "Tab" [
+        end
+    ]
+    let f = Array.prototype.filter.call(off_root.querySelectorAll("button,a[href]"), off_visible)
+    if f.length == 0 [
+        end
+    ]
+    let first = f[0]
+    let last = f[f.length - 1]
+    if e.shiftKey and document.activeElement == first [
+        e.preventDefault()
+        last.focus()
+    ] elif not e.shiftKey and document.activeElement == last [
+        e.preventDefault()
+        first.focus()
+    ]
+]
+
+fun ensure_overlay() -> Any [
+    if off_root != null [
+        end off_root
+    ]
+    let payload = get_payload()
+    let style_el = document.createElement("style")
+    style_el.id = "hos-off-style"
+    style_el.textContent = payload.css
+    (document.head or document.documentElement).appendChild(style_el)
+
+    off_root = document.createElement("div")
+    off_root.id = "hos-off-root"
+    off_root.className = "hos-off-backdrop"
+    off_root.setAttribute("role", "alertdialog")
+    off_root.setAttribute("aria-modal", "true")
+    off_root.setAttribute("aria-labelledby", "hos-off-title")
+    off_root.setAttribute("data-mode", "overlay")
+    off_root.hidden = true
+    off_root.innerHTML = payload.html
+    (document.body or document.documentElement).appendChild(off_root)
+
+    off_root.addEventListener("click", off_on_click)
+    off_root.addEventListener("keydown", off_on_keydown)
+    end off_root
+]
+
+fun set_status(txt: Any, cls: Str) [
+    if off_root == null [
+        end
+    ]
+    let el = off_root.querySelector("[data-slot=\"status\"]")
+    if el != null [
+        el.textContent = txt or ""
+        el.className = "hos-off-status"
+        if cls != "" [
+            el.className = "hos-off-status " + cls
+        ]
+    ]
+]
+
+fun show() -> Any [
+    if OFF_NO_OVERLAY or off_dismissed [
+        end null
+    ]
+    let r = ensure_overlay()
+    let lang = off_lang()
+    let t = fill(r, get_payload(), lang)
+    cl_rm(r.querySelector(".hos-off-card"), "ok")
+    set_status("", "")
+    r.lang = lang
+    if r.hidden [
+        off_prev_focus = document.activeElement
+        off_prev_overflow = document.documentElement.style.overflow
+        document.documentElement.style.overflow = "hidden"
+        r.hidden = false
+        let btn = r.querySelector("[data-act=\"retry\"]")
+        if btn != null [
+            btn.focus()
+        ]
+    ]
+    end t
+]
+
+fun hide() [
+    if off_root == null or off_root.hidden [
+        end
+    ]
+    off_root.hidden = true
+    document.documentElement.style.overflow = off_prev_overflow
+    if off_prev_focus != null and not nil(off_prev_focus.focus) [
+        off_prev_focus.focus()
+    ]
+]
+
+fun off_after_restored() [
+    off_dismissed = false
+    hide()
+]
+
+let off_recheck_t: Any = null
+
+fun off_on_ping(ok: Any) [
+    off_checking = false
+    let t = off_recheck_t
+    if ok [
+        touch_online(false)
+        if off_root != null [
+            off_root.querySelector(".hos-off-card").classList.add("ok")
+        ]
+        set_status(t.restored, "good")
+        setTimeout(off_after_restored, 1200)
+    ] else [
+        set_status(t.still, "bad")
+        if off_root == null or off_root.hidden [
+            show()
+        ]
+    ]
+]
+
+fun recheck() [
+    if off_checking [
+        end
+    ]
+    off_checking = true
+    let t = jget(get_payload().i18n, off_lang()) or js_obj()
+    off_recheck_t = t
+    set_status(t.checking, "")
+    ping().then(off_on_ping)
+]
+
+!! ── zdarzenia sieci ────────────────────────────────────────────────────
+fun off_on_offline(e: Any) [
+    let s = get_state()
+    s.offlineCount = (s.offlineCount or 0) + 1
+    s.lastOffline = Date.now()
+    save_state(s)
+    off_dismissed = false
+    show()
+]
+
+fun off_on_online(e: Any) [
+    if off_root != null and not off_root.hidden [
+        recheck()
+    ] else [
+        touch_online(false)
+    ]
+]
+
+!! tetno: gdy uzytkownik jest online, odswiezamy "ostatnio online"
+fun off_heartbeat() [
+    if navigator.onLine and (off_root == null or off_root.hidden) [
+        touch_online(false)
+    ]
+]
+
+fun off_on_visibility(e: Any) [
+    if document.visibilityState == "visible" and not navigator.onLine [
+        show()
+    ]
+]
+
+fun off_on_load(e: Any) [
+    navigator.serviceWorker.register(OFF_BASE + "sw.js", off_sw_opts()).catch(sw_ignore)
+]
+
+fun off_sw_opts() -> Any [
+    let o = js_obj()
+    o.scope = OFF_BASE
+    end o
+]
+
+!! Publiczne API (np. do testow w konsoli: HackerOffline.show())
+fun off_api_show() [
+    off_dismissed = false
+    show()
+]
+
+fun off_api_hide() [
+    hide()
+]
+
+fun off_api_check() [
+    recheck()
+]
+
+fun off_expose_api() [
+    let api = js_obj()
+    api.show = off_api_show
+    api.hide = off_api_hide
+    api.check = off_api_check
+    api.ping = ping
+    api.key = OFF_KEY
+    api.stateKey = OFF_STATE_KEY
+    window.HackerOffline = api
+]
+
+!! ── start ──────────────────────────────────────────────────────────────
+fun offline_no_overlay() [
+    OFF_NO_OVERLAY = true
+]
+
+!! root_rel: sciezka od strony do korzenia serwisu ("" | "../" | "../../")
+fun offline_init(root_rel: Str) [
+    OFF_BASE = Reflect.construct(URL, [root_rel + ".", location.href]).pathname
+    if navigator.onLine [
+        persist_dialog()   !! zapis dialogu w localStorage (jeszcze przed reszta strony)
+        touch_online(true) !! zapis stanu
+    ] else [
+        show()             !! strona z cache przegladarki otwarta bez sieci
+    ]
+    window.addEventListener("offline", off_on_offline)
+    window.addEventListener("online", off_on_online)
+    setInterval(off_heartbeat, 20000)
+    document.addEventListener("visibilitychange", off_on_visibility)
+    if not nil(navigator.serviceWorker) and location.protocol.indexOf("http") == 0 [
+        window.addEventListener("load", off_on_load)
+    ]
+    off_expose_api()
+]
