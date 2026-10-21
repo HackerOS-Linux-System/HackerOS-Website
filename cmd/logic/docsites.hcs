@@ -1,0 +1,569 @@
+include <doc_copy>
+include <scrollspy>
+
+!! ═══════════════ hacker-lang/docs.html ═══════════════════════════════════
+let hl_btn_label: Str = "KOPIUJ"
+
+fun hl_style_btn(btn: Any) [
+    btn.style.cssText = "\n    margin-left: auto; background: rgba(168,85,247,0.12);\n    border: 1px solid rgba(168,85,247,0.25); color: #c084fc;\n    font-family: 'Space Mono', monospace; font-size: 9px;\n    letter-spacing: 2px; padding: 3px 10px; border-radius: 2px;\n    cursor: pointer; text-transform: uppercase; transition: all 0.15s;\n  "
+]
+
+fun hl_code_block(block: Any) [
+    let header = block.querySelector(".code-header")
+    if header == null [
+        end
+    ]
+    let btn = document.createElement("button")
+    btn.textContent = "KOPIUJ"
+    hl_style_btn(btn)
+
+    fun on_enter(e: Any) [
+        btn.style.background = "rgba(168,85,247,0.22)"
+    ]
+    fun on_leave(e: Any) [
+        btn.style.background = "rgba(168,85,247,0.12)"
+    ]
+    btn.addEventListener("mouseenter", on_enter)
+    btn.addEventListener("mouseleave", on_leave)
+
+    fun reset_btn() [
+        btn.textContent = "KOPIUJ"
+        btn.style.color = "#c084fc"
+        btn.style.borderColor = "rgba(168,85,247,0.25)"
+    ]
+    fun copied(x: Any) [
+        btn.textContent = "SKOPIOWANO"
+        btn.style.color = "#34d399"
+        btn.style.borderColor = "rgba(52,211,153,0.3)"
+        setTimeout(reset_btn, 1800)
+    ]
+    fun on_click(e: Any) [
+        let pre = block.querySelector("pre")
+        if pre == null [
+            end
+        ]
+        navigator.clipboard.writeText(pre.innerText).then(copied)
+    ]
+    btn.addEventListener("click", on_click)
+    header.appendChild(btn)
+]
+
+!! ── playground (WASM) ──
+let pg_run_hl: Any = null
+let pg_status: Any = null
+let pg_run_btn: Any = null
+let pg_editor: Any = null
+let pg_output: Any = null
+const HL_WASM_URL: Str = "https://github.com/HackerOS-Linux-System/Hacker-Lang/releases/download/gen-2/hl-playground.wasm"
+
+fun pg_set_status(text: Str, cls: Str) [
+    pg_status.textContent = text
+    pg_status.className = "playground-status"
+    if cls != "" [
+        pg_status.className = "playground-status " + cls
+    ]
+]
+
+fun pg_escape(s: Any) -> Str [
+    end String(s).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+]
+
+fun pg_show_error(msg: Any) [
+    console.error("[hl playground] błąd ładowania:", msg)
+    pg_set_status("błąd ładowania", "status-error")
+    pg_output.innerHTML = "<span class=\"out-error\">Nie udało się załadować playgroundu: " + pg_escape(msg) + "</span>" + "<span class=\"out-exit\">Sprawdź w konsoli przeglądarki (F12) — zwykle to brak CORS albo brak hl-playground.js obok .wasm w release'u.</span>"
+]
+
+fun pg_fail(err: Any) -> Any [
+    pg_show_error(err.message or String(err))
+    end null
+]
+
+async fun pg_load() [
+    pg_set_status("pobieram WASM…", "")
+    let resp = await fetch(HL_WASM_URL).catch(pg_fail)
+    if resp == null [
+        end
+    ]
+    if not resp.ok [
+        pg_show_error("nie mogę pobrać .wasm (HTTP " + resp.status + ")")
+        end
+    ]
+    let wasm_bytes = await resp.arrayBuffer()
+    pg_set_status("inicjalizuję…", "")
+    let js_url = rx_replace(HL_WASM_URL, rx("\\.wasm$"), ".js")
+    let mod = await dyn_import(js_url).catch(pg_fail)
+    if mod == null [
+        end
+    ]
+    await jget(mod, "default")(wasm_bytes)
+    pg_run_hl = mod.run_hl
+    pg_set_status("gotowe", "status-ready")
+    pg_run_btn.disabled = false
+]
+
+fun pg_run_one(src: Any) -> Any [
+    end pg_run_hl(src)
+]
+
+fun pg_show_result(result: Any) [
+    let html = ""
+    if result.output [
+        html = pg_escape(result.output)
+    ]
+    if not result.ok [
+        let sep = ""
+        if html != "" [
+            sep = "\n"
+        ]
+        html = html + sep + "<span class=\"out-error\">" + pg_escape(result.error) + "</span>"
+    ]
+    html = html + "<span class=\"out-exit\">exit code: " + result.exit_code + "</span>"
+    pg_output.innerHTML = html
+    pg_run_btn.disabled = false
+]
+
+fun pg_show_internal(err: Any) [
+    pg_output.innerHTML = "<span class=\"out-error\">Błąd wewnętrzny: " + pg_escape(err.message or String(err)) + "</span>"
+    pg_run_btn.disabled = false
+]
+
+fun pg_on_run(e: Any) [
+    if pg_run_hl == null [
+        end
+    ]
+    pg_run_btn.disabled = true
+    pg_output.textContent = ""
+    Promise.resolve(pg_editor.value).then(pg_run_one).then(pg_show_result).catch(pg_show_internal)
+]
+
+fun hl_playground_init() [
+    pg_status = document.getElementById("pg-status")
+    pg_run_btn = document.getElementById("pg-run")
+    pg_editor = document.getElementById("pg-editor")
+    pg_output = document.getElementById("pg-output")
+    !! sekcja #playground nie istnieje na tej stronie -> nic do zrobienia
+    if pg_status == null or pg_run_btn == null or pg_editor == null or pg_output == null [
+        end
+    ]
+    pg_run_btn.addEventListener("click", pg_on_run)
+    pg_load()
+]
+
+fun hacker_lang_docs_init() [
+    scrollspy("section[id]", ".sidebar a", "-20% 0px -70% 0px", 0.0)
+    document.querySelectorAll(".code-block").forEach(hl_code_block)
+    hl_playground_init()
+]
+
+!! ═══════════════ hackeros-games/docs.html ════════════════════════════════
+let g_sections: Any = null
+let g_nav_links: Any = null
+let g_breadcrumb: Any = null
+let g_sidebar: Any = null
+let g_menu_btn: Any = null
+let g_section_ids: Any = null
+
+fun g_deactivate(el: Any) [
+    cl_rm(el, "active")
+]
+
+fun g_activate_section(id: Str) [
+    g_sections.forEach(g_deactivate)
+    g_nav_links.forEach(g_deactivate)
+    let target = document.getElementById(id)
+    if target != null [
+        target.classList.add("active")
+    ]
+    let active_link = document.querySelector("[data-section=\"" + id + "\"]")
+    if active_link != null [
+        active_link.classList.add("active")
+        g_breadcrumb.textContent = active_link.textContent.trim()
+    ]
+    document.querySelector(".doc-body").scrollTo(0, 0)
+]
+
+fun g_on_nav_click(e: Any) [
+    e.preventDefault()
+    let section = e.currentTarget.dataset.section
+    g_activate_section(section)
+    history.pushState(null, "", "#" + section)
+    !! zamknij sidebar na mobile
+    if window.innerWidth <= 900 [
+        cl_rm(g_sidebar, "open")
+    ]
+]
+
+fun g_load_from_hash(e: Any) [
+    let hash = window.location.hash.replace("#", "")
+    if hash and document.getElementById(hash) [
+        g_activate_section(hash)
+    ] else [
+        g_activate_section("overview")
+    ]
+]
+
+fun g_on_menu(e: Any) [
+    g_sidebar.classList.toggle("open")
+]
+
+fun g_on_doc_click(e: Any) [
+    if window.innerWidth <= 900 and not node_contains(g_sidebar, e.target) and e.target != g_menu_btn [
+        cl_rm(g_sidebar, "open")
+    ]
+]
+
+fun g_is_active(id: Str) -> Bool [
+    end document.getElementById(id).classList.contains("active")
+]
+
+fun g_current_index() -> Int [
+    let i = 0
+    while i < g_section_ids.length [
+        if g_is_active(g_section_ids[i]) [
+            end i
+        ]
+        i = i + 1
+    ]
+    end -1
+]
+
+fun g_on_keydown(e: Any) [
+    if e.target.tagName == "INPUT" or e.target.tagName == "TEXTAREA" [
+        end
+    ]
+    let current = g_current_index()
+    let n = g_section_ids.length
+    if e.key == "ArrowRight" or e.key == "ArrowDown" [
+        e.preventDefault()
+        let next = g_section_ids[(current + 1) % n]
+        g_activate_section(next)
+        history.pushState(null, "", "#" + next)
+    ]
+    if e.key == "ArrowLeft" or e.key == "ArrowUp" [
+        e.preventDefault()
+        let prev = g_section_ids[(current - 1 + n) % n]
+        g_activate_section(prev)
+        history.pushState(null, "", "#" + prev)
+    ]
+]
+
+fun g_code_block(block: Any) [
+    let wrapper = document.createElement("div")
+    wrapper.style.cssText = "position:relative"
+    let btn = document.createElement("button")
+    btn.textContent = "COPY"
+    btn.style.cssText = "\n    position: absolute;\n    top: 8px;\n    right: 8px;\n    background: transparent;\n    border: 1px solid #18253a;\n    color: #4a5e78;\n    font-family: 'Share Tech Mono', monospace;\n    font-size: 10px;\n    letter-spacing: 2px;\n    padding: 3px 8px;\n    cursor: pointer;\n    transition: all 0.15s;\n  "
+
+    fun on_enter(e: Any) [
+        btn.style.color = "#2a90ff"
+        btn.style.borderColor = "#2a90ff"
+    ]
+    fun on_leave(e: Any) [
+        btn.style.color = "#4a5e78"
+        btn.style.borderColor = "#18253a"
+    ]
+    btn.addEventListener("mouseenter", on_enter)
+    btn.addEventListener("mouseleave", on_leave)
+
+    fun on_click(e: Any) [
+        let orig = btn.textContent
+        fun restore() [
+            btn.textContent = orig
+            btn.style.color = "#4a5e78"
+        ]
+        fun copied(x: Any) [
+            btn.textContent = "COPIED!"
+            btn.style.color = "#2a90ff"
+            setTimeout(restore, 1800)
+        ]
+        fun reset_err() [
+            btn.textContent = "COPY"
+        ]
+        fun failed(x: Any) [
+            btn.textContent = "ERR"
+            setTimeout(reset_err, 1500)
+        ]
+        navigator.clipboard.writeText(block.textContent.trim()).then(copied).catch(failed)
+    ]
+    btn.addEventListener("click", on_click)
+
+    block.parentNode.insertBefore(wrapper, block)
+    wrapper.appendChild(block)
+    wrapper.appendChild(btn)
+]
+
+fun g_on_keypress(e: Any) [
+    if e.target.tagName == "INPUT" [
+        end
+    ]
+    if e.key == "/" [
+        e.preventDefault()
+        if g_nav_links.length > 0 [
+            g_nav_links[0].focus()
+        ]
+    ]
+]
+
+fun g_section_id(s: Any) -> Any [
+    end s.id
+]
+
+fun games_docs_init() [
+    g_sections = document.querySelectorAll(".doc-section")
+    g_nav_links = document.querySelectorAll(".nav-link")
+    g_breadcrumb = document.getElementById("breadcrumb")
+    g_sidebar = document.getElementById("sidebar")
+    g_menu_btn = document.getElementById("menu-btn")
+    g_nav_links.forEach(g_bind_link)
+    window.addEventListener("hashchange", g_load_from_hash)
+    g_load_from_hash(null)
+    g_menu_btn.addEventListener("click", g_on_menu)
+    document.addEventListener("click", g_on_doc_click)
+    g_section_ids = Array.prototype.map.call(g_sections, g_section_id)
+    document.addEventListener("keydown", g_on_keydown)
+    document.querySelectorAll(".code-block").forEach(g_code_block)
+    document.addEventListener("keypress", g_on_keypress)
+    console.log("%cHACKEROS GAMES DOCS", "color:#2a90ff;font-family:monospace;font-size:18px;font-weight:bold")
+    console.log("%cv0.7.0 // TAURI 2 + REACT 18 + RUST", "color:#4a5e78;font-family:monospace;font-size:11px")
+    console.log("%cSECURE CONNECTION ESTABLISHED", "color:#2a90ff;font-family:monospace;font-size:10px")
+]
+
+fun g_bind_link(link: Any) [
+    link.addEventListener("click", g_on_nav_click)
+]
+
+!! ═══════════════ Blue-Environment/docs.html i HackerScript/docs.html ═════
+let sd_sections: Any = null
+let sd_links: Any = null
+let sd_current: Any = null
+let sd_search: Any = null
+let sd_haystack: Any = null
+let sd_sidebar: Any = null
+let sd_toggle: Any = null
+
+fun sd_on_toggle(e: Any) [
+    let open = sd_sidebar.classList.toggle("open")
+    if open [
+        sd_toggle.setAttribute("aria-expanded", "true")
+    ] else [
+        sd_toggle.setAttribute("aria-expanded", "false")
+    ]
+]
+
+fun sd_on_sidebar_click(e: Any) [
+    if e.target.tagName == "A" and window.innerWidth <= 860 [
+        cl_rm(sd_sidebar, "open")
+        sd_toggle.setAttribute("aria-expanded", "false")
+    ]
+]
+
+fun sd_init_nav() [
+    sd_toggle = document.getElementById("navToggle")
+    sd_sidebar = document.getElementById("sidebar")
+    if sd_toggle != null and sd_sidebar != null [
+        sd_toggle.addEventListener("click", sd_on_toggle)
+        sd_sidebar.addEventListener("click", sd_on_sidebar_click)
+    ]
+]
+
+!! kopiowanie: blue -> tekst <pre> w .code-block; hackerscript -> element wskazany w data-copy-target
+let sd_copy_mode: Str = "block"
+
+fun sd_btn_text(btn: Any) -> Any [
+    if sd_copy_mode == "target" [
+        let target = document.getElementById(btn.getAttribute("data-copy-target"))
+        if target == null [
+            end null
+        ]
+        end target.innerText
+    ]
+    let block = btn.closest(".code-block")
+    let pre = null
+    if block != null [
+        pre = block.querySelector("pre")
+    ]
+    if pre == null [
+        end null
+    ]
+    end pre.innerText
+]
+
+fun sd_bind_copy(btn: Any) [
+    fun on_click(e: Any) [
+        let text = sd_btn_text(btn)
+        if text == null [
+            end
+        ]
+        let original = btn.textContent
+        fun restore() [
+            btn.textContent = original
+            cl_rm(btn, "copied")
+        ]
+        fun done() [
+            btn.textContent = "Skopiowano"
+            btn.classList.add("copied")
+            setTimeout(restore, 1500)
+        ]
+        fun done_arg(x: Any) [
+            done()
+        ]
+        fun fallback(x: Any) [
+            doc_fallback_copy(text)
+            done()
+        ]
+        if navigator.clipboard and navigator.clipboard.writeText [
+            navigator.clipboard.writeText(text).then(done_arg).catch(fallback)
+        ] else [
+            fallback(null)
+        ]
+    ]
+    btn.addEventListener("click", on_click)
+]
+
+fun sd_link_for(id: Str) -> Any [
+    let i = 0
+    while i < sd_links.length [
+        if sd_links[i].getAttribute("href") == "#" + id [
+            end sd_links[i]
+        ]
+        i = i + 1
+    ]
+    end null
+]
+
+let sd_spy_active_only: Bool = false
+
+fun sd_spy_entry(en: Any) [
+    if not en.isIntersecting [
+        end
+    ]
+    let l = sd_link_for(en.target.id)
+    if l == null [
+        end
+    ]
+    if sd_current != null [
+        cl_rm(sd_current, "active")
+    ]
+    l.classList.add("active")
+    sd_current = l
+]
+
+fun sd_spy_cb(entries: Any) [
+    entries.forEach(sd_spy_entry)
+]
+
+fun sd_observe(s: Any) [
+    sd_observer.observe(s)
+]
+
+let sd_observer: Any = null
+
+fun sd_init_spy(margin: Str) [
+    sd_sections = Array.prototype.slice.call(document.querySelectorAll("section.doc-section[id]"))
+    sd_links = Array.prototype.slice.call(document.querySelectorAll(".sidebar a"))
+    if not nil(window.IntersectionObserver) and sd_sections.length > 0 [
+        sd_current = null
+        let o = js_obj()
+        o.rootMargin = margin
+        o.threshold = 0
+        sd_observer = Reflect.construct(IntersectionObserver, [sd_spy_cb, o])
+        sd_sections.forEach(sd_observe)
+    ]
+]
+
+fun sd_hay(s: Any) [
+    jset(sd_haystack, s.id, (s.innerText or s.textContent or "").toLowerCase())
+]
+
+fun sd_filter_link(a: Any) [
+    let q = sd_search.value.trim().toLowerCase()
+    let id = (a.getAttribute("href") or "").slice(1)
+    let matched = not q or a.textContent.toLowerCase().indexOf(q) != -1
+    if not matched and sd_haystack != null [
+        let h = jget(sd_haystack, id) or ""
+        matched = h.indexOf(q) != -1
+    ]
+    a.parentElement.classList.toggle("no-match", not matched)
+]
+
+fun sd_on_search_input(e: Any) [
+    sd_links.forEach(sd_filter_link)
+]
+
+!! blue: "/" i Escape (czysci pole); hackerscript: "/" gdy pole nie jest aktywne
+let sd_escape_clears: Bool = false
+
+fun sd_on_search_key(e: Any) [
+    let tag = ""
+    if document.activeElement != null [
+        tag = document.activeElement.tagName or ""
+    ]
+    if sd_escape_clears [
+        if e.key == "/" and tag != "INPUT" and tag != "TEXTAREA" [
+            e.preventDefault()
+            sd_search.focus()
+        ]
+        if e.key == "Escape" and document.activeElement == sd_search [
+            sd_search.value = ""
+            sd_search.dispatchEvent(Reflect.construct(Event, ["input"]))
+            sd_search.blur()
+        ]
+    ] else [
+        if e.key == "/" and document.activeElement != sd_search [
+            e.preventDefault()
+            sd_search.focus()
+        ]
+    ]
+]
+
+fun sd_init_search(with_haystack: Bool) [
+    sd_search = document.getElementById("docSearch")
+    if sd_search == null [
+        end
+    ]
+    if with_haystack [
+        sd_haystack = js_obj()
+        sd_sections.forEach(sd_hay)
+    ]
+    sd_search.addEventListener("input", sd_on_search_input)
+    document.addEventListener("keydown", sd_on_search_key)
+]
+
+!! ── Blue Environment ──
+fun sd_on_scroll(e: Any) [
+    document.getElementById("toTop").classList.toggle("show", window.scrollY > 700)
+]
+
+fun sd_on_to_top(e: Any) [
+    let o = js_obj()
+    o.top = 0
+    o.behavior = "smooth"
+    window.scrollTo(o)
+]
+
+fun blue_docs_init() [
+    sd_copy_mode = "block"
+    sd_escape_clears = true
+    sd_init_nav()
+    document.querySelectorAll(".copy-btn").forEach(sd_bind_copy)
+    sd_init_spy("-12% 0px -75% 0px")
+    sd_init_search(true)
+    let to_top = document.getElementById("toTop")
+    if to_top != null [
+        let opts = js_obj()
+        opts.passive = true
+        window.addEventListener("scroll", sd_on_scroll, opts)
+        to_top.addEventListener("click", sd_on_to_top)
+    ]
+]
+
+!! ── HackerScript docs ──
+fun hackerscript_docs_init() [
+    sd_copy_mode = "target"
+    sd_escape_clears = false
+    sd_init_nav()
+    document.querySelectorAll(".copy-btn").forEach(sd_bind_copy)
+    sd_init_spy("-15% 0px -70% 0px")
+    sd_init_search(false)
+]
