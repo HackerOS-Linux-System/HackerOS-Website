@@ -1,0 +1,17 @@
+use <mode:website>
+
+include <../shared/core>
+
+style {
+#app { display: none; }
+
+}
+
+let PAGE_BODY: Str = "  <p>Jeśli nie nastąpiło automatyczne przekierowanie, kliknij tutaj:\n    <a href=\"Home-page.html\">Przejdź do strony głównej</a>\n  </p>"
+
+fun main() [
+    boot_begin("pl", "Przekierowanie...")
+    head_tag("meta", ["http-equiv", "refresh", "content", "0; url=Home-page.html"])
+    boot_body(PAGE_BODY)
+    location.replace("Home-page.html")
+]
