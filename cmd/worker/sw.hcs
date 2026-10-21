@@ -1,0 +1,138 @@
+use <lang:javascript>
+
+const CACHE: Str = "hackeros-offline-v3"
+const OFFLINE_URL: Str = "offline.html"
+const NOT_FOUND_URL: Str = "404.html"
+const LOGO_URL: Str = "HackerOS.png"
+!! Skrypty stron offline/404 (kompilowane z HackerScript) musza byc w cache, bo te strony
+!! sa serwowane pod dowolnym adresem, gdy sieci nie ma.
+const OFFLINE_JS: Str = "offline.app.js"
+const NOT_FOUND_JS: Str = "404.app.js"
+
+!! "match" to slowo kluczowe HackerScript - metode wywolujemy przez prototyp
+fun proto_method(o: Any, name: Str) -> Any [
+    let cur = o
+    while cur != null [
+        let d = Object.getOwnPropertyDescriptor(cur, name)
+        if d [
+            end d.value
+        ]
+        cur = Object.getPrototypeOf(cur)
+    ]
+    end null
+]
+
+fun store_match(store: Any, key: Any) -> Any [
+    end proto_method(store, "match").call(store, key)
+]
+
+fun precache_list() -> Any [
+    end [OFFLINE_URL, OFFLINE_JS, NOT_FOUND_URL, NOT_FOUND_JS, LOGO_URL]
+]
+
+async fun do_install() -> Any [
+    let c = await caches.open(CACHE)
+    await c.addAll(precache_list())
+    await self.skipWaiting()
+]
+
+fun on_install(e: Any) [
+    e.waitUntil(do_install())
+]
+
+async fun do_activate() -> Any [
+    let keys = await proto_method(caches, "keys").call(caches)
+    let old = keys.filter(not_current_cache)
+    await Promise.all(old.map(delete_cache))
+    await self.clients.claim()
+]
+
+fun not_current_cache(k: Any) -> Bool [
+    end k != CACHE
+]
+
+fun delete_cache(k: Any) -> Any [
+    end caches.delete(k)
+]
+
+fun on_activate(e: Any) [
+    e.waitUntil(do_activate())
+]
+
+!! Nawigacja: siec, a gdy jej brak -> offline.html
+async fun navigate_or_offline(req: Any) -> Any [
+    let res = await fetch(req).catch(null_on_error)
+    if res != null [
+        end res
+    ]
+    let c = await caches.open(CACHE)
+    let r = await store_match(c, OFFLINE_URL)
+    if not r [
+        r = await store_match(caches, NOT_FOUND_URL)
+    ]
+    if not r [
+        let headers = Object.fromEntries([["Content-Type", "text/plain; charset=utf-8"]])
+        let init = Object.fromEntries([["status", 503], ["headers", headers]])
+        r = Reflect.construct(Response, ["Offline", init])
+    ]
+    end r
+]
+
+fun null_on_error(e: Any) -> Any [
+    end null
+]
+
+async fun asset_or_cache(req: Any, name: Str) -> Any [
+    let res = await fetch(req).catch(null_on_error)
+    if res != null and res.ok [
+        end res
+    ]
+    let r = await store_match(caches, name)
+    if r [
+        end r
+    ]
+    end res
+]
+
+fun on_fetch(e: Any) [
+    let req = e.request
+    if req.method != "GET" [
+        end
+    ]
+
+    !! Nawigacja (otwarcie strony): siec, a gdy jej brak -> offline.html
+    if req.mode == "navigate" [
+        e.respondWith(navigate_or_offline(req))
+        end
+    ]
+
+    let path = Reflect.construct(URL, [req.url]).pathname
+
+    !! Skrypty stron offline/404 - z sieci, a gdy jej brak (lub 404) z cache
+    if req.destination == "script" [
+        if path.endsWith("/" + OFFLINE_JS) [
+            e.respondWith(asset_or_cache(req, OFFLINE_JS))
+            end
+        ]
+        if path.endsWith("/" + NOT_FOUND_JS) [
+            e.respondWith(asset_or_cache(req, NOT_FOUND_JS))
+            end
+        ]
+    ]
+
+    !! Logo (obrazek) - z sieci, a offline z cache. Zapytania fetch() (np. ping lacznosci)
+    !! NIE sa przechwytywane, wiec zawsze pokazuja prawdziwy stan sieci.
+    if req.destination == "image" and path.endsWith("/" + LOGO_URL) [
+        e.respondWith(asset_or_cache(req, LOGO_URL))
+    ]
+]
+
+!! Nasluchiwacze musza byc zarejestrowane synchronicznie przy pierwszym wykonaniu skryptu
+!! workera (a main() startuje dopiero w mikrozadaniu), wiec rejestrujemy je w inicjalizatorach.
+let reg_install: Any = self.addEventListener("install", on_install)
+let reg_activate: Any = self.addEventListener("activate", on_activate)
+let reg_fetch: Any = self.addEventListener("fetch", on_fetch)
+
+fun main() [
+    log("HackerOS Service Worker aktywny")
+]
