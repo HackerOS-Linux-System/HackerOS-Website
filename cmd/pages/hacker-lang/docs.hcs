@@ -1,0 +1,483 @@
+use <mode:website>
+
+include <../../shared/offline>
+include <../../logic/docsites>
+
+style {
+#app { display: none; }
+:root {
+  --bg:        #0e0b16;
+  --bg2:       #13101f;
+  --bg3:       #1a1630;
+  --border:    #2d2550;
+  --border2:   #3d3470;
+  --purple:    #a855f7;
+  --purple2:   #c084fc;
+  --orange:    #f97316;
+  --orange2:   #fb923c;
+  --pink:      #ec4899;
+  --cyan:      #22d3ee;
+  --text:      #e2d9f3;
+  --text-dim:  #7c6fa0;
+  --code-bg:   #090714;
+  --glow-p:    rgba(168,85,247,0.3);
+  --glow-o:    rgba(249,115,22,0.3);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  line-height: 1.75;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(168,85,247,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(168,85,247,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  top: -200px; right: -200px;
+  width: 700px; height: 700px;
+  background: radial-gradient(circle, rgba(168,85,247,0.08) 0%, transparent 65%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+
+.sidebar {
+  position: fixed;
+  left: 0; top: 0; bottom: 0;
+  width: 270px;
+  background: linear-gradient(180deg, var(--bg2) 0%, var(--bg) 100%);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  z-index: 100;
+  padding-bottom: 60px;
+}
+
+.sidebar::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--purple), var(--orange));
+}
+
+.sidebar-logo {
+  padding: 32px 24px 24px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 8px;
+  position: relative;
+}
+
+.logo-img {
+  width: 48px; height: 48px;
+  border-radius: 10px;
+  margin-bottom: 14px;
+  display: block;
+}
+
+.logo-name {
+  font-family: 'Syne', sans-serif;
+  font-size: 20px; font-weight: 800;
+  letter-spacing: 0.5px;
+  background: linear-gradient(135deg, var(--purple2), var(--orange));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.logo-ver {
+  font-size: 11px; color: var(--text-dim);
+  letter-spacing: 2px; margin-top: 2px;
+  font-family: 'Space Mono', monospace;
+}
+
+.sidebar-section {
+  padding: 14px 20px 4px;
+  font-size: 9px; letter-spacing: 3.5px;
+  text-transform: uppercase;
+  color: var(--border2);
+  font-family: 'Space Mono', monospace;
+  margin-top: 4px;
+}
+
+.sidebar a {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 20px 6px 24px;
+  color: var(--text-dim); text-decoration: none;
+  font-size: 12.5px; transition: all 0.15s;
+  border-left: 2px solid transparent;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.sidebar a .op {
+  color: var(--border2); font-size: 10px;
+  transition: color 0.15s; min-width: 28px;
+}
+
+.sidebar a:hover {
+  color: var(--purple2); border-left-color: var(--purple);
+  background: rgba(168,85,247,0.05); padding-left: 28px;
+}
+
+.sidebar a:hover .op { color: var(--orange); }
+.sidebar a.active { color: var(--purple2); border-left-color: var(--purple); background: rgba(168,85,247,0.07); }
+.sidebar a.active .op { color: var(--orange); }
+
+
+.main {
+  margin-left: 270px;
+  padding: 0 64px 100px;
+  max-width: 1020px;
+  position: relative; z-index: 1;
+}
+
+
+.hero {
+  padding: 80px 0 64px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 72px; position: relative;
+}
+
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(168,85,247,0.08);
+  border: 1px solid rgba(168,85,247,0.2);
+  color: var(--purple2);
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; letter-spacing: 3px;
+  padding: 6px 14px; border-radius: 2px;
+  margin-bottom: 28px; text-transform: uppercase;
+}
+
+.hero-eyebrow::before {
+  content: ''; width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--purple);
+  box-shadow: 0 0 8px var(--purple);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.hero h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: 68px; font-weight: 800;
+  line-height: 1; letter-spacing: -2px; margin-bottom: 20px;
+}
+
+.hero h1 .h { background: linear-gradient(135deg, #c084fc, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.hero h1 .l { background: linear-gradient(135deg, var(--orange), var(--orange2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+.hero-desc {
+  font-size: 15px; color: var(--text-dim);
+  max-width: 540px; margin-bottom: 36px;
+  line-height: 1.8;
+}
+
+.hero-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.tag {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; padding: 4px 12px;
+  border-radius: 2px; letter-spacing: 1px; text-transform: uppercase;
+}
+
+.tag-p  { background: rgba(168,85,247,0.1); border: 1px solid rgba(168,85,247,0.25); color: var(--purple2); }
+.tag-o  { background: rgba(249,115,22,0.1); border: 1px solid rgba(249,115,22,0.25); color: var(--orange2); }
+.tag-c  { background: rgba(34,211,238,0.08); border: 1px solid rgba(34,211,238,0.2); color: var(--cyan); }
+.tag-pk { background: rgba(236,72,153,0.08); border: 1px solid rgba(236,72,153,0.2); color: var(--pink); }
+
+
+section { margin-bottom: 80px; scroll-margin-top: 24px; }
+
+.section-header {
+  display: flex; align-items: center; gap: 16px;
+  margin-bottom: 32px; padding-bottom: 16px;
+  border-bottom: 1px solid var(--border); position: relative;
+}
+
+.section-header::after {
+  content: ''; position: absolute;
+  bottom: -1px; left: 0;
+  width: 60px; height: 1px;
+  background: linear-gradient(90deg, var(--purple), transparent);
+}
+
+.section-num {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; color: var(--orange); opacity: 0.7; min-width: 28px;
+}
+
+h2 {
+  font-family: 'Syne', sans-serif;
+  font-size: 26px; font-weight: 700;
+  color: var(--text); letter-spacing: -0.3px;
+}
+
+h2 code {
+  font-family: 'Space Mono', monospace;
+  font-size: 20px; background: none; border: none;
+  color: var(--orange); padding: 0;
+}
+
+h3 {
+  font-family: 'Syne', sans-serif;
+  font-size: 16px; font-weight: 600;
+  color: var(--purple2); margin: 32px 0 14px; letter-spacing: 0.3px;
+}
+
+p { margin-bottom: 14px; color: var(--text); line-height: 1.8; }
+
+
+.code-block {
+  background: var(--code-bg); border: 1px solid var(--border);
+  border-radius: 6px; margin: 20px 0; overflow: hidden; position: relative;
+}
+
+.code-block::before {
+  content: ''; position: absolute;
+  top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, var(--purple), var(--orange), transparent);
+  opacity: 0.5;
+}
+
+.code-header {
+  background: rgba(168,85,247,0.04);
+  border-bottom: 1px solid var(--border);
+  padding: 9px 18px;
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; color: var(--text-dim);
+  letter-spacing: 2px;
+  display: flex; align-items: center; gap: 10px;
+  text-transform: uppercase;
+}
+
+.code-dots { display: flex; gap: 5px; }
+.code-dots span { width: 8px; height: 8px; border-radius: 50%; }
+.code-dots .d1 { background: #ff5f57; }
+.code-dots .d2 { background: #ffbd2e; }
+.code-dots .d3 { background: #28ca41; }
+
+pre {
+  padding: 22px; overflow-x: auto;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px; line-height: 1.9;
+}
+
+code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12.5px;
+  background: rgba(168,85,247,0.1);
+  border: 1px solid rgba(168,85,247,0.15);
+  padding: 2px 7px; border-radius: 3px; color: var(--purple2);
+}
+
+
+.hl-comment  { color: #3d3460; font-style: italic; }
+.hl-doc      { color: #4a3d6a; font-style: italic; }
+.hl-print    { color: #34d399; }
+.hl-cmd      { color: #60a5fa; }
+.hl-sudo     { color: var(--orange); }
+.hl-iso      { color: var(--pink); }
+.hl-var-decl { color: #fbbf24; }
+.hl-var-ref  { color: #fcd34d; font-style: italic; }
+.hl-func     { color: var(--purple2); font-weight: 700; }
+.hl-logic    { color: #c084fc; }
+.hl-done     { color: #9d4edd; }
+.hl-dep      { color: var(--cyan); }
+.hl-import   { color: #67e8f9; }
+.hl-string   { color: #86efac; }
+.hl-kw       { color: #d8b4fe; font-weight: 600; }
+.hl-quick    { color: var(--pink); font-weight: 600; }
+.hl-export   { color: #fb923c; font-weight: 600; }
+.hl-shebang  { color: #4a3d6a; font-style: italic; }
+.hl-gen      { color: #d8b4fe; font-style: italic; }
+
+.hl-bg       { color: #22d3ee; font-weight: 700; }         
+.hl-hsh      { color: #fbbf24; font-weight: 700; }         
+.hl-repeat   { color: #f97316; font-weight: 700; }         
+.hl-goroutine { color: #c084fc; font-weight: 700; }        
+.hl-channel  { color: #a855f7; font-weight: 700; }         
+.hl-chanop   { color: #9d4edd; font-weight: 700; }         
+
+
+.ref-table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 13px; }
+
+.ref-table th {
+  background: rgba(168,85,247,0.06);
+  border: 1px solid var(--border);
+  padding: 10px 18px; text-align: left;
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; letter-spacing: 2px;
+  color: var(--orange); font-weight: 400; text-transform: uppercase;
+}
+
+.ref-table td { border: 1px solid var(--border); padding: 10px 18px; vertical-align: top; }
+.ref-table tr:hover td { background: rgba(168,85,247,0.03); }
+.ref-table td:first-child { font-family: 'Space Mono', monospace; color: var(--purple2); white-space: nowrap; font-size: 12px; }
+.ref-table td:nth-child(2) { color: var(--text-dim); font-size: 13px; }
+.ref-table td:last-child   { color: var(--text); font-size: 13px; }
+
+
+.cmd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; }
+
+.cmd-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 6px; padding: 18px 20px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  position: relative; overflow: hidden;
+}
+
+.cmd-card::before {
+  content: ''; position: absolute;
+  top: 0; left: 0; width: 3px; height: 100%;
+  background: var(--purple); opacity: 0; transition: opacity 0.2s;
+}
+
+.cmd-card:hover { border-color: rgba(168,85,247,0.35); box-shadow: 0 0 24px rgba(168,85,247,0.08); }
+.cmd-card:hover::before { opacity: 1; }
+.cmd-card.sudo-card:hover { border-color: rgba(249,115,22,0.35); }
+.cmd-card.sudo-card::before { background: var(--orange); }
+.cmd-card.iso-card:hover { border-color: rgba(236,72,153,0.35); }
+.cmd-card.iso-card::before { background: var(--pink); }
+
+.cmd-card .op {
+  font-family: 'Space Mono', monospace;
+  font-size: 15px; color: var(--purple2);
+  margin-bottom: 8px; display: block;
+}
+
+.cmd-card .op.sudo  { color: var(--orange); }
+.cmd-card .op.iso   { color: var(--pink); }
+.cmd-card p { font-size: 12.5px; color: var(--text-dim); margin: 0; line-height: 1.6; }
+
+
+.quick-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin: 16px 0; }
+
+.quick-item {
+  background: rgba(236,72,153,0.05);
+  border: 1px solid rgba(236,72,153,0.15);
+  border-radius: 4px; padding: 10px 14px;
+  font-family: 'Space Mono', monospace; font-size: 11.5px;
+}
+
+.quick-item .fn { color: var(--pink); display: block; margin-bottom: 2px; }
+.quick-item .desc { color: var(--text-dim); font-size: 10.5px; }
+
+
+.callout {
+  display: flex; gap: 14px;
+  background: rgba(249,115,22,0.06);
+  border: 1px solid rgba(249,115,22,0.2);
+  border-radius: 4px; padding: 16px 18px; margin: 20px 0;
+}
+
+.callout-icon { font-size: 18px; flex-shrink: 0; line-height: 1.6; }
+.callout-body { font-size: 13px; color: var(--text); }
+.callout-body strong { color: var(--orange); }
+
+.callout.info { background: rgba(168,85,247,0.06); border-color: rgba(168,85,247,0.2); }
+.callout.info .callout-body strong { color: var(--purple2); }
+.callout.note { background: rgba(34,211,238,0.05); border-color: rgba(34,211,238,0.15); }
+.callout.note .callout-body strong { color: var(--cyan); }
+
+
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--purple); }
+
+
+@media (max-width: 960px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 24px 24px 80px; }
+  .cmd-grid, .quick-grid { grid-template-columns: 1fr; }
+  .hero h1 { font-size: 42px; }
+}
+
+
+.hl-arith    { color: #fbbf24; font-weight: 700; }         
+.hl-pipe     { color: #22d3ee; font-weight: 700; }         
+.hl-forin    { color: #f97316; font-weight: 700; }         
+.hl-while    { color: #a855f7; font-weight: 700; }         
+.hl-hackeros { color: #ec4899; font-weight: 700; }         
+
+
+.hl-builtin   { color: #38bdf8; font-weight: 700; }        
+.hl-dirimport { color: #67e8f9; font-weight: 700; }        
+.hl-arena     { color: #f472b6; font-weight: 700; }        
+.hl-extern    { color: #fb7185; font-weight: 700; }        
+
+
+.playground-wrap {
+  border: 1px solid var(--border); border-radius: 6px;
+  background: var(--code-bg); overflow: hidden; margin: 20px 0;
+}
+.playground-bar {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 16px; background: var(--bg3); border-bottom: 1px solid var(--border);
+}
+.playground-status {
+  font-size: 11px; color: var(--text-dim); font-family: 'Space Mono', monospace;
+  letter-spacing: 1px; text-transform: uppercase;
+}
+.playground-status.status-ready { color: #34d399; }
+.playground-status.status-error { color: var(--pink); }
+.playground-run {
+  margin-left: auto; background: rgba(168,85,247,0.15);
+  border: 1px solid rgba(168,85,247,0.35); color: var(--purple2);
+  font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 1.5px;
+  padding: 6px 16px; border-radius: 3px; cursor: pointer; text-transform: uppercase;
+  transition: all 0.15s;
+}
+.playground-run:hover:not(:disabled) { background: rgba(168,85,247,0.28); }
+.playground-run:disabled { opacity: 0.4; cursor: not-allowed; }
+.playground-editor {
+  width: 100%; min-height: 220px; resize: vertical; border: none; outline: none;
+  background: var(--code-bg); color: var(--text);
+  font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.6;
+  padding: 16px 18px; tab-size: 4;
+}
+.playground-output {
+  border-top: 1px solid var(--border); background: #060510;
+  padding: 14px 18px; font-family: 'JetBrains Mono', monospace; font-size: 12.5px;
+  white-space: pre-wrap; word-break: break-word; min-height: 40px; max-height: 320px;
+  overflow-y: auto; color: var(--text-dim);
+}
+.playground-output .out-error { color: var(--pink); }
+.playground-output .out-exit  { color: var(--text-dim); font-style: italic; display: block; margin-top: 8px; }
+}
+
+let PAGE_BODY: Str = "<nav class=\"sidebar\">\n  <div class=\"sidebar-logo\">\n    <img class=\"logo-img\" src=\"https://raw.githubusercontent.com/HackerOS-Linux-System/Hacker-Lang/main/images/icon.png\" alt=\"HL\">\n    <div class=\"logo-name\">Hacker Lang</div>\n    <div class=\"logo-ver\">// gen 2 — dokumentacja</div>\n  </div>\n\n  <div class=\"sidebar-section\">// playground</div>\n  <a href=\"#playground\"><span class=\"op\">▶</span>Uruchom online</a>\n\n  <div class=\"sidebar-section\">// wstęp</div>\n  <a href=\"#intro\"><span class=\"op\">01</span>Czym jest HL?</a>\n  <a href=\"#install\"><span class=\"op\">02</span>Dostępność</a>\n  <a href=\"#quickstart\"><span class=\"op\">03</span>Szybki start</a>\n\n  <div class=\"sidebar-section\">// meta</div>\n  <a href=\"#shebang\"><span class=\"op\">#!</span>Shebang</a>\n  <a href=\"#gen\"><span class=\"op\">gen</span>System Genów</a>\n\n  <div class=\"sidebar-section\">// składnia gen 1</div>\n  <a href=\"#output\"><span class=\"op\">~></span>Print</a>\n  <a href=\"#quick\"><span class=\"op\">::</span>Quick-funkcje</a>\n  <a href=\"#commands\"><span class=\"op\">></span>Komendy</a>\n  <a href=\"#builtin\"><span class=\"op\">/></span>Builtin coreutils</a>\n  <a href=\"#background\"><span class=\"op\">&amp;</span>Tło &amp;</a>\n  <a href=\"#hsh\"><span class=\"op\">*></span>Hsh</a>\n  <a href=\"#repeatn\"><span class=\"op\">_N</span>Pętla _N</a>\n  <a href=\"#goroutines\"><span class=\"op\">:*</span>Goroutines</a>\n  <a href=\"#fileimport\"><span class=\"op\">&lt;&lt;</span>Import pliku</a>\n\n  <div class=\"sidebar-section\">// składnia gen 2</div>\n  <a href=\"#typedvars\"><span class=\"op\">%:</span>Typowane zmienne</a>\n  <a href=\"#arithmetic\"><span class=\"op\">$()</span>Arytmetyka</a>\n  <a href=\"#pipevar\"><span class=\"op\">|></span>Pipe do zmiennej</a>\n  <a href=\"#forin\"><span class=\"op\">@in</span>For-in</a>\n  <a href=\"#while\"><span class=\"op\">?~</span>While</a>\n  <a href=\"#switch\"><span class=\"op\">?sw</span>Switch</a>\n  <a href=\"#hackeros\"><span class=\"op\">||</span>HackerOS API</a>\n  <a href=\"#dirimport\"><span class=\"op\">&lt;*</span>Import katalogu</a>\n  <a href=\"#arena\"><span class=\"op\">::&lt;n&gt;</span>Arena functions</a>\n  <a href=\"#extern\"><span class=\"op\">_></span>Extern runtime</a>\n\n  <div class=\"sidebar-section\">// wspólne</div>\n  <a href=\"#variables\"><span class=\"op\">%@</span>Zmienne</a>\n  <a href=\"#export\"><span class=\"op\">=></span>Export</a>\n  <a href=\"#functions\"><span class=\"op\">:--</span>Funkcje</a>\n  <a href=\"#logic\"><span class=\"op\">?</span>Warunki</a>\n  <a href=\"#comments\"><span class=\"op\">;;</span>Komentarze</a>\n  <a href=\"#deps\"><span class=\"op\">//</span>Zależności</a>\n  <a href=\"#imports\"><span class=\"op\">#</span>Biblioteki</a>\n\n  <div class=\"sidebar-section\">// bit</div>\n  <a href=\"#bit\"><span class=\"op\">bit</span>Manager bit</a>\n  <a href=\"#bit-project\"><span class=\"op\">proj</span>Projekt mode</a>\n\n  <div class=\"sidebar-section\">// narzędzia</div>\n  <a href=\"#cli\"><span class=\"op\">hl</span>CLI</a>\n  <a href=\"#compile\"><span class=\"op\">.bc</span>Kompilacja</a>\n  <a href=\"#exec\"><span class=\"op\">exec</span>hl exec</a>\n  <a href=\"#shell\"><span class=\"op\">»</span>Powłoka</a>\n  <a href=\"#diag\"><span class=\"op\">!</span>Diagnostyka</a>\n\n  <div class=\"sidebar-section\">// przykłady</div>\n  <a href=\"#ex-basic\"><span class=\"op\">&lt;/></span>Gen 1 podstawy</a>\n  <a href=\"#ex-gen2\"><span class=\"op\">&lt;/></span>Gen 2 nowe</a>\n  <a href=\"#ex-async\"><span class=\"op\">&lt;/></span>Async</a>\n  <a href=\"#ex-system\"><span class=\"op\">&lt;/></span>Systemowe</a>\n</nav>\n\n<main class=\"main\">\n\n  <div class=\"hero\">\n    <div class=\"hero-eyebrow\">HackerOS — język skryptowy</div>\n    <h1><span class=\"h\">Hacker</span><span class=\"l\"> Lang</span></h1>\n    <p class=\"hero-desc\">\n      Interpretowany język programowania dla HackerOS.<br>\n      Własna składnia operatorowa · Bytecode + Cranelift · Manager pakietów <strong>bit</strong> · Gen 2\n    </p>\n    <div class=\"hero-tags\">\n      <span class=\"tag tag-p\">wbudowany w HackerOS</span>\n      <span class=\"tag tag-o\">tylko dla HackerOS</span>\n      <span class=\"tag tag-c\">.hl / .bc</span>\n      <span class=\"tag tag-pk\">gen 2 (domyślny)</span>\n    </div>\n  </div>\n\n  \n  <section id=\"playground\">\n    <div class=\"section-header\"><span class=\"section-num\">00</span><h2>Uruchom online — playground</h2></div>\n    <div class=\"callout info\"><span class=\"callout-icon\">ℹ️</span><div class=\"callout-body\"><strong>Prawdziwy interpreter, nie symulacja.</strong> To dokładnie ten sam kod (parser + kompilator + interpreter bytecode), skompilowany do WASM i uruchomiony lokalnie w Twojej przeglądarce — bez żadnego serwera. Dwie rzeczy nie działają tu z przyczyn fundamentalnych, nie z lenistwa: natywny JIT (wymaga wykonywalnej pamięci, niedostępnej w sandboksie przeglądarki) i wykonywanie komend systemowych (<code>&gt;</code>, <code>^&gt;</code>, <code>||</code>, ... — przeglądarka nie ma dostępu do powłoki). Reszta języka — arytmetyka, zmienne, pętle, funkcje, warunki, stringi — działa identycznie jak w natywnym <code>hl</code>.</div></div>\n    <div class=\"playground-wrap\">\n      <div class=\"playground-bar\">\n        <span class=\"playground-status\" id=\"pg-status\">ładowanie WASM…</span>\n        <button class=\"playground-run\" id=\"pg-run\" disabled>▶ Uruchom</button>\n      </div>\n      <textarea class=\"playground-editor\" id=\"pg-editor\" spellcheck=\"false\">using &lt;gen 2&gt;\n\n% name: str = \"swiat\"\n~> Witaj, @name!\n\n% i: int = 0\n?~ @i &lt; 5\n    $( @i + 1 ) -> @i\n    ~> licznik: @i\ndone</textarea>\n      <div class=\"playground-output\" id=\"pg-output\">Wynik pojawi się tutaj po kliknięciu „Uruchom”.</div>\n    </div>\n  </section>\n\n  \n  <section id=\"intro\">\n    <div class=\"section-header\"><span class=\"section-num\">01</span><h2>Czym jest Hacker Lang?</h2></div>\n    <p>Hacker Lang (<strong>HL</strong>) to interpretowany język programowania napisany w Rust, natywny język skryptowy <strong>HackerOS</strong>. Pliki źródłowe mają rozszerzenie <code>.hl</code>, skompilowany bytecode — <code>.bc</code>.</p>\n    <div class=\"callout info\">\n      <span class=\"callout-icon\">✨</span>\n      <div class=\"callout-body\">\n        <strong>Gen 2 (domyślny):</strong> typowane zmienne <code>%: typ</code>, arytmetyka <code>$()</code>, pipe do zmiennej <code>|&gt;</code>, for-in <code>@ item in</code>, while <code>?~</code>, switch <code>? switch</code>, HackerOS API <code>||</code>, goroutines z nazwą <code>:* nazwa def</code>, manager pakietów <strong>bit</strong> z progress barem.\n      </div>\n    </div>\n  </section>\n\n  \n  <section id=\"install\">\n    <div class=\"section-header\"><span class=\"section-num\">02</span><h2>Dostępność</h2></div>\n    <div class=\"callout info\">\n      <span class=\"callout-icon\">🔒</span>\n      <div class=\"callout-body\"><strong>Hacker Lang jest wbudowany w HackerOS.</strong> Binarka <code>hl</code> i manager <code>bit</code> są częścią systemu.</div>\n    </div>\n    <div class=\"code-block\">\n      <div class=\"code-header\"><div class=\"code-dots\"><span class=\"d1\"></span><span class=\"d2\"></span><span class=\"d3\"></span></div>SPRAWDŹ WERSJĘ</div>\n      <pre>hl version\nbit</pre>\n    </div>\n  </section>\n\n  \n  <section id=\"quickstart\">\n    <div class=\"section-header\"><span class=\"section-num\">03</span><h2>Szybki start</h2></div>\n    <div class=\"code-block\">\n      <div class=\"code-header\"><div class=\"code-dots\"><span class=\"d1\"></span><span class=\"d2\"></span><span class=\"d3\"></span></div>hello.hl</div>\n      <pre><span class=\"hl-shebang\">#!/usr/bin/env hl</span>\n<span class=\"hl-doc\">/// Mój pierwszy skrypt</span>\n<span class=\"hl-gen\">using &lt;gen 2&gt;</span>\n\n<span class=\"hl-dep\">// curl</span>\n<span class=\"hl-import\">#</span> <span class=\"hl-string\">&lt;main/colors&gt;</span>\n\n<span class=\"hl-var-decl\">% name: str</span> = HackerOS\n<span class=\"hl-var-decl\">% count: int</span> = 42\n\n<span class=\"hl-arith\">$( @count * 2 )</span> -> <span class=\"hl-var-ref\">@doubled</span>\n\n<span class=\"hl-print\">~></span> Witaj w <span class=\"hl-var-ref\">@name</span>! count=<span class=\"hl-var-ref\">@count</span> doubled=<span class=\"hl-var-ref\">@doubled</span>\n\n<span class=\"hl-cmd\">></span> uname -r <span class=\"hl-pipe\">|></span> <span class=\"hl-var-ref\">@kernel</span>\n<span class=\"hl-print\">~></span> Kernel: <span class=\"hl-var-ref\">@kernel</span>\n\n<span class=\"hl-forin\">@ tool</span> in curl git python3\n    <span class=\"hl-quick\">::</span>which <span class=\"hl-var-ref\">@tool</span>\n    <span class=\"hl-logic\">? ok</span>\n        <span class=\"hl-quick\">::</span>green ✓ <span class=\"hl-var-ref\">@tool</span>\n    <span class=\"hl-done\">done</span>\n<span class=\"hl-done\">done</span></pre>\n    </div>\n    <div class=\"code-block\">\n      <div class=\"code-header\"><div class=\"code-dots\"><span class=\"d1\"></span><span class=\"d2\"></span><span class=\"d3\"></span></div>URUCHAMIANIE</div>\n      <pre>hl hello.hl              <span class=\"hl-comment\"># uruchom</span>\nhl compile hello.hl      <span class=\"hl-comment\"># → hello.bc (bytecode)</span>\nhl compile hello.bc      <span class=\"hl-comment\"># → binarka ELF</span>\n./hello.bc               <span class=\"hl-comment\"># uruchom .bc bezpośrednio</span>\nhl repl                  <span class=\"hl-comment\"># REPL interaktywny</span></pre>\n    </div>\n  </section>\n\n  \n  <section id=\"shebang\">\n    <div class=\"section-header\"><span class=\"section-num\">04</span><h2>Shebang</h2></div>\n    <div class=\"code-block\">\n      <div class=\"code-header\"><div class=\"code-dots\"><span class=\"d1\"></span><span class=\"d2\"></span><span class=\"d3\"></span></div>SHEBANG</div>\n      <pre><span class=\"hl-shebang\">#!/usr/bin/env hl</span>          <span class=\"hl-comment\"># .hl — zalecana forma</span>\n<span class=\"hl-shebang\">#!/usr/bin/hl</span>              <span class=\"hl-comment\"># bezpośrednia ścieżka</span>\n<span class=\"hl-shebang\">#!/usr/bin/env -S /usr/bin/hl run</span>  <span class=\"hl-comment\"># .bc — auto-dodawany</span></pre>\n    </div>\n  </section>\n\n  \n  <section id=\"gen\">\n    <div class=\"section-header\"><span class=\"section-num\">05</span><h2>System Genów</h2></div>\n    <p>Geny to odpowiednik Rust editions. <strong>Gen 2 jest domyślny</strong> — pliki bez <code>using</code> dostają gen 2.</p>\n    <div class=\"code-block\">\n      <div class=\"code-header\"><div class=\"code-dots\"><span class=\"d1\"></span><span class=\"d2\"></span><span class=\"d3\"></span></div>DEKLARACJA</div>\n      <pre><span class=\"hl-gen\">using &lt;gen 2&gt;</span>    <span class=\"hl-comment\"># domyślny</span>\n<span class=\"hl-gen\">using &lt;gen 1&gt;</span>    <span class=\"hl-comment\"># kompatybilność wsteczna</span></pre>\n    </div>\n    <table class=\"ref-table\">\n      <tr><th>Gen</th><th>Status</th><th>Co zawiera</th></tr>\n      <tr><td>gen 1</td><td><span style=\"color:#34d399\">aktywny</span></td><td><code>&amp;</code> <code>*&gt;</code> <code>_N</code> <code>&lt;&lt;</code> <code>:*</code> <code>:**</code> <code>*--</code> — podstawowa składnia</td></tr>\n      <tr><td>gen 2</td><td><span style=\"color:#a855f7\">domyślny</span></td><td><code>%: typ</code> <code>$()</code> <code>|&gt;</code> <code>@ in</code> <code>?~</code> <code>? switch</code> <code>||</code> — typowanie, pętle, switch, HackerOS API</td></tr>\n      <tr><td>gen 3</td><td><span style=\"color:#7c6fa0\">plan</span></td><td>Domknięcia (planowane)</td></tr>\n    </table>\n  </section>\n\n  \n  <section id=\"output\">\n    <div class=\"section-header\"><span class=\"section-num\">06</span><h2>Print — <code>~></code></h2></div>\n    <div class=\"callout\"><span class=\"callout-icon\">🚫</span><div class=\"callout-body\"><strong>echo jest zabronione.</strong> <code>&gt; echo tekst</code> generuje błąd. Użyj <code>~&gt; tekst</code>.</div></div>\n    <div class=\"code-block\">\n      <div class=\"code-header\"><div class=\"code-dots\"><span class=\"d1\"></span><span class=\"d2\"></span><span class=\"d3\"></span></div>~></div>\n      <pre><span class=\"hl-print\">~></span> Zwykły tekst\n<span class=\"hl-print\">~></span> Zmienna: <span class=\"hl-var-ref\">@name</span>\n<span class=\"hl-print\">~></span> Wynik: <span class=\"hl-var-ref\">@count</span> doubled=<span class=\"hl-var-ref\">@doubled</span></pre>\n    </div>\n  </section>\n\n  \n  <section id=\"quick\">\n    <div class=\"section-header\"><span class=\"section-num\">07</span><h2>Quick-funkcje — <code>::</code></h2></div>\n    <div class=\"quick-grid\">\n      <div class=\"quick-item\"><span class=\"fn\">::upper/lower</span><span class=\"desc\">zmiana wielkości</span></div>\n      <div class=\"quick-item\"><span class=\"fn\">::len/trim/rev</span><span class=\"desc\">operacje na str</span></div>\n      <div class=\"quick-item\"><span class=\"fn\">::replace/split</span><span class=\"desc\">transformacje</span></div>\n      <div class=\"quick-item\"><span class=\"fn\">::contains/startswith/endswith</span><span class=\"desc\">sprawdzanie</span></div>\n      <div class=\"quick-item\"><span class=\"fn\">::abs/ceil/floor/round</span><span class=\"desc\">matematyka</span></div>\n      <div class=\"quick-item\"><span class=\"fn\">::max/min/rand</span><span class=\"desc\">matematyka</span></div>\n      <div class=\"quick-item\"><span class=\"fn\">::env/date/time/pid</span><span class=\"desc\">system</span></div>\n      <div class=\"quick-item\"><span class=\"fn\">::which/exists/isdir/isfile</span><span class=\"desc\">pliki</span></div>\n      <div class=\"quick-item\"><span class=\"fn\">::basename/dirname/read</span><span class=\"desc\">ścieżki</span></div>\n      <div class=\"quick-item\"><span class=\"fn\">::set/get/type/unset</span><span class=\"desc\">zmienne</span></div>\n      <div class=\"quick-item\"><span class=\"fn\">::nl/hr/bold</span><span class=\"desc\">formatowanie</span></div>\n      <div class=\"quick-item\"><span class=\"fn\">::red/green/yellow/cyan</span><span class=\"desc\">kolory</span></div>\n    </div>\n  </section>\n\n  \n  <section id=\"commands\">\n    <div class=\"section-header\"><span class=\"section-num\">08</span><h2>Komendy — <code>&gt; ^&gt; -&gt;</code></h2></div>\n    <div class=\"cmd-grid\">\n      <div class=\"cmd-card\"><span class=\"op\">> komenda</span><p>Zwykłe wykonanie.</p></div>\n      <div class=\"cmd-card sudo-card\"><span class=\"op sudo\">^> komenda</span><p>Sudo.</p></div>\n      <div class=\"cmd-card iso-card\"><span class=\"op iso\">-> komenda</span><p>Izolacja namespace.</p></div>\n      <div class=\"cmd-card iso-card\"><span class=\"op iso\">^-> komenda</span><p>Sudo + izolacja.</p></div>\n      <div class=\"cmd-card\"><span class=\"op\">>> komenda @var</span><p>Z interpolacją zmiennych.</p></div>\n      <div class=\"cmd-card sudo-card\"><span class=\"op sudo\">^>> komenda</span><p>Interpolacja + sudo.</p></div>\n    </div>\n  </section>\n\n  \n  <section id=\"builtin\">\n    <div class=\"section-header\"><span class=\"section-num\">09</span><h2>Builtin coreutils — <code>/&gt;</code></h2></div>\n    <p>Operator <code>/&gt;</code> wywołuje wbudowaną, natywną implementację popularnych narzędzi coreutils — bez spawnowania zewnętrznego procesu. Szybsze niż <code>&gt;</code> i działa nawet tam, gdzie danego binarnego narzędzia brakuje w systemie.</p>\n    <div class=\"code-block\">\n      <div class=\"code-header\"><div class=\"code-dots\"><span class=\"d1\"></span><span class=\"d2\"></span><span class=\"d3\"></span></div>/&gt;</div>\n      <pre><span class=\"hl-builtin\">/></span> cat plik.txt\n<span class=\"hl-builtin\">/></span> ls -la /tmp\n<span class=\"hl-builtin\">/></span> grep TODO src/main.rs\n<span class=\"hl-builtin\">/></span> wc -l plik.txt <span class=\"hl-pipe\">|></span> <span class=\"hl-var-ref\">@liczba_linii</span></pre>\n    </div>\n    <div class=\"quick-grid\">\n      <div class=\"quick-item\"><span class=\"fn\">cat / ls / grep</span><span class=\"desc\">odczyt / listowanie / szukanie</span></div>\n      <div class=\"quick-item\"><span class=\"fn\">head / tail / wc</span><span class=\"desc\">fragmenty / liczenie</span></div>\n      <div class=\"quick-item\"><span class=\"fn\">find / sort / uniq</span><span class=\"desc\">wyszukiwanie / sortowanie</span></div>\n      <div class=\"quick-item\"><span class=\"fn\">cut / tr / rev</span><span class=\"desc\">przetwarzanie tekstu</span></div>\n      <div class=\"quick-item\"><span class=\"fn\">cp / mv / rm</span><span class=\"desc\">operacje na plikach</span></div>\n      <div class=\"quick-item\"><span class=\"fn\">mkdir / touch / stat</span><span class=\"desc\">tworzenie / metadane</span></div>\n      <div class=\"quick-item\"><span class=\"fn\">chmod / du / pwd</span><span class=\"desc\">uprawnienia / rozmiar / cwd</span></div>\n      <div class=\"quick-item\"><span class=\"fn\">which / env / date</span><span class=\"desc\">system</span></div>\n      <div class=\"quick-item\"><span class=\"fn\">basename / dirname</span><span class=\"desc\">ścieżki</span></div>\n    </div>\n    <div class=\"callout note\"><span class=\"callout-icon\">📝</span><div class=\"callout-body\"><strong>Przechwytywanie wyniku</strong> działa tak samo jak przy zwykłych komendach: <code>/&gt; komenda |&gt; @zmienna</code>.</div></div>\n  </section>\n\n  \n  <section id=\"background\">\n    <div class=\"section-header\"><span class=\"section-num\">10</span><h2>Tło — <code>&amp;</code></h2></div>\n    <div class=\"code-block\">\n      <div class=\"code-header\"><div class=\"code-dots\"><span class=\"d1\"></span><span class=\"d2\"></span><span class=\"d3\"></span></div>TŁO &amp;</div>\n      <pre><span class=\"hl-bg\">&amp;</span> python3 -m http.server 8080\n<span class=\"hl-bg\">&amp;</span> redis-server --port 6379\n<span class=\"hl-print\">~></span> Serwer PID: <span class=\"hl-var-ref\">@_bg_pid</span>\n\n<span class=\"hl-comment\">;; Równoległy download</span>\n<span class=\"hl-bg\">&amp;</span> wget -q https://example.com/a.zip\n<span class=\"hl-bg\">&amp;</span> wget -q https://example.com/b.zip</pre>\n    </div>\n  </section>\n\n  \n  <section id=\"hsh\">\n    <div class=\"section-header\"><span class=\"section-num\">11</span><h2>Hsh — <code>*&gt;</code></h2></div>\n    <p>Operator <code>*&gt;</code> uruchamia komendę przez <code>hsh -c</code> — autorską powłokę HackerOS. <code>echo</code> jest dozwolone wewnątrz <code>*&gt;</code>.</p>\n    <div class=\"code-block\">\n      <div class=\"code-header\"><div class=\"code-dots\"><span class=\"d1\"></span><span class=\"d2\"></span><span class=\"d3\"></span></div>*></div>\n      <pre><span class=\"hl-hsh\">*></span> uname -a\n<span class=\"hl-hsh\">*></span> notify-send \"Gotowe\"\n<span class=\"hl-comment\">;; Brak interpolacji @zmiennych — użyj >> dla zmiennych</span></pre>\n    </div>\n  </section>\n\n  \n  <section id=\"repeatn\">\n    <div class=\"section-header\"><span class=\"section-num\">12</span><h2>Pętla _N</h2></div>\n    <div class=\"code-block\">\n      <div class=\"code-header\"><div class=\"code-dots\"><span class=\"d1\"></span><span class=\"d2\"></span><span class=\"d3\"></span></div>_N</div>\n      <pre><span class=\"hl-repeat\">_10</span> <span class=\"hl-cmd\">></span> hacker update\n<span class=\"hl-repeat\">_5</span>  <span class=\"hl-print\">~></span> powtorzenie!\n<span class=\"hl-repeat\">_3</span>  <span class=\"hl-quick\">::</span>green OK</pre>\n    </div>\n  </section>\n\n  \n  <section id=\"goroutines\">\n    <div class=\"section-header\"><span class=\"section-num\">13</span><h2>Goroutines — <code>:*</code></h2></div>\n    <div class=\"code-block\">\n      <div class=\"code-header\"><div class=\"code-dots\"><span class=\"d1\"></span><span class=\"d2\"></span><span class=\"d3\"></span></div>GOROUTINES I CHANNELS</div>\n      <pre><span class=\"hl-channel\">:**</span> wyniki          <span class=\"hl-comment\">;; zadeklaruj kanał</span>\n\n<span class=\"hl-goroutine\">:*</span> scanner <span class=\"hl-kw\">def</span>      <span class=\"hl-comment\">;; goroutine z nazwą (gen 2)</span>\n    <span class=\"hl-cmd\">>></span> nmap -sn 192.168.1.0/24\n    <span class=\"hl-chanop\">*--</span> wyniki\n<span class=\"hl-done\">done</span>\n\n<span class=\"hl-goroutine\">:*</span>                  <span class=\"hl-comment\">;; anonimowa (gen 1)</span>\n    <span class=\"hl-cmd\">></span> jakies_zadanie\n<span class=\"hl-done\">done</span>\n\n<span class=\"hl-chanop\">*--</span> wyniki           <span class=\"hl-comment\">;; odbierz z kanału</span></pre>\n    </div>\n  </section>\n\n  \n  <section id=\"fileimport\">\n    <div class=\"section-header\"><span class=\"section-num\">14</span><h2>Import pliku — <code>&lt;&lt;</code></h2></div>\n    <div class=\"code-block\">\n      <div class=\"code-header\"><div class=\"code-dots\"><span class=\"d1\"></span><span class=\"d2\"></span><span class=\"d3\"></span></div>&lt;&lt;</div>\n      <pre><span class=\"hl-import\">&lt;&lt;</span> utils.hl\n<span class=\"hl-import\">&lt;&lt;</span> config.hl | produkcja   <span class=\"hl-comment\">;; detal → @_import_detail</span></pre>\n    </div>\n  </section>\n\n  \n  <section id=\"dirimport\">\n    <div class=\"section-header\"><span class=\"section-num\">15</span><h2>Import katalogu — <code>&lt;*</code> (gen 2)</h2></div>\n    <p><code>&lt;*</code> ładuje CAŁY katalog jako moduł — odpowiednik <code>mod.rs</code> w Rust. Wewnątrz katalogu musi istnieć plik <code>imports.hl</code>, zawierający listę <code>&lt;&lt;</code> dla każdego pliku wchodzącego w skład modułu.</p>\n    <div class=\"code-block\">\n      <div class=\"code-header\"><div class=\"code-dots\"><span class=\"d1\"></span><span class=\"d2\"></span><span class=\"d3\"></span></div>&lt;*</div>\n      <pre><span class=\"hl-dirimport\">&lt;*</span> narzedzia         <span class=\"hl-comment\">;; ładuje narzedzia/imports.hl</span>\n<span class=\"hl-dirimport\">&lt;*</span> lib/siec          <span class=\"hl-comment\">;; zagnieżdżona ścieżka też działa</span>\n\n<span class=\"hl-comment\">;; narzedzia/imports.hl:</span>\n<span class=\"hl-import\">&lt;&lt;</span> string_utils.hl\n<span class=\"hl-import\">&lt;&lt;</span> math_utils.hl\n<span class=\"hl-import\">&lt;&lt;</span> validators.hl</pre>\n    </div>\n  </section>\n\n  \n  <section id=\"typedvars\">\n    <div class=\"section-header\"><span class=\"section-num\">16</span><h2>Typowane zmienne — <code>%: typ</code> (gen 2)</h2></div>\n    <div class=\"code-block\">\n      <div class=\"code-header\"><div class=\"code-dots\"><span class=\"d1\"></span><span class=\"d2\"></span><span class=\"d3\"></span></div>TYPY</div>\n      <pre><span class=\"hl-var-decl\">% count: int</span>   = 42\n<span class=\"hl-var-decl\">% score: float</span> = 3.14\n<span class=\"hl-var-decl\">% label: str</span>   = hello world\n<span class=\"hl-var-decl\">% active: bool</span> = true\n<span class=\"hl-var-decl\">% x: int</span>       = <span class=\"hl-arith\">$( @count * 2 )</span>   <span class=\"hl-comment\">;; arytmetyka jako wartość</span>\n<span class=\"hl-var-decl\">% name</span>         = bez_typu           <span class=\"hl-comment\">;; gen 1 — nadal działa</span></pre>\n    </div>\n  </section>\n\n  \n  <section id=\"arithmetic\">\n    <div class=\"section-header\"><span class=\"section-num\">17</span><h2>Arytmetyka — <code>$( )</code> (gen 2)</h2></div>\n    <div class=\"code-block\">\n      <div class=\"code-header\"><div class=\"code-dots\"><span class=\"d1\"></span><span class=\"d2\"></span><span class=\"d3\"></span></div>$( expr ) -> @var</div>\n      <pre><span class=\"hl-arith\">$( 2 + 2 )</span>              -> <span class=\"hl-var-ref\">@res</span>\n<span class=\"hl-arith\">$( 10 * @count )</span>        -> <span class=\"hl-var-ref\">@mul</span>\n<span class=\"hl-arith\">$( @a + @b )</span>            -> <span class=\"hl-var-ref\">@sum</span>\n<span class=\"hl-arith\">$( (2 + 3) * 4 )</span>        -> <span class=\"hl-var-ref\">@paren</span>\n<span class=\"hl-arith\">$( 100 / @cores )</span>       -> <span class=\"hl-var-ref\">@per_core</span>\n<span class=\"hl-var-decl\">% threads: int</span> = <span class=\"hl-arith\">$( @cores * 2 )</span></pre>\n    </div>\n    <div class=\"callout note\"><span class=\"callout-icon\">💡</span><div class=\"callout-body\">Backend: <code>sh -c 'echo $(( expr ))'</code>. Obsługuje wszystkie operatory shell: <code>+ - * / % ** &lt;&lt; &gt;&gt;</code>.</div></div>\n  </section>\n\n  \n  <section id=\"pipevar\">\n    <div class=\"section-header\"><span class=\"section-num\">18</span><h2>Pipe do zmiennej — <code>|&gt;</code> (gen 2)</h2></div>\n    <div class=\"code-block\">\n      <div class=\"code-header\"><div class=\"code-dots\"><span class=\"d1\"></span><span class=\"d2\"></span><span class=\"d3\"></span></div>> cmd |> @var</div>\n      <pre><span class=\"hl-cmd\">></span> hostname           <span class=\"hl-pipe\">|></span> <span class=\"hl-var-ref\">@host</span>\n<span class=\"hl-cmd\">></span> uname -r           <span class=\"hl-pipe\">|></span> <span class=\"hl-var-ref\">@kernel</span>\n<span class=\"hl-cmd\">></span> date +%Y-%m-%d     <span class=\"hl-pipe\">|></span> <span class=\"hl-var-ref\">@today</span>\n<span class=\"hl-cmd\">></span> id -un             <span class=\"hl-pipe\">|></span> <span class=\"hl-var-ref\">@user</span>\n<span class=\"hl-cmd\">></span> nproc              <span class=\"hl-pipe\">|></span> <span class=\"hl-var-ref\">@cores</span>\n<span class=\"hl-sudo\">^></span> id -u              <span class=\"hl-pipe\">|></span> <span class=\"hl-var-ref\">@uid</span>   <span class=\"hl-comment\">;; sudo pipe</span>\n<span class=\"hl-print\">~></span> Host: <span class=\"hl-var-ref\">@host</span> | Kernel: <span class=\"hl-var-ref\">@kernel</span></pre>\n    </div>\n  </section>\n\n  \n  <section id=\"forin\">\n    <div class=\"section-header\"><span class=\"section-num\">19</span><h2>For-in — <code>@ item in</code> (gen 2)</h2></div>\n    <div class=\"code-block\">\n      <div class=\"code-header\"><div class=\"code-dots\"><span class=\"d1\"></span><span class=\"d2\"></span><span class=\"d3\"></span></div>@ item in lista</div>\n      <pre><span class=\"hl-forin\">@ tool</span> in curl git python3\n    <span class=\"hl-quick\">::</span>which <span class=\"hl-var-ref\">@tool</span>\n    <span class=\"hl-logic\">? ok</span>\n        <span class=\"hl-quick\">::</span>green ✓ <span class=\"hl-var-ref\">@tool</span>\n    <span class=\"hl-done\">done</span>\n<span class=\"hl-done\">done</span>\n\n<span class=\"hl-comment\">;; Ze zmiennej (ważne: ścieżki z / muszą być w zmiennej)</span>\n<span class=\"hl-var-decl\">% dirs</span> = \"/tmp /etc /usr\"\n<span class=\"hl-forin\">@ d</span> in <span class=\"hl-var-ref\">@dirs</span>\n    <span class=\"hl-print\">~></span> <span class=\"hl-var-ref\">@d</span>\n<span class=\"hl-done\">done</span></pre>\n    </div>\n    <div class=\"callout note\"><span class=\"callout-icon\">💡</span><div class=\"callout-body\">Iterable to lista oddzielona spacjami. Ścieżki zawierające <code>/</code> należy umieszczać w zmiennej (<code>% dirs = \"/tmp /etc\"</code>), a nie bezpośrednio w <code>@ item in</code>.</div></div>\n  </section>\n\n  \n  <section id=\"while\">\n    <div class=\"section-header\"><span class=\"section-num\">20</span><h2>While — <code>?~</code> (gen 2)</h2></div>\n    <div class=\"code-block\">\n      <div class=\"code-header\"><div class=\"code-dots\"><span class=\"d1\"></span><span class=\"d2\"></span><span class=\"d3\"></span></div>?~ warunek</div>\n      <pre><span class=\"hl-var-decl\">% i: int</span> = 0\n\n<span class=\"hl-while\">?~</span> <span class=\"hl-var-ref\">@i</span> &lt; 10\n    <span class=\"hl-arith\">$( @i + 1 )</span> -> <span class=\"hl-var-ref\">@i</span>\n    <span class=\"hl-print\">~></span> iteracja: <span class=\"hl-var-ref\">@i</span>\n<span class=\"hl-done\">done</span>\n\n<span class=\"hl-comment\">;; Operatory: == != &lt; > &lt;= >=</span>\n<span class=\"hl-while\">?~</span> <span class=\"hl-var-ref\">@status</span> == running\n    <span class=\"hl-print\">~></span> działa...\n<span class=\"hl-done\">done</span></pre>\n    </div>\n  </section>\n\n  \n  <section id=\"switch\">\n    <div class=\"section-header\"><span class=\"section-num\">21</span><h2>Switch — <code>? switch</code> (gen 2)</h2></div>\n    <div class=\"code-block\">\n      <div class=\"code-header\"><div class=\"code-dots\"><span class=\"d1\"></span><span class=\"d2\"></span><span class=\"d3\"></span></div>? switch</div>\n      <pre><span class=\"hl-logic\">? switch</span> <span class=\"hl-var-ref\">@os</span>\n| linux\n    <span class=\"hl-quick\">::</span>green Linux!\n| windows\n    <span class=\"hl-quick\">::</span>yellow Windows!\n| *\n    <span class=\"hl-print\">~></span> Nieznany: <span class=\"hl-var-ref\">@os</span>\n<span class=\"hl-done\">done</span>\n\n<span class=\"hl-comment\">;; Z dynamiczną wartością</span>\n<span class=\"hl-cmd\">></span> uname -s <span class=\"hl-pipe\">|></span> <span class=\"hl-var-ref\">@detected</span>\n<span class=\"hl-logic\">? switch</span> <span class=\"hl-var-ref\">@detected</span>\n| Linux\n    <span class=\"hl-quick\">::</span>green Linux!\n| *\n    <span class=\"hl-print\">~></span> <span class=\"hl-var-ref\">@detected</span>\n<span class=\"hl-done\">done</span></pre>\n    </div>\n  </section>\n\n  \n  <section id=\"hackeros\">\n    <div class=\"section-header\"><span class=\"section-num\">22</span><h2>HackerOS API — <code>||</code> (gen 2)</h2></div>\n    <p>Operator <code>||</code> wywołuje natywne narzędzia HackerOS bezpośrednio.</p>\n    <div class=\"code-block\">\n      <div class=\"code-header\"><div class=\"code-dots\"><span class=\"d1\"></span><span class=\"d2\"></span><span class=\"d3\"></span></div>|| narzedzie [args]</div>\n      <pre><span class=\"hl-hackeros\">||</span> hacker update\n<span class=\"hl-hackeros\">||</span> hpkg install nmap\n<span class=\"hl-hackeros\">||</span> lpm list\n<span class=\"hl-hackeros\">||</span> hsh -c \"ls /tmp\"\n<span class=\"hl-hackeros\">||</span> H# --version\n<span class=\"hl-hackeros\">||</span> Blue-Environment start\n<span class=\"hl-hackeros\">||</span> hackeros-steam launch</pre>\n    </div>\n    <p>Dostępne: <code>H# hco hacker hsh hpkg Blue-Environment hnm hpm hedit ngt eiq getit hdev anvil a hbuild lpm chker isolator hackeros-steam ulb gameframe hup hackeros-builder</code></p>\n  </section>\n\n  \n  <section id=\"extern\">\n    <div class=\"section-header\"><span class=\"section-num\">23</span><h2>Extern runtime — <code>_&gt;</code> (gen 2+)</h2></div>\n    <p>Uruchamia zewnętrzny plik/binarkę we WŁAŚCIWYM dla niego runtime — shell, Python, Java, bezpośrednia binarka (ELF) lub biblioteka dzielona (<code>.so</code>, przez <code>dlopen</code>). Runtime dobierany jest jawnie w nawiasach kwadratowych albo zgadywany z rozszerzenia pliku.</p>\n    <div class=\"code-block\">\n      <div class=\"code-header\"><div class=\"code-dots\"><span class=\"d1\"></span><span class=\"d2\"></span><span class=\"d3\"></span></div>_&gt;</div>\n      <pre><span class=\"hl-extern\">_></span> deploy.sh <span class=\"hl-kw\">[shell]</span> <span class=\"hl-kw\">def</span>\n    <span class=\"hl-print\">~></span> Uruchamiam deploy...\n<span class=\"hl-done\">done</span>\n\n<span class=\"hl-extern\">_></span> analiza.py <span class=\"hl-kw\">[python]</span> <span class=\"hl-kw\">def</span>\n    <span class=\"hl-print\">~></span> Analiza danych...\n<span class=\"hl-done\">done</span>\n\n<span class=\"hl-comment\">;; Runtime zgadywany automatycznie z rozszerzenia — [] można pominąć</span>\n<span class=\"hl-extern\">_></span> narzedzie.sh <span class=\"hl-kw\">def</span>     <span class=\"hl-comment\">;; .sh/.bash → shell</span>\n<span class=\"hl-done\">done</span>\n<span class=\"hl-extern\">_></span> /usr/bin/mytool <span class=\"hl-kw\">def</span>  <span class=\"hl-comment\">;; brak rozszerzenia → elf</span>\n<span class=\"hl-done\">done</span></pre>\n    </div>\n    <table class=\"ref-table\">\n      <tr><th>Runtime</th><th>Rozszerzenie (auto)</th><th>Co uruchamia</th></tr>\n      <tr><td><code>[shell]</code></td><td><code>.sh</code>, <code>.bash</code></td><td>bash/sh</td></tr>\n      <tr><td><code>[python]</code></td><td><code>.py</code></td><td>python3</td></tr>\n      <tr><td><code>[java]</code></td><td><code>.jar</code></td><td>java -jar</td></tr>\n      <tr><td><code>[elf]</code></td><td>(domyślny)</td><td>bezpośrednie wykonanie binarki</td></tr>\n      <tr><td><code>[so]</code></td><td><code>.so</code></td><td>biblioteka dzielona (dlopen)</td></tr>\n    </table>\n  </section>\n\n  \n  <section id=\"variables\">\n    <div class=\"section-header\"><span class=\"section-num\">24</span><h2>Zmienne — <code>%</code> i <code>@</code></h2></div>\n    <table class=\"ref-table\">\n      <tr><th>Zmienna</th><th>Wartość</th></tr>\n      <tr><td>@HL_VERSION</td><td>gen 2</td></tr>\n      <tr><td>@HL_OS</td><td>HackerOS/Debian</td></tr>\n      <tr><td>@HL_GEN</td><td>2</td></tr>\n      <tr><td>@HL_SCRIPT</td><td>ścieżka do bieżącego skryptu</td></tr>\n      <tr><td>@_bg_pid</td><td>PID ostatniego procesu w tle (&amp;)</td></tr>\n      <tr><td>@_import_detail</td><td>detal z <code>&lt;&lt; plik.hl | detal</code></td></tr>\n      <tr><td>@argc, @arg0…</td><td>argumenty skryptu</td></tr>\n    </table>\n  </section>\n\n  \n  <section id=\"export\">\n    <div class=\"section-header\"><span class=\"section-num\">25</span><h2>Export — <code>=></code></h2></div>\n    <div class=\"code-block\">\n      <div class=\"code-header\"><div class=\"code-dots\"><span class=\"d1\"></span><span class=\"d2\"></span><span class=\"d3\"></span></div>EXPORT</div>\n      <pre><span class=\"hl-export\">=></span> EDITOR  = nvim\n<span class=\"hl-export\">=></span> GOPATH  = /home/hacker/go\n\n<span class=\"hl-export\">=></span> PATH [\n| /usr/local/bin\n| /usr/bin\n| /usr/lib/HackerOS\n]</pre>\n    </div>\n  </section>\n\n  \n  <section id=\"functions\">\n    <div class=\"section-header\"><span class=\"section-num\">26</span><h2>Funkcje — <code>:</code> i <code>--</code></h2></div>\n    <div class=\"code-block\">\n      <div class=\"code-header\"><div class=\"code-dots\"><span class=\"d1\"></span><span class=\"d2\"></span><span class=\"d3\"></span></div>FUNKCJE</div>\n      <pre><span class=\"hl-func\">:</span> audit <span class=\"hl-kw\">def</span>\n    <span class=\"hl-print\">~></span> Skanowanie <span class=\"hl-var-ref\">@target</span>...\n    <span class=\"hl-cmd\">>></span> nmap -sV <span class=\"hl-var-ref\">@target</span>\n    <span class=\"hl-logic\">? ok</span>\n        <span class=\"hl-quick\">::</span>green Skan OK.\n    <span class=\"hl-done\">done</span>\n<span class=\"hl-done\">done</span>\n\n<span class=\"hl-func\">--</span> audit</pre>\n    </div>\n  </section>\n\n  \n  <section id=\"arena\">\n    <div class=\"section-header\"><span class=\"section-num\">27</span><h2>Arena functions — <code>:: nazwa &lt;rozmiar&gt; def</code> (gen 2)</h2></div>\n    <p>Szybszy wariant funkcji: przed wejściem alokowana jest arena (bump-pointer) o zadanym rozmiarze — wszystkie zmienne lokalne trafiają do niej, a po wyjściu następuje JEDEN dealokacja zamiast osobnego zwalniania każdej zmiennej. Zero presji na GC, zero fragmentacji sterty. Najlepsze dla: przetwarzania stringów, pętli matematycznych, parsowania, transformacji danych.</p>\n    <div class=\"code-block\">\n      <div class=\"code-header\"><div class=\"code-dots\"><span class=\"d1\"></span><span class=\"d2\"></span><span class=\"d3\"></span></div>ARENA FUNCTIONS</div>\n      <pre><span class=\"hl-arena\">::</span> przetworz <span class=\"hl-arena\">&lt;4k&gt;</span> <span class=\"hl-kw\">def</span>\n    <span class=\"hl-var-decl\">% buf: str</span> = <span class=\"hl-var-ref\">@wejscie</span>\n    <span class=\"hl-print\">~></span> Przetworzono: <span class=\"hl-var-ref\">@buf</span>\n<span class=\"hl-done\">done</span>\n\n<span class=\"hl-comment\">;; Wywołanie — tak samo jak zwykłej funkcji przez ::</span>\n<span class=\"hl-quick\">::</span>przetworz dane_wejsciowe\n\n<span class=\"hl-comment\">;; Rozmiar domyślny (4096 B), gdy pominięty</span>\n<span class=\"hl-arena\">::</span> szybka <span class=\"hl-kw\">def</span>\n    <span class=\"hl-print\">~></span> Bez jawnego rozmiaru — domyślnie 4k\n<span class=\"hl-done\">done</span></pre>\n    </div>\n    <table class=\"ref-table\">\n      <tr><th>Zapis rozmiaru</th><th>Bajtów</th><th>Uwagi</th></tr>\n      <tr><td><code>&lt;256&gt;</code></td><td>256 B</td><td>liczba = bajty wprost</td></tr>\n      <tr><td><code>&lt;4k&gt;</code></td><td>4096 B</td><td>sufiks <code>k</code> = ×1024</td></tr>\n      <tr><td><code>&lt;1m&gt;</code></td><td>1 048 576 B</td><td>sufiks <code>m</code> = ×1024×1024</td></tr>\n      <tr><td>(pominięty)</td><td>4096 B</td><td>domyślny rozmiar areny</td></tr>\n    </table>\n  </section>\n\n  \n  <section id=\"logic\">\n    <div class=\"section-header\"><span class=\"section-num\">28</span><h2>Warunki — <code>? ok / ? err</code></h2></div>\n    <div class=\"code-block\">\n      <div class=\"code-header\"><div class=\"code-dots\"><span class=\"d1\"></span><span class=\"d2\"></span><span class=\"d3\"></span></div>WARUNKI</div>\n      <pre><span class=\"hl-cmd\">></span> ping -c 1 192.168.1.1\n\n<span class=\"hl-logic\">? ok</span>\n    <span class=\"hl-quick\">::</span>green Online ✓\n<span class=\"hl-done\">done</span>\n\n<span class=\"hl-logic\">? err</span>\n    <span class=\"hl-quick\">::</span>red Offline ✗\n<span class=\"hl-done\">done</span></pre>\n    </div>\n  </section>\n\n  \n  <section id=\"comments\">\n    <div class=\"section-header\"><span class=\"section-num\">29</span><h2>Komentarze</h2></div>\n    <div class=\"code-block\">\n      <div class=\"code-header\"><div class=\"code-dots\"><span class=\"d1\"></span><span class=\"d2\"></span><span class=\"d3\"></span></div>KOMENTARZE</div>\n      <pre><span class=\"hl-comment\">;; komentarz liniowy</span>\n<span class=\"hl-doc\">/// dokumentacyjny (widoczny w hl search)</span>\n<span class=\"hl-comment\">// blokowy — wieloliniowy — kończy się \\\\</span></pre>\n    </div>\n  </section>\n\n  \n  <section id=\"deps\">\n    <div class=\"section-header\"><span class=\"section-num\">30</span><h2>Zależności — <code>//</code></h2></div>\n    <div class=\"code-block\">\n      <div class=\"code-header\"><div class=\"code-dots\"><span class=\"d1\"></span><span class=\"d2\"></span><span class=\"d3\"></span></div>DEKLARACJA</div>\n      <pre><span class=\"hl-dep\">// nmap</span>\n<span class=\"hl-dep\">// curl</span>\n<span class=\"hl-dep\">// git</span></pre>\n    </div>\n  </section>\n\n  \n  <section id=\"imports\">\n    <div class=\"section-header\"><span class=\"section-num\">31</span><h2>Biblioteki — <code>#</code></h2></div>\n    <div class=\"code-block\">\n      <div class=\"code-header\"><div class=\"code-dots\"><span class=\"d1\"></span><span class=\"d2\"></span><span class=\"d3\"></span></div>IMPORTY — gen 2</div>\n      <pre><span class=\"hl-import\">#</span> <span class=\"hl-string\">&lt;main/net&gt;</span>           <span class=\"hl-comment\">;; NET_LOCALHOST, NET_MYIP, porty...</span>\n<span class=\"hl-import\">#</span> <span class=\"hl-string\">&lt;main/fs&gt;</span>            <span class=\"hl-comment\">;; FS_HOME, FS_TMP...</span>\n<span class=\"hl-import\">#</span> <span class=\"hl-string\">&lt;main/sys&gt;</span>           <span class=\"hl-comment\">;; SYS_ARCH, SYS_KERNEL, SYS_OS...</span>\n<span class=\"hl-import\">#</span> <span class=\"hl-string\">&lt;main/str&gt;</span>           <span class=\"hl-comment\">;; STR_* stałe + funkcje str_*</span>\n<span class=\"hl-import\">#</span> <span class=\"hl-string\">&lt;main/crypto&gt;</span>        <span class=\"hl-comment\">;; sha256, md5, base64</span>\n<span class=\"hl-import\">#</span> <span class=\"hl-string\">&lt;main/colors&gt;</span>        <span class=\"hl-comment\">;; COLOR_RED, COLOR_GREEN...</span>\n<span class=\"hl-import\">#</span> <span class=\"hl-string\">&lt;main/cli&gt;</span>           <span class=\"hl-comment\">;; CLI_ARGC, CLI_ARG0...</span>\n<span class=\"hl-import\">#</span> <span class=\"hl-string\">&lt;main/progress-bar&gt;</span>  <span class=\"hl-comment\">;; pb_draw, pb_done, pb_label</span>\n<span class=\"hl-import\">#</span> <span class=\"hl-string\">&lt;main/json&gt;</span>          <span class=\"hl-comment\">;; json_get, json_validate...</span>\n<span class=\"hl-import\">#</span> <span class=\"hl-string\">&lt;main/hk-parser&gt;</span>     <span class=\"hl-comment\">;; parser .hk (HackerOS Config)</span>\n<span class=\"hl-import\">#</span> <span class=\"hl-string\">&lt;main/hacker&gt;</span>        <span class=\"hl-comment\">;; parser .hacker v1/v2/v3</span>\n<span class=\"hl-import\">#</span> <span class=\"hl-string\">&lt;bit/hashlib&gt;</span>        <span class=\"hl-comment\">;; bit — .so</span>\n<span class=\"hl-import\">#</span> <span class=\"hl-string\">&lt;github/user/repo&gt;</span>   <span class=\"hl-comment\">;; GitHub</span>\n\n<span class=\"hl-comment\">;; Kompatybilność wsteczna (automatycznie normalizowane):</span>\n<span class=\"hl-comment\">;; # &lt;std/net&gt; → main/net   # &lt;virus/x&gt; → bit/x   # &lt;community/u/r&gt; → github/u/r</span></pre>\n    </div>\n    <p>Biblioteki <code>main/</code> to pliki <code>.hl</code> w <code>/usr/lib/HackerOS/Hacker-Lang/main-libs/</code> — nie wbudowane w binkarkę.</p>\n  </section>\n\n  \n  <section id=\"bit\">\n    <div class=\"section-header\"><span class=\"section-num\">32</span><h2>Manager pakietów — <code>bit</code></h2></div>\n    <div class=\"code-block\">\n      <div class=\"code-header\"><div class=\"code-dots\"><span class=\"d1\"></span><span class=\"d2\"></span><span class=\"d3\"></span></div>KOMENDY bit</div>\n      <pre>bit                     <span class=\"hl-comment\"># auto: uruchom/skompiluj projekt</span>\nbit install hashlib     <span class=\"hl-comment\"># zainstaluj pakiet</span>\nbit remove  hashlib     <span class=\"hl-comment\"># usuń pakiet</span>\nbit list                <span class=\"hl-comment\"># lista dostępnych</span>\nbit update              <span class=\"hl-comment\"># zaktualizuj listę</span>\nbit info    hashlib     <span class=\"hl-comment\"># info o pakiecie</span>\nbit help                <span class=\"hl-comment\"># pomoc</span></pre>\n    </div>\n    <div class=\"code-block\">\n      <div class=\"code-header\"><div class=\"code-dots\"><span class=\"d1\"></span><span class=\"d2\"></span><span class=\"d3\"></span></div>PROGRESS BAR</div>\n      <pre>[->.................] [1%]\n[---->..............] [10%]\n[---------->........] [50%]\n[-------------------->] [100%]</pre>\n    </div>\n  </section>\n\n  \n  <section id=\"bit-project\">\n    <div class=\"section-header\"><span class=\"section-num\">33</span><h2>Projekt mode — <code>bit</code></h2></div>\n    <div class=\"cmd-grid\">\n      <div class=\"cmd-card\">\n        <span class=\"op\">run.hl + kod</span>\n        <p><code>bit</code> → uruchamia interpretowalnie przez <code>hl run run.hl</code></p>\n      </div>\n      <div class=\"cmd-card\">\n        <span class=\"op\">build.hl + kod</span>\n        <p><code>bit</code> → kompiluje do <code>bc/elf/so</code> wg <code>BIT_BUILD_TARGET</code></p>\n      </div>\n      <div class=\"cmd-card iso-card\">\n        <span class=\"op\">source-code/ + build.hl</span>\n        <p><code>bit</code> → kompiluje cały katalog (rust-like)</p>\n      </div>\n    </div>\n    <div class=\"code-block\">\n      <div class=\"code-header\"><div class=\"code-dots\"><span class=\"d1\"></span><span class=\"d2\"></span><span class=\"d3\"></span></div>build.hl</div>\n      <pre><span class=\"hl-gen\">using &lt;gen 2&gt;</span>\n\n<span class=\"hl-var-decl\">% BIT_BUILD_TARGET</span> = elf    <span class=\"hl-comment\">;; bc | elf | so</span>\n<span class=\"hl-var-decl\">% BIT_BUILD_INPUT</span>  = main.hl</pre>\n    </div>\n    <div class=\"callout note\"><span class=\"callout-icon\">💡</span><div class=\"callout-body\"><code>.cache/</code> tworzony automatycznie i usuwany po zakończeniu — izolowane środowisko.</div></div>\n  </section>\n\n  \n  <section id=\"cli\">\n    <div class=\"section-header\"><span class=\"section-num\">34</span><h2>CLI — <code>hl</code></h2></div>\n    <div class=\"code-block\">\n      <div class=\"code-header\"><div class=\"code-dots\"><span class=\"d1\"></span><span class=\"d2\"></span><span class=\"d3\"></span></div>WSZYSTKIE KOMENDY</div>\n      <pre>hl plik.hl               <span class=\"hl-comment\"># uruchom skrypt</span>\nhl run plik.hl           <span class=\"hl-comment\"># jawna forma</span>\nhl run plik.bc           <span class=\"hl-comment\"># uruchom bytecode</span>\nhl compile plik.hl       <span class=\"hl-comment\"># → plik.bc</span>\nhl compile plik.bc       <span class=\"hl-comment\"># → binarka ELF</span>\nhl compile --shared plik.bc  <span class=\"hl-comment\"># → .so</span>\nhl check plik.hl         <span class=\"hl-comment\"># linter + składnia</span>\nhl check --meta plik.hl  <span class=\"hl-comment\"># + gen + shebang</span>\nhl ast plik.hl           <span class=\"hl-comment\"># AST jako JSON</span>\nhl repl                  <span class=\"hl-comment\"># REPL interaktywny</span>\nhl shell                 <span class=\"hl-comment\"># HL jako powłoka</span>\nhl exec nazwa            <span class=\"hl-comment\"># skrypt systemowy</span>\nhl search fraza          <span class=\"hl-comment\"># szukaj skryptów</span>\nhl gen-info plik.hl      <span class=\"hl-comment\"># gen + shebang</span>\nhl docs                  <span class=\"hl-comment\"># dokumentacja TUI</span>\nhl version               <span class=\"hl-comment\"># wersja</span>\nhl -c \"~> Hej!\"          <span class=\"hl-comment\"># kod inline</span></pre>\n    </div>\n  </section>\n\n  \n  <section id=\"compile\">\n    <div class=\"section-header\"><span class=\"section-num\">35</span><h2>Kompilacja — <code>.hl → .bc → ELF</code></h2></div>\n    <div class=\"cmd-grid\">\n      <div class=\"cmd-card\"><span class=\"op\">.hl → .bc</span><p>Parsuj, serializuj AST do JSON bytecode. Plik <code>.bc</code> ma shebang i jest wykonywalny.</p></div>\n      <div class=\"cmd-card\"><span class=\"op\">.bc → ELF</span><p>Wczytaj <code>.bc</code>, lower → Cranelift → C runtime → binarka ELF x86_64.</p></div>\n    </div>\n    <div class=\"code-block\">\n      <div class=\"code-header\"><div class=\"code-dots\"><span class=\"d1\"></span><span class=\"d2\"></span><span class=\"d3\"></span></div>PIPELINE</div>\n      <pre>hl compile skrypt.hl   <span class=\"hl-comment\"># → skrypt.bc (bytecode)</span>\n./skrypt.bc            <span class=\"hl-comment\"># uruchom bezpośrednio</span>\nhl compile skrypt.bc   <span class=\"hl-comment\"># → skrypt (ELF)</span>\n./skrypt               <span class=\"hl-comment\"># uruchom binkarkę</span></pre>\n    </div>\n  </section>\n\n  \n  <section id=\"exec\">\n    <div class=\"section-header\"><span class=\"section-num\">36</span><h2><code>hl exec</code> i <code>hl search</code></h2></div>\n    <div class=\"code-block\">\n      <div class=\"code-header\"><div class=\"code-dots\"><span class=\"d1\"></span><span class=\"d2\"></span><span class=\"d3\"></span></div>SKRYPTY SYSTEMOWE</div>\n      <pre>hl search all            <span class=\"hl-comment\"># wszystkie skrypty</span>\nhl search update         <span class=\"hl-comment\"># szukaj</span>\nhl exec update-system    <span class=\"hl-comment\"># uruchom</span></pre>\n    </div>\n  </section>\n\n  \n  <section id=\"shell\">\n    <div class=\"section-header\"><span class=\"section-num\">37</span><h2>Powłoka</h2></div>\n    <div class=\"code-block\">\n      <div class=\"code-header\"><div class=\"code-dots\"><span class=\"d1\"></span><span class=\"d2\"></span><span class=\"d3\"></span></div>~/.hlrc</div>\n      <pre><span class=\"hl-gen\">using &lt;gen 2&gt;</span>\n\n<span class=\"hl-export\">=></span> EDITOR = nvim\n<span class=\"hl-export\">=></span> PATH [\n| /usr/local/bin\n| /usr/bin\n| /usr/lib/HackerOS\n]\n\n<span class=\"hl-func\">:</span> ll <span class=\"hl-kw\">def</span>\n    <span class=\"hl-cmd\">></span> ls -la\n<span class=\"hl-done\">done</span></pre>\n    </div>\n  </section>\n\n  \n  <section id=\"diag\">\n    <div class=\"section-header\"><span class=\"section-num\">38</span><h2>Diagnostyka i linter</h2></div>\n    <div class=\"code-block\">\n      <div class=\"code-header\"><div class=\"code-dots\"><span class=\"d1\"></span><span class=\"d2\"></span><span class=\"d3\"></span></div>PRZYKŁAD</div>\n      <pre><span class=\"hl-comment\">error: `echo` jest zabronione w blokach komend HL</span>\n  --> skrypt.hl:5:1\n 5 │ > echo hello\n   ^^^^^^^^^^^\n  help: zamień na: `~> hello`\n\n<span class=\"hl-comment\">warning: `> sudo cmd` — użyj `^>`</span>\n  --> skrypt.hl:8:1\n  help: zamień na: `^> cmd`</pre>\n    </div>\n  </section>\n\n  \n  <section id=\"ex-basic\">\n    <div class=\"section-header\"><span class=\"section-num\">39</span><h2>Przykłady — Gen 1 podstawy</h2></div>\n    <div class=\"code-block\">\n      <div class=\"code-header\"><div class=\"code-dots\"><span class=\"d1\"></span><span class=\"d2\"></span><span class=\"d3\"></span></div>update.hl</div>\n      <pre><span class=\"hl-shebang\">#!/usr/bin/env hl</span>\n<span class=\"hl-doc\">/// Aktualizacja systemu HackerOS</span>\n\n<span class=\"hl-func\">:</span> aktualizuj <span class=\"hl-kw\">def</span>\n    <span class=\"hl-quick\">::</span>hr 50\n    <span class=\"hl-quick\">::</span>bold APT — Aktualizacja\n    <span class=\"hl-sudo\">^></span> apt-get update -y\n    <span class=\"hl-logic\">? ok</span>\n        <span class=\"hl-sudo\">^></span> apt-get upgrade -y\n        <span class=\"hl-quick\">::</span>green APT zaktualizowany ✓\n    <span class=\"hl-done\">done</span>\n<span class=\"hl-done\">done</span>\n\n<span class=\"hl-bg\">&amp;</span> snap refresh          <span class=\"hl-comment\">;; snap w tle</span>\n<span class=\"hl-func\">--</span> aktualizuj\n<span class=\"hl-hsh\">*></span> notify-send \"Zaktualizowano\"</pre>\n    </div>\n  </section>\n\n  \n  <section id=\"ex-gen2\">\n    <div class=\"section-header\"><span class=\"section-num\">40</span><h2>Przykłady — Gen 2</h2></div>\n    <div class=\"code-block\">\n      <div class=\"code-header\"><div class=\"code-dots\"><span class=\"d1\"></span><span class=\"d2\"></span><span class=\"d3\"></span></div>gen2_demo.hl</div>\n      <pre><span class=\"hl-shebang\">#!/usr/bin/env hl</span>\n<span class=\"hl-doc\">/// Demo wszystkich funkcji gen 2</span>\n<span class=\"hl-gen\">using &lt;gen 2&gt;</span>\n<span class=\"hl-import\">#</span> <span class=\"hl-string\">&lt;main/colors&gt;</span>\n\n<span class=\"hl-comment\">;; Typowane zmienne</span>\n<span class=\"hl-var-decl\">% cores: int</span>  = 1\n<span class=\"hl-cmd\">></span> nproc <span class=\"hl-pipe\">|></span> <span class=\"hl-var-ref\">@cores</span>\n<span class=\"hl-arith\">$( @cores * 2 )</span> -> <span class=\"hl-var-ref\">@threads</span>\n<span class=\"hl-print\">~></span> Rdzenie: <span class=\"hl-var-ref\">@cores</span> | Wątki: <span class=\"hl-var-ref\">@threads</span>\n\n<span class=\"hl-comment\">;; For-in</span>\n<span class=\"hl-forin\">@ tool</span> in curl git nmap\n    <span class=\"hl-quick\">::</span>which <span class=\"hl-var-ref\">@tool</span>\n    <span class=\"hl-logic\">? ok</span>\n        <span class=\"hl-print\">~></span> <span class=\"hl-var-ref\">@COLOR_GREEN</span>✓<span class=\"hl-var-ref\">@COLOR_RESET</span> <span class=\"hl-var-ref\">@tool</span>\n    <span class=\"hl-done\">done</span>\n<span class=\"hl-done\">done</span>\n\n<span class=\"hl-comment\">;; Switch</span>\n<span class=\"hl-cmd\">></span> uname -s <span class=\"hl-pipe\">|></span> <span class=\"hl-var-ref\">@os</span>\n<span class=\"hl-logic\">? switch</span> <span class=\"hl-var-ref\">@os</span>\n| Linux\n    <span class=\"hl-quick\">::</span>green Linux ✓\n| *\n    <span class=\"hl-print\">~></span> OS: <span class=\"hl-var-ref\">@os</span>\n<span class=\"hl-done\">done</span>\n\n<span class=\"hl-comment\">;; While</span>\n<span class=\"hl-var-decl\">% i: int</span> = 0\n<span class=\"hl-while\">?~</span> <span class=\"hl-var-ref\">@i</span> &lt; 3\n    <span class=\"hl-arith\">$( @i + 1 )</span> -> <span class=\"hl-var-ref\">@i</span>\n    <span class=\"hl-print\">~></span> iter: <span class=\"hl-var-ref\">@i</span>\n<span class=\"hl-done\">done</span>\n\n<span class=\"hl-comment\">;; HackerOS API</span>\n<span class=\"hl-hackeros\">||</span> hacker --version</pre>\n    </div>\n  </section>\n\n  \n  <section id=\"ex-async\">\n    <div class=\"section-header\"><span class=\"section-num\">41</span><h2>Przykłady — Async</h2></div>\n    <div class=\"code-block\">\n      <div class=\"code-header\"><div class=\"code-dots\"><span class=\"d1\"></span><span class=\"d2\"></span><span class=\"d3\"></span></div>parallel.hl</div>\n      <pre><span class=\"hl-doc\">/// Równoległy skan sieci</span>\n<span class=\"hl-gen\">using &lt;gen 2&gt;</span>\n<span class=\"hl-dep\">// nmap</span>\n\n<span class=\"hl-channel\">:**</span> wyniki\n\n<span class=\"hl-goroutine\">:*</span> nmap_scan <span class=\"hl-kw\">def</span>\n    <span class=\"hl-cmd\">>></span> nmap -sn 192.168.1.0/24\n    <span class=\"hl-chanop\">*--</span> wyniki\n<span class=\"hl-done\">done</span>\n\n<span class=\"hl-goroutine\">:*</span> ping_gw <span class=\"hl-kw\">def</span>\n    <span class=\"hl-cmd\">></span> ping -c 3 8.8.8.8\n    <span class=\"hl-chanop\">*--</span> wyniki\n<span class=\"hl-done\">done</span>\n\n<span class=\"hl-bg\">&amp;</span> wget -q https://example.com/plik1.zip\n<span class=\"hl-bg\">&amp;</span> wget -q https://example.com/plik2.zip\n\n<span class=\"hl-chanop\">*--</span> wyniki</pre>\n    </div>\n  </section>\n\n  \n  <section id=\"ex-system\">\n    <div class=\"section-header\"><span class=\"section-num\">42</span><h2>Przykłady — Systemowe</h2></div>\n    <div class=\"code-block\">\n      <div class=\"code-header\"><div class=\"code-dots\"><span class=\"d1\"></span><span class=\"d2\"></span><span class=\"d3\"></span></div>sysinfo.hl</div>\n      <pre><span class=\"hl-doc\">/// Raport systemowy — gen 2</span>\n<span class=\"hl-gen\">using &lt;gen 2&gt;</span>\n<span class=\"hl-import\">#</span> <span class=\"hl-string\">&lt;main/colors&gt;</span>\n\n<span class=\"hl-cmd\">></span> uname -r   <span class=\"hl-pipe\">|></span> <span class=\"hl-var-ref\">@kernel</span>\n<span class=\"hl-cmd\">></span> nproc       <span class=\"hl-pipe\">|></span> <span class=\"hl-var-ref\">@cores</span>\n<span class=\"hl-cmd\">></span> uname -m   <span class=\"hl-pipe\">|></span> <span class=\"hl-var-ref\">@arch</span>\n<span class=\"hl-cmd\">></span> id -un     <span class=\"hl-pipe\">|></span> <span class=\"hl-var-ref\">@user</span>\n<span class=\"hl-arith\">$( @cores * 2 )</span> -> <span class=\"hl-var-ref\">@threads</span>\n\n<span class=\"hl-quick\">::</span>hr 50\n<span class=\"hl-print\">~></span> <span class=\"hl-var-ref\">@COLOR_BOLD</span>HackerOS System Report<span class=\"hl-var-ref\">@COLOR_RESET</span>\n<span class=\"hl-quick\">::</span>hr 50\n<span class=\"hl-print\">~></span> Kernel:  <span class=\"hl-var-ref\">@kernel</span>\n<span class=\"hl-print\">~></span> Arch:    <span class=\"hl-var-ref\">@arch</span>\n<span class=\"hl-print\">~></span> Cores:   <span class=\"hl-var-ref\">@cores</span>\n<span class=\"hl-print\">~></span> Threads: <span class=\"hl-var-ref\">@threads</span>\n<span class=\"hl-print\">~></span> User:    <span class=\"hl-var-ref\">@user</span>\n<span class=\"hl-quick\">::</span>hr 50</pre>\n    </div>\n  </section>\n\n</main>"
+
+fun main() [
+    boot_begin("pl", "Hacker Lang — Dokumentacja gen 2")
+    set_viewport("width=device-width, initial-scale=1.0")
+    head_tag("link", ["rel", "icon", "type", "image/png", "href", "https://raw.githubusercontent.com/HackerOS-Linux-System/Hacker-Lang/main/images/icon.png"])
+    head_tag("link", ["rel", "preconnect", "href", "https://fonts.googleapis.com"])
+    head_tag("link", ["href", "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap", "rel", "stylesheet"])
+    boot_body(PAGE_BODY)
+    offline_init("../")
+    hacker_lang_docs_init()
+]
