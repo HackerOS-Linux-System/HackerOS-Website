@@ -1,0 +1,614 @@
+use <mode:website>
+
+include <../../shared/offline>
+include <../../logic/scrollspy>
+
+style {
+#app { display: none; }
+  :root {
+    --bg:       #080b10;
+    --bg2:      #0d1117;
+    --bg3:      #111820;
+    --border:   #1e2d40;
+    --dim:      #2a3a50;
+    --text:     #c8d8e8;
+    --muted:    #5a7a98;
+    --green:    #39ff98;
+    --cyan:     #00d4ff;
+    --purple:   #b060ff;
+    --orange:   #ff7b35;
+    --red:      #ff3a5c;
+    --yellow:   #ffe44d;
+    --glow-g:   0 0 20px rgba(57,255,152,.25);
+    --glow-c:   0 0 20px rgba(0,212,255,.25);
+    --glow-p:   0 0 20px rgba(176,96,255,.25);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    line-height: 1.75;
+    overflow-x: hidden;
+  }
+
+  
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+
+  
+  body::after {
+    content: '';
+    position: fixed; inset: 0; z-index: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,.04) 2px,
+      rgba(0,0,0,.04) 4px
+    );
+    pointer-events: none;
+  }
+
+  
+  .shell {
+    position: relative; z-index: 1;
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    min-height: 100vh;
+  }
+
+  
+  nav {
+    position: sticky; top: 0; height: 100vh;
+    overflow-y: auto;
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    padding: 0 0 2rem;
+    scrollbar-width: thin;
+    scrollbar-color: var(--dim) transparent;
+  }
+
+  .nav-logo {
+    padding: 1.5rem 1.25rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: .75rem;
+  }
+
+  .nav-logo .wordmark {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.4rem;
+    letter-spacing: -.01em;
+    color: var(--green);
+    text-shadow: var(--glow-g);
+    display: block;
+  }
+
+  .nav-logo .tagline {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    margin-top: .2rem;
+  }
+
+  .nav-badge {
+    display: inline-block;
+    font-size: 9px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border-radius: 2px;
+    margin-top: .5rem;
+    font-weight: 700;
+  }
+  .badge-normal  { background: rgba(0,212,255,.15); color: var(--cyan);   border: 1px solid rgba(0,212,255,.3); }
+  .badge-cybersec{ background: rgba(176,96,255,.15); color: var(--purple); border: 1px solid rgba(176,96,255,.3); }
+
+  nav ul { list-style: none; padding: 0 .5rem; }
+  nav ul li a {
+    display: block;
+    padding: .35rem .75rem;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 12px;
+    border-radius: 4px;
+    transition: all .15s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  nav ul li a:hover { color: var(--text); background: var(--bg3); }
+  nav ul li a.active { color: var(--green); background: rgba(57,255,152,.07); }
+
+  .nav-section {
+    font-size: 10px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--dim);
+    padding: 1rem 1.25rem .3rem;
+  }
+
+  
+  main {
+    padding: 0;
+    overflow: hidden;
+  }
+
+  
+  .hero {
+    background: linear-gradient(135deg, var(--bg2) 0%, var(--bg3) 50%, #0a0f1a 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 4rem 3.5rem 3.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: 'GhostFS';
+    position: absolute;
+    right: -2rem; top: 50%; transform: translateY(-50%);
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 12rem;
+    color: rgba(57,255,152,.03);
+    line-height: 1;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  .hero-tag {
+    font-size: 10px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 1rem;
+  }
+
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 2.8rem;
+    line-height: 1.1;
+    letter-spacing: -.02em;
+    margin-bottom: 1rem;
+    color: #e8f4ff;
+  }
+
+  .hero h1 span { color: var(--green); text-shadow: var(--glow-g); }
+
+  .hero-desc {
+    max-width: 640px;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.8;
+    margin-bottom: 2rem;
+  }
+
+  .hero-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+  }
+
+  .pill {
+    font-size: 11px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 500;
+  }
+  .pill-green  { background: rgba(57,255,152,.1);  color: var(--green);  border: 1px solid rgba(57,255,152,.25); }
+  .pill-cyan   { background: rgba(0,212,255,.1);   color: var(--cyan);   border: 1px solid rgba(0,212,255,.25); }
+  .pill-purple { background: rgba(176,96,255,.1);  color: var(--purple); border: 1px solid rgba(176,96,255,.25); }
+  .pill-orange { background: rgba(255,123,53,.1);  color: var(--orange); border: 1px solid rgba(255,123,53,.25); }
+
+  
+  .section { padding: 2.5rem 3.5rem; border-bottom: 1px solid var(--border); }
+  .section:last-child { border-bottom: none; }
+
+  .section-label {
+    font-size: 10px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: .5rem;
+  }
+
+  h2 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #e8f4ff;
+    margin-bottom: 1.25rem;
+    letter-spacing: -.01em;
+  }
+  h2 .accent { color: var(--cyan); }
+
+  h3 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 1.05rem;
+    color: var(--text);
+    margin: 1.75rem 0 .75rem;
+  }
+
+  h4 {
+    font-size: 11px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 1.25rem 0 .5rem;
+  }
+
+  p { color: var(--text); margin-bottom: .9rem; font-size: 13px; line-height: 1.85; }
+  p:last-child { margin-bottom: 0; }
+
+  
+  .mode-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    margin: 1.5rem 0;
+  }
+
+  .mode-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color .2s;
+  }
+  .mode-card:hover { border-color: var(--dim); }
+  .mode-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 2px;
+  }
+  .mode-card.normal::before { background: linear-gradient(90deg, var(--cyan), transparent); }
+  .mode-card.cybersec::before { background: linear-gradient(90deg, var(--purple), transparent); }
+
+  .mode-icon {
+    font-size: 1.5rem;
+    margin-bottom: .75rem;
+    display: block;
+  }
+
+  .mode-card h3 { margin-top: 0; font-size: 1.1rem; }
+  .mode-card.normal h3 { color: var(--cyan); }
+  .mode-card.cybersec h3 { color: var(--purple); }
+
+  .mode-card ul { list-style: none; margin: .75rem 0 0; }
+  .mode-card ul li {
+    font-size: 12px;
+    color: var(--muted);
+    padding: .25rem 0;
+    padding-left: 1.2rem;
+    position: relative;
+  }
+  .mode-card ul li::before {
+    content: '▸';
+    position: absolute; left: 0;
+    color: var(--dim);
+  }
+
+  
+  .arch-diagram {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    font-size: 12px;
+    overflow-x: auto;
+  }
+
+  .arch-layer {
+    display: flex;
+    gap: 1rem;
+    align-items: stretch;
+    margin-bottom: .75rem;
+  }
+  .arch-label {
+    width: 90px;
+    min-width: 90px;
+    font-size: 10px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+  }
+  .arch-boxes {
+    display: flex;
+    gap: .5rem;
+    flex: 1;
+    flex-wrap: wrap;
+  }
+  .abox {
+    flex: 1;
+    min-width: 90px;
+    padding: .5rem .75rem;
+    border-radius: 4px;
+    font-size: 11px;
+    text-align: center;
+    font-weight: 500;
+    border: 1px solid;
+  }
+  .abox-green  { background: rgba(57,255,152,.07);  color: var(--green);  border-color: rgba(57,255,152,.2); }
+  .abox-cyan   { background: rgba(0,212,255,.07);   color: var(--cyan);   border-color: rgba(0,212,255,.2); }
+  .abox-purple { background: rgba(176,96,255,.07);  color: var(--purple); border-color: rgba(176,96,255,.2); }
+  .abox-orange { background: rgba(255,123,53,.07);  color: var(--orange); border-color: rgba(255,123,53,.2); }
+  .abox-dim    { background: var(--bg3);            color: var(--muted);  border-color: var(--border); }
+  .abox-red    { background: rgba(255,58,92,.07);   color: var(--red);    border-color: rgba(255,58,92,.2); }
+  .abox-yellow { background: rgba(255,228,77,.07);  color: var(--yellow); border-color: rgba(255,228,77,.2); }
+
+  .arch-arrow {
+    text-align: center;
+    color: var(--dim);
+    font-size: 16px;
+    margin: .2rem 0;
+    margin-left: 90px;
+    padding-left: .75rem;
+  }
+
+  
+  pre, code {
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  pre {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--green);
+    border-radius: 4px;
+    padding: 1.25rem 1.5rem;
+    overflow-x: auto;
+    font-size: 12.5px;
+    line-height: 1.7;
+    margin: 1rem 0;
+    position: relative;
+  }
+  pre.cybersec { border-left-color: var(--purple); }
+  pre.normal   { border-left-color: var(--cyan); }
+  pre.warn     { border-left-color: var(--orange); }
+
+  code {
+    background: rgba(57,255,152,.06);
+    color: var(--green);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 12px;
+  }
+
+  pre code {
+    background: none; padding: 0; border-radius: 0; font-size: inherit;
+  }
+
+  .comment  { color: var(--muted); font-style: italic; }
+  .kw       { color: var(--purple); }
+  .str      { color: var(--yellow); }
+  .num      { color: var(--orange); }
+  .fn-name  { color: var(--cyan); }
+  .flag     { color: var(--green); }
+
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    margin: 1.25rem 0;
+  }
+  th {
+    text-align: left;
+    font-size: 10px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: .6rem 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: .6rem 1rem;
+    border-bottom: 1px solid rgba(30,45,64,.5);
+    color: var(--text);
+    vertical-align: top;
+  }
+  tr:hover td { background: rgba(57,255,152,.02); }
+  td code { font-size: 11.5px; }
+
+  
+  .callout {
+    border-radius: 5px;
+    padding: 1rem 1.25rem;
+    margin: 1.25rem 0;
+    font-size: 12.5px;
+    line-height: 1.75;
+    display: flex;
+    gap: .75rem;
+    align-items: flex-start;
+  }
+  .callout-icon { flex-shrink: 0; font-size: 1rem; }
+  .callout.info    { background: rgba(0,212,255,.07);   border: 1px solid rgba(0,212,255,.2); }
+  .callout.warning { background: rgba(255,123,53,.07);  border: 1px solid rgba(255,123,53,.2); }
+  .callout.danger  { background: rgba(255,58,92,.07);   border: 1px solid rgba(255,58,92,.2); }
+  .callout.success { background: rgba(57,255,152,.07);  border: 1px solid rgba(57,255,152,.2); }
+  .callout.cybersec{ background: rgba(176,96,255,.07);  border: 1px solid rgba(176,96,255,.2); }
+
+  
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    margin: 1.5rem 0;
+    font-size: 12px;
+  }
+  .compare-header {
+    padding: .75rem 1rem;
+    font-size: 10px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+  .ch-feature   { background: var(--bg3); color: var(--muted); }
+  .ch-normal    { background: rgba(0,212,255,.08); color: var(--cyan); }
+  .ch-cybersec  { background: rgba(176,96,255,.08); color: var(--purple); }
+  .compare-row  { display: contents; }
+  .compare-cell {
+    padding: .6rem 1rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+  }
+  .cc-feature { background: var(--bg2); color: var(--text); }
+  .cc-normal  { background: rgba(0,212,255,.03); color: var(--muted); }
+  .cc-cybersec{ background: rgba(176,96,255,.03); color: var(--muted); }
+  .tick-y { color: var(--green); }
+  .tick-n { color: var(--dim); }
+  .tick-p { color: var(--purple); }
+
+  
+  .step-list {
+    counter-reset: step;
+    list-style: none;
+    margin: 1rem 0;
+  }
+  .step-list li {
+    counter-increment: step;
+    padding: 1rem 1.25rem 1rem 3.5rem;
+    position: relative;
+    border-left: 1px solid var(--border);
+    margin-bottom: .75rem;
+    background: var(--bg2);
+    border-radius: 0 4px 4px 0;
+    font-size: 13px;
+    color: var(--text);
+  }
+  .step-list li::before {
+    content: counter(step);
+    position: absolute;
+    left: -1px;
+    top: 50%; transform: translateY(-50%);
+    width: 2rem;
+    height: 2rem;
+    background: var(--green);
+    color: var(--bg);
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 2px;
+  }
+
+  
+  .test-block {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    margin: 1rem 0;
+  }
+  .test-header {
+    background: var(--bg3);
+    padding: .6rem 1rem;
+    font-size: 11px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .test-status { font-size: 10px; padding: 2px 8px; border-radius: 10px; }
+  .ts-pass { background: rgba(57,255,152,.15); color: var(--green); }
+  .ts-cybersec { background: rgba(176,96,255,.15); color: var(--purple); }
+  .test-block pre { border-radius: 0; border: none; border-left: none; margin: 0; }
+
+  
+  .key-grid {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: .3rem 1.5rem;
+    font-size: 12px;
+    margin: 1rem 0;
+  }
+  .key-name { color: var(--green); font-weight: 500; }
+  .key-desc { color: var(--muted); }
+
+  
+  footer {
+    padding: 2rem 3.5rem;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 11px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--dim); border-radius: 3px; }
+
+  
+  @media (max-width: 900px) {
+    .shell { grid-template-columns: 1fr; }
+    nav { position: static; height: auto; }
+    .hero { padding: 2rem 1.5rem; }
+    .section { padding: 2rem 1.5rem; }
+    .mode-grid, .compare-grid { grid-template-columns: 1fr; }
+    footer { flex-direction: column; text-align: center; }
+  }
+
+  
+  @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+  .cursor::after {
+    content: '█';
+    color: var(--green);
+    animation: blink 1s step-end infinite;
+    font-size: .9em;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .hero h1, .hero-desc, .hero-pills {
+    animation: fadeUp .5s ease forwards;
+  }
+  .hero-desc { animation-delay: .1s; opacity: 0; }
+  .hero-pills { animation-delay: .2s; opacity: 0; }
+}
+
+let PAGE_BODY: Str = "<div class=\"shell\">\n\n\n<nav>\n  <div class=\"nav-logo\">\n    <span class=\"wordmark\">GhostFS</span>\n    <span class=\"tagline\">HackerOS File System</span><br>\n    <span class=\"nav-badge badge-normal\">Normal v0.4</span>\n    <span class=\"nav-badge badge-cybersec\">Cybersec v0.4</span>\n  </div>\n\n  <div class=\"nav-section\">Overview</div>\n  <ul>\n    <li><a href=\"#overview\">Introduction</a></li>\n    <li><a href=\"#architecture\">Architecture</a></li>\n    <li><a href=\"#modes\">Build Modes</a></li>\n    <li><a href=\"#comparison\">Feature Matrix</a></li>\n  </ul>\n\n  <div class=\"nav-section\">Normal Mode</div>\n  <ul>\n    <li><a href=\"#normal-journal\">WAL Journal</a></li>\n    <li><a href=\"#normal-extents\">Extent Tree</a></li>\n    <li><a href=\"#normal-dirindex\">Dir Index (HTree)</a></li>\n    <li><a href=\"#normal-cache\">Read-ahead Cache</a></li>\n    <li><a href=\"#normal-dedup\">Deduplication</a></li>\n    <li><a href=\"#normal-compression\">Compression</a></li>\n  </ul>\n\n  <div class=\"nav-section\">Cybersec Mode</div>\n  <ul>\n    <li><a href=\"#cs-crypto\">AES-256-GCM Crypto</a></li>\n    <li><a href=\"#cs-integrity\">Merkle Integrity Tree</a></li>\n    <li><a href=\"#cs-mac\">MAC Labels (BLP)</a></li>\n    <li><a href=\"#cs-ids\">Intrusion Detection</a></li>\n    <li><a href=\"#cs-forensics\">Forensics Chain</a></li>\n    <li><a href=\"#cs-audit\">Structured Audit</a></li>\n  </ul>\n\n  <div class=\"nav-section\">Operations</div>\n  <ul>\n    <li><a href=\"#build\">Building</a></li>\n    <li><a href=\"#mkfs\">Formatting</a></li>\n    <li><a href=\"#mount\">Mounting</a></li>\n    <li><a href=\"#sled-layout\">Sled Key Layout</a></li>\n    <li><a href=\"#testing\">Testing Guide</a></li>\n    <li><a href=\"#calamares\">Calamares Integration</a></li>\n  </ul>\n\n  <div class=\"nav-section\">Reference</div>\n  <ul>\n    <li><a href=\"#cli\">CLI Reference</a></li>\n    <li><a href=\"#errors\">Error Codes</a></li>\n    <li><a href=\"#tunables\">Tunables</a></li>\n  </ul>\n</nav>\n\n\n<main>\n\n\n<div class=\"hero\">\n  <div class=\"hero-tag\">// HackerOS — GhostFS v0.4.0</div>\n  <h1><span>Ghost</span>FS<span class=\"cursor\"></span></h1>\n  <p class=\"hero-desc\">\n    A production-grade FUSE filesystem backed by sled, written in Rust.\n    Two personalities in one binary: <strong>Normal</strong> — a high-performance\n    ext4-class filesystem for everyday use; <strong>Cybersec</strong> — a\n    forensics-ready, encryption-mandatory, MAC-enforcing fortress for\n    security professionals and incident responders.\n  </p>\n  <div class=\"hero-pills\">\n    <span class=\"pill pill-green\">Rust + FUSE</span>\n    <span class=\"pill pill-cyan\">sled embedded DB</span>\n    <span class=\"pill pill-green\">Write-Ahead Log</span>\n    <span class=\"pill pill-cyan\">Extent Tree</span>\n    <span class=\"pill pill-purple\">AES-256-GCM</span>\n    <span class=\"pill pill-purple\">Merkle Integrity</span>\n    <span class=\"pill pill-purple\">Bell-LaPadula MAC</span>\n    <span class=\"pill pill-orange\">BLAKE3 everywhere</span>\n  </div>\n</div>\n\n\n<div class=\"section\" id=\"overview\">\n  <div class=\"section-label\">// 01 — overview</div>\n  <h2>What is <span class=\"accent\">GhostFS</span>?</h2>\n  <p>GhostFS is a userspace filesystem designed for HackerOS. It runs on top of FUSE and stores all metadata and data inside a <strong>sled</strong> embedded key-value store, giving it ACID-grade crash safety without requiring a dedicated block device.</p>\n  <p>It is compiled as one of two personalities selected at build time:</p>\n\n  <div class=\"mode-grid\">\n    <div class=\"mode-card normal\">\n      <span class=\"mode-icon\">⚡</span>\n      <h3>Normal Mode</h3>\n      <p style=\"font-size:12px;color:var(--muted);margin:.5rem 0 .75rem\">Feature: <code>normal</code></p>\n      <ul>\n        <li>Write-Ahead Log (WAL) for crash safety</li>\n        <li>Extent-based block mapping (fewer metadata ops)</li>\n        <li>HTree-style directory index (O(log n) lookup)</li>\n        <li>Read-ahead + write-back block cache</li>\n        <li>Content-addressable block deduplication (BLAKE3)</li>\n        <li>zstd / lz4 / zlib transparent compression</li>\n        <li>Per-user disk quotas</li>\n        <li>Extended attributes (xattr)</li>\n        <li>Optional AES-256-GCM encryption</li>\n        <li>Rotating structured audit log</li>\n        <li>Background self-repair worker</li>\n      </ul>\n    </div>\n    <div class=\"mode-card cybersec\">\n      <span class=\"mode-icon\">🔐</span>\n      <h3>Cybersec Mode</h3>\n      <p style=\"font-size:12px;color:var(--muted);margin:.5rem 0 .75rem\">Feature: <code>cybersec</code></p>\n      <ul>\n        <li><em>Everything in Normal, plus:</em></li>\n        <li>Encryption is <strong>mandatory</strong> — no unencrypted blocks</li>\n        <li>Per-file Merkle integrity tree (tamper detection)</li>\n        <li>Bell-LaPadula Mandatory Access Control labels</li>\n        <li>Filesystem-level IDS with anomaly alerting</li>\n        <li>Hash-chained immutable forensics log</li>\n        <li>SIEM-exportable forensics tail</li>\n        <li>Root bypass only within MAC trust domain</li>\n        <li>Compartment-based access control</li>\n        <li>Rapid-enumeration scanner detection</li>\n        <li>Mass-delete ransomware heuristic</li>\n      </ul>\n    </div>\n  </div>\n</div>\n\n\n<div class=\"section\" id=\"architecture\">\n  <div class=\"section-label\">// 02 — architecture</div>\n  <h2>Layer <span class=\"accent\">Architecture</span></h2>\n\n  <div class=\"arch-diagram\">\n    <div class=\"arch-layer\">\n      <div class=\"arch-label\">Application</div>\n      <div class=\"arch-boxes\">\n        <div class=\"abox abox-dim\">POSIX app</div>\n        <div class=\"abox abox-dim\">shell</div>\n        <div class=\"abox abox-dim\">forensics CLI</div>\n      </div>\n    </div>\n    <div class=\"arch-arrow\">↓ VFS syscalls</div>\n    <div class=\"arch-layer\">\n      <div class=\"arch-label\">FUSE layer</div>\n      <div class=\"arch-boxes\">\n        <div class=\"abox abox-cyan\">fs.rs (Filesystem impl)</div>\n      </div>\n    </div>\n    <div class=\"arch-arrow\">↓</div>\n    <div class=\"arch-layer\">\n      <div class=\"arch-label\">GhostFS core</div>\n      <div class=\"arch-boxes\">\n        <div class=\"abox abox-green\">journal.rs (WAL)</div>\n        <div class=\"abox abox-green\">extents.rs</div>\n        <div class=\"abox abox-green\">dirindex.rs</div>\n        <div class=\"abox abox-green\">cache.rs</div>\n      </div>\n    </div>\n    <div class=\"arch-arrow\">↓</div>\n    <div class=\"arch-layer\">\n      <div class=\"arch-label\">Data path</div>\n      <div class=\"arch-boxes\">\n        <div class=\"abox abox-orange\">dedup (BLAKE3)</div>\n        <div class=\"abox abox-orange\">compression</div>\n        <div class=\"abox abox-purple\">crypto (AES-GCM)</div>\n      </div>\n    </div>\n    <div class=\"arch-arrow\">↓  [cybersec only ↘]</div>\n    <div class=\"arch-layer\">\n      <div class=\"arch-label\">Security</div>\n      <div class=\"arch-boxes\">\n        <div class=\"abox abox-purple\">integrity.rs (Merkle)</div>\n        <div class=\"abox abox-purple\">mac.rs (BLP)</div>\n        <div class=\"abox abox-red\">ids.rs (IDS)</div>\n        <div class=\"abox abox-yellow\">forensics.rs</div>\n      </div>\n    </div>\n    <div class=\"arch-arrow\">↓</div>\n    <div class=\"arch-layer\">\n      <div class=\"arch-label\">Storage</div>\n      <div class=\"arch-boxes\">\n        <div class=\"abox abox-dim\">sled embedded KV (LSMT)</div>\n        <div class=\"abox abox-dim\">audit.rs</div>\n        <div class=\"abox abox-dim\">quota.rs</div>\n        <div class=\"abox abox-dim\">xattr.rs</div>\n      </div>\n    </div>\n  </div>\n</div>\n\n\n<div class=\"section\" id=\"modes\">\n  <div class=\"section-label\">// 03 — build modes</div>\n  <h2>Build <span class=\"accent\">Modes</span></h2>\n\n  <h3>Normal Mode</h3>\n  <pre class=\"normal\"><span class=\"comment\"># Build Normal (default)</span>\ncargo build --release\n\n<span class=\"comment\"># With all compression backends</span>\ncargo build --release --features zstd,lz4,normal</pre>\n\n  <h3>Cybersec Mode</h3>\n  <pre class=\"cybersec\"><span class=\"comment\"># Build Cybersec (mandatory encryption)</span>\ncargo build --no-default-features --features cybersec,zstd,lz4 --release</pre>\n\n  <div class=\"callout cybersec\">\n    <span class=\"callout-icon\">🔐</span>\n    <div>In <strong>cybersec</strong> mode the binary will refuse to mount without a key file. Encryption is not optional. Attempting to mount without <code>--key-file</code> results in an immediate error.</div>\n  </div>\n</div>\n\n\n<div class=\"section\" id=\"comparison\">\n  <div class=\"section-label\">// 04 — feature matrix</div>\n  <h2>Feature <span class=\"accent\">Matrix</span></h2>\n\n  <div class=\"compare-grid\">\n    <div class=\"compare-header ch-feature\">Feature</div>\n    <div class=\"compare-header ch-normal\">⚡ Normal</div>\n    <div class=\"compare-header ch-cybersec\">🔐 Cybersec</div>\n\n    <div class=\"compare-cell cc-feature\">Write-Ahead Log (WAL)</div>\n    <div class=\"compare-cell cc-normal\"><span class=\"tick-y\">✓</span> ordered-data journal</div>\n    <div class=\"compare-cell cc-cybersec\"><span class=\"tick-y\">✓</span> ordered-data journal</div>\n\n    <div class=\"compare-cell cc-feature\">Extent-based block map</div>\n    <div class=\"compare-cell cc-normal\"><span class=\"tick-y\">✓</span> coalescing extents</div>\n    <div class=\"compare-cell cc-cybersec\"><span class=\"tick-y\">✓</span> coalescing extents</div>\n\n    <div class=\"compare-cell cc-feature\">HTree directory index</div>\n    <div class=\"compare-cell cc-normal\"><span class=\"tick-y\">✓</span> BLAKE3 hash-sorted</div>\n    <div class=\"compare-cell cc-cybersec\"><span class=\"tick-y\">✓</span> BLAKE3 hash-sorted</div>\n\n    <div class=\"compare-cell cc-feature\">Read-ahead cache</div>\n    <div class=\"compare-cell cc-normal\"><span class=\"tick-y\">✓</span> 8-block prefetch</div>\n    <div class=\"compare-cell cc-cybersec\"><span class=\"tick-y\">✓</span> 8-block prefetch</div>\n\n    <div class=\"compare-cell cc-feature\">Block deduplication</div>\n    <div class=\"compare-cell cc-normal\"><span class=\"tick-y\">✓</span> content-addressable</div>\n    <div class=\"compare-cell cc-cybersec\"><span class=\"tick-y\">✓</span> content-addressable</div>\n\n    <div class=\"compare-cell cc-feature\">Transparent compression</div>\n    <div class=\"compare-cell cc-normal\"><span class=\"tick-y\">✓</span> zstd / lz4 / zlib</div>\n    <div class=\"compare-cell cc-cybersec\"><span class=\"tick-y\">✓</span> zstd / lz4 / zlib</div>\n\n    <div class=\"compare-cell cc-feature\">AES-256-GCM encryption</div>\n    <div class=\"compare-cell cc-normal\"><span class=\"tick-y\">✓</span> optional</div>\n    <div class=\"compare-cell cc-cybersec\"><span class=\"tick-p\">✦</span> mandatory</div>\n\n    <div class=\"compare-cell cc-feature\">Merkle integrity tree</div>\n    <div class=\"compare-cell cc-normal\"><span class=\"tick-n\">–</span></div>\n    <div class=\"compare-cell cc-cybersec\"><span class=\"tick-p\">✦</span> per-file, BLAKE3</div>\n\n    <div class=\"compare-cell cc-feature\">Bell-LaPadula MAC</div>\n    <div class=\"compare-cell cc-normal\"><span class=\"tick-n\">–</span></div>\n    <div class=\"compare-cell cc-cybersec\"><span class=\"tick-p\">✦</span> levels + compartments</div>\n\n    <div class=\"compare-cell cc-feature\">IDS / anomaly detection</div>\n    <div class=\"compare-cell cc-normal\"><span class=\"tick-n\">–</span></div>\n    <div class=\"compare-cell cc-cybersec\"><span class=\"tick-p\">✦</span> 5 rule categories</div>\n\n    <div class=\"compare-cell cc-feature\">Hash-chained forensics</div>\n    <div class=\"compare-cell cc-normal\"><span class=\"tick-n\">–</span></div>\n    <div class=\"compare-cell cc-cybersec\"><span class=\"tick-p\">✦</span> append-only, μs timestamps</div>\n\n    <div class=\"compare-cell cc-feature\">Structured audit log</div>\n    <div class=\"compare-cell cc-normal\"><span class=\"tick-y\">✓</span> 100 k entries, rotating</div>\n    <div class=\"compare-cell cc-cybersec\"><span class=\"tick-p\">✦</span> + forensics chain</div>\n\n    <div class=\"compare-cell cc-feature\">Per-user quotas</div>\n    <div class=\"compare-cell cc-normal\"><span class=\"tick-y\">✓</span></div>\n    <div class=\"compare-cell cc-cybersec\"><span class=\"tick-y\">✓</span></div>\n\n    <div class=\"compare-cell cc-feature\">Extended attributes</div>\n    <div class=\"compare-cell cc-normal\"><span class=\"tick-y\">✓</span></div>\n    <div class=\"compare-cell cc-cybersec\"><span class=\"tick-y\">✓</span> owner-only writes</div>\n\n    <div class=\"compare-cell cc-feature\">Background repair</div>\n    <div class=\"compare-cell cc-normal\"><span class=\"tick-y\">✓</span> hourly scan</div>\n    <div class=\"compare-cell cc-cybersec\"><span class=\"tick-y\">✓</span> + integrity verify</div>\n  </div>\n</div>\n\n\n\n<div class=\"section\" id=\"normal-journal\">\n  <div class=\"section-label\">// 05 — normal mode</div>\n  <h2>Write-Ahead <span class=\"accent\">Journal</span></h2>\n  <p>GhostFS Normal implements a <strong>ordered-data WAL</strong> modelled after ext4's default journalling mode. Before any block or metadata write is committed to sled, a <em>before-image</em> is appended to the journal. On next mount, <code>journal::recover()</code> replays uncommitted records to restore consistency.</p>\n\n  <h3>Journal record format</h3>\n  <pre><span class=\"comment\">// journal.rs — JournalRecord</span>\n<span class=\"kw\">pub enum</span> JournalOp {\n    WriteBlock  { ino, block_idx, before: Option&lt;Vec&lt;u8&gt;&gt; },\n    DeleteBlock { ino, block_idx, before: Option&lt;Vec&lt;u8&gt;&gt; },\n    MetaUpdate  { key: String,   before: Option&lt;Vec&lt;u8&gt;&gt; },\n}</pre>\n\n  <h3>Commit barrier</h3>\n  <p>Every batch write calls <code>journal::commit_barrier()</code> before <code>sled::apply_batch()</code>. This marks all pending records as committed and flushes sled to disk (<code>fdatasync</code>-equivalent). Entries older than 256 are pruned to keep the journal compact.</p>\n\n  <div class=\"callout info\">\n    <span class=\"callout-icon\">ℹ️</span>\n    <div>To disable the sync-on-barrier for benchmarking (trading durability for throughput), set <code>SYNC_ON_BARRIER = false</code> in <code>journal.rs</code>. Not recommended for production.</div>\n  </div>\n</div>\n\n<div class=\"section\" id=\"normal-extents\">\n  <h2>Extent <span class=\"accent\">Tree</span></h2>\n  <p>Rather than storing one sled key per block (flat mapping), GhostFS groups consecutive blocks into <strong>extents</strong> — runs of contiguous logical blocks that share a single metadata record. This mirrors ext4's extent B-tree and dramatically reduces the metadata footprint for large files.</p>\n\n  <table>\n    <tr><th>Scenario</th><th>Flat mapping keys</th><th>Extent mapping keys</th></tr>\n    <tr><td>1 GiB sequential file</td><td>262,144</td><td>1 (single extent)</td></tr>\n    <tr><td>Fragmented file (64 runs)</td><td>262,144</td><td>64</td></tr>\n    <tr><td>Small file 12 KiB</td><td>3</td><td>1</td></tr>\n  </table>\n\n  <h3>Extent coalescing</h3>\n  <p>When <code>put_block()</code> writes block <em>N+1</em> immediately after an existing extent ending at <em>N</em>, the extent is extended in-place — no new sled key is written. This makes sequential writes extremely metadata-efficient.</p>\n\n  <pre class=\"normal\"><span class=\"comment\">// extents.rs — coalescing logic</span>\n<span class=\"kw\">if</span> prev_start + ext.length <span class=\"kw\">as</span> u64 == logical {\n    ext.length += <span class=\"num\">1</span>;            <span class=\"comment\">// extend in-place — O(1), no new key</span>\n    self.db.insert(ekey, bincode::serialize(&amp;ext)?)?;\n    <span class=\"kw\">return</span> Ok(());\n}</pre>\n</div>\n\n<div class=\"section\" id=\"normal-dirindex\">\n  <h2>HTree Directory <span class=\"accent\">Index</span></h2>\n  <p>Large directories in ext4 use an HTree (hash B-tree) for O(log n) lookup. GhostFS implements the same idea via <code>dirindex.rs</code>: every directory entry is duplicated into a secondary index keyed by the BLAKE3 hash of the name, giving stable sort order independent of insertion sequence.</p>\n\n  <h3>Sled key structure</h3>\n  <div class=\"key-grid\">\n    <span class=\"key-name\">didx:&lt;parent&gt;:&lt;hash8&gt;:&lt;name&gt;</span>\n    <span class=\"key-desc\">Child inode number — indexed entry</span>\n    <span class=\"key-name\">didx_count:&lt;parent&gt;</span>\n    <span class=\"key-desc\">Number of indexed entries in this directory</span>\n  </div>\n\n  <p>For small directories (&lt;16 entries), <code>readdir_entries()</code> falls back to a linear scan to avoid index overhead. The switch is transparent to callers.</p>\n</div>\n\n<div class=\"section\" id=\"normal-cache\">\n  <h2>Read-ahead <span class=\"accent\">Cache</span></h2>\n  <p><code>cache.rs</code> provides a two-level LRU cache (10,000 inodes + 10,000 blocks ≈ 40 MiB) backed by <code>DashMap</code> for concurrent access and a <code>LruCache</code> for eviction policy.</p>\n\n  <h3>Read-ahead</h3>\n  <p>After a block is fetched, <code>Cache::read_ahead_hint(last_block)</code> returns the next 8 block indices. The caller (<code>read_data</code>) can prefetch these in a background pass, hiding latency for sequential reads.</p>\n\n  <h3>Write-back coalescing</h3>\n  <p>Dirty blocks are collected in <code>dirty_blocks</code> and flushed together via <code>flush_dirty()</code>. This coalesces multiple small writes into a single sled batch, reducing write amplification.</p>\n</div>\n\n<div class=\"section\" id=\"normal-dedup\">\n  <h2>Block <span class=\"accent\">Deduplication</span></h2>\n  <p>Every block written is hashed with <strong>BLAKE3</strong> before storage. If an identical hash already exists in the dedup index, only a reference record is written — the block data is not duplicated. Reference counting ensures blocks are reclaimed only when all references are removed.</p>\n\n  <table>\n    <tr><th>Sled key</th><th>Value</th><th>Purpose</th></tr>\n    <tr><td><code>dedup:&lt;hash&gt;</code></td><td>(ino, block_idx)</td><td>Hash → first occurrence</td></tr>\n    <tr><td><code>ref:&lt;ino&gt;:&lt;idx&gt;</code></td><td>(orig_ino, orig_idx)</td><td>Back-reference</td></tr>\n    <tr><td><code>refcount:&lt;ino&gt;:&lt;idx&gt;</code></td><td>u64</td><td>Reference counter</td></tr>\n    <tr><td><code>hash:&lt;ino&gt;:&lt;idx&gt;</code></td><td>[u8;32]</td><td>Per-block integrity hash</td></tr>\n  </table>\n</div>\n\n<div class=\"section\" id=\"normal-compression\">\n  <h2>Transparent <span class=\"accent\">Compression</span></h2>\n  <p>The compression pipeline sits between the block cache and the deduplication / encryption layers. Data is compressed before encryption, maximising the efficiency of both operations.</p>\n\n  <table>\n    <tr><th>Algorithm</th><th>Feature flag</th><th>Best for</th><th>Notes</th></tr>\n    <tr><td><code>none</code></td><td>always</td><td>Encrypted / already-compressed data</td><td>Zero CPU overhead</td></tr>\n    <tr><td><code>zlib</code></td><td>always</td><td>Text, source code</td><td>High ratio, moderate speed</td></tr>\n    <tr><td><code>zstd</code></td><td><code>zstd</code></td><td>General purpose</td><td>Best ratio/speed tradeoff</td></tr>\n    <tr><td><code>lz4</code></td><td><code>lz4</code></td><td>Hot data, real-time</td><td>Fastest decompression</td></tr>\n  </table>\n\n  <pre class=\"normal\"><span class=\"comment\"># Mount with zstd compression</span>\nghostfs mount -d /dev/sdb1 -m /mnt/ghost --compression zstd</pre>\n</div>\n\n\n\n<div class=\"section\" id=\"cs-crypto\">\n  <div class=\"section-label\">// 06 — cybersec mode</div>\n  <h2>AES-256-GCM <span class=\"accent\">Encryption</span></h2>\n\n  <div class=\"callout cybersec\">\n    <span class=\"callout-icon\">🔐</span>\n    <div>In cybersec mode, <em>every block</em> is encrypted before being stored in sled. There is no plaintext fallback. The filesystem will not mount without a valid 32-byte key.</div>\n  </div>\n\n  <p>Encryption uses <strong>AES-256-GCM</strong> (authenticated encryption) with a fresh random 96-bit nonce per block. The nonce is prepended to the ciphertext. The GCM authentication tag detects any tampering at the ciphertext level — this is the first line of defence, before the Merkle tree.</p>\n\n  <h3>Key management</h3>\n  <pre class=\"cybersec\"><span class=\"comment\"># Generate a 256-bit key</span>\nopenssl rand -hex <span class=\"num\">32</span> &gt; /etc/ghostfs/key.hex\nchmod <span class=\"num\">600</span> /etc/ghostfs/key.hex\n\n<span class=\"comment\"># Mount cybersec mode</span>\nghostfs mount -d /dev/sdb1 -m /mnt/secure \\\n  --cybersecurity \\\n  --key-file /etc/ghostfs/key.hex \\\n  --compression zstd</pre>\n\n  <div class=\"callout danger\">\n    <span class=\"callout-icon\">⚠️</span>\n    <div>Losing the key means losing all data. Store the key separately from the filesystem (TPM, HSM, or hardware token). GhostFS does <strong>not</strong> implement key escrow.</div>\n  </div>\n\n  <h3>Encryption pipeline</h3>\n  <pre class=\"cybersec\">plaintext block\n  │\n  ▼  compression (zstd/lz4/zlib)\n  compressed\n  │\n  ▼  AES-256-GCM (random nonce, authenticated)\n  [nonce 12B][ciphertext][GCM tag 16B]\n  │\n  ▼  sled insert(\"data:&lt;ino&gt;:&lt;block&gt;\", ...)</pre>\n</div>\n\n<div class=\"section\" id=\"cs-integrity\">\n  <h2>Merkle Integrity <span class=\"accent\">Tree</span></h2>\n  <p>The AES-GCM tag protects against ciphertext tampering. The Merkle tree (<code>integrity.rs</code>) provides an additional layer: it detects tampering with the plaintext <em>after</em> decryption (e.g. key compromise, sled-level manipulation).</p>\n\n  <p>Every block's BLAKE3 hash is stored as a Merkle leaf. Internal nodes are BLAKE3 hashes of child pairs. The root hash summarises the entire file in 32 bytes and is recomputed on every write.</p>\n\n  <h3>Verification</h3>\n  <pre class=\"cybersec\"><span class=\"comment\">// integrity.rs — verify_block() called on every read</span>\n<span class=\"kw\">let</span> computed = blake3::hash(data);\n<span class=\"kw\">if</span> computed.as_bytes() != stored.as_ref() {\n    <span class=\"kw\">return</span> Err(HfsError::CorruptedData); <span class=\"comment\">// → EIO to application</span>\n}</pre>\n\n  <h3>Root export</h3>\n  <p>The Merkle root for any file is accessible via <code>IntegrityTree::root(ino)</code>. This enables external verification pipelines (e.g. comparing roots between a live mount and a forensic image).</p>\n\n  <div class=\"key-grid\">\n    <span class=\"key-name\">itree:&lt;ino&gt;:leaf:&lt;idx&gt;</span>\n    <span class=\"key-desc\">BLAKE3 of plaintext block</span>\n    <span class=\"key-name\">itree:&lt;ino&gt;:root</span>\n    <span class=\"key-desc\">Current Merkle root hash (32 bytes)</span>\n    <span class=\"key-name\">itree:&lt;ino&gt;:height</span>\n    <span class=\"key-desc\">Tree height (informational)</span>\n  </div>\n</div>\n\n<div class=\"section\" id=\"cs-mac\">\n  <h2>Bell-LaPadula <span class=\"accent\">MAC</span></h2>\n  <p>Mandatory Access Control enforces information flow policies <em>regardless</em> of filesystem permissions. Every inode has a <strong>MacLabel</strong>; every UID has a <strong>MacClearance</strong>.</p>\n\n  <h3>Sensitivity levels</h3>\n  <table>\n    <tr><th>Level</th><th>Value</th><th>Analog</th></tr>\n    <tr><td><code>Unclassified</code></td><td>0</td><td>Public / world-readable</td></tr>\n    <tr><td><code>Restricted</code></td><td>1</td><td>Internal use only</td></tr>\n    <tr><td><code>Confidential</code></td><td>2</td><td>Need-to-know</td></tr>\n    <tr><td><code>TopSecret</code></td><td>3</td><td>Compartmented intelligence</td></tr>\n  </table>\n\n  <h3>MAC rules</h3>\n  <table>\n    <tr><th>Rule</th><th>Condition for ALLOW</th></tr>\n    <tr><td>No-Read-Up</td><td><code>clearance.level ≥ label.level</code></td></tr>\n    <tr><td>No-Write-Down</td><td><code>clearance.level ≤ label.level</code></td></tr>\n    <tr><td>Compartments</td><td><code>(clearance.compartments &amp; label.compartments) == label.compartments</code></td></tr>\n  </table>\n\n  <h3>Assigning labels</h3>\n  <pre class=\"cybersec\"><span class=\"comment\">// Programmatic — called from a management daemon or ghostfs-admin tool</span>\nfs.mac.set_label(<span class=\"num\">ino</span>, &amp;MacLabel {\n    level: SensitivityLevel::Confidential,\n    compartments: <span class=\"num\">0b0000_0011</span>, <span class=\"comment\">// compartments A + B</span>\n})?;\n\nfs.mac.set_clearance(<span class=\"num\">uid</span>, &amp;MacClearance {\n    level: SensitivityLevel::Confidential,\n    compartments: <span class=\"num\">0b1111_1111</span>, <span class=\"comment\">// all compartments</span>\n    trusted: <span class=\"kw\">false</span>,\n})?;</pre>\n</div>\n\n<div class=\"section\" id=\"cs-ids\">\n  <h2>Intrusion <span class=\"accent\">Detection System</span></h2>\n  <p><code>ids.rs</code> hooks into every I/O path and applies five detection rules using per-UID sliding-window counters (60-second windows, stored in sled):</p>\n\n  <table>\n    <tr><th>Rule</th><th>Trigger</th><th>Alert Kind</th></tr>\n    <tr><td>Brute-force</td><td>&gt;20 permission denials / 60 s per UID</td><td><code>BruteForce</code></td></tr>\n    <tr><td>Mass-delete</td><td>&gt;50 unlinks / 60 s per UID</td><td><code>MassDelete</code></td></tr>\n    <tr><td>Rapid enumeration</td><td>&gt;500 readdirs / 60 s per UID</td><td><code>RapidEnumeration</code></td></tr>\n    <tr><td>Integrity violation</td><td>Merkle hash mismatch on read</td><td><code>IntegrityViolation</code></td></tr>\n    <tr><td>MAC violation</td><td>Access denied by MAC check</td><td><code>MacViolation</code></td></tr>\n  </table>\n\n  <p>Alerts are persisted at <code>ids:alert:&lt;timestamp&gt;:&lt;seq&gt;</code> and retrievable via <code>Ids::recent_alerts(n)</code> for SIEM integration. All thresholds are compile-time constants in <code>ids.rs</code> and easy to tune.</p>\n\n  <div class=\"callout success\">\n    <span class=\"callout-icon\">🛡️</span>\n    <div>The <strong>MassDelete</strong> rule is specifically designed to detect ransomware behaviour (rapid bulk deletion followed by encrypted re-creation). Combined with the forensics chain, GhostFS provides evidence-grade logging of such incidents.</div>\n  </div>\n</div>\n\n<div class=\"section\" id=\"cs-forensics\">\n  <h2>Hash-chained Forensics <span class=\"accent\">Log</span></h2>\n  <p>Every filesystem operation is recorded in an <strong>append-only, hash-chained log</strong> in <code>forensics.rs</code>. Each entry contains the BLAKE3 hash of the previous entry — any deletion or modification of a historical record breaks the chain and is immediately detectable.</p>\n\n  <h3>Entry structure</h3>\n  <pre class=\"cybersec\"><span class=\"kw\">pub struct</span> ForensicsEntry {\n    pub seq:          u64,\n    pub timestamp_us: u128,   <span class=\"comment\">// microsecond precision</span>\n    pub uid:          u32,\n    pub operation:    String,\n    pub ino:          u64,\n    pub name:         Option&lt;Vec&lt;u8&gt;&gt;,\n    pub prev_hash:    [u8; <span class=\"num\">32</span>], <span class=\"comment\">// chain link</span>\n    pub self_hash:    [u8; <span class=\"num\">32</span>], <span class=\"comment\">// BLAKE3 of all above fields</span>\n}</pre>\n\n  <h3>Chain verification</h3>\n  <pre class=\"cybersec\"><span class=\"comment\"># Verify chain integrity (0 = clean, Err = tampered)</span>\n<span class=\"kw\">let</span> count = fs.forensics.verify_chain()?;\nprintln!(<span class=\"str\">\"✓ {} forensics entries verified\"</span>, count);</pre>\n\n  <h3>SIEM export</h3>\n  <p>Use <code>Forensics::tail(n)</code> to export the last <em>n</em> entries for ingestion into Splunk, Elastic, or any syslog-compatible SIEM. Each entry includes µs-precision timestamps suitable for timeline correlation.</p>\n</div>\n\n<div class=\"section\" id=\"cs-audit\">\n  <h2>Structured <span class=\"accent\">Audit Log</span></h2>\n  <p>The audit log (<code>audit.rs</code>) provides a fast, human-readable trail of all filesystem operations. It is separate from the forensics chain (which is immutable and cryptographically linked); the audit log rotates at 100,000 entries.</p>\n\n  <p>In cybersec mode, <code>log_audit()</code> in <code>lib.rs</code> writes to <em>both</em> the audit log (fast, mutable, rotatable) <em>and</em> the forensics chain (slow, immutable, hash-chained). This dual-write strategy allows operators to query recent events quickly while retaining court-admissible evidence.</p>\n</div>\n\n\n\n<div class=\"section\" id=\"build\">\n  <div class=\"section-label\">// 07 — operations</div>\n  <h2>Building <span class=\"accent\">GhostFS</span></h2>\n\n  <pre><span class=\"comment\"># Prerequisites</span>\napt install fuse libfuse-dev build-essential\ncurl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh\n\n<span class=\"comment\"># Clone and build — Normal (default)</span>\ngit clone https://github.com/hackeros/ghostfs\ncd ghostfs\ncargo build --release\n\n<span class=\"comment\"># Build — Cybersec</span>\ncargo build --no-default-features --features cybersec,zstd,lz4 --release\n\n<span class=\"comment\"># Install</span>\ninstall -m 755 target/release/ghostfs /usr/local/bin/</pre>\n</div>\n\n<div class=\"section\" id=\"mkfs\">\n  <h2>Formatting <span class=\"accent\">(mkfs)</span></h2>\n  <pre><span class=\"comment\"># Format a raw file or block device</span>\ndd if=/dev/zero of=/var/ghostfs.img bs=1M count=<span class=\"num\">4096</span>\nghostfs mkfs --device /var/ghostfs.img\n\n<span class=\"comment\"># With custom block size (must be power of 2, ≥ 512)</span>\nghostfs mkfs --device /dev/sdb1 --block-size <span class=\"num\">4096</span></pre>\n\n  <div class=\"callout warning\">\n    <span class=\"callout-icon\">⚠️</span>\n    <div><code>mkfs</code> is destructive — it overwrites the sled database. Always back up data before re-formatting.</div>\n  </div>\n</div>\n\n<div class=\"section\" id=\"mount\">\n  <h2>Mounting <span class=\"accent\">GhostFS</span></h2>\n\n  <h3>Normal mode</h3>\n  <pre class=\"normal\"><span class=\"comment\"># Plain mount</span>\nghostfs mount -d /var/ghostfs.img -m /mnt/ghost\n\n<span class=\"comment\"># With lz4 compression and noatime</span>\nghostfs mount -d /var/ghostfs.img -m /mnt/ghost \\\n  --compression lz4 --noatime\n\n<span class=\"comment\"># Normal mode with optional encryption</span>\nghostfs mount -d /var/ghostfs.img -m /mnt/ghost \\\n  --cybersecurity --key-file /root/key.hex</pre>\n\n  <h3>Cybersec mode</h3>\n  <pre class=\"cybersec\"><span class=\"comment\"># Cybersec — encryption mandatory</span>\nghostfs mount -d /dev/sdb1 -m /mnt/secure \\\n  --cybersecurity \\\n  --key-file /etc/ghostfs/key.hex \\\n  --compression zstd \\\n  --noatime\n\n<span class=\"comment\"># Unmount</span>\nghostfs umount -m /mnt/secure</pre>\n\n  <h3>systemd unit</h3>\n  <pre><span class=\"comment\"># /etc/systemd/system/ghostfs.service</span>\n[Unit]\nDescription=GhostFS\nAfter=local-fs.target\n\n[Service]\nExecStart=/usr/local/bin/ghostfs mount \\\n  -d /var/ghostfs.img -m /mnt/ghost \\\n  --compression zstd --noatime\nExecStop=/usr/local/bin/ghostfs umount -m /mnt/ghost\nRestart=on-failure\n\n[Install]\nWantedBy=multi-user.target</pre>\n</div>\n\n<div class=\"section\" id=\"sled-layout\">\n  <h2>Sled Key <span class=\"accent\">Layout</span></h2>\n  <p>All state lives inside the sled embedded database. Understanding the key layout is useful for debugging, forensics, and manual inspection.</p>\n\n  <table>\n    <tr><th>Key pattern</th><th>Value type</th><th>Description</th></tr>\n    <tr><td><code>next_ino</code></td><td>u64</td><td>Next inode number</td></tr>\n    <tr><td><code>sb:*</code></td><td>mixed</td><td>Superblock fields (version, block_size, created)</td></tr>\n    <tr><td><code>inode:&lt;ino&gt;</code></td><td>Inode</td><td>Inode metadata</td></tr>\n    <tr><td><code>dir:&lt;parent&gt;:&lt;name&gt;</code></td><td>u64</td><td>Directory entry → child ino</td></tr>\n    <tr><td><code>didx:&lt;parent&gt;:&lt;hash&gt;:&lt;name&gt;</code></td><td>u64</td><td>HTree index entry</td></tr>\n    <tr><td><code>data:&lt;ino&gt;:&lt;block&gt;</code></td><td>[u8]</td><td>Block data (compressed, possibly encrypted)</td></tr>\n    <tr><td><code>ext:&lt;ino&gt;:&lt;start&gt;</code></td><td>Extent</td><td>Extent tree record</td></tr>\n    <tr><td><code>dedup:&lt;hash&gt;</code></td><td>(u64, usize)</td><td>Content hash → origin block</td></tr>\n    <tr><td><code>ref:&lt;ino&gt;:&lt;idx&gt;</code></td><td>(u64, usize)</td><td>Dedup back-reference</td></tr>\n    <tr><td><code>xattr:&lt;ino&gt;:&lt;name&gt;</code></td><td>[u8]</td><td>Extended attribute value</td></tr>\n    <tr><td><code>quota:&lt;uid&gt;</code></td><td>UserQuota</td><td>Per-user quota + usage</td></tr>\n    <tr><td><code>journal:seq:&lt;n&gt;</code></td><td>JournalRecord</td><td>WAL entry</td></tr>\n    <tr><td><code>audit:entry:&lt;seq&gt;</code></td><td>AuditEntry</td><td>Audit log record</td></tr>\n    <tr><td><code>itree:&lt;ino&gt;:leaf:&lt;idx&gt;</code></td><td>[u8;32]</td><td>[cybersec] Merkle leaf hash</td></tr>\n    <tr><td><code>itree:&lt;ino&gt;:root</code></td><td>[u8;32]</td><td>[cybersec] Merkle root</td></tr>\n    <tr><td><code>mac:label:&lt;ino&gt;</code></td><td>MacLabel</td><td>[cybersec] MAC label</td></tr>\n    <tr><td><code>mac:clearance:&lt;uid&gt;</code></td><td>MacClearance</td><td>[cybersec] Subject clearance</td></tr>\n    <tr><td><code>ids:stats:&lt;uid&gt;</code></td><td>UidStats</td><td>[cybersec] IDS per-UID counters</td></tr>\n    <tr><td><code>ids:alert:&lt;ts&gt;:&lt;seq&gt;</code></td><td>IdsAlert</td><td>[cybersec] IDS alert</td></tr>\n    <tr><td><code>forensics:seq:&lt;n&gt;</code></td><td>ForensicsEntry</td><td>[cybersec] Hash-chained log entry</td></tr>\n  </table>\n</div>\n\n\n<div class=\"section\" id=\"testing\">\n  <h2>Testing <span class=\"accent\">Guide</span></h2>\n\n  <h3>Prerequisites</h3>\n  <pre>apt install fuse3 libfuse-dev attr\nmodprobe fuse</pre>\n\n  <div class=\"test-block\">\n    <div class=\"test-header\">\n      <span>01 — Basic mount / unmount</span>\n      <span class=\"test-status ts-pass\">normal + cybersec</span>\n    </div>\n    <pre>mkdir -p /tmp/gfs-db /tmp/gfs-mnt\ndd if=/dev/zero of=/tmp/gfs.img bs=1M count=512\n\nghostfs mkfs --device /tmp/gfs.img\nghostfs mount -d /tmp/gfs.img -m /tmp/gfs-mnt --noatime &\n\nsleep 1\nmount | grep ghostfs            <span class=\"comment\"># should show the mount</span>\nghostfs umount -m /tmp/gfs-mnt</pre>\n  </div>\n\n  <div class=\"test-block\">\n    <div class=\"test-header\">\n      <span>02 — POSIX operations (fsx-style)</span>\n      <span class=\"test-status ts-pass\">normal</span>\n    </div>\n    <pre>ghostfs mount -d /tmp/gfs.img -m /tmp/gfs-mnt --compression lz4 &\nsleep 1\n\n<span class=\"comment\"># Create, write, read</span>\necho \"hello ghostfs\" &gt; /tmp/gfs-mnt/test.txt\ncat /tmp/gfs-mnt/test.txt\n\n<span class=\"comment\"># Directory ops</span>\nmkdir -p /tmp/gfs-mnt/a/b/c\nls -la /tmp/gfs-mnt/a/b/\n\n<span class=\"comment\"># Symlinks &amp; hard links</span>\nln -s /tmp/gfs-mnt/test.txt /tmp/gfs-mnt/link.txt\nln /tmp/gfs-mnt/test.txt /tmp/gfs-mnt/hard.txt\n\n<span class=\"comment\"># xattr</span>\nsetfattr -n user.comment -v \"test\" /tmp/gfs-mnt/test.txt\ngetfattr -n user.comment /tmp/gfs-mnt/test.txt\n\n<span class=\"comment\"># Permissions</span>\nchmod 600 /tmp/gfs-mnt/test.txt\nstat /tmp/gfs-mnt/test.txt\n\nghostfs umount -m /tmp/gfs-mnt</pre>\n  </div>\n\n  <div class=\"test-block\">\n    <div class=\"test-header\">\n      <span>03 — Crash recovery (WAL test)</span>\n      <span class=\"test-status ts-pass\">normal</span>\n    </div>\n    <pre>ghostfs mount -d /tmp/gfs.img -m /tmp/gfs-mnt &\nGPID=$!\nsleep 1\n\n<span class=\"comment\"># Write a large file</span>\ndd if=/dev/urandom of=/tmp/gfs-mnt/big.bin bs=1M count=64\n\n<span class=\"comment\"># Simulate crash — kill without clean unmount</span>\nkill -9 $GPID\nsleep 1\n\n<span class=\"comment\"># Remount — journal recovery should replay automatically</span>\nghostfs mount -d /tmp/gfs.img -m /tmp/gfs-mnt &\nsleep 1\n\n<span class=\"comment\"># Verify file is intact</span>\nls -lh /tmp/gfs-mnt/big.bin\nmd5sum /tmp/gfs-mnt/big.bin\n\nghostfs umount -m /tmp/gfs-mnt</pre>\n  </div>\n\n  <div class=\"test-block\">\n    <div class=\"test-header\">\n      <span>04 — Cybersec mode: encryption + integrity</span>\n      <span class=\"test-status ts-cybersec\">cybersec only</span>\n    </div>\n    <pre><span class=\"comment\"># Build cybersec binary first</span>\ncargo build --no-default-features --features cybersec,zstd,lz4 --release\n\nopenssl rand -hex 32 &gt; /tmp/key.hex\n\nghostfs mkfs --device /tmp/gfs-sec.img\nghostfs mount -d /tmp/gfs-sec.img -m /tmp/gfs-mnt \\\n  --cybersecurity --key-file /tmp/key.hex &\nsleep 1\n\necho \"secret data\" &gt; /tmp/gfs-mnt/secret.txt\n\n<span class=\"comment\"># Verify sled data is ciphertext (should be random-looking)</span>\nstrings /tmp/gfs-sec.img | grep \"secret\" &amp;&amp; echo \"FAIL: plaintext found\" || echo \"PASS: encrypted\"\n\nghostfs umount -m /tmp/gfs-mnt</pre>\n  </div>\n\n  <div class=\"test-block\">\n    <div class=\"test-header\">\n      <span>05 — Cybersec mode: MAC enforcement</span>\n      <span class=\"test-status ts-cybersec\">cybersec only</span>\n    </div>\n    <pre><span class=\"comment\"># Create a file, set MAC label = TopSecret, test as unprivileged user</span>\n<span class=\"comment\"># (Requires MAC label management tool — see mac.rs API)</span>\n\n<span class=\"comment\"># Expected: read from UID with Unclassified clearance → EACCES</span>\nsudo -u nobody cat /tmp/gfs-mnt/secret.txt\necho \"Exit code: $?\"   <span class=\"comment\"># should be non-zero</span></pre>\n  </div>\n\n  <div class=\"test-block\">\n    <div class=\"test-header\">\n      <span>06 — Forensics chain verify</span>\n      <span class=\"test-status ts-cybersec\">cybersec only</span>\n    </div>\n    <pre><span class=\"comment\"># After some operations, verify the hash chain</span>\n<span class=\"comment\"># (integrate into a management daemon or CLI subcommand)</span>\n\n<span class=\"comment\"># Quick Rust test</span>\ncargo test --no-default-features --features cybersec forensics</pre>\n  </div>\n\n  <div class=\"test-block\">\n    <div class=\"test-header\">\n      <span>07 — Performance baseline</span>\n      <span class=\"test-status ts-pass\">normal</span>\n    </div>\n    <pre>apt install fio\n\nghostfs mount -d /tmp/gfs.img -m /tmp/gfs-mnt \\\n  --compression lz4 --noatime &\nsleep 1\n\n<span class=\"comment\"># Sequential write</span>\nfio --name=seqwr --ioengine=sync --rw=write --bs=1m \\\n    --size=512m --filename=/tmp/gfs-mnt/fio.tmp\n\n<span class=\"comment\"># Sequential read</span>\nfio --name=seqrd --ioengine=sync --rw=read --bs=1m \\\n    --size=512m --filename=/tmp/gfs-mnt/fio.tmp\n\n<span class=\"comment\"># Random 4K read/write mix</span>\nfio --name=rand4k --ioengine=sync --rw=randrw --bs=4k \\\n    --size=256m --filename=/tmp/gfs-mnt/fio2.tmp\n\nghostfs umount -m /tmp/gfs-mnt</pre>\n  </div>\n</div>\n\n\n<div class=\"section\" id=\"calamares\">\n  <h2>Calamares <span class=\"accent\">Integration</span></h2>\n  <p>Calamares is the HackerOS installer framework. Integrating GhostFS requires providing a filesystem module, a mount module, and optionally a pre-install hook.</p>\n\n  <h3>Step-by-step</h3>\n  <ol class=\"step-list\">\n    <li>\n      <strong>Add <code>ghostfs</code> to the live ISO.</strong><br>\n      Include the compiled <code>ghostfs</code> binary and the FUSE library in the squashfs image at <code>/usr/local/bin/ghostfs</code> and ensure <code>fuse3</code> is in the package list (<code>packages.conf</code>).\n    </li>\n    <li>\n      <strong>Create the filesystem module.</strong><br>\n      Add a new module directory: <code>/usr/lib/calamares/modules/ghostfs-mkfs/</code> with <code>module.desc</code> and a Python job script.\n<pre><span class=\"comment\"># /usr/lib/calamares/modules/ghostfs-mkfs/module.desc</span>\n---\ntype:      \"job\"\nname:      \"ghostfs-mkfs\"\ninterface: \"python\"\nscript:    \"main.py\"</pre>\n<pre><span class=\"comment\"># main.py</span>\n<span class=\"kw\">import</span> subprocess, libcalamares\n\n<span class=\"kw\">def</span> <span class=\"fn-name\">run</span>():\n    device = libcalamares.globalstorage.value(<span class=\"str\">\"rootMountPoint\"</span>)\n    partition = libcalamares.globalstorage.value(<span class=\"str\">\"rootPartition\"</span>)\n\n    result = subprocess.run(\n        [<span class=\"str\">\"ghostfs\"</span>, <span class=\"str\">\"mkfs\"</span>, <span class=\"str\">\"--device\"</span>, partition],\n        capture_output=True, text=True\n    )\n    <span class=\"kw\">if</span> result.returncode != <span class=\"num\">0</span>:\n        <span class=\"kw\">return</span> (<span class=\"str\">\"GhostFS mkfs failed\"</span>, result.stderr)\n    <span class=\"kw\">return</span> None</pre>\n    </li>\n    <li>\n      <strong>Create the mount module.</strong><br>\n      Add <code>/usr/lib/calamares/modules/ghostfs-mount/</code>. The mount module mounts the freshly formatted partition at the Calamares root mount point so the installer can copy files.\n<pre><span class=\"comment\"># main.py — mount module</span>\n<span class=\"kw\">import</span> subprocess, os, libcalamares\n\n<span class=\"kw\">def</span> <span class=\"fn-name\">run</span>():\n    root    = libcalamares.globalstorage.value(<span class=\"str\">\"rootMountPoint\"</span>)\n    device  = libcalamares.globalstorage.value(<span class=\"str\">\"rootPartition\"</span>)\n    os.makedirs(root, exist_ok=True)\n    result = subprocess.run(\n        [<span class=\"str\">\"ghostfs\"</span>, <span class=\"str\">\"mount\"</span>,\n         <span class=\"str\">\"-d\"</span>, device, <span class=\"str\">\"-m\"</span>, root,\n         <span class=\"str\">\"--compression\"</span>, <span class=\"str\">\"zstd\"</span>, <span class=\"str\">\"--noatime\"</span>],\n        capture_output=True, text=True\n    )\n    <span class=\"kw\">if</span> result.returncode != <span class=\"num\">0</span>:\n        <span class=\"kw\">return</span> (<span class=\"str\">\"GhostFS mount failed\"</span>, result.stderr)\n    <span class=\"kw\">return</span> None</pre>\n    </li>\n    <li>\n      <strong>Add the unmount hook.</strong><br>\n      After file copy (<code>unpackfs</code>), unmount GhostFS cleanly using a post-install module:\n<pre>subprocess.run([<span class=\"str\">\"ghostfs\"</span>, <span class=\"str\">\"umount\"</span>, <span class=\"str\">\"-m\"</span>, root])</pre>\n    </li>\n    <li>\n      <strong>Register in <code>settings.conf</code>.</strong><br>\n      Add the modules in the correct sequence:\n<pre><span class=\"comment\"># /etc/calamares/settings.conf — sequence section</span>\nsequence:\n  - show:\n      - welcome\n      - locale\n      - partition\n      - users\n      - summary\n  - exec:\n      - partition       <span class=\"comment\"># standard partitioning</span>\n      - ghostfs-mkfs    <span class=\"comment\"># ← format with GhostFS</span>\n      - ghostfs-mount   <span class=\"comment\"># ← mount GhostFS root</span>\n      - unpackfs        <span class=\"comment\"># copy squashfs to GhostFS</span>\n      - machineid\n      - fstab\n      - locale\n      - keyboard\n      - localecfg\n      - users\n      - displaymanager\n      - networkcfg\n      - hwclock\n      - services-systemd\n      - ghostfs-umount  <span class=\"comment\"># ← clean unmount</span>\n      - bootloader\n  - show:\n      - finished</pre>\n    </li>\n    <li>\n      <strong>Generate the fstab entry.</strong><br>\n      Calamares's <code>fstab</code> module must emit a GhostFS-compatible entry. Override the template in <code>/etc/calamares/modules/fstab.conf</code>:\n<pre><span class=\"comment\"># fstab.conf</span>\nmountOptions:\n  ghostfs: \"noatime,compression=zstd\"</pre>\n      The generated <code>/etc/fstab</code> line will look like:\n<pre>/dev/sda1   /   ghostfs   noatime,compression=zstd   0   0</pre>\n    </li>\n    <li>\n      <strong>[Cybersec only] Key provisioning.</strong><br>\n      For cybersec installations, generate and store the key during install:\n<pre><span class=\"comment\"># In the ghostfs-mkfs module, cybersec variant</span>\nimport secrets\nkey = secrets.token_hex(<span class=\"num\">32</span>)\nkey_path = <span class=\"str\">\"/etc/ghostfs/key.hex\"</span>\nos.makedirs(<span class=\"str\">\"/etc/ghostfs\"</span>, exist_ok=True)\n<span class=\"kw\">with</span> open(key_path, <span class=\"str\">\"w\"</span>) <span class=\"kw\">as</span> f:\n    f.write(key)\nos.chmod(key_path, <span class=\"num\">0o600</span>)\n<span class=\"comment\"># Pass key to mount step via globalstorage</span>\nlibcalamares.globalstorage.insert(<span class=\"str\">\"ghostfsKeyPath\"</span>, key_path)</pre>\n    </li>\n  </ol>\n\n  <div class=\"callout info\">\n    <span class=\"callout-icon\">ℹ️</span>\n    <div>After installation, the boot process must mount GhostFS before the init system starts. Add a <strong>systemd generator</strong> or use an <code>initramfs</code> hook that runs <code>ghostfs mount</code> with the appropriate key-file before pivot_root.</div>\n  </div>\n</div>\n\n\n<div class=\"section\" id=\"cli\">\n  <h2>CLI <span class=\"accent\">Reference</span></h2>\n\n  <table>\n    <tr><th>Subcommand</th><th>Options</th><th>Description</th></tr>\n    <tr>\n      <td><code>mount</code></td>\n      <td><code>-d &lt;device&gt;</code> <code>-m &lt;mountpoint&gt;</code> <code>--compression</code> <code>--noatime</code> <code>--cybersecurity</code> <code>--key-file</code></td>\n      <td>Mount a GhostFS image or block device</td>\n    </tr>\n    <tr>\n      <td><code>mkfs</code></td>\n      <td><code>-d &lt;device&gt;</code> <code>--block-size</code> <code>--encryption</code></td>\n      <td>Format (initialise) a GhostFS volume</td>\n    </tr>\n    <tr>\n      <td><code>umount</code></td>\n      <td><code>-m &lt;mountpoint&gt;</code></td>\n      <td>Unmount a GhostFS volume (calls fusermount -u)</td>\n    </tr>\n  </table>\n</div>\n\n\n<div class=\"section\" id=\"errors\">\n  <h2>Error <span class=\"accent\">Codes</span></h2>\n\n  <table>\n    <tr><th>HfsError variant</th><th>errno</th><th>Cause</th></tr>\n    <tr><td><code>NoEntry</code></td><td>ENOENT</td><td>Inode not found in sled</td></tr>\n    <tr><td><code>QuotaExceeded(uid)</code></td><td>EDQUOT</td><td>User disk quota exceeded</td></tr>\n    <tr><td><code>CorruptedData</code></td><td>EIO</td><td>BLAKE3 / Merkle mismatch or bad GCM tag</td></tr>\n    <tr><td><code>InvalidArgument(s)</code></td><td>EINVAL</td><td>Bad parameter to filesystem call</td></tr>\n    <tr><td><code>CryptoError</code></td><td>EIO</td><td>AES-GCM encrypt/decrypt failure</td></tr>\n    <tr><td><code>MissingKey</code></td><td>EIO</td><td>Cybersec mode mounted without key</td></tr>\n    <tr><td><code>TimeError</code></td><td>EIO</td><td>SystemTime before UNIX_EPOCH</td></tr>\n  </table>\n</div>\n\n\n<div class=\"section\" id=\"tunables\">\n  <h2>Compile-time <span class=\"accent\">Tunables</span></h2>\n\n  <table>\n    <tr><th>Constant</th><th>File</th><th>Default</th><th>Description</th></tr>\n    <tr><td><code>FS_BLOCK_SIZE</code></td><td>lib.rs</td><td>4096</td><td>Filesystem block size in bytes</td></tr>\n    <tr><td><code>TTL</code></td><td>lib.rs</td><td>1 s</td><td>FUSE attribute cache TTL</td></tr>\n    <tr><td><code>INODE_CACHE_CAP</code></td><td>cache.rs</td><td>10,000</td><td>LRU inode cache capacity</td></tr>\n    <tr><td><code>BLOCK_CACHE_CAP</code></td><td>cache.rs</td><td>10,000</td><td>LRU block cache capacity (~40 MiB)</td></tr>\n    <tr><td><code>READ_AHEAD_BLOCKS</code></td><td>cache.rs</td><td>8</td><td>Prefetch window in blocks</td></tr>\n    <tr><td><code>SYNC_ON_BARRIER</code></td><td>journal.rs</td><td>true</td><td>fdatasync on every journal commit</td></tr>\n    <tr><td><code>MAX_AUDIT_ENTRIES</code></td><td>audit.rs</td><td>100,000</td><td>Rotating audit log size</td></tr>\n    <tr><td><code>PERM_FAIL_THRESHOLD</code></td><td>ids.rs</td><td>20 / 60s</td><td>IDS brute-force trigger</td></tr>\n    <tr><td><code>MASS_DELETE_THRESHOLD</code></td><td>ids.rs</td><td>50 / 60s</td><td>IDS mass-delete (ransomware) trigger</td></tr>\n    <tr><td><code>ENUM_THRESHOLD</code></td><td>ids.rs</td><td>500 / 60s</td><td>IDS rapid-enumeration trigger</td></tr>\n  </table>\n</div>\n\n\n<footer>\n  <span>GhostFS v0.4.0 — HackerOS Project</span>\n  <span>Built with Rust · FUSE · sled · BLAKE3 · AES-256-GCM</span>\n  <span style=\"color:var(--green)\">// stay ghost</span>\n</footer>\n\n</main>\n</div>"
+
+fun main() [
+    boot_begin("en", "GhostFS — Technical Documentation")
+    set_viewport("width=device-width, initial-scale=1.0")
+    head_tag("link", ["rel", "icon", "type", "image/png", "href", "../HackerOS.png"])
+    head_tag("link", ["rel", "preconnect", "href", "https://fonts.googleapis.com"])
+    head_tag("link", ["href", "https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap", "rel", "stylesheet"])
+    boot_body(PAGE_BODY)
+    offline_init("../")
+    scrollspy("[id]", "nav a", "-20% 0px -70% 0px", 0.0)
+]
