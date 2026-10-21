@@ -1,0 +1,74 @@
+use <lang:javascript>
+
+!! Przypiete do aktualnego wydania H#. Zmien segment wersji w tym URL-u, gdy opublikowane
+!! zostanie nowe hsharp-playground.wasm.
+const WASM_URL: Str = "https://github.com/HackerOS-Linux-System/H-Sharp/releases/download/v0.8/hsharp-playground.wasm"
+const MAX_STEPS: Int = 200000
+
+let wk_mod: Any = null
+let wk_ready: Any = null
+
+!! import() to slowo kluczowe HackerScript - dynamiczny import przez Function
+fun dyn_import(url: Str) -> Any [
+    let f = Reflect.construct(Function, ["u", "return import(u)"])
+    end f(url)
+]
+
+fun err_text(e: Any) -> Str [
+    if e and e.message [
+        end String(e.message)
+    ]
+    end String(e)
+]
+
+fun init_failed(e: Any) -> Any [
+    postMessage(Object.fromEntries([["__init_error", err_text(e)]]))
+    end null
+]
+
+async fun wk_init() -> Any [
+    let glue = Reflect.construct(URL, ["./hsharp_playground.js", self.location.href]).href
+    wk_mod = await dyn_import(glue).catch(init_failed)
+    if wk_mod == null [
+        end null
+    ]
+    await wk_mod.default(WASM_URL).catch(init_failed)
+]
+
+async fun wk_on_message(ev: Any) [
+    await wk_ready
+    if wk_mod == null [
+        end
+    ]
+    let source = ""
+    if ev.data and ev.data.source [
+        source = ev.data.source
+    ]
+    !! prawdziwy panic Rusta trafia tu jako wyjatek JS; pozostale bledy wracaja jako JSON z ok:false
+    let json = await Promise.resolve(source).then(run_it).catch(on_panic)
+    if json != null [
+        postMessage(Object.fromEntries([["result", json]]))
+    ]
+]
+
+fun run_it(src: Any) -> Any [
+    end wk_mod.run_with_limit(src, MAX_STEPS)
+]
+
+fun on_panic(e: Any) -> Any [
+    postMessage(Object.fromEntries([["__panic", err_text(e)]]))
+    end null
+]
+
+!! Rejestracja synchroniczna przy pierwszym wykonaniu skryptu workera
+fun wk_register() -> Any [
+    self.onmessage = wk_on_message
+    wk_ready = wk_init()
+    end null
+]
+
+let wk_started: Any = wk_register()
+
+fun main() [
+    log("H# playground worker")
+]
