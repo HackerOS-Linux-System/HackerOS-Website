@@ -567,3 +567,40 @@ fun hackerscript_docs_init() [
     sd_init_spy("-15% 0px -70% 0px")
     sd_init_search(false)
 ]
+
+!! ── HackerScript docs: przelacznik motywu jasny/ciemny ──
+!! Motyw zapisywany w localStorage ("hs-theme"); bez wyboru obowiazuje prefers-color-scheme.
+fun hs_theme_current() -> Str [
+    let t = document.documentElement.getAttribute("data-theme")
+    if t == null or t == "" [
+        if window.matchMedia and window.matchMedia("(prefers-color-scheme: dark)").matches [
+            end "dark"
+        ]
+        end "light"
+    ]
+    end t
+]
+
+fun hs_theme_on_toggle(e: Any) [
+    let next = "dark"
+    if hs_theme_current() == "dark" [
+        next = "light"
+    ]
+    document.documentElement.setAttribute("data-theme", next)
+    if window.localStorage [
+        window.localStorage.setItem("hs-theme", next)
+    ]
+]
+
+fun hackerscript_theme_init() [
+    if window.localStorage [
+        let saved = window.localStorage.getItem("hs-theme")
+        if saved == "dark" or saved == "light" [
+            document.documentElement.setAttribute("data-theme", saved)
+        ]
+    ]
+    let btn = document.getElementById("themeToggle")
+    if btn != null [
+        btn.addEventListener("click", hs_theme_on_toggle)
+    ]
+]
