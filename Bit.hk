@@ -1,6 +1,6 @@
 [package]
 -> name        => hackeros-website
--> version     => 5.0.0
+-> version     => 5.1.0
 -> description => Strona HackerOS napisana w 100% w HackerScript.
 -> authors     => ["HackerOS Team"]
 -> license     => GPL-3.0
